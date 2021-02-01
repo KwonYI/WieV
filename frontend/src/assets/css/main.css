@@ -1,0 +1,28 @@
+/* 메인 컬러  */
+.main-bg-navy {
+    background-color: #304B61 !important;
+    color: white;
+}
+
+​ .main-ft-beige {
+    color: #FFF1C3;
+}
+
+​ .main-ft-white {
+    color: white;
+}
+
+/* 버튼 속성 */
+​ .btn-active {
+    background-color: #758EF5;
+}
+
+​ .btn-inactive {
+    background-color: #ABABAB;
+}
+
+/* 라우터 속성 */
+a {
+    text-decoration: none !important;
+    color: inherit !important;
+}

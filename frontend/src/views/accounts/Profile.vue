@@ -1,0 +1,65 @@
+<template>
+  <div id="profile">
+    <v-container>
+      <v-row class="h-100">
+        <v-col col="6">
+          <div>
+            <h2 class="text-center m-5">{{ com_name }}</h2>
+            <v-img :src="com_logo" max-height="150" max-width="250"></v-img>
+            <h3>주소 : {{ com_address }}</h3>
+            <h3>홈페이지 : {{ com_homepage }}</h3>
+          </div>
+        </v-col>
+
+        <v-col col="6">
+          <div class="">
+            <h2 class="text-center m-5">Profile</h2>
+            <v-btn class="ma-2" text icon color="red lighten-2">
+              <v-icon>mdi-cog</v-icon>
+            </v-btn>
+            <div class="">
+              <h4>이메일 : {{ hr_email }}</h4>
+              <h4>연락처 : {{ hr_phone }}</h4>
+              <h4>가입일 : {{ hr_create_date }}</h4>
+              <h4>인증여부 : {{ com_homepage }}</h4>
+            </div>
+          </div>
+
+          <div class="text-center">
+            <v-btn rounded color="primary" dark> 웹 화면 테스트 </v-btn>
+          </div>
+        </v-col>
+      </v-row>
+    </v-container>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "Profile",
+  data: function () {
+    return {
+      com_name: "버즈글로벌",
+      com_logo:
+        "https://r1.community.samsung.com/t5/image/serverpage/image-id/616190iB4F850C825C2D0CD/image-size/large?v=1.0&px=999",
+      com_address: "서울특별시 강남구 테헤란로",
+      com_homepage: "www.naver.com",
+      hr_email: "elsa@buzglobal.co.kr",
+      hr_phone: "01074965575",
+      hr_create_date: "2021-01-27",
+      hr_certified: "인증완료",
+    };
+  },
+  created: function () {
+    // this.reno = this.$route.params.recruitNo;
+    this.reno = this.$store.state.selectedRecruitNo;
+    console.log("reno:", this.reno);
+  },
+};
+</script>
+
+<style>
+#profileRow {
+  height: 30vh;
+}
+</style>

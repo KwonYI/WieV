@@ -1,0 +1,316 @@
+<html>
+<!-- 방에 입장한 화면 -->
+<!-- 최초 입장 -->
+<!-- 1. OV = new OpenVidu(); -->
+<!-- 2. OV.initSession(); -->
+<!-- 3. session.connect 실행 -->
+<!--    - 퍼블리셔 객체 생성 -->
+<!--    - publish 실행 -->
+<!-- 4. videoElementCreated 실행 -->
+<!--    - 인잇메인 실행 -->
+<!--    - appendUserData -->
+
+<!-- 이후에 입장하는 사람 -> 2.5 과정 추가 기존에 있는 사람만큼 진행 / 최초에 들어온 사람은 4번 이후에 실행 -->
+<!-- 2.5. streamCreated 실행 -->
+<!--    - subscribe -->
+<!--    - videoElementCreated - appendUserDate 실행 -->
+
+<head>
+<title>openvidu-mvc-java</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1" charset="utf-8"></meta>
+<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon"></link>
+
+<!-- Bootstrap -->
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"></link>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></link>
+<!-- Bootstrap -->
+
+<link rel="styleSheet" href="style.css" type="text/css" media="screen"></link>
+<script src="openvidu-browser-2.16.0.js"></script>
+</head>
+
+<body>
+	<nav class="navbar navbar-default">
+		<div class="container">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="/"> <img class="demo-logo"
+					src="images/openvidu_vert_white_bg_trans_cropped.png" /> MVC Java
+				</a> <a class="navbar-brand nav-icon"
+					href="https://github.com/OpenVidu/openvidu-tutorials/tree/master/openvidu-mvc-java"
+					title="GitHub Repository" target="_blank"> <i
+					class="fa fa-github" aria-hidden="true"></i>
+				</a> <a class="navbar-brand nav-icon"
+					href="http://www.docs.openvidu.io/en/stable/tutorials/openvidu-mvc-java/"
+					title="Documentation" target="_blank"> <i class="fa fa-book"
+					aria-hidden="true"></i>
+				</a>
+			</div>
+		</div>
+	</nav>
+
+	<div id="main-container" class="container">
+		<div id="logged">
+			<div id="session">
+				<div id="session-header">
+					<h1 th:text="${sessionName}" id="session-title"></h1>
+					<form action="/leave-session" method="post">
+						<input type="hidden" name="session-name" th:value="${sessionName}"></input>
+						<input type="hidden" name="token" th:value="${token}"></input>
+						<button id="buttonLeaveSession" class="btn btn-large btn-danger"
+							type="submit" onclick="leaveSession()">Leave session</button>
+					</form>
+				</div>
+				<!-- 최상단 비디오(가장 큰 화면) -->
+				<div id="main-video" class="col-md-6">
+					<p class="nickName"></p>
+					<p class="userName"></p>
+					<video autoplay="autoplay" playsinline="true"></video>
+				</div>
+				<!-- 여기에 입장한 사람들의 비디오를 띄워준다, 내꺼도 여기 있긴해 -->
+				<div id="video-container" class="col-md-6"></div>
+			</div>
+		</div>
+	</div>
+
+	<footer class="footer">
+		<div class="container">
+			<div class="text-muted">OpenVidu © 2017</div>
+			<a href="http://www.openvidu.io/" target="_blank"> <img
+				class="openvidu-logo"
+				src="images/openvidu_globe_bg_transp_cropped.png" />
+			</a>
+		</div>
+	</footer>
+
+</body>
+
+<script th:inline="javascript">
+
+	// Get all the attributes from the template in Thymeleaf style
+	var sessionName = [[${ sessionName }]];
+	var token = [[${ token }]];
+	var nickName = [[${ nickName }]];
+	var userName = [[${ userName }]];
+
+	console.warn('Request of TOKEN gone WELL (TOKEN:' + token + ')');
+
+	// --- 1) Get an OpenVidu object ---
+	// https://docs.openvidu.io/en/2.16.0/api/openvidu-browser/classes/openvidu.html
+	OV = new OpenVidu();
+	// --- 2) Init a session ---
+	// 세션은 하나의 비디오 영상이면서 여러개의 영상이 있는 방으로도 볼 수 있다
+	// https://docs.openvidu.io/en/2.16.0/api/openvidu-browser/classes/session.html
+	
+	session = OV.initSession();
+
+	// --- 3) 세션에 입장해서 어떤 역할? 액션을 취할지 정해준다
+	// 	기존 연결에 새로운 연결을 추가할때, 처음 연결때는 존재하는 연결이 없기 떄문에 실행안된다
+	//  그 이후엔 방에 있는 사람들만큼 실행된다
+	// 	https://docs.openvidu.io/en/2.16.0/api/openvidu-browser/classes/streamevent.html
+	// 	streamCreated - 세션에 입장해서 비디오 송출 시작하려할때 보내지는 이벤트...??
+			
+	session.on('streamCreated', (event) => {
+		// Subscribe to the Stream to receive it
+		// video-container에 추가할거야
+		var subscriber = session.subscribe(event.stream, 'video-container');
+		
+		// video-container에 추가된 경우
+		// https://docs.openvidu.io/en/2.16.0/api/openvidu-browser/classes/videoelementevent.html
+		// videoElementCreated : 새로운 비디오가 추가될때마다 보내지는 이벤트
+		
+		// 이미 방에 들어와있는 참가자가 있을경우에 이 부분 실행, 그 참가자에게 내 정보를 이어준다?
+		subscriber.on('videoElementCreated', (event) => {
+			// Add a new HTML element for the user's name and nickname over its video
+			appendUserData(event.element, subscriber.stream.connection);
+		});
+	});
+
+	// On every Stream destroyed...
+	// streamDestroyed - 세션에서 나갈때 보내는 이벤트
+	session.on('streamDestroyed', (event) => {
+		// Delete the HTML element with the user's name and nickname
+		removeUserData(event.stream.connection);
+	});
+
+	// 토큰을 사용하여 세션에 연결해준다, 클라이언트에 보내줄 정보를 뒤에 추가로 붙여줘(clientData)
+	// streamCreated 이벤트 받을대 읽어온다, json이나 xml로 보내주는게 좋아
+	// 방에 들어갈때 실행
+	session.connect(token, { clientData: nickName })
+		.then(() => {
+			$('#session-title').text(sessionName);
+			$('#join').hide();
+			$('#session').show();
+			
+			// Here we check somehow if the user has 'PUBLISHER' role before
+			// trying to publish its stream. Even if someone modified the client's code and
+			// published the stream, it wouldn't work if the token sent in Session.connect
+			// method is not recognized as 'PUBLIHSER' role by OpenVidu Server
+			
+			// 영상보여주기전에 역할을 확인해 -> 서브스크라이버는 내 영상을 보여줄 수 없어
+			// 토큰에 넣어준 값을 읽어오는거다 -> 세션컨트롤러 부분에서 하는거지
+			var role = returnRole();
+			
+			if (role == 'p') { // 퍼블리셔
+
+				// 어디에 표시할건지, 퍼블리셔의 속성값 준다
+				// Publisher.addVideoElement or Publisher.createVideoElement 변경 가능
+				// https://docs.openvidu.io/en/2.16.0/api/openvidu-browser/interfaces/publisherproperties.html
+				var publisher = OV.initPublisher('video-container', {
+					audioSource: undefined, // The source of audio. If undefined default microphone
+					videoSource: undefined, // The source of video. If undefined default webcam
+					publishAudio: true,  	// Whether you want to start publishing with your audio unmuted or not
+					publishVideo: true,  	// Whether you want to start publishing with your video enabled or not
+					resolution: '640x480',  // The resolution of your video
+					frameRate: 30,			// The frame rate of your video
+					insertMode: 'APPEND',	// How the video is inserted in the target element 'video-container'
+					mirror: false       	// Whether to mirror your local video or not
+				});
+			
+				// --- 7) Specify the actions when events take place in our publisher ---
+				// When our HTML video has been added to DOM...
+				publisher.on('videoElementCreated', (event) => {
+					// Init the main video with ours and append our data
+					var userData = {
+						nickName: nickName,
+						userName: userName
+					};
+					
+					initMainVideo(event.element, userData);
+					appendUserData(event.element, userData);
+					$(event.element).prop('muted', true); // Mute local video
+				});
+
+				// --- 8) Publish your stream ---
+				session.publish(publisher);
+			} else if(role == 'm'){
+				// --- 6) Get your own camera stream ---
+
+				// 어디에 표시할건지, 퍼블리셔의 속성값 준다
+				// Publisher.addVideoElement or Publisher.createVideoElement 변경 가능
+				// https://docs.openvidu.io/en/2.16.0/api/openvidu-browser/classes/publisher.html
+				var moderater = OV.initPublisher('video-container', {
+					audioSource: undefined, // The source of audio. If undefined default microphone
+					videoSource: undefined, // The source of video. If undefined default webcam
+					publishAudio: true,  	// Whether you want to start publishing with your audio unmuted or not
+					publishVideo: true,  	// Whether you want to start publishing with your video enabled or not
+					resolution: '640x480',  // The resolution of your video
+					frameRate: 30,			// The frame rate of your video
+					insertMode: 'APPEND',	// How the video is inserted in the target element 'video-container'
+					mirror: false       	// Whether to mirror your local video or not
+				});
+				// --- 7) Specify the actions when events take place in our publisher ---
+
+				// When our HTML video has been added to DOM...
+				moderater.on('videoElementCreated', (event) => {
+					// Init the main video with ours and append our data
+					var userData = {
+						nickName: nickName,
+						userName: userName
+					};
+					initMainVideo(event.element, userData);
+					appendUserData(event.element, userData);
+					$(event.element).prop('muted', true); // Mute local video
+				});
+
+				// --- 8) Publish your stream ---
+				session.publish(moderater);
+			} 
+			else {
+				console.warn('You don\'t have permissions to publish');
+				initMainVideoThumbnail(); // Show SUBSCRIBER message in main video
+			}
+		})
+		.catch(error => {
+			console.warn('There was an error connecting to the session:', error.code, error.message);
+		});
+
+
+	function leaveSession() {
+		// --- 9) Leave the session by calling 'disconnect' method over the Session object ---
+		// 연결 해제 + 비디오 요소 제거(videoElementDestroyed ??)
+		// https://docs.openvidu.io/en/2.16.0/api/openvidu-browser/classes/session.html#disconnect
+		session.disconnect();
+	}
+
+	// connection -> 처음엔 없다, 사람들이 들어올때 쌓인다
+	function appendUserData(videoElement, connection) {
+		var clientData;
+		var serverData;
+		var nodeId;
+		
+		// console.log("커넥션 데이터를 봅시다 " + connection.data)
+		
+		if (connection.nickName) { // 먼저 내 비디오화면 이름들 붙여줘, 내 비디오는 메인에 있지
+			//console.log("일단 내 비디오 설정을 마친다")
+			clientData = connection.nickName;
+			serverData = connection.userName;
+			nodeId = 'main-videodata';
+		} else {
+			//console.log("다른 연결들의 설정들 해주고")
+			clientData = JSON.parse(connection.data.split('%/%')[0]).clientData;
+			serverData = JSON.parse(connection.data.split('%/%')[1]).serverData;
+			nodeId = connection.connectionId;
+			//console.log("걔들은 " + nodeId + " 여기에 넣어주자" )
+		}
+		var dataNode = document.createElement('div');
+		dataNode.className = "data-node";
+		dataNode.id = "data-" + nodeId;
+		dataNode.innerHTML = '<p class="nickName">' + clientData + '</p><p class="userName">' + serverData + '</p>';
+		videoElement.parentNode.insertBefore(dataNode, videoElement.nextSibling);
+		addClickListener(videoElement, clientData, serverData);
+	}
+
+	function removeUserData(connection) {
+		var userNameRemoved = $("#data-" + connection.connectionId);
+		if ($(userNameRemoved).find('p.userName').html() === $('#main-video p.userName').html()) {
+			cleanMainVideo(); // The participant focused in the main video has left
+		}
+		$("#data-" + connection.connectionId).remove();
+	}
+
+	function removeAllUserData() {
+		$(".data-node").remove();
+	}
+
+	function cleanMainVideo() {
+		$('#main-video video').get(0).srcObject = null;
+		$('#main-video p').each(function () {
+			$(this).html('');
+		});
+	}
+
+	function addClickListener(videoElement, clientData, serverData) {
+		videoElement.addEventListener('click', function () {
+			var mainVideo = $('#main-video video').get(0);
+			if (mainVideo.srcObject !== videoElement.srcObject) {
+				$('#main-video').fadeOut("fast", () => {
+					$('#main-video p.nickName').html(clientData);
+					$('#main-video p.userName').html(serverData);
+					mainVideo.srcObject = videoElement.srcObject;
+					$('#main-video').fadeIn("fast");
+				});
+			}
+		});
+	}
+
+	function initMainVideo(videoElement, userData) {
+		$('#main-video video').get(0).srcObject = videoElement.srcObject;
+		$('#main-video p.nickName').html(userData.nickName);
+		$('#main-video p.userName').html(userData.userName);
+		$('#main-video video').prop('muted', true);
+	}
+
+	function initMainVideoThumbnail() {// 서브스크라이버일 경우에만 실행
+		$('#main-video video').css("background", "url('images/subscriber-msg.jpg') round");
+	}
+	
+	function returnRole() { // 로그인한 사람의 역할
+		if(userName.includes('p')) return 'p';
+		else if(userName.includes('m')) return 'm';
+		else return 's';
+	}
+</script>
+</html>
