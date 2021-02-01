@@ -8,6 +8,8 @@
             <v-subheader>
               <v-btn @click="selectRecruit(-1)">기업정보</v-btn>
             </v-subheader>
+
+            
             <v-list-item-group v-model="selectedItem" color="primary">
               <v-list-item v-for="(item, i) in items" :key="i">
                 <v-list-item-content>

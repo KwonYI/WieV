@@ -156,9 +156,9 @@ export default {
       { label: "비밀번호 확인", type: "password", value: 'hrPasswordConfirmation'},
       { label: "연락처", type: "text", value: 'hrPhone' },
       { label: "기업명", type: "text", value: 'comName' },
-      { label: "기업 로고", type: "text", value: 'comLogo' },
-      { label: "기업 주소", type: "text", value: 'comAddress' },
-      { label: "기업 홈페이지", type: "text", value: 'comHomepage' },
+     // { label: "기업 로고", type: "text", value: 'comLogo' },
+     // { label: "기업 주소", type: "text", value: 'comAddress' },
+     // { label: "기업 홈페이지", type: "text", value: 'comHomepage' },
     ],
     credentials: {
       hrEmail: '',
@@ -166,21 +166,23 @@ export default {
       hrPasswordConfirmation: '',
       hrPhone: '',
       comName: '',
-      comLogo: '',
-      comAddress: '',
-      comHomepage: '',
+     // comLogo: '',
+     // comAddress: '',
+     // comHomepage: '',
       hrCertificated: '',
       agreed: false,
     },
   }),
   methods: {
     // 회원가입 axios
+    /*
     signup: function () {
-      /*
+      
       if (this.credentials.agreed){
-        axios.post('회원가입 URL', this.credentials)
+        axios.post('회원가입 url', this.credentials)
           .then(res => {
             console.log(res)
+            alert("회원가입 성공")
             this.$router.push({ name: 'Login' })
           })
           .catch(err => {
@@ -190,8 +192,9 @@ export default {
       } else {
         alert("개인정보 이용 약관에 동의해야 합니다.")
       }
-    */
+    
     }
+    */
   }
 }
 </script>

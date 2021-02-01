@@ -10,10 +10,13 @@ import javax.validation.Valid;
 
 import com.web.project.dao.hr.CompanyDao;
 import com.web.project.dao.hr.HrDao;
+import com.web.project.dao.interview.InterviewerDao;
 import com.web.project.model.BasicResponse;
 import com.web.project.model.hr.SignupRequest;
+import com.web.project.model.interview.Interviewer;
 import com.web.project.model.hr.Company;
 import com.web.project.model.hr.Hr;
+import com.web.project.model.hr.LoginRequest;
 import com.web.project.service.hr.JwtService;
 
 import org.springframework.web.bind.annotation.RestController;
@@ -52,44 +55,92 @@ public class HrController {
 	@Autowired
 	CompanyDao companyDao;
 	
+	@Autowired
+	InterviewerDao interviewerDao;
+	
 	public static final Logger logger = LoggerFactory.getLogger(HrController.class);
 	
 	@PostMapping("/login")
 	@ApiOperation(value = "로그인")
-	public ResponseEntity<Map<String, Object>> login(@RequestParam(required = true) final String hrEmail,
-			@RequestParam(required = true) final String hrPassword) {
+	public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequest loginRequest) {
 		
 		Map<String, Object> resultMap = new HashMap<>();
 		HttpStatus status = null;
 
-		Optional<Hr> hrOpt = hrDao.findHrByHrEmailAndHrPassword(hrEmail, hrPassword);
-		
+		Optional<Hr> hrOpt = hrDao.findHrByHrEmailAndHrPassword(loginRequest.getUserEmail(), loginRequest.getUserPassword());
+		Optional<Interviewer> interviewerOpt = interviewerDao.findOptionalInterviewerByViewEmailAndViewPassword(loginRequest.getUserEmail(), loginRequest.getUserPassword());
+	
 		try {
 			if (hrOpt.isPresent()) {
 				// Swagger용!
 				final BasicResponse result = new BasicResponse();
 				result.status = true;
 				result.data = "success";
+				
 				// Optional -> 일반 객체
 				Hr loginHr = hrOpt.get();
+				
 				// login token
 				String token = jwtService.create(loginHr);
 				logger.trace("로그인 토큰 정보 : {}", token);
 				resultMap.put("auth-token", token);
 				// email
-				resultMap.put("hr-Email", loginHr.getHrEmail());
+				resultMap.put("user-Email", loginHr.getHrEmail());
 				// 이름
-				resultMap.put("hr-Name", loginHr.getHrName());
+				resultMap.put("user-Name", loginHr.getHrName());
 				// 핸드폰 번호
-				resultMap.put("hr-Phone", loginHr.getHrPhone());
-				// 계정 생성 날짜
-				resultMap.put("hr-Create-Date", loginHr.getHrCreateDate());
-				// 소속 회사 이름 가져오기!
+				resultMap.put("user-Phone", loginHr.getHrPhone());
+				// 면접관(1)인지 대기관(0)인지
+				resultMap.put("user-View-Wait", -1);
+				// 소속 회사 Seq
+				resultMap.put("user-Company-Seq", loginHr.getCompanyComSeq());
+				// 소속 회사 이름
 				Company company = companyDao.findCompanyByComSeq(loginHr.getCompanyComSeq());
-				resultMap.put("hr-Company-Name", company.getComName());
+				resultMap.put("user-Company-Name", company.getComName());
+				// 소속 회사 로고
+				resultMap.put("user-Company-Logo", company.getComLogo());
+				// 소속 회사 주소
+				resultMap.put("user-Company-Address", company.getComAddress());
+				// 소속 회사 홈페이지 주소
+				resultMap.put("user-Company-Homepage", company.getComHomepage());
+				
 				result.object = resultMap;
 				status = HttpStatus.OK;
-			} else {
+			} else if(interviewerOpt.isPresent()) {
+				// Swagger용!
+				final BasicResponse result = new BasicResponse();
+				result.status = true;
+				result.data = "success";
+				
+				Interviewer loginInterviewer = interviewerOpt.get();
+				
+				// login token
+				String token = jwtService.create(loginInterviewer);
+				logger.trace("로그인 토큰 정보 : {}", token);
+				resultMap.put("auth-token", token);
+				// email
+				resultMap.put("user-Email", loginInterviewer.getViewEmail());
+				// 이름
+				resultMap.put("user-Name", loginInterviewer.getViewName());
+				// 핸드폰 번호
+				resultMap.put("user-Phone", loginInterviewer.getViewPhone());
+				// 면접관(1)인지 대기관(0)인지
+				resultMap.put("user-View-Wait", loginInterviewer.getViewWait());
+				// 소속 회사 Seq
+				resultMap.put("user-Company-Seq", loginInterviewer.getCompanyComSeq());
+				// 소속 회사 이름
+				Company company = companyDao.findCompanyByComSeq(loginInterviewer.getCompanyComSeq());
+				resultMap.put("user-Company-Name", company.getComName());
+				// 소속 회사 로고
+				resultMap.put("user-Company-Logo", company.getComLogo());
+				// 소속 회사 주소
+				resultMap.put("user-Company-Address", company.getComAddress());
+				// 소속 회사 홈페이지 주소
+				resultMap.put("user-Company-Homepage", company.getComHomepage());
+				
+				result.object = resultMap;
+				status = HttpStatus.OK;
+			}else {
 				resultMap.put("message", "로그인 실패");
 				status = HttpStatus.INTERNAL_SERVER_ERROR;
 			}
@@ -123,7 +174,6 @@ public class HrController {
 			if (hrEmailOpt.isPresent()) {
 				status = HttpStatus.INTERNAL_SERVER_ERROR;
 			} else {
-				
 				result.status = true;
 				result.data = "success";
 				
