@@ -12,7 +12,7 @@
               :key="index"
               :cols="item.col"
             >
-              <v-select :items="item.data" :label="item.name" solo hide-details>
+              <v-select :items="item.data" :label="item.name" solo hide-details disabled>
               </v-select>
             </v-col>
           </v-row>
@@ -61,7 +61,12 @@
                   </v-card-title>
                   <v-card-text>
                     <v-row v-for="i in this.formData.groupNum" :key="i" no-gutters>
-                      <!-- <v-col v-for=""></v-col> -->
+                      <v-col v-for="j in viewTypesNum" :key="j">
+                        <v-select
+                          :items="formData.viewTypes"
+                          solo
+                        ></v-select>
+                      </v-col>
                     </v-row>
                   </v-card-text>
                 </v-card>
@@ -98,6 +103,8 @@
 </template>
 
 <script>
+import _ from "lodash"
+
 export default {
   name: "CreateSet",
   data() {
@@ -131,7 +138,7 @@ export default {
           value: 'career'
         },
         {
-          name: "면접 종류",
+          name: "면접 유형",
           data: ["직무", "인성", "PT", "토론"],
           col: 5,
           multiple: true,
@@ -174,7 +181,7 @@ export default {
           value: 'endTime'
         },
         {
-          name: "면접당",
+          name: "면접 그룹",
           col: 2
         },
         {
@@ -199,7 +206,7 @@ export default {
           value: 'duration'
         },
         {
-          name: "그룹당",
+          name: "면접 세부 그룹",
           col: 2,
         },
         {
@@ -213,17 +220,29 @@ export default {
       ],
       // 일정 생성 V-Model
       formData: {
+        // 부서
         part: '',
+        // 직군
         career: '',
-        viewTypes: '',
+        // 면접 유형
+        viewTypes: [],
+        // 시작 날짜
         startDate: '',
+        // 시작 시간
         startTime: '',
+        // 종료 날짜(안 써도 됨)
         endDate: '',
+        // 종료 시간
         endTime: '',
-        viewerNum: '',
-        vieweeNum: 0,
+        // 면접 그룹당 면접관 수
+        viewerNum: 0.1,
+        // 면접 그룹당 지원자 수
+        vieweeNum: 0.1,
+        // 면접 그룹당 소요 시간
         duration: '',
-        vieweePerGroup: 0,
+        // 면접 세부그룹 당 지원자 수
+        vieweePerGroup: 0.1,
+        // 면접 그룹당 세부 그룹 수(자동 계산)
         groupNum: 0
       },
       // 일정 데이터
@@ -237,7 +256,7 @@ export default {
           },
           { text: '날짜', value: 'scheduleDate' },
           { text: '시간', value: 'scheduleTime' },
-          { text: '직무', value: 'scheduleJob' },
+          { text: '직무', value: 'scheduleCareer' },
           { text: '면접 유형', value: 'scheduleInterview' },
           { text: '지원자', value: 'scheduleViewee' },
           { text: '대기실', value: 'scheduleGuide' },
@@ -262,7 +281,7 @@ export default {
   },
   methods: {
     addSchedule: function () {
-      console.log()
+      
     }
   },
   watch: {
@@ -275,13 +294,18 @@ export default {
       this.loader = null
     },
     makeGroup() {
-      this.formData.groupNum = parseInt(this.formData.vieweeNum/this.formData.vieweePerGroup)
-    }
+      _.toInteger()
+      this.formData.groupNum = _.ceil(this.formData.vieweeNum/this.formData.vieweePerGroup)
+    },
+    
   },
   computed: {
     makeGroup() {
-      return this.formData.vieweePerGroup
-    }
+      return [this.formData.vieweePerGroup, this.formData.vieweeNum]
+    },
+    viewTypesNum() {
+      return _.findLastIndex(this.formData.viewTypes) + 1
+    },
   }
 };
 </script>
