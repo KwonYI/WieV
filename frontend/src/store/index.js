@@ -11,6 +11,16 @@ export default new Vuex.Store({
     isLogin: false,
     isManager: false,
     userEmail: '',
+    hr: {
+      hrEmail: "",
+      hrName: "",
+      hrPhone: "",
+      hrComSeq: 0,
+      // hrCompan
+    },
+    interviewer: {
+
+    },
 
     //관리자가 선택한 현재 공고 : 
     selectRecruitTrigger : false,

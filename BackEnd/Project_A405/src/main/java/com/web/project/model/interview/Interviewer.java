@@ -22,6 +22,7 @@ public class Interviewer {
 
 	private String viewName;
 	private String viewEmail;
+	private String viewPassword;
 	private String viewPhone;
 	private int viewWait;
 	private int viewAssigned;
