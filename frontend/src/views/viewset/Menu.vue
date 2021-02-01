@@ -11,14 +11,17 @@
 
             
             <v-list-item-group v-model="selectedItem" color="primary">
-              <v-list-item v-for="(item, i) in items" :key="i">
+
+              <v-list-item v-for="(item, i) in recruitList" :key="i">
                 <v-list-item-content>
                   <v-list-item-title
-                    v-text="item.text"
-                    @click="selectRecruit(item.reno)"
+                    v-text="`${item.reYear}${item.reFlag} ${item.reStatus}`"
+                    @click="selectRecruit(item.reSeq)"
                   ></v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
+
+
             </v-list-item-group>
           </v-list>
         </v-col>
@@ -86,7 +89,7 @@ export default {
     // this.recruitno = this.$store.state.selectedRecruitNo;
   },
   computed: {
-    ...mapState(["selectedRecruitNo"]),
+    ...mapState(["selectedRecruitNo", "recruitList"]),
   },
 };
 </script>
