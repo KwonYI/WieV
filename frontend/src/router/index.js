@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '@/views/main/Home'
+import Home from '@/views/main/Home.vue'
 import Profile from '@/views/accounts/Profile'
 import Signup from '@/views/accounts/Signup'
 import Menu from '@/views/viewset/Menu'
@@ -84,5 +84,6 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
+
 
 export default router
