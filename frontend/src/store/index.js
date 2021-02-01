@@ -78,10 +78,29 @@ export default new Vuex.Store({
       //     console.log(err)
       //   })
     },
+
+
+
+    //############# Schedule.vue 에서 새로 추가한 공고 store에 넣는 작업 ###################################
+    ADD_RECRUIT: function (state, recruitData) {
+      console.log("state의 ADD_RECRUIT실행:", state, recruitData)
+      state.recruit_list.push(recruitData)
+      //필요하다면, recruitData 형식을 가공해서 넣어줘야 함 
+
+    }
+
+
+
+
+
   },
   actions: {
     getRecruits: function({commit}, res){
       commit('GET_RECRUITS', res)
     },
+
+    addRecruit: function({commit}, recruitData){
+      commit('ADD_RECRUIT', recruitData )
+    }
   }
 })

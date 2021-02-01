@@ -31,6 +31,7 @@
             <v-col class="subtitle-1" @click="login">
               로그인
             </v-col>
+            
             <v-col>
               <router-link :to="{ name: 'Signup' }">
                 회원가입
