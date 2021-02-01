@@ -15,6 +15,10 @@
                   v-model="credentials[item.value]"
                 ></v-text-field>
               </td>
+             <v-btn v-if="index===0" @click="send">인증 메일 발송
+             </v-btn>
+             <v-btn v-if="index===1" @click="certified">인증 확인
+             </v-btn>
             </tr>
           </tbody>
         </v-simple-table>
@@ -144,7 +148,9 @@
 </template>
 
 <script>
-// import axios from 'axios'
+ import axios from 'axios';
+
+const SERVER_URL = "https://localhost:8080/";
 
 export default {
   name: "Signup",
@@ -152,34 +158,76 @@ export default {
   data: () => ({
     userInfo: [
       { label: "이메일", type: "text", value: 'hrEmail'},
+      { label: "이메일 인증번호", type: "text", value: 'hrEmailCode'},
+      { label: "이름", type: "text", value: 'hrName'},
       { label: "비밀번호", type: "password", value: 'hrPassword'},
       { label: "비밀번호 확인", type: "password", value: 'hrPasswordConfirmation'},
       { label: "연락처", type: "text", value: 'hrPhone' },
       { label: "기업명", type: "text", value: 'comName' },
-     // { label: "기업 로고", type: "text", value: 'comLogo' },
-     // { label: "기업 주소", type: "text", value: 'comAddress' },
-     // { label: "기업 홈페이지", type: "text", value: 'comHomepage' },
     ],
     credentials: {
       hrEmail: '',
+      hrEmailCode:'',
+      hrName:'',
       hrPassword: '',
       hrPasswordConfirmation: '',
       hrPhone: '',
       comName: '',
-     // comLogo: '',
-     // comAddress: '',
-     // comHomepage: '',
-      hrCertificated: '',
+      hrCertified:'',
       agreed: false,
     },
+    certifiedNum:'',
+    isCertified:false
   }),
   methods: {
-    // 회원가입 axios
-    /*
+    // 메일 발송
+    send:function(){
+      if(this.credentials.hrEmail){
+        axios.post(`${SERVER_URL}email/send`,this.credentials)
+          .then(res => {
+            this.certifiedNum=res.data;
+            alert("메일 보내기 성공")
+          })
+          .catch(err => {
+            console.log(err)
+            alert("메일 보내기 실패")
+          })        
+      }
+    },
+
+    //메일 인증 확인
+    certified:function(){
+      console.log("입력:"+this.credentials.hrEmailCode)
+      console.log("인증번호:"+this.certifiedNum)
+      if(this.credentials.hrEmailCode==this.certifiedNum){
+        this.isCertified=true;
+        alert("인증 완료");
+      }
+      else{
+        alert("인증 실패");
+        this.isCertified=false;
+      }
+    },
+
     signup: function () {
-      
+      if (this.credentials.hrPassword != this.credentials.hrPasswordConfirmation) {
+        alert("비밀번호가 다릅니다.");
+        return;
+      }
+
+      let regexp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
+      if (!regexp.test(this.credentials.hrEmail)) {
+        alert("이메일은 이메일 형식으로 입력해주세요.");
+        return;
+      }
+
+      if(this.isCertified==false){
+        alert("메일 인증을 진행하세요.")
+        return;
+      }
+
       if (this.credentials.agreed){
-        axios.post('회원가입 url', this.credentials)
+        axios.post(`${SERVER_URL}hr/signup`, this.credentials)
           .then(res => {
             console.log(res)
             alert("회원가입 성공")
@@ -194,7 +242,7 @@ export default {
       }
     
     }
-    */
+    
   }
 }
 </script>
