@@ -111,7 +111,7 @@ export default new Vuex.Store({
       state.recruit_list.push(recruitData)
       //필요하다면, recruitData 형식을 가공해서 넣어줘야 함 
 
-    }
+    },
 
 
 
@@ -149,7 +149,7 @@ export default new Vuex.Store({
 
     addRecruit: function({commit}, recruitData){
       commit('ADD_RECRUIT', recruitData )
-    }
+    },
     LOGIN(context, user) {
       axios.post(`${SERVER_URL}/hr/login`, user)
         .then(response => {
