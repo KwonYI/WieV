@@ -179,6 +179,7 @@ public class HrController {
 				
 				// INSERT 수행 부분
 				Hr hr = new Hr();
+				System.out.println(request.getHrEmail());
 				// 1. 이메일 입력 -> 이메일 인증 받기(어떻게?)
 				hr.setHrEmail(request.getHrEmail());
 				// -----------------------------------

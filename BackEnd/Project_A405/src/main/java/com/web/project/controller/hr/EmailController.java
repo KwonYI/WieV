@@ -4,11 +4,15 @@ import java.util.Optional;
 import java.util.Random;
 
 import javax.mail.MessagingException;
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.web.project.dao.hr.HrDao;
 import com.web.project.model.BasicResponse;
 import com.web.project.model.hr.Hr;
+import com.web.project.model.hr.SignupRequest;
 import com.web.project.service.hr.EmailService;
 
 import io.swagger.annotations.ApiOperation;
@@ -37,10 +42,13 @@ public class EmailController {
 	@Autowired
 	private EmailService emailService;
 
-	@GetMapping("/send")
+	@PostMapping("/send")
 	@ApiOperation(value = "인증 메일 보내기")
-	public void sendMail(Hr hr) throws MessagingException {
+	public String sendMail(@RequestBody SignupRequest request) throws MessagingException {
+		String email=request.getHrEmail();
 		StringBuffer emailContent = new StringBuffer();
+		String certifiedKey=certified_key();
+		
 		emailContent.append("<!DOCTYPE html>");
 		emailContent.append("<html>");
 		emailContent.append("<head>");
@@ -52,17 +60,16 @@ public class EmailController {
 				+ "		<span style=\"font-size: 15px; margin: 0 0 10px 3px;\">Test A405</span><br />"
 				+ "		<span style=\"color: #02b875\">메일인증</span> 안내입니다." + "	</h1>\n"
 				+ "	<p style=\"font-size: 16px; line-height: 26px; margin-top: 50px; padding: 0 5px;\">"
-				+ hr.getHrName() + "		님 안녕하세요.<br />" + "		Test A405에 가입해 주셔서 진심으로 감사드립니다.<br />"
-				+ "		아래 <b style=\"color: #02b875\">'메일 인증'</b> 버튼을 클릭하여 회원가입을 완료해 주세요.<br />" + "		감사합니다."
-				+ "	</p>" + "	<a style=\"color: #FFF; text-decoration: none; text-align: center;\""
-				+ "	href=\"http://localhost:8080/email/certified?Email=" + hr.getHrEmail() + "&certified="
-				+ certified_key() + "\" target=\"_blank\">" + "		<p"
-				+ "			style=\"display: inline-block; width: 210px; height: 45px; margin: 30px 5px 40px; background: #02b875; line-height: 45px; vertical-align: middle; font-size: 16px;\">"
-				+ "			메일 인증</p>" + "	</a>" + "	<div style=\"border-top: 1px solid #DDD; padding: 5px;\"></div>"
+				+"		Test A405에 가입해 주셔서 진심으로 감사드립니다.<br />"
+				+ "		아래 <b style=\"color: #02b875\">'메일 인증 번호'</b>를 입력해 주세요.<br />" + "		감사합니다.<br/>"
+				+ "	</p>" 
+				+" <h3><b style=\"color: #02b875\">"+certifiedKey+"</b></h3>" 
 				+ " </div>");
 		emailContent.append("</body>");
 		emailContent.append("</html>");
-		emailService.sendMail(hr.getHrEmail(), "[Test A405 이메일 인증]", emailContent.toString());
+		emailService.sendMail(email, "[Test A405 이메일 인증]", emailContent.toString());
+		
+		return certifiedKey;
 	}
 	
 	// 10자리 인증키 만들어주는 Method
