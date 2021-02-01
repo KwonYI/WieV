@@ -1,25 +1,30 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import axios from "axios"
 
 Vue.use(Vuex)
-//const SERVER_URL = "https://localhost:8080"
+const SERVER_URL = "https://localhost:8080"
 // import axios from 'axios'
 
 export default new Vuex.Store({
   state: {
     // 로그인 정보
-    isLogin: false,
-    isManager: false,
-    userEmail: '',
-    hr: {
-      hrEmail: "",
-      hrName: "",
-      hrPhone: "",
-      hrComSeq: 0,
-      // hrCompan
-    },
-    interviewer: {
+    // isLogin: false,
+    // isManager: false,
+    // userEmail: '',
 
+    accessToken: null,
+    // userViewWait => 인사담당자(-1), 대기관(0), 면접관(1) 구분자
+    user: {
+      userEmail: "",
+      userName: "",
+      userPhone: "",
+      userViewWait: 0,
+      userComSeq: 0,
+      userComName: "",
+      userComLogo: "",
+      userComAddress: "",
+      userComHomepage: ""
     },
 
     //관리자가 선택한 현재 공고 : 
@@ -63,10 +68,19 @@ export default new Vuex.Store({
       }
     ]
   },
+
+
   getters: {
+    getUser(state) {
+      return state.user;
+    },
+    getAccessToken(state) {
+      return state.accessToken;
+    },
+    getUserViewWait(state) {  
+      return state.user.userViewWait;
+    }
   },
-
-
   mutations: {
 
     // 공고 리스트 가져오는 요청
@@ -103,6 +117,30 @@ export default new Vuex.Store({
 
 
 
+    LOGIN(state, res) {
+      state.accessToken = res["auth-token"];
+      state.user.userEmail = res["user-Email"];
+      state.user.userName = res["user-Name"];
+      state.user.userPhone = res["user-Phone"];
+      state.user.userViewWait = res["user-View-Wait"];
+      state.user.userComSeq = res["user-Company-seq"];
+      state.user.userComName = res["user-Company-Name"];
+      state.user.userComLogo = res["user-Company-Logo"];
+      state.user.userComAddress = res["user-Company-Address"];
+      state.user.userComHomepage = res["user-Company-Homepage"];
+    },
+    LOGOUT(state) {
+      state.accessToken = null;
+      state.user.userEmail = "";
+      state.user.userName = "";
+      state.user.userPhone = "";
+      state.user.userViewWait = 0;
+      state.user.userComSeq = 0;
+      state.user.userComName = "";
+      state.user.userComLogo = "";
+      state.user.userComAddress = "";
+      state.user.userComHomepage = "";
+    }
   },
   actions: {
     getRecruits: function({commit}, res){
@@ -112,5 +150,19 @@ export default new Vuex.Store({
     addRecruit: function({commit}, recruitData){
       commit('ADD_RECRUIT', recruitData )
     }
+    LOGIN(context, user) {
+      axios.post(`${SERVER_URL}/hr/login`, user)
+        .then(response => {
+          context.commit("LOGIN", response.data);
+          console.log(response.data);
+          axios.defaults.headers.common[
+            "auth-token"
+          ] = `${response.data["auth-token"]}`;
+        });
+    },
+    LOGOUT(context){
+      context.commit("LOGOUT");
+      axios.defaults.headers.common["auth-token"] = undefined;
+    },
   }
 })

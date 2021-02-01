@@ -25,10 +25,10 @@
         <v-spacer></v-spacer>
 
         <!-- 오른쪽 상단 위치 -->
-        <div v-if="isLogin">
+        <div v-if="getAccessToken">
           <v-toolbar-items class="align-center">
             <!-- 인사담당자일 경우 면접 스케줄 생성 버튼 -->
-            <v-chip v-if="isLogin" class="mr-10" color="#FFF1C3" outlined>
+            <v-chip v-if="getAccessToken" class="mr-10" color="#FFF1C3" outlined>
               <router-link :to="{ name: 'CreateSet'}">
                 면접스케줄 생성
               </router-link>
@@ -53,7 +53,7 @@
       >
         <v-container
           class="p-0 m-0 pt-16"
-          :class="{ 'main-bg-navy': !isLogin }"
+          :class="{ 'main-bg-navy': accessToken === null }"
           style="min-height: 100vh; max-width: initial"
         >
           <router-view></router-view>
@@ -75,7 +75,7 @@
 
 <script>
 // import RecruitMenu from "@/views/viewset/RecruitMenu.vue";
-import { mapState } from "vuex"
+import { mapGetters, mapState } from "vuex"
 
 export default {
   name: "App",
@@ -85,15 +85,19 @@ export default {
   data: () => ({
     Manager: "",
   }),
+  computed: {
+    ...mapState(["accessToken"]),
+    ...mapGetters(["getAccessToken"]),
+  },
   methods: {
     logout: function () {
-      this.$store.state.isLogin = false
-      // this.$store.state.isViewer = false;
-      this.$router.push({ name: "Home" })
+      this.$store
+        .dispatch("LOGOUT")
+        .then(() => this.$router.replace({ name: "Home" }));
+      // this.$store.state.isLogin = false;
+      // // this.$store.state.isViewer = false;
+      // this.$router.push({ name: "Home" });
     },
-  },
-  computed: {
-    ...mapState(["isLogin", "isViewer"]),
   },
   created: function () {
     this.Manager = this.$store.state.Manager

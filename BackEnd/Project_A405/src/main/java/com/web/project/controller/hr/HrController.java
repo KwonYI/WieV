@@ -16,6 +16,7 @@ import com.web.project.model.hr.SignupRequest;
 import com.web.project.model.interview.Interviewer;
 import com.web.project.model.hr.Company;
 import com.web.project.model.hr.Hr;
+import com.web.project.model.hr.LoginRequest;
 import com.web.project.service.hr.JwtService;
 
 import org.springframework.web.bind.annotation.RestController;
@@ -61,15 +62,14 @@ public class HrController {
 	
 	@PostMapping("/login")
 	@ApiOperation(value = "로그인")
-	public ResponseEntity<Map<String, Object>> login(@RequestParam(required = true) final String email,
-			@RequestParam(required = true) final String password) {
+	public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequest loginRequest) {
 		
 		Map<String, Object> resultMap = new HashMap<>();
 		HttpStatus status = null;
 
-		Optional<Hr> hrOpt = hrDao.findHrByHrEmailAndHrPassword(email, password);
-		Optional<Interviewer> interviewerOpt = interviewerDao.findOptionalInterviewerByViewEmailAndViewPassword(email, password);
-		
+		Optional<Hr> hrOpt = hrDao.findHrByHrEmailAndHrPassword(loginRequest.getUserEmail(), loginRequest.getUserPassword());
+		Optional<Interviewer> interviewerOpt = interviewerDao.findOptionalInterviewerByViewEmailAndViewPassword(loginRequest.getUserEmail(), loginRequest.getUserPassword());
+	
 		try {
 			if (hrOpt.isPresent()) {
 				// Swagger용!
@@ -85,24 +85,24 @@ public class HrController {
 				logger.trace("로그인 토큰 정보 : {}", token);
 				resultMap.put("auth-token", token);
 				// email
-				resultMap.put("hr-Email", loginHr.getHrEmail());
+				resultMap.put("user-Email", loginHr.getHrEmail());
 				// 이름
-				resultMap.put("hr-Name", loginHr.getHrName());
+				resultMap.put("user-Name", loginHr.getHrName());
 				// 핸드폰 번호
-				resultMap.put("hr-Phone", loginHr.getHrPhone());
-				// 계정 생성 날짜
-				resultMap.put("hr-Create-Date", loginHr.getHrCreateDate());
+				resultMap.put("user-Phone", loginHr.getHrPhone());
+				// 면접관(1)인지 대기관(0)인지
+				resultMap.put("user-View-Wait", -1);
 				// 소속 회사 Seq
-				resultMap.put("hr-Company-Seq", loginHr.getCompanyComSeq());
+				resultMap.put("user-Company-Seq", loginHr.getCompanyComSeq());
 				// 소속 회사 이름
 				Company company = companyDao.findCompanyByComSeq(loginHr.getCompanyComSeq());
-				resultMap.put("hr-Company-Name", company.getComName());
+				resultMap.put("user-Company-Name", company.getComName());
 				// 소속 회사 로고
-				resultMap.put("hr-Company-Logo", company.getComLogo());
+				resultMap.put("user-Company-Logo", company.getComLogo());
 				// 소속 회사 주소
-				resultMap.put("hr-Company-Address", company.getComAddress());
+				resultMap.put("user-Company-Address", company.getComAddress());
 				// 소속 회사 홈페이지 주소
-				resultMap.put("hr-Company-Homepage", company.getComHomepage());
+				resultMap.put("user-Company-Homepage", company.getComHomepage());
 				
 				result.object = resultMap;
 				status = HttpStatus.OK;
@@ -119,24 +119,24 @@ public class HrController {
 				logger.trace("로그인 토큰 정보 : {}", token);
 				resultMap.put("auth-token", token);
 				// email
-				resultMap.put("interviewer-Email", loginInterviewer.getViewEmail());
+				resultMap.put("user-Email", loginInterviewer.getViewEmail());
 				// 이름
-				resultMap.put("interviewer-Name", loginInterviewer.getViewName());
+				resultMap.put("user-Name", loginInterviewer.getViewName());
 				// 핸드폰 번호
-				resultMap.put("interviewer-Phone", loginInterviewer.getViewPhone());
+				resultMap.put("user-Phone", loginInterviewer.getViewPhone());
 				// 면접관(1)인지 대기관(0)인지
-				resultMap.put("interviewer-view-wait", loginInterviewer.getViewWait());
+				resultMap.put("user-View-Wait", loginInterviewer.getViewWait());
 				// 소속 회사 Seq
-				resultMap.put("interviewer-Company-Seq", loginInterviewer.getCompanyComSeq());
+				resultMap.put("user-Company-Seq", loginInterviewer.getCompanyComSeq());
 				// 소속 회사 이름
 				Company company = companyDao.findCompanyByComSeq(loginInterviewer.getCompanyComSeq());
-				resultMap.put("interviewer-Company-Name", company.getComName());
+				resultMap.put("user-Company-Name", company.getComName());
 				// 소속 회사 로고
-				resultMap.put("interviewer-Company-Logo", company.getComLogo());
+				resultMap.put("user-Company-Logo", company.getComLogo());
 				// 소속 회사 주소
-				resultMap.put("interviewer-Company-Address", company.getComAddress());
+				resultMap.put("user-Company-Address", company.getComAddress());
 				// 소속 회사 홈페이지 주소
-				resultMap.put("interviewer-Company-Homepage", company.getComHomepage());
+				resultMap.put("user-Company-Homepage", company.getComHomepage());
 				
 				result.object = resultMap;
 				status = HttpStatus.OK;
