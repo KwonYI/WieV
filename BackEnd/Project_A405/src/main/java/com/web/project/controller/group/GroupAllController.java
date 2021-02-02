@@ -288,7 +288,7 @@ public class GroupAllController {
 
 				// 몇 개의 그룹이 필요한지 결정하기 - 공고 날짜, 끝시간 - 시작시간, 소요시간
 				// 1. 공고의 시작, 끝 날짜를 통해 몇일동안 면접을 진행하는지 파악
-				int fullRoutine = calFullRoutine(recruit.getReStartdate(), recruit.getReEnddate());
+				int fullRoutine = calFullRoutine(recruit.getReStartDate(), recruit.getReEndDate());
 
 				// 2. 하루 면접이 언제 시작하고 끝나는지 파악
 				int dailyRoutine = Integer.parseInt(groupAllRequest.getEndTime())
@@ -303,7 +303,7 @@ public class GroupAllController {
 				// 5. 그룹 결정하기
 				int time = 1;
 				int nowTime = Integer.parseInt(groupAllRequest.getStartTime());
-				String nowDate = recruit.getReStartdate();
+				String nowDate = recruit.getReStartDate();
 				for (int i = 1; i <= groupCount; i++) {
 					// 이미 지원자를 다 넣은 경우, 종료
 					if (totalApplyCount <= 0)
