@@ -10,6 +10,8 @@ import com.web.project.model.recruit.Applicant;
 @Repository
 public interface ApplicantDao extends JpaRepository<Applicant, String> {
 	Applicant findApplicantByapplyId(String id);
+	List<Applicant> findAllApplicantByRecruitReSeq(int recruitReSeq);
+	
 	
 	Applicant findApplicantByRecruitReSeqAndCareerCaSeq(int recruitReSeq, int careerCaSeq);
 

@@ -85,10 +85,11 @@ public class InterviewerController {
 
 	public static final Logger logger = LoggerFactory.getLogger(HrController.class);
 
-	@GetMapping("/getList")
-	@ApiOperation(value = "면접관리스트 모두 가져오기")
-	public ResponseEntity<List<Interviewer>> getInterviewerList() {
-		return new ResponseEntity<List<Interviewer>>(interviewerDao.findAll(), HttpStatus.OK);
+	@GetMapping("/getList/{comSeq}")
+	@ApiOperation(value = "회사에 따른 면접관리스트 모두 가져오기")
+	public ResponseEntity<List<Interviewer>> getInterviewerList(@PathVariable("comSeq") int comSeq) {
+		List<Interviewer> interviewerList=interviewerDao.findAllInterviewerByCompanyComSeq(comSeq);
+		return new ResponseEntity<List<Interviewer>>(interviewerList, HttpStatus.OK);
 	}
 		
 	@PostMapping("/assign/{groupSeq}")

@@ -104,10 +104,12 @@ public class ApplicantController {
 	
 	public static final Logger logger = LoggerFactory.getLogger(HrController.class);
 	
-	@GetMapping(value = "/getList")
-	@ApiOperation(value = "지원자 리스트 모두 가져오기")
-	public ResponseEntity<List<Applicant>> getApplicationList() {
-		return new ResponseEntity<List<Applicant>>(applicantDao.findAll(), HttpStatus.OK);
+	@GetMapping(value = "/getList/{reSeq}")
+	@ApiOperation(value = "공고에 따른 지원자 리스트 모두 가져오기")
+	public ResponseEntity<List<Applicant>> getApplicationList(@PathVariable("reSeq") int reSeq) {
+		System.out.println(reSeq);
+		List<Applicant> applicantList=applicantDao.findAllApplicantByRecruitReSeq(reSeq);
+		return new ResponseEntity<List<Applicant>>(applicantList, HttpStatus.OK);
 	}
 
 	@PostMapping("/assign/{groupSeq}")
