@@ -12,6 +12,7 @@ import com.web.project.model.interview.Interviewer;
 @Repository
 public interface InterviewerDao extends JpaRepository<Interviewer,String> {
 	Interviewer findInterviewerByViewSeq(int viewSeq);
+	List<Interviewer> findAllInterviewerByCompanyComSeq(int companyComSeq);
 
 	
 	Optional<Interviewer> findOptionalInterviewerByViewSeq(int viewSeq);

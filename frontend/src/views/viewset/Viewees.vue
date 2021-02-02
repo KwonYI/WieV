@@ -59,6 +59,9 @@
 </template>
 
 <script>
+ import axios from 'axios';
+const SERVER_URL = "https://localhost:8080/";
+
   export default {
     name: "Viewees",
     data: function () {
@@ -67,7 +70,8 @@
         select: null,
         items: [],
         reno: "",
-        recruits: [{
+        recruits: [
+          {
             no: 1,
             name: "김지원",
             email: "apply123@naver.com",
@@ -188,9 +192,14 @@
 
     methods: {
       createVieweeDB: function (reno) {
-        //reno 는 현재 공고 reSeq
-        console.log("createVieweeDB!", reno);
-
+        console.log("현재공고seq:"+reno);
+        axios.get(`${SERVER_URL}applicant/getList/${1}`)
+        .then((res)=>{
+          console.log(res.data)
+        })
+        .catch((err)=>{
+          console.log(err)
+        })
         //여기서 요청을 보내면, excel파일대로 DB를 저장한 뒤 여기에 뿌려줘야 합니다.
         //공고 데이터를 보내면, 받는 데이터는 해당 공고 지원자 전체입니다.
         //지원자 리스트 데이터 받을 때, 혹시 가능하다면 reSeq까지 받을 수 있으면 좋아요
