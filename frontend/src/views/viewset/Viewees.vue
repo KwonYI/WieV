@@ -48,8 +48,8 @@
 </template>
 
 <script>
-  //  import axios from 'axios';
-  // const SERVER_URL = "https://localhost:8080/";
+  import axios from 'axios';
+   const SERVER_URL = "https://localhost:8080/";
 
   import {
     mapState
