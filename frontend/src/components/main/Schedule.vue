@@ -79,7 +79,7 @@
             <td>{{ recruit.reStatus }}</td>
             <td>{{ recruit.reStartDate }} ~ {{recruit.reEndDate }}</td>
             <td>
-              <v-btn>관리하기</v-btn>
+              <v-btn :to="{ name: 'Progress', params: { recruitNo: recruit.reSeq } }" >관리하기</v-btn>
             </td>
             <!--여기에 recruitMenu라우터 연결해야 합니다.-->
           </tr>

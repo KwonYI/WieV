@@ -343,6 +343,7 @@ export default new Vuex.Store({
       });
       context.commit("GET_RECRUIT_LIST");
     },
+    
     //지원자를 저장 
     GETVIEWEELIST(context, recruitNo) {
       axios.get(`${SERVER_URL}/applicant/getList/${recruitNo}`)

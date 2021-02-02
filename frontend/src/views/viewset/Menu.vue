@@ -55,6 +55,7 @@ export default {
     return {
       recruitno: -1,
       selectedItem: -1,
+      tempReList:[],
     };
   },
   methods: {
@@ -73,10 +74,13 @@ export default {
   },
   created: function () {
     // this.recruitno = this.$store.state.selectedRecruitNo;
+    this.tempReList = this.recruitList
+    console.log("createD????",this.tempReList )
   },
   computed: {
     ...mapState(["selectedRecruitNo", "recruitList"]),
   },
+  
 };
 </script>
 
