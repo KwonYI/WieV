@@ -44,7 +44,11 @@ public class GroupAllRequest {
 	@ApiModelProperty(required = true)
 	@NotNull
 	private int divideInterviewer;
-
+	
+	@ApiModelProperty(required = true)
+	@NotNull
+	private int divideDetailNum;
+	
 	public String getPart() {
 		return part;
 	}
@@ -115,5 +119,13 @@ public class GroupAllRequest {
 
 	public void setDivideInterviewer(int divideInterviewer) {
 		this.divideInterviewer = divideInterviewer;
+	}
+
+	public int getDivideDetailNum() {
+		return divideDetailNum;
+	}
+
+	public void setDivideDetailNum(int divideDetailNum) {
+		this.divideDetailNum = divideDetailNum;
 	}
 }

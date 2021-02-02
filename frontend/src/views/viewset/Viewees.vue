@@ -5,7 +5,10 @@
       <v-autocomplete v-model="select" :loading="loading" :items="items" :search-input.sync="search" cache-items
         class="mx-4" flat hide-no-data hide-details label="지원자 이름 검색" solo-inverted></v-autocomplete>
       <v-btn class="m-3"> 검색 </v-btn>
-      <v-file-input show-size counter multiple label="File input"></v-file-input>
+      <v-file-input v-model="files" show-size label="File input"></v-file-input>
+      <v-btn @click="upload" color="primary">Upload</v-btn>
+      <p>File Name : {{ files.name }}</p>
+
       <v-btn class="m-3" @click="createVieweeDB(reno)"> DB업데이트 </v-btn>
     </v-toolbar>
     <v-simple-table fixed-header class="mt-5">
@@ -37,7 +40,7 @@
           </td>
         </tr> -->
 
-        <tr v-for="viewee in recruits" :key="viewee.no" class="text-center">
+        <tr v-for="viewee in applicants" :key="viewee.no" class="text-center">
           <td>{{ viewee.no }}</td>
           <td>{{ viewee.ca }}</td>
           <td>{{ viewee.name }}</td>
@@ -62,15 +65,19 @@
  import axios from 'axios';
 const SERVER_URL = "https://localhost:8080/";
 
+
   export default {
     name: "Viewees",
-    data: function () {
+    data:()=>({
+      files:[],
+    }),
+     function () {
       return {
         search: null,
         select: null,
         items: [],
         reno: "",
-        recruits: [
+        applicants: [
           {
             no: 1,
             name: "김지원",
@@ -191,6 +198,27 @@ const SERVER_URL = "https://localhost:8080/";
     },
 
     methods: {
+      upload:function() {
+      var fd = new FormData();
+      console.log(this.files)
+      //var excelfile=document.querySelector(`#files`);
+      fd.append('files', this.files)
+      //console.log( excelfile.files[0])
+      console.log(fd)
+      axios.post(`${SERVER_URL}applicant/getExcel`,
+            fd, {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            }
+          ).then( response => {
+            console.log('SUCCESS!!');
+            console.log(response.data)
+          })
+          .catch(function () {
+            console.log('FAILURE!!');
+          });
+    },
       createVieweeDB: function (reno) {
         console.log("현재공고seq:"+reno);
         axios.get(`${SERVER_URL}applicant/getList/${1}`)

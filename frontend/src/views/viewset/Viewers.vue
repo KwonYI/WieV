@@ -34,8 +34,8 @@ export default {
   name: "Viewers",
   data: function () {
     return {
-      reno: "",
-
+      comno: "",
+      reno:"",
       recruits: [
         [
           {
@@ -133,10 +133,25 @@ export default {
     };
   },
   created: function () {
-    // this.reno = this.$route.params.recruitNo;
-    this.reno = this.$store.state.selectedRecruitNo;
-    console.log("reno:", this.reno);
+    // this.comno = this.$route.params.recruitNo;
+    this.comno =this.$store.state.userComSeq;
+    this.reno=this.$store.state.selectedRecruitNo;
+    console.log("comno:", this.comno);
   },
+    methods: {
+      createVieweeDB: function (reno) {
+        
+        //reno 는 현재 공고 reSeq
+        console.log("createVieweeDB!", reno);
+
+        //여기서 요청을 보내면, excel파일대로 DB를 저장한 뒤 여기에 뿌려줘야 합니다.
+        //공고 데이터를 보내면, 받는 데이터는 해당 공고 지원자 전체입니다.
+
+        //axios.post(보낼url, reno)
+
+      },
+
+    },  
 };
 </script>
 

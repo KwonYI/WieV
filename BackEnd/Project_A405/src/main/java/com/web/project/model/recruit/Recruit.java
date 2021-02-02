@@ -27,8 +27,8 @@ public class Recruit {
 	private int reYear;
 	private String reFlag;
 	private String reStatus;
-	private String reStartdate;
-	private String reEnddate;
+	private String reStartDate;
+	private String reEndDate;
 
 	private int companyComSeq;
 }

@@ -79,8 +79,8 @@ public class RecruitController {//공고 등록
 			recruitTemp.setReYear(RegisterRequest.getReYear());
 			recruitTemp.setReFlag(RegisterRequest.getReFlag());
 			recruitTemp.setReStatus(RegisterRequest.getReStatus());
-			recruitTemp.setReStartdate(RegisterRequest.getReStartdate());
-			recruitTemp.setReEnddate(RegisterRequest.getReEnddate());
+			recruitTemp.setReStartDate(RegisterRequest.getReStartdate());
+			recruitTemp.setReEndDate(RegisterRequest.getReEnddate());
 			
 			// 외래키
 			recruitTemp.setCompanyComSeq(comSeq);
