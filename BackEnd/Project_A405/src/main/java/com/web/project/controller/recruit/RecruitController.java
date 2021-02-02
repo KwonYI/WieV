@@ -34,7 +34,7 @@ import io.swagger.annotations.ApiResponses;
 		@ApiResponse(code = 500, message = "Failure", response = BasicResponse.class) })
 @CrossOrigin(origins = { "http://localhost:3000" })
 @RestController
-@RequestMapping("/recuit")
+@RequestMapping("/recruit")
 public class RecruitController {//공고 등록
 
 	@Autowired
