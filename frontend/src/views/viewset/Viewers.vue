@@ -12,17 +12,15 @@
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="recruit in recruits[reno - 1]"
-          :key="recruit.no"
-          class="text-center"
-        >
-          <td>{{ recruit.no }}</td>
-          <td>{{ recruit.name }}</td>
-          <td>{{ recruit.email }}</td>
-          <td>{{ recruit.phone }}</td>
-          <td>{{ recruit.password }}</td>
-          <td><v-btn>관리</v-btn></td>
+        <tr v-for="viewer in viewers" :key="viewer.no" class="text-center">
+          <td>{{ viewer.no }}</td>
+          <td>{{ viewer.name }}</td>
+          <td>{{ viewer.email }}</td>
+          <td>{{ viewer.phone }}</td>
+          <td>{{ viewer.password }}</td>
+          <td>
+            <v-btn>관리</v-btn>
+          </td>
         </tr>
       </tbody>
     </v-simple-table>
@@ -30,14 +28,14 @@
 </template>
 
 <script>
-export default {
-  name: "Viewers",
-  data: function () {
-    return {
-      reno: "",
+  export default {
+    name: "Viewers",
+    data: function () {
+      return {
+        reno: "",
 
-      recruits: [
-        [
+        viewers: [
+
           {
             no: 1,
             name: "김김김",
@@ -66,9 +64,7 @@ export default {
             phone: "010-0000-1234",
             password: "1234",
           },
-        ],
 
-        [
           {
             no: 5,
             name: "이이이",
@@ -97,9 +93,7 @@ export default {
             phone: "010-0000-1234",
             password: "1234",
           },
-        ],
 
-        [
           {
             no: 9,
             name: "박박박",
@@ -128,16 +122,16 @@ export default {
             phone: "010-0000-1234",
             password: "1234",
           },
+
         ],
-      ],
-    };
-  },
-  created: function () {
-    // this.reno = this.$route.params.recruitNo;
-    this.reno = this.$store.state.selectedRecruitNo;
-    console.log("reno:", this.reno);
-  },
-};
+      };
+    },
+    created: function () {
+      // this.reno = this.$route.params.recruitNo;
+      this.reno = this.$store.state.selectedRecruitNo;
+      console.log("reno:", this.reno);
+    },
+  };
 </script>
 
 <style>

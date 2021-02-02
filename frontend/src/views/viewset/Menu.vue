@@ -55,20 +55,6 @@ export default {
     return {
       recruitno: -1,
       selectedItem: -1,
-      items: [
-        {
-          text: "2021상반기 공채",
-          reno: 3,
-        },
-        {
-          text: "2020하반기 공채",
-          reno: 2,
-        },
-        {
-          text: "2019하반기 공채",
-          reno: 1,
-        },
-      ],
     };
   },
   methods: {

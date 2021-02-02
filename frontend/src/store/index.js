@@ -46,7 +46,7 @@ export default new Vuex.Store({
     recruitList: [{
         reSeq: 1003,
         reYear: 2021,
-        reFlag: "상반기",
+        reFlag: "상반기(더미)",
         reStatus: "신입",
         reStartDate: "2021-08-07",
         reEndDate: "2021-08-08",
@@ -54,7 +54,7 @@ export default new Vuex.Store({
       {
         reSeq: 1002,
         reYear: 2020,
-        reFlag: "하반기",
+        reFlag: "하반기(더미)",
         reStatus: "신입",
         reStartDate: "2020-11-07",
         reEndDate: "2020-11-10",
@@ -62,7 +62,7 @@ export default new Vuex.Store({
       {
         reSeq: 1001,
         reYear: 2020,
-        reFlag: "상반기",
+        reFlag: "상반기(더미)",
         reStatus: "신입",
         reStartDate: "2020-08-22",
         reEndDate: "2020-08-24",
@@ -225,6 +225,8 @@ export default new Vuex.Store({
 
 
     recruitVieweeList: [
+        
+
 
     ],
 
@@ -309,6 +311,8 @@ export default new Vuex.Store({
       state.user.userComHomepage = "";
     }
   },
+
+
   actions: {
     getRecruits: function ({
       commit
@@ -316,11 +320,15 @@ export default new Vuex.Store({
       commit('GET_RECRUITS', res)
     },
 
+
     addRecruit: function ({
       commit
     }, recruitData) {
       commit('ADD_RECRUIT', recruitData)
     },
+
+
+
     LOGIN(context, user) {
       axios.post(`${SERVER_URL}/hr/login`, user)
         .then(response => {
