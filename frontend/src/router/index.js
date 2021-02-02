@@ -9,7 +9,8 @@ import Viewees from '@/views/viewset/Viewees'
 import Viewers from '@/views/viewset/Viewers'
 import Progress from '@/views/viewset/Progress'
 import Main from '@/views/main/Main'
-import StandbyRoom from '@/views/room/StandbyRoom'
+import WaitRoom from '@/views/room/WaitRoom'
+import ViewRoom from '@/views/room/ViewRoom'
 
 // import Recruit from '@/components/viewset/Recruit'
 
@@ -22,9 +23,14 @@ const routes = [
     component: Main,
   },
   {
-    path: '/standbyroom',
-    name: 'StandbyRoom',
-    component: StandbyRoom,
+    path: '/waitroom',
+    name: 'WaitRoom',
+    component: WaitRoom,
+  },
+  {
+    path: '/viewroom',
+    name: 'ViewRoom',
+    component: ViewRoom,
   },
   {
     path: '/signup',
@@ -70,7 +76,7 @@ const routes = [
   {
     path: '/createset',
     name: 'CreateSet',
-    component: CreateSet,
+    component: CreateSet
   },
   {
     path: '/',

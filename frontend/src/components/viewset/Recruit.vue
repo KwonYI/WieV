@@ -8,7 +8,7 @@
         <!--######## 상단 메뉴들 ###############-->
         <!--######## if문 걸어서 recruitNo 관련해서 값 없으면 그냥 프로필 보여주던지 해야함 -->
         <v-app-bar>
-          <v-tabs align-with-title>
+          <v-tabs style="width: initial" align-with-title>
             <v-tab :to="{ name: 'Progress', params: { recruitNo: recruitNo } }">
               {{ recruitNo }}.면접 일정</v-tab>
             <!-- <v-tab>
@@ -17,6 +17,11 @@
             <v-tab :to="{ name: 'Viewers', params: { recruitNo: recruitNo } }">면접관 관리</v-tab>
             <v-tab :to="{ name: 'Viewees', params: { recruitNo: recruitNo } }">지원자 관리</v-tab>
           </v-tabs>
+          <v-chip style="" outlined>
+            <router-link :to="{ name: 'CreateSet'}">
+              면접스케줄 생성
+            </router-link>
+          </v-chip>
         </v-app-bar>
 
         <!-- </v-col> -->

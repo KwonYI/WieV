@@ -1,5 +1,5 @@
 <template>
-  <div id="standbyRoom">
+  <div id="waitRoom">
     <!-- 대기실 페이지. 신분에 따라 보여지는 컴포넌트가 다르다.  -->
 
 
@@ -84,7 +84,7 @@
   import VieweeList from '@/components/room/VieweeList.vue'
 
   export default {
-    name: "StandbyRoom",
+    name: "WaitRoom",
     components: {
       ManagerList,
       VieweeList,
@@ -98,7 +98,7 @@
         re_status: "신입",
 
 
-      };
+      }
     },
 
     methods: {},

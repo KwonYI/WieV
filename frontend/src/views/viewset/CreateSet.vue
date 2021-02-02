@@ -89,12 +89,32 @@
         
         <hr>
         <!-- 스케줄 -->
-        
         <v-data-table
           :headers="scheduleTable.headers"
           :items="scheduleTable.schedules"
         >
-
+          <template v-slot:body="{ items }">
+            <tbody>
+              <v-expansion-panels>
+                <v-expansion-panel v-for="item in items" :key="item.scheduleNo">
+                  <v-expansion-panel-header>
+                    <tr>
+                      <td>{{ item.scheduleNo }}</td>
+                      <td>{{ item.scheduleDate }}</td>
+                      <td>{{ item.scheduleTime }}</td>
+                      <td>{{ item.scheduleCareer }}</td>
+                      <td>{{ item.scheduleViewee }}</td>
+                      <td>{{ item.scheduleGuide }}</td>
+                      <td>{{ item.scheduleViewer }}</td>
+                    </tr>
+                  </v-expansion-panel-header>
+                  <v-expansion-panel-content>
+                    좀 떠라 떠
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+              </v-expansion-panels>
+            </tbody>
+          </template>
         </v-data-table>
         
       </v-col>
@@ -103,6 +123,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import _ from "lodash"
 
 export default {
@@ -111,7 +132,7 @@ export default {
     return {
       dialog: false,
       // 시즌 데이터
-      seasonData: [
+      seasonForm: [
         {
           name: "시즌",
           data: ["2020 하반기", "2021 상반기", "2021 하반기"],
@@ -219,6 +240,7 @@ export default {
 
       ],
       // 일정 생성 V-Model
+      seasonData: 1,
       formData: {
         // 부서
         part: '',
@@ -234,19 +256,22 @@ export default {
         endDate: '',
         // 종료 시간
         endTime: '',
-        // 면접 그룹당 면접관 수
+        // 면접 그룹당 면접관 수, int
         viewerNum: 0.1,
-        // 면접 그룹당 지원자 수
+        // 면접 그룹당 지원자 수, int
         vieweeNum: 0.1,
-        // 면접 그룹당 소요 시간
+        // 면접 그룹당 소요 시간, int
         duration: '',
-        // 면접 세부그룹 당 지원자 수
+        // 블라인드 여부
+        blindView: false,
+        // 면접 세부그룹 당 지원자 수, int
         vieweePerGroup: 0.1,
         // 면접 그룹당 세부 그룹 수(자동 계산)
         groupNum: 0
       },
       // 일정 데이터
       scheduleTable: {
+        expanded: [],
         headers: [
           {
             text: 'No.',
@@ -267,7 +292,7 @@ export default {
             scheduleNo: 1,
             scheduleDate: '7/10',
             scheduleTime: '14:00',
-            scheduleJob: '마케팅',
+            scheduleCareer: '마케팅',
             scheduleInterview: '직무, PT, 그룹',
             scheduleViewee: '',
             scheduleGuide: '',
@@ -281,7 +306,13 @@ export default {
   },
   methods: {
     addSchedule: function () {
-      
+      axios.post(`https://localhost:8080/groupAll/divide`, this.formData)
+        .then(res => {
+          console.log(res)
+          // this.$set()
+        })
+        .catch(err => console.log(err))
+
     }
   },
   watch: {
@@ -306,15 +337,11 @@ export default {
     viewTypesNum() {
       return _.findLastIndex(this.formData.viewTypes) + 1
     },
+  },
+  created () {
+    this.scheduleTable.schedules.forEach(i => {
+      this.$set(this.scheduleTable.expanded, i.name, false)
+    })
   }
-};
+}
 </script>
-
-<style scoped>
-.brd {
-  border: 0.5px solid lightgray;
-}
-.v-input input {
-  font-size: 10px;
-}
-</style>
