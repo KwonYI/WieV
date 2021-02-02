@@ -44,13 +44,13 @@ export default new Vuex.Store({
     },
 
     recruitList: [{
-        reSeq: 0,
-        reYear: 0,
-        reFlag: "",
-        reStatus: "",
-        reStartDate: "",
-        reEndDate: "",
-      }],
+      reSeq: 0,
+      reYear: 0,
+      reFlag: "",
+      reStatus: "",
+      reStartDate: "",
+      reEndDate: "",
+    }],
 
 
     recruitProgressList: [{
@@ -205,7 +205,7 @@ export default new Vuex.Store({
 
 
     recruitVieweeList: [
-      
+
     ],
 
     recruitViewerList: [
@@ -227,7 +227,7 @@ export default new Vuex.Store({
     getUserViewWait(state) {
       return state.user.userViewWait;
     },
-    getUserComSeq(state){
+    getUserComSeq(state) {
       return state.user.userComSeq;
     }
   },
@@ -253,8 +253,6 @@ export default new Vuex.Store({
       //   })
     },
 
-
-
     //############# Schedule.vue 에서 새로 추가한 공고 store에 넣는 작업 ###################################
     ADD_RECRUIT: function (state, recruitData) {
       console.log("state의 ADD_RECRUIT실행:", state, recruitData)
@@ -262,10 +260,6 @@ export default new Vuex.Store({
       //필요하다면, recruitData 형식을 가공해서 넣어줘야 함 
 
     },
-
-
-
-
 
     LOGIN(state, res) {
       state.accessToken = res["auth-token"];
@@ -291,70 +285,77 @@ export default new Vuex.Store({
       state.user.userComAddress = "";
       state.user.userComHomepage = "";
     },
-    GET_RECRUIT_LIST(state, res){
+    GET_RECRUIT_LIST(state, res) {
       state.recruitList = res;
     },
-    GETVIEWEELIST(state, res){
+    INSERT_RECRUIT(state, res) {
+      state.recruitList.push(res);
+    },
+    GETVIEWEELIST(state, res) {
       console.log("mutaions의 GETVIEWEELIST", res)
       state.recruitVieweeList = res
       console.log(state.recruitVieweeList)
-    }
+
+    },
   },
 
 
-  actions: {
-    getRecruits: function ({
-      commit
-    }, res) {
-      commit('GET_RECRUITS', res)
-    },
+    actions: {
+      getRecruits: function ({
+        commit
+      }, res) {
+        commit('GET_RECRUITS', res)
+      },
 
 
-    addRecruit: function ({
-      commit
-    }, recruitData) {
-      commit('ADD_RECRUIT', recruitData)
-    },
+      addRecruit: function ({
+        commit
+      }, recruitData) {
+        commit('ADD_RECRUIT', recruitData)
+      },
 
-    // 로그인, 로그아웃
-    LOGIN(context, user) {
-      // console.log("login_in");
-      axios.post(`${SERVER_URL}/hr/login`, user)
-        .then(response => {
-          context.commit("LOGIN", response.data);
-          // console.log(response.data);
-          axios.defaults.headers.common[
-            "auth-token"
-          ] = `${response.data["auth-token"]}`;
-        });
-    },
-    LOGOUT(context) {
-      context.commit("LOGOUT");
-      axios.defaults.headers.common["auth-token"] = undefined;
-    },
+      // 로그인, 로그아웃
+      LOGIN(context, user) {
+        axios.post(`${SERVER_URL}/hr/login`, user)
+          .then(response => {
+            context.commit("LOGIN", response.data);
+            axios.defaults.headers.common[
+              "auth-token"
+            ] = `${response.data["auth-token"]}`;
+          });
+      },
+      LOGOUT(context) {
+        context.commit("LOGOUT");
+        axios.defaults.headers.common["auth-token"] = undefined;
+      },
 
-    // 공고 리스트 가져오기
-    GET_RECRUIT_LIST(context) {
-      console.log(this.state.user.userComSeq);
-      axios.get(`${SERVER_URL}/recruit/getList/` + this.state.user.userComSeq )
-      .then(response => {
-        console.log(response.data);
-        context.commit("GET_RECRUIT_LIST", response.data);
-      });
-      context.commit("GET_RECRUIT_LIST");
-    },
-    
-    //지원자를 저장 
-    GETVIEWEELIST(context, recruitNo) {
-      axios.get(`${SERVER_URL}/applicant/getList/${recruitNo}`)
-        .then((res)=>{
-          context.commit("GETVIEWEELIST", res.data);
-        })
-        .catch((err)=>{
-          console.log(err)
-        })
-    },
+      // 공고 리스트 가져오기, 추가
+      GET_RECRUIT_LIST(context) {
+        axios.get(`${SERVER_URL}/recruit/getList/` + this.state.user.userComSeq)
+          .then(response => {
+            context.commit("GET_RECRUIT_LIST", response.data);
+            console.log(response.data);
+          });
+        context.commit("GET_RECRUIT_LIST");
+      },
+      INSERT_RECRUIT(context, newRecruit) {
+        axios.post(`${SERVER_URL}/recruit/register/` + this.state.user.userComSeq, newRecruit)
+          .then(response => {
+            context.commit("INSERT_RECRUIT", response.data);
+          })
+      },
 
+      //지원자를 저장 
+      GETVIEWEELIST(context, recruitNo) {
+        axios.get(`${SERVER_URL}/applicant/getList/${recruitNo}`)
+          .then((res) => {
+            context.commit("GETVIEWEELIST", res.data);
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+      },
+    }
 
-  }
+  
 })

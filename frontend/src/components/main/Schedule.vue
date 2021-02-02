@@ -26,7 +26,7 @@
             <v-container>
               <v-row>
                 <v-col cols="12" sm="6" md="4">
-                  <v-select :items="[2021, 2020]" label="년도" required v-model="new_recruit.reYear"></v-select>
+                  <v-select :items="[2021]" label="년도" required v-model="new_recruit.reYear"></v-select>
                 </v-col>
                 <v-col cols="12" sm="6" md="4">
                   <v-select :items="['상반기', '하반기']" label="시즌" required v-model="new_recruit.reFlag"></v-select>
@@ -111,19 +111,26 @@
           reFlag:'',
           reStatus:'',
           reStartDate:'',
-          reEndDate:'',
-        }
-
+          reEndDate: '',
+        },
       }
     },
 
     methods: {
       createRecruit: function () {
         this.dialog = false;
-        this.new_recruit.reStartDate = this.dates[0]
-        this.new_recruit.reEndDate = this.dates[1]
-        console.log("createRecruit 실행!")
-        console.log("새로추가된공고정보들:",this.new_recruit)
+
+        // this.dialog = false;
+        // console.log("createRecruit 실행!")
+        // console.log("새로추가된공고정보들:",this.new_recruit)
+
+        this.new_recruit.reStartDate = this.dates[0];
+        this.new_recruit.reEndDate = this.dates[1];
+
+        this.$store
+          .dispatch("INSERT_RECRUIT", this.new_recruit)
+          .then(() => console.log("insertRecruit"));
+
         //여기에 axios.post 요청으로, DB에 새로운 공고를 저장할 수 있도록 합니다. 
         // 새로 저장된 공고의 정보 (seq포함)를 가져오고, state 에 저장합니다. 
         //this.$store.dispatch('addRecruit', 응답으로 받은 데이터 res.data)
@@ -136,11 +143,14 @@
         this.$router.push({name:'Progress', params: { recruitNo: this.myReno }})
       },
 
-    },
+        
+      },
+    
     created : function () {
       this.$store
         .dispatch("GET_RECRUIT_LIST")
-        .then(() => console.log("recruitList"));
+        .then(() => console.log("getRecruitList"))
+        console.log(this.$store.state.recruitList);
     },
     computed: {
       ...mapState(["recruitList"]),
