@@ -12,17 +12,15 @@
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="recruit in recruits[reno - 1]"
-          :key="recruit.no"
-          class="text-center"
-        >
-          <td>{{ recruit.no }}</td>
-          <td>{{ recruit.name }}</td>
-          <td>{{ recruit.email }}</td>
-          <td>{{ recruit.phone }}</td>
-          <td>{{ recruit.password }}</td>
-          <td><v-btn>관리</v-btn></td>
+        <tr v-for="viewer in viewers" :key="viewer.no" class="text-center">
+          <td>{{ viewer.no }}</td>
+          <td>{{ viewer.name }}</td>
+          <td>{{ viewer.email }}</td>
+          <td>{{ viewer.phone }}</td>
+          <td>{{ viewer.password }}</td>
+          <td>
+            <v-btn>관리</v-btn>
+          </td>
         </tr>
       </tbody>
     </v-simple-table>
@@ -30,14 +28,14 @@
 </template>
 
 <script>
-export default {
-  name: "Viewers",
-  data: function () {
-    return {
-      comno: "",
-      reno:"",
-      recruits: [
-        [
+  export default {
+    name: "Viewers",
+    data: function () {
+      return {
+        reno: "",
+
+        viewers: [
+
           {
             no: 1,
             name: "김김김",
@@ -66,9 +64,7 @@ export default {
             phone: "010-0000-1234",
             password: "1234",
           },
-        ],
 
-        [
           {
             no: 5,
             name: "이이이",
@@ -97,9 +93,7 @@ export default {
             phone: "010-0000-1234",
             password: "1234",
           },
-        ],
 
-        [
           {
             no: 9,
             name: "박박박",
@@ -128,31 +122,17 @@ export default {
             phone: "010-0000-1234",
             password: "1234",
           },
+
         ],
-      ],
-    };
-  },
-  created: function () {
-    // this.comno = this.$route.params.recruitNo;
-    this.comno =this.$store.state.userComSeq;
-    this.reno=this.$store.state.selectedRecruitNo;
-    console.log("comno:", this.comno);
-  },
-    methods: {
-      createVieweeDB: function (reno) {
-        
-        //reno 는 현재 공고 reSeq
-        console.log("createVieweeDB!", reno);
-
-        //여기서 요청을 보내면, excel파일대로 DB를 저장한 뒤 여기에 뿌려줘야 합니다.
-        //공고 데이터를 보내면, 받는 데이터는 해당 공고 지원자 전체입니다.
-
-        //axios.post(보낼url, reno)
-
-      },
-
-    },  
-};
+    
+      };
+    },
+    created: function () {
+      // this.reno = this.$route.params.recruitNo;
+      this.reno = this.$store.state.selectedRecruitNo;
+      console.log("reno:", this.reno);
+    },
+  };
 </script>
 
 <style>

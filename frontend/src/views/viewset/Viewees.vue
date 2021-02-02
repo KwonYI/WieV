@@ -8,14 +8,15 @@
       <v-file-input v-model="files" show-size label="File input"></v-file-input>
       <v-btn @click="upload" color="primary">Upload</v-btn>
       <p>File Name : {{ files.name }}</p>
-
-      <v-btn class="m-3" @click="createVieweeDB(reno)"> DB업데이트 </v-btn>
+      <v-btn class="m-3" @click="createVieweeDB"> DB업데이트 </v-btn>
+      <!-- <v-file-input show-size counter multiple label="File input"></v-file-input>
+      <v-btn class="m-3" @click="createVieweeDB"> DB업데이트 </v-btn> -->
     </v-toolbar>
     <v-simple-table fixed-header class="mt-5">
       <thead>
         <tr>
           <th class="text-center">No</th>
-          <th class="text-center">직군</th>
+          <th class="text-center">직군부류</th>
           <th class="text-center">이름</th>
           <th class="text-center">연락처</th>
           <th class="text-center">생년월일</th>
@@ -25,28 +26,13 @@
         </tr>
       </thead>
       <tbody>
-        <!-- <tr v-for="recruit in recruits[reno - 1]" :key="recruit.no" class="text-center">
-          <td>{{ recruit.no }}</td>
-          <td>{{ recruit.ca }}</td>
-          <td>{{ recruit.name }}</td>
-          <td>{{ recruit.phone }}</td>
-          <td>{{ recruit.birth }}</td>
-          <td>{{ recruit.email }}</td>
-          <td>
-            <v-btn>자기소개서</v-btn>
-          </td>
-          <td>
-            <v-btn>이력서</v-btn>
-          </td>
-        </tr> -->
-
-        <tr v-for="viewee in applicants" :key="viewee.no" class="text-center">
-          <td>{{ viewee.no }}</td>
-          <td>{{ viewee.ca }}</td>
-          <td>{{ viewee.name }}</td>
-          <td>{{ viewee.phone }}</td>
-          <td>{{ viewee.birth }}</td>
-          <td>{{ viewee.email }}</td>
+        <tr v-for="(viewee, index) in filterdVieweeList()" :key="viewee.index" class="text-center">
+          <td>{{ index+1 }}</td>
+          <td>{{ viewee.careerCaSeq }}</td>
+          <td>{{ viewee.applyName }}</td>
+          <td>{{ viewee.applyPhone }}</td>
+          <td>{{ viewee.applyBirth }}</td>
+          <td>{{ viewee.applyEmail }}</td>
           <td>
             <v-btn>자기소개서</v-btn>
           </td>
@@ -62,8 +48,12 @@
 </template>
 
 <script>
- import axios from 'axios';
-const SERVER_URL = "https://localhost:8080/";
+  //  import axios from 'axios';
+  // const SERVER_URL = "https://localhost:8080/";
+
+  import {
+    mapState
+  } from "vuex";
 
 
   export default {
@@ -195,6 +185,13 @@ const SERVER_URL = "https://localhost:8080/";
       // this.reno = this.$route.params.recruitNo;
       this.reno = this.$store.state.selectedRecruitNo;
       console.log("reno:", this.reno);
+      console.log("지원자들어있나 created때?", this.recruitVieweeList)
+      this.filterdVieweeList();
+
+
+
+
+
     },
 
     methods: {
@@ -219,23 +216,37 @@ const SERVER_URL = "https://localhost:8080/";
             console.log('FAILURE!!');
           });
     },
-      createVieweeDB: function (reno) {
-        console.log("현재공고seq:"+reno);
-        axios.get(`${SERVER_URL}applicant/getList/${1}`)
-        .then((res)=>{
-          console.log(res.data)
-        })
-        .catch((err)=>{
-          console.log(err)
-        })
+
         //여기서 요청을 보내면, excel파일대로 DB를 저장한 뒤 여기에 뿌려줘야 합니다.
         //공고 데이터를 보내면, 받는 데이터는 해당 공고 지원자 전체입니다.
 
         //axios.post(보낼url, reno)
+      createVieweeDB: function () {
+
+        this.$store.dispatch("GETVIEWEELIST", this.reno)
+        this.filterdVieweeList();
+
+      },
+      filterdVieweeList: function () { //re.recruitReSeq === this.reno 로 수정해야함
+        return this.recruitVieweeList.filter(re => re.recruitReSeq === this.reno)
 
       },
 
+
+
     },
+    computed: {
+      ...mapState(["recruitVieweeList"]),
+      //지원자 리스트에서 공고에 해당하는 것만 골라서 필터링
+      // filterdVieweeList: function () { //re.recruitReSeq === this.reno 로 수정해야함
+      //   return this.recruitVieweeList.filter(re => re.recruitReSeq === this.reno)
+
+      // }
+
+
+
+    },
+
 
 
   };

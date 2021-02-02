@@ -55,42 +55,28 @@ export default {
     return {
       recruitno: -1,
       selectedItem: -1,
-      items: [
-        {
-          text: "2021상반기 공채",
-          reno: 3,
-        },
-        {
-          text: "2020하반기 공채",
-          reno: 2,
-        },
-        {
-          text: "2019하반기 공채",
-          reno: 1,
-        },
-      ],
+      tempReList:[],
     };
   },
   methods: {
     selectRecruit: function (selectedreno) {
       console.log("selectRecruit클릭!", selectedreno);
       this.$store.state.selectedRecruitNo = selectedreno;
-      // this.selectedRecruitNo = selectedreno;
       this.recruitno = selectedreno;
-      // this.selectRecruitTrigger = true;
     },
     goToProfile: function () {
-      // this.$store.state.selectedRecruitNo = -1;
-      // this.selectedRecruitNo = -1;
       this.recruitno = -1;
     },
   },
   created: function () {
-    // this.recruitno = this.$store.state.selectedRecruitNo;
+    this.tempReList = this.recruitList
+    console.log("Menu의 createD의 reno", this.recruitno)
+    // console.log("Menu의 createD의 recruitList",this.tempReList )
   },
   computed: {
     ...mapState(["selectedRecruitNo", "recruitList"]),
   },
+
 };
 </script>
 

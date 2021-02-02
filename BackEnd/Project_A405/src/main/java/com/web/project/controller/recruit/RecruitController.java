@@ -34,7 +34,7 @@ import io.swagger.annotations.ApiResponses;
 		@ApiResponse(code = 500, message = "Failure", response = BasicResponse.class) })
 @CrossOrigin(origins = { "http://localhost:3000" })
 @RestController
-@RequestMapping("/recuit")
+@RequestMapping("/recruit")
 public class RecruitController {//공고 등록
 
 	@Autowired
@@ -67,20 +67,22 @@ public class RecruitController {//공고 등록
 		return new ResponseEntity<List<Recruit>>(recruitList, status);
 	}
 	
-	@PostMapping("/register")
+	@PostMapping("/register/{comSeq}")
 	@ApiOperation(value = "공고등록")
-	public ResponseEntity<Recruit> recruitRegister(@Valid @RequestBody RegisterRequest RegisterRequest, int comSeq) {
+	public ResponseEntity<Recruit> recruitRegister(@PathVariable("comSeq") int comSeq, @Valid @RequestBody RegisterRequest registerRequest) {
 		HttpStatus status = null;
 		Recruit recruit = null;
+		
+		System.out.println(registerRequest);
 
 		try {
 			// Recruit INSERT 수행 부분
 			Recruit recruitTemp = new Recruit();
-			recruitTemp.setReYear(RegisterRequest.getReYear());
-			recruitTemp.setReFlag(RegisterRequest.getReFlag());
-			recruitTemp.setReStatus(RegisterRequest.getReStatus());
-			recruitTemp.setReStartDate(RegisterRequest.getReStartdate());
-			recruitTemp.setReEndDate(RegisterRequest.getReEnddate());
+			recruitTemp.setReYear(registerRequest.getReYear());
+			recruitTemp.setReFlag(registerRequest.getReFlag());
+			recruitTemp.setReStatus(registerRequest.getReStatus());			
+			recruitTemp.setReStartDate(registerRequest.getReStartDate());
+			recruitTemp.setReEndDate(registerRequest.getReEndDate());
 			
 			// 외래키
 			recruitTemp.setCompanyComSeq(comSeq);
