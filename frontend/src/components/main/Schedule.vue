@@ -79,7 +79,7 @@
             <td>{{ recruit.reStatus }}</td>
             <td>{{ recruit.reStartDate }} ~ {{recruit.reEndDate }}</td>
             <td>
-              <v-btn>관리하기</v-btn>
+              <v-btn :to="{ name: 'Progress', params: { recruitNo: recruit.reSeq } }" >관리하기</v-btn>
             </td>
             <!--여기에 recruitMenu라우터 연결해야 합니다.-->
           </tr>
@@ -93,9 +93,7 @@
 </template>
 
 <script>
-  import {
-    mapState
-  } from "vuex";
+  import { mapState } from "vuex";
 
   export default {
     name: "Schedule",
@@ -135,8 +133,10 @@
       }
 
     },
-    created: function () {
-
+    created : function () {
+      this.$store
+        .dispatch("GET_RECRUIT_LIST")
+        .then(() => console.log("recruitList"));
     },
     computed: {
       ...mapState(["recruitList"]),

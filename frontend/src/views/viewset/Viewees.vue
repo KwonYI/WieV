@@ -2,27 +2,17 @@
   <div id="viewees">
     <v-toolbar dark color="teal">
       <v-toolbar-title>지원자 찾기</v-toolbar-title>
-      <v-autocomplete
-        v-model="select"
-        :loading="loading"
-        :items="items"
-        :search-input.sync="search"
-        cache-items
-        class="mx-4"
-        flat
-        hide-no-data
-        hide-details
-        label="지원자 이름 검색"
-        solo-inverted
-      ></v-autocomplete>
+      <v-autocomplete v-model="select" :loading="loading" :items="items" :search-input.sync="search" cache-items
+        class="mx-4" flat hide-no-data hide-details label="지원자 이름 검색" solo-inverted></v-autocomplete>
       <v-btn class="m-3"> 검색 </v-btn>
-      <v-btn class="m-3"> DB업데이트 </v-btn>
+      <v-file-input show-size counter multiple label="File input"></v-file-input>
+      <v-btn class="m-3" @click="createVieweeDB"> DB업데이트 </v-btn>
     </v-toolbar>
     <v-simple-table fixed-header class="mt-5">
       <thead>
         <tr>
           <th class="text-center">No</th>
-          <th class="text-center">직군</th>
+          <th class="text-center">직군부류</th>
           <th class="text-center">이름</th>
           <th class="text-center">연락처</th>
           <th class="text-center">생년월일</th>
@@ -32,159 +22,72 @@
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="recruit in recruits[reno - 1]"
-          :key="recruit.no"
-          class="text-center"
-        >
-          <td>{{ recruit.no }}</td>
-          <td>{{ recruit.ca }}</td>
-          <td>{{ recruit.name }}</td>
-          <td>{{ recruit.phone }}</td>
-          <td>{{ recruit.birth }}</td>
-          <td>{{ recruit.email }}</td>
-          <td><v-btn>자기소개서</v-btn></td>
-          <td><v-btn>이력서</v-btn></td>
+         <tr v-for="(viewee, index) in filterdVieweeList" :key="viewee.index" class="text-center">
+          <td>{{ index+1 }}</td>
+          <td>{{ viewee.careerCaSeq }}</td>
+          <td>{{ viewee.applyName }}</td>
+          <td>{{ viewee.applyPhone }}</td>
+          <td>{{ viewee.applyBirth }}</td>
+          <td>{{ viewee.applyEmail }}</td>
+          <td>
+            <v-btn>자기소개서</v-btn>
+          </td>
+          <td>
+            <v-btn>이력서</v-btn>
+          </td>
         </tr>
+
+
       </tbody>
     </v-simple-table>
   </div>
 </template>
 
 <script>
-export default {
-  name: "Viewees",
-  data: function () {
-    return {
-      search: null,
-      select: null,
-      items: [],
-      reno: "",
-      recruits: [
-        [
-          {
-            no: 1,
-            name: "김지원",
-            email: "apply123@naver.com",
-            phone: "010-0000-1234",
-            ca: "SW개발",
-            birth: "94-09-15",
-          },
-          {
-            no: 2,
-            name: "김지원",
-            ca: "SW개발",
-            email: "apply123@naver.com",
-            phone: "010-0000-1234",
-            password: "1234",
-            birth: "94-09-15",
-          },
-          {
-            no: 3,
-            name: "김지원",
-            ca: "마케팅",
-            email: "apply123@naver.com",
-            phone: "010-0000-1234",
-            password: "1234",
-            birth: "94-09-15",
-          },
-          {
-            no: 4,
-            name: "김지원",
-            ca: "회로개발",
-            email: "apply123@naver.com",
-            phone: "010-0000-1234",
-            password: "1234",
-            birth: "94-09-15",
-          },
-        ],
+//  import axios from 'axios';
+// const SERVER_URL = "https://localhost:8080/";
 
-        [
-          {
-            no: 5,
-            name: "이지원",
-            email: "apply123@naver.com",
-            phone: "010-0000-1234",
-            password: "1234",
-            ca: "SW개발",
-            birth: "94-09-15",
-          },
-          {
-            no: 6,
-            name: "이지원",
-            email: "apply123@naver.com",
-            phone: "010-0000-1234",
-            password: "1234",
-            ca: "SW개발",
-            birth: "94-09-15",
-          },
-          {
-            no: 7,
-            name: "이지원",
-            email: "apply123@naver.com",
-            phone: "010-0000-1234",
-            password: "1234",
-            ca: "인사",
-            birth: "94-09-15",
-          },
-          {
-            no: 8,
-            name: "이지원",
-            email: "apply123@naver.com",
-            phone: "010-0000-1234",
-            password: "1234",
-            ca: "VOC",
-            birth: "94-09-15",
-          },
-        ],
+import { mapState } from "vuex";
 
-        [
-          {
-            no: 9,
-            name: "박지원",
-            email: "apply123@naver.com",
-            phone: "010-0000-1234",
-            password: "1234",
-            ca: "SW개발",
-            birth: "94-09-15",
-          },
-          {
-            no: 10,
-            name: "박지원",
-            email: "apply123@naver.com",
-            phone: "010-0000-1234",
-            password: "1234",
-            ca: "QA",
-            birth: "94-09-15",
-          },
-          {
-            no: 11,
-            name: "박지원",
-            email: "apply123@naver.com",
-            phone: "010-0000-1234",
-            password: "1234",
-            ca: "총무",
-            birth: "94-09-15",
-          },
-          {
-            no: 12,
-            name: "박지원",
-            email: "apply123@naver.com",
-            phone: "010-0000-1234",
-            password: "1234",
-            ca: "리서치",
-            birth: "94-09-15",
-          },
-        ],
-      ],
-    };
+  export default {
+    name: "Viewees",
+    data: function () {
+      return {
+        search: null,
+        select: null,
+        items: [],
+        reno: "",
+        
+      };
+    },
+    created: function () {
+      // this.reno = this.$route.params.recruitNo;
+      this.reno = this.$store.state.selectedRecruitNo;
+      console.log("reno:", this.reno);
+    },
+
+    methods: {
+      createVieweeDB: function () {
+
+        this.$store.dispatch("GETVIEWEELIST", 1) 
+
+    },
+
+    },
+     computed: {
+    ...mapState(["recruitVieweeList"]),
+
+    //지원자 리스트에서 공고에 해당하는 것만 골라서 필터링
+    filterdVieweeList: function() { //re.recruitReSeq === this.reno 로 수정해야함
+      return this.recruitVieweeList.filter( re => re.recruitReSeq === 1)
+
+    }
+
   },
-  created: function () {
-    // this.reno = this.$route.params.recruitNo;
-    this.reno = this.$store.state.selectedRecruitNo;
-    console.log("reno:", this.reno);
-  },
-};
+   
+
+
+  };
 </script>
 
 <style>

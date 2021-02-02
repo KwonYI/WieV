@@ -92,6 +92,7 @@ public class SessionController {
 		Session session = null;
 		ConnectionProperties connectionProperties = null;
 		OpenViduRole role = OpenViduRole.MODERATOR; // 기본 세팅은 관리자
+		String type = "manager"; // 면접관, 대기실 관리자, 면접자 구분
 		String token = null;
 		
 		try {
@@ -106,6 +107,7 @@ public class SessionController {
 						int viewWait = interviewer.getViewWait();
 						
 						if (viewWait == 1) { // 1이면 면접관
+							type = "interviewer";
 							role = OpenViduRole.PUBLISHER;
 						}
 						
@@ -118,6 +120,7 @@ public class SessionController {
 							this.tokensInSession.get(sessionName).put(token, role);
 
 							resultMap.put("token", token);
+							resultMap.put("type", type);
 							resultMap.put("interviewerName", interviewer.getViewName());
 
 							result.status = true;
@@ -154,6 +157,7 @@ public class SessionController {
 								this.tokensInSession.get(sessionName).put(token, role);
 
 								resultMap.put("token", token);
+								resultMap.put("type", type);
 								resultMap.put("interviewerName", interviewer.getViewName());
 
 								result.status = true;
@@ -226,6 +230,7 @@ public class SessionController {
 				this.tokensInSession.get(sessionName).put(token, OpenViduRole.PUBLISHER);
 
 				resultMap.put("token", token);
+				resultMap.put("type", "interviewee");
 				resultMap.put("applicantName", applicantName);
 
 				result.status = true;

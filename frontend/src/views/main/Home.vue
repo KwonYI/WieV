@@ -99,9 +99,10 @@
       login: function () {
         this.$store
         .dispatch("LOGIN", this.credentials)
-        .then(() => {this.$router.replace("/")
+        .then(() => {this.$router.replace(this.$router.currentRoute) 
         this.credentials.userEmail = ""
-        this.credentials.userPassword = ""})
+        this.credentials.userPassword = ""
+        })
         .catch(({ message }) => (this.msg = message));
         // 로그인 axios
         // [BACK에게 요청] 로그인 했을 때, 인담자인지 면접관인지 값을 받아와야 해요, 회사정보(com_seq)도 주세요.

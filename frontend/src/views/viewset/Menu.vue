@@ -11,14 +11,17 @@
 
             
             <v-list-item-group v-model="selectedItem" color="primary">
-              <v-list-item v-for="(item, i) in items" :key="i">
+
+              <v-list-item v-for="(item, i) in recruitList" :key="i">
                 <v-list-item-content>
                   <v-list-item-title
-                    v-text="item.text"
-                    @click="selectRecruit(item.reno)"
+                    v-text="`${item.reYear}${item.reFlag} ${item.reStatus}`"
+                    @click="selectRecruit(item.reSeq)"
                   ></v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
+
+
             </v-list-item-group>
           </v-list>
         </v-col>
@@ -52,20 +55,7 @@ export default {
     return {
       recruitno: -1,
       selectedItem: -1,
-      items: [
-        {
-          text: "2021상반기 공채",
-          reno: 3,
-        },
-        {
-          text: "2020하반기 공채",
-          reno: 2,
-        },
-        {
-          text: "2019하반기 공채",
-          reno: 1,
-        },
-      ],
+      tempReList:[],
     };
   },
   methods: {
@@ -84,10 +74,13 @@ export default {
   },
   created: function () {
     // this.recruitno = this.$store.state.selectedRecruitNo;
+    this.tempReList = this.recruitList
+    console.log("createD????",this.tempReList )
   },
   computed: {
-    ...mapState(["selectedRecruitNo"]),
+    ...mapState(["selectedRecruitNo", "recruitList"]),
   },
+  
 };
 </script>
 
