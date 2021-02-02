@@ -93,9 +93,7 @@
 </template>
 
 <script>
-  import {
-    mapState
-  } from "vuex";
+  import { mapState } from "vuex";
 
   export default {
     name: "Schedule",
@@ -135,8 +133,10 @@
       }
 
     },
-    created: function () {
-
+    created : function () {
+      this.$store
+        .dispatch("GET_RECRUIT_LIST")
+        .then(() => console.log("recruitList"));
     },
     computed: {
       ...mapState(["recruitList"]),

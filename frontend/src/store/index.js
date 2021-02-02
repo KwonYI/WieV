@@ -12,7 +12,7 @@ export default new Vuex.Store({
     // isLogin: false,
     // isManager: false,
     // userEmail: '',
-
+    // comSeq: 0,
     accessToken: null,
     // userViewWait => 인사담당자(-1), 대기관(0), 면접관(1) 구분자
     user: {
@@ -44,30 +44,13 @@ export default new Vuex.Store({
     },
 
     recruitList: [{
-        reSeq: 1003,
-        reYear: 2021,
-        reFlag: "상반기",
-        reStatus: "신입",
-        reStartDate: "2021-08-07",
-        reEndDate: "2021-08-08",
-      },
-      {
-        reSeq: 1002,
-        reYear: 2020,
-        reFlag: "하반기",
-        reStatus: "신입",
-        reStartDate: "2020-11-07",
-        reEndDate: "2020-11-10",
-      },
-      {
-        reSeq: 1001,
-        reYear: 2020,
-        reFlag: "상반기",
-        reStatus: "신입",
-        reStartDate: "2020-08-22",
-        reEndDate: "2020-08-24",
-      }
-    ],
+        reSeq: 0,
+        reYear: 0,
+        reFlag: "",
+        reStatus: "",
+        reStartDate: "",
+        reEndDate: "",
+      }],
 
 
     recruitProgressList: [{
@@ -118,9 +101,6 @@ export default new Vuex.Store({
         interviewers: "김면접 외 14",
         infomail: "",
       },
-
-
-
       {
         reSeq: 1002,
         progress_no: 5,
@@ -246,6 +226,9 @@ export default new Vuex.Store({
     },
     getUserViewWait(state) {
       return state.user.userViewWait;
+    },
+    getUserComSeq(state){
+      return state.user.userComSeq;
     }
   },
   mutations: {
@@ -290,7 +273,7 @@ export default new Vuex.Store({
       state.user.userName = res["user-Name"];
       state.user.userPhone = res["user-Phone"];
       state.user.userViewWait = res["user-View-Wait"];
-      state.user.userComSeq = res["user-Company-seq"];
+      state.user.userComSeq = res["user-Company-Seq"];
       state.user.userComName = res["user-Company-Name"];
       state.user.userComLogo = res["user-Company-Logo"];
       state.user.userComAddress = res["user-Company-Address"];
@@ -307,6 +290,9 @@ export default new Vuex.Store({
       state.user.userComLogo = "";
       state.user.userComAddress = "";
       state.user.userComHomepage = "";
+    },
+    GET_RECRUIT_LIST(state, res){
+      state.recruitList = res;
     }
   },
   actions: {
@@ -321,11 +307,14 @@ export default new Vuex.Store({
     }, recruitData) {
       commit('ADD_RECRUIT', recruitData)
     },
+
+    // 로그인, 로그아웃
     LOGIN(context, user) {
+      // console.log("login_in");
       axios.post(`${SERVER_URL}/hr/login`, user)
         .then(response => {
           context.commit("LOGIN", response.data);
-          console.log(response.data);
+          // console.log(response.data);
           axios.defaults.headers.common[
             "auth-token"
           ] = `${response.data["auth-token"]}`;
@@ -335,5 +324,16 @@ export default new Vuex.Store({
       context.commit("LOGOUT");
       axios.defaults.headers.common["auth-token"] = undefined;
     },
+
+    // 공고 리스트 가져오기
+    GET_RECRUIT_LIST(context) {
+      console.log(this.state.user.userComSeq);
+      axios.get(`${SERVER_URL}/recruit/getList/` + this.state.user.userComSeq )
+      .then(response => {
+        console.log(response.data);
+        context.commit("GET_RECRUIT_LIST", response.data);
+      });
+      context.commit("GET_RECRUIT_LIST");
+    }
   }
 })
