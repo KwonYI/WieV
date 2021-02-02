@@ -28,7 +28,7 @@ export default new Vuex.Store({
     },
 
     //관리자가 선택한 현재 공고 : 
-    selectRecruitTrigger : false,
+    selectRecruitTrigger: false,
     selectedRecruitNo: -1,
 
 
@@ -36,14 +36,15 @@ export default new Vuex.Store({
     whoLogin: 'viewer', //Manager, viewer, viewee
 
     comData: {
-      comSeq:'1',
-      comName:'버즈글로벌',
-      comLogo:'asdf',
-      comAddress:'서울특별시 강남구 테헤란로',
-      comHomepage:'https://www.naver.com',
+      comSeq: '1',
+      comName: '버즈글로벌',
+      comLogo: 'asdf',
+      comAddress: '서울특별시 강남구 테헤란로',
+      comHomepage: 'https://www.naver.com',
     },
+
     recruitList: [{
-        reSeq: '1003',
+        reSeq: 1003,
         reYear: 2021,
         reFlag: "상반기",
         reStatus: "신입",
@@ -51,7 +52,7 @@ export default new Vuex.Store({
         reEndDate: "2021-08-08",
       },
       {
-        reSeq: '1002',
+        reSeq: 1002,
         reYear: 2020,
         reFlag: "하반기",
         reStatus: "신입",
@@ -59,14 +60,180 @@ export default new Vuex.Store({
         reEndDate: "2020-11-10",
       },
       {
-        reSeq: '1001',
+        reSeq: 1001,
         reYear: 2020,
         reFlag: "상반기",
         reStatus: "신입",
         reStartDate: "2020-08-22",
         reEndDate: "2020-08-24",
       }
-    ]
+    ],
+
+
+    recruitProgressList: [{
+        reSeq: 1003,
+        progress_no: 1,
+        group_date: "07/20",
+        group_start_time: "10:00",
+        ca: "SW개발",
+        types: "직무, PT, 토론",
+        applicants: "김지원 외 49",
+        view_wait: "김대기 외 5",
+        interviewers: "김면접 외 14",
+        infomail: "",
+      },
+      {
+        reSeq: 1003,
+        progress_no: 2,
+        group_date: "07/20",
+        group_start_time: "10:00",
+        ca: "마케팅",
+        types: "직무, PT, 토론",
+        applicants: "김지원 외 49",
+        view_wait: "김대기 외 5",
+        interviewers: "김면접 외 14",
+        infomail: "",
+      },
+      {
+        reSeq: 1003,
+        progress_no: 3,
+        group_date: "07/20",
+        group_start_time: "10:00",
+        ca: "회로개발",
+        types: "직무, PT, 토론",
+        applicants: "김지원 외 49",
+        view_wait: "김대기 외 5",
+        interviewers: "김면접 외 14",
+        infomail: "",
+      },
+      {
+        reSeq: 1003,
+        progress_no: 4,
+        group_date: "07/20",
+        group_start_time: "16:00",
+        ca: "SW개발",
+        types: "직무, PT, 토론",
+        applicants: "김지원 외 49",
+        view_wait: "김대기 외 5",
+        interviewers: "김면접 외 14",
+        infomail: "",
+      },
+
+
+
+      {
+        reSeq: 1002,
+        progress_no: 5,
+        group_date: "11/13",
+        group_start_time: "08:00",
+        ca: "SW개발",
+        types: "직무, PT, 토론",
+        applicants: "김지원 외 49",
+        view_wait: "김대기 외 5",
+        interviewers: "김면접 외 14",
+        infomail: "",
+      },
+      {
+        reSeq: 1002,
+        progress_no: 6,
+        group_date: "11/13",
+        group_start_time: "08:00",
+        ca: "총무",
+        types: "직무, PT, 토론",
+        applicants: "김지원 외 49",
+        view_wait: "김대기 외 5",
+        interviewers: "김면접 외 14",
+        infomail: "",
+      },
+      {
+        reSeq: 1002,
+        progress_no: 7,
+        group_date: "11/13",
+        group_start_time: "08:00",
+        ca: "회로개발",
+        types: "직무, PT, 토론",
+        applicants: "김지원 외 49",
+        view_wait: "김대기 외 5",
+        interviewers: "김면접 외 14",
+        infomail: "",
+      },
+      {
+        reSeq: 1002,
+        progress_no: 8,
+        group_date: "11/14",
+        group_start_time: "08:00",
+        ca: "SW개발",
+        types: "직무, PT, 토론",
+        applicants: "김지원 외 49",
+        view_wait: "김대기 외 5",
+        interviewers: "김면접 외 14",
+        infomail: "",
+      },
+
+
+      {
+        reSeq: 1001,
+        progress_no: 9,
+        group_date: "07/08",
+        group_start_time: "09:00",
+        ca: "리서치",
+        types: "직무, PT, 토론",
+        applicants: "김지원 외 49",
+        view_wait: "김대기 외 5",
+        interviewers: "김면접 외 14",
+        infomail: "",
+      },
+      {
+        reSeq: 1001,
+        progress_no: 10,
+        group_date: "07/08",
+        group_start_time: "09:00",
+        ca: "UI/UX",
+        types: "직무, PT, 토론",
+        applicants: "김지원 외 49",
+        view_wait: "김대기 외 5",
+        interviewers: "김면접 외 14",
+        infomail: "",
+      },
+      {
+        reSeq: 1001,
+        progress_no: 11,
+        group_date: "07/08",
+        group_start_time: "13:00",
+        ca: "리서치",
+        types: "직무, PT, 토론",
+        applicants: "김지원 외 49",
+        view_wait: "김대기 외 5",
+        interviewers: "김면접 외 14",
+        infomail: "",
+      },
+      {
+        reSeq: 1001,
+        progress_no: 12,
+        group_date: "07/08",
+        group_start_time: "13:00",
+        ca: "제품디자인",
+        types: "직무, PT, 토론",
+        applicants: "김지원 외 49",
+        view_wait: "김대기 외 5",
+        interviewers: "김면접 외 14",
+        infomail: "",
+      },
+    ],
+
+
+
+
+    recruitVieweeList: [
+
+    ],
+
+    recruitViewerList: [
+
+    ],
+
+
+
   },
 
 
@@ -77,7 +244,7 @@ export default new Vuex.Store({
     getAccessToken(state) {
       return state.accessToken;
     },
-    getUserViewWait(state) {  
+    getUserViewWait(state) {
       return state.user.userViewWait;
     }
   },
@@ -143,12 +310,16 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    getRecruits: function({commit}, res){
+    getRecruits: function ({
+      commit
+    }, res) {
       commit('GET_RECRUITS', res)
     },
 
-    addRecruit: function({commit}, recruitData){
-      commit('ADD_RECRUIT', recruitData )
+    addRecruit: function ({
+      commit
+    }, recruitData) {
+      commit('ADD_RECRUIT', recruitData)
     },
     LOGIN(context, user) {
       axios.post(`${SERVER_URL}/hr/login`, user)
@@ -160,7 +331,7 @@ export default new Vuex.Store({
           ] = `${response.data["auth-token"]}`;
         });
     },
-    LOGOUT(context){
+    LOGOUT(context) {
       context.commit("LOGOUT");
       axios.defaults.headers.common["auth-token"] = undefined;
     },
