@@ -79,7 +79,9 @@
             <td>{{ recruit.reStatus }}</td>
             <td>{{ recruit.reStartDate }} ~ {{recruit.reEndDate }}</td>
             <td>
-              <v-btn :to="{ name: 'Progress', params: { recruitNo: recruit.reSeq } }" >관리하기</v-btn>
+              <!-- <v-btn :to="{ name: 'Progress', params: { recruitNo: recruit.reSeq } }" >관리하기</v-btn> -->
+              <!-- <v-btn :to="{ name: 'Progress', params: { recruitNo: recruit.reSeq } }" >관리하기</v-btn> -->
+              <v-btn @click="goToProgress(recruit.reSeq)" >관리하기</v-btn>
             </td>
             <!--여기에 recruitMenu라우터 연결해야 합니다.-->
           </tr>
@@ -101,6 +103,7 @@
       return {
         com_name: "버즈글로벌",
         dialog: false,
+        myReno: '',
 
         dates: ['2021-01-01', '2021-01-01'],
         new_recruit :{
@@ -121,16 +124,17 @@
         this.new_recruit.reEndDate = this.dates[1]
         console.log("createRecruit 실행!")
         console.log("새로추가된공고정보들:",this.new_recruit)
-
-        
-
-
-
         //여기에 axios.post 요청으로, DB에 새로운 공고를 저장할 수 있도록 합니다. 
         // 새로 저장된 공고의 정보 (seq포함)를 가져오고, state 에 저장합니다. 
         //this.$store.dispatch('addRecruit', 응답으로 받은 데이터 res.data)
 
-      }
+      },
+      goToProgress: function (reno) {
+        this.myReno = reno
+        this.$store.state.selectedRecruitNo = reno
+        console.log("goToProgres!!", this.$store.state.selectedRecruitNo)
+        this.$router.push({name:'Progress', params: { recruitNo: this.myReno }})
+      },
 
     },
     created : function () {

@@ -22,7 +22,7 @@
         </tr>
       </thead>
       <tbody>
-         <tr v-for="(viewee, index) in filterdVieweeList" :key="viewee.index" class="text-center">
+        <tr v-for="(viewee, index) in filterdVieweeList()" :key="viewee.index" class="text-center">
           <td>{{ index+1 }}</td>
           <td>{{ viewee.careerCaSeq }}</td>
           <td>{{ viewee.applyName }}</td>
@@ -44,10 +44,12 @@
 </template>
 
 <script>
-//  import axios from 'axios';
-// const SERVER_URL = "https://localhost:8080/";
+  //  import axios from 'axios';
+  // const SERVER_URL = "https://localhost:8080/";
 
-import { mapState } from "vuex";
+  import {
+    mapState
+  } from "vuex";
 
   export default {
     name: "Viewees",
@@ -57,34 +59,49 @@ import { mapState } from "vuex";
         select: null,
         items: [],
         reno: "",
-        
+
       };
     },
     created: function () {
       // this.reno = this.$route.params.recruitNo;
       this.reno = this.$store.state.selectedRecruitNo;
       console.log("reno:", this.reno);
+      console.log("지원자들어있나 created때?", this.recruitVieweeList)
+      this.filterdVieweeList();
+
+
+
+
+
     },
 
     methods: {
       createVieweeDB: function () {
 
-        this.$store.dispatch("GETVIEWEELIST", 1) 
+        this.$store.dispatch("GETVIEWEELIST", this.reno)
+        this.filterdVieweeList();
+
+      },
+      filterdVieweeList: function () { //re.recruitReSeq === this.reno 로 수정해야함
+        return this.recruitVieweeList.filter(re => re.recruitReSeq === this.reno)
+
+      },
+
+
+
+    },
+    computed: {
+      ...mapState(["recruitVieweeList"]),
+      //지원자 리스트에서 공고에 해당하는 것만 골라서 필터링
+      // filterdVieweeList: function () { //re.recruitReSeq === this.reno 로 수정해야함
+      //   return this.recruitVieweeList.filter(re => re.recruitReSeq === this.reno)
+
+      // }
+
+
 
     },
 
-    },
-     computed: {
-    ...mapState(["recruitVieweeList"]),
-
-    //지원자 리스트에서 공고에 해당하는 것만 골라서 필터링
-    filterdVieweeList: function() { //re.recruitReSeq === this.reno 로 수정해야함
-      return this.recruitVieweeList.filter( re => re.recruitReSeq === 1)
-
-    }
-
-  },
-   
 
 
   };
