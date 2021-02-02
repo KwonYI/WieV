@@ -205,9 +205,7 @@ export default new Vuex.Store({
 
 
     recruitVieweeList: [
-        
-
-
+      
     ],
 
     recruitViewerList: [
@@ -295,6 +293,11 @@ export default new Vuex.Store({
     },
     GET_RECRUIT_LIST(state, res){
       state.recruitList = res;
+    },
+    GETVIEWEELIST(state, res){
+      console.log("mutaions의 GETVIEWEELIST", res)
+      state.recruitVieweeList = res
+      console.log(state.recruitVieweeList)
     }
   },
 
@@ -339,6 +342,18 @@ export default new Vuex.Store({
         context.commit("GET_RECRUIT_LIST", response.data);
       });
       context.commit("GET_RECRUIT_LIST");
-    }
+    },
+    //지원자를 저장 
+    GETVIEWEELIST(context, recruitNo) {
+      axios.get(`${SERVER_URL}/applicant/getList/${recruitNo}`)
+        .then((res)=>{
+          context.commit("GETVIEWEELIST", res.data);
+        })
+        .catch((err)=>{
+          console.log(err)
+        })
+    },
+
+
   }
 })
