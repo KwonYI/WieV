@@ -113,8 +113,8 @@ export default {
 
         this.session.publish(this.publisher);
 
-        if(type === "interviewee")
-        else
+        // if(type === "interviewee")
+        // else
       })
       .catch((error) => {
         console.warn(
