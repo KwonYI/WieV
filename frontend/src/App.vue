@@ -42,6 +42,13 @@
                   WieV Inc.
                 </router-link>
               </span>
+
+              <span>
+                <router-link class="title" :to="{ name: 'Profile' }">
+                  내 정보
+                </router-link>
+              </span>
+
               <v-btn plain style="font-size: 1rem" @click="logout">
                 로그아웃
               </v-btn>
@@ -87,7 +94,7 @@
 </template>
 
 <script>
-// import RecruitMenu from "@/views/viewset/RecruitMenu.vue";
+// import RecruitMenu from "@/views/viewset/RecruitMenu.vue"
 import { mapGetters, mapState } from "vuex"
 
 export default {
@@ -109,10 +116,10 @@ export default {
     logout: function () {
       this.$store
         .dispatch("LOGOUT")
-        .then(() => this.$router.replace({ name: "Home" }));
-      // this.$store.state.isLogin = false;
-      // // this.$store.state.isViewer = false;
-      // this.$router.push({ name: "Home" });
+        .then(() => this.$router.replace({ name: "Home" }))
+      // this.$store.state.isLogin = false
+      // // this.$store.state.isViewer = false
+      // this.$router.push({ name: "Home" })
     },
   },
   created: function () {

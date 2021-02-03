@@ -48,14 +48,14 @@ export default {
       hr_phone: "01074965575",
       hr_create_date: "2021-01-27",
       hr_certified: "인증완료",
-    };
+    }
   },
   created: function () {
-    // this.reno = this.$route.params.recruitNo;
-    this.reno = this.$store.state.selectedRecruitNo;
-    console.log("reno:", this.reno);
+    // this.reno = this.$route.params.recruitNo
+    this.reno = this.$store.state.selectedRecruitNo
+    console.log("reno:", this.reno)
   },
-};
+}
 </script>
 
 <style>

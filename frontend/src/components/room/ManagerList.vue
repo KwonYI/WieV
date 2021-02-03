@@ -15,7 +15,7 @@
 <script>
 export default {
   name: "ManagerList",
-};
+}
 </script>
 
 <style scoped>

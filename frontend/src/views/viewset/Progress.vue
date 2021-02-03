@@ -1,6 +1,6 @@
 <template>
   <div id="progress">
-    <v-simple-table fixed-header class="mt-5">
+    <v-simple-table fixed-header height="1000px" class="mt-5">
       <thead>
         <tr>
           <th class="text-center">날짜</th>
@@ -41,7 +41,7 @@
 
 <script>
 
-import { mapState } from "vuex";
+import { mapState } from "vuex"
 
 
 export default {
@@ -49,11 +49,11 @@ export default {
   data: function () {
     return {
       reno: "",
-    };
+    }
   },
   created: function () {
-    this.reno = this.$store.state.selectedRecruitNo;
-    console.log("프로그레스 created의 reno:", this.reno);
+    this.reno = this.$store.state.selectedRecruitNo
+    console.log("프로그레스 created의 reno:", this.reno)
   },
 
   computed: {
@@ -66,7 +66,7 @@ export default {
 
   },
   
-};
+}
 </script>
 
 <style>

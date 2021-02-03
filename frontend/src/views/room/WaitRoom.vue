@@ -42,14 +42,14 @@
 </template>
 
 <script>
-//import axios from "axios";
-import { OpenVidu } from "openvidu-browser";
+//import axios from "axios"
+import { OpenVidu } from "openvidu-browser"
 
-import { mapState } from "vuex";
+import { mapState } from "vuex"
 
-// import ManagerList from "@/components/room/ManagerList.vue";
-// import VieweeList from "@/components/room/VieweeList.vue";
-// import UserVideo from "@/components/room/UserVideo";
+// import ManagerList from "@/components/room/ManagerList.vue"
+// import VieweeList from "@/components/room/VieweeList.vue"
+// import UserVideo from "@/components/room/UserVideo"
 
 export default {
   name: "WaitRoom",
@@ -84,7 +84,7 @@ export default {
       token: undefined,
       userName: undefined,
       type: undefined, // 대기실 관리자(manager) / 면접관(interviewer) / 면접자(interviewee)
-    };
+    }
   },
   mounted() {
     this.OV = new OpenVidu()
@@ -114,12 +114,12 @@ export default {
           frameRate: 30, // The frame rate of your video
           insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
           mirror: false, // Whether to mirror your local video or not
-        });
+        })
 
-        this.mainStreamManager = publisher;
-        this.publisher = publisher;
+        this.mainStreamManager = publisher
+        this.publisher = publisher
 
-        this.session.publish(this.publisher);
+        this.session.publish(this.publisher)
 
         // if(type === "interviewee")
         // else
@@ -129,42 +129,42 @@ export default {
           "There was an error connecting to the session:",
           error.code,
           error.message
-        );
-      });
+        )
+      })
 
-    window.addEventListener("beforeunload", this.leaveSession);
+    window.addEventListener("beforeunload", this.leaveSession)
   },
 
   methods: {
     leaveSession() {
-      if (this.session) this.session.disconnect();
+      if (this.session) this.session.disconnect()
 
-      this.session = undefined;
-      this.mainStreamManager = undefined;
-      this.publisher = undefined;
-      this.subscribers = [];
-      this.OV = undefined;
+      this.session = undefined
+      this.mainStreamManager = undefined
+      this.publisher = undefined
+      this.subscribers = []
+      this.OV = undefined
 
-      window.removeEventListener("beforeunload", this.leaveSession);
+      window.removeEventListener("beforeunload", this.leaveSession)
     },
 
     updateMainVideoStreamManager(stream) {
       // 클릭시 객체 정보 반환
-      if (this.mainStreamManager === stream) return;
-      this.mainStreamManager = stream;
+      if (this.mainStreamManager === stream) return
+      this.mainStreamManager = stream
     },
   },
 
   created: function() {
     // if (this.viewerLogin) {
-    //   this.$router.push({ name: "ViewerRecruitItem" });
+    //   this.$router.push({ name: "ViewerRecruitItem" })
     // }
   },
 
   computed: {
     ...mapState(["whoLogin"]),
   },
-};
+}
 </script>
 
 <style scoped>

@@ -15,10 +15,8 @@
                   v-model="credentials[item.value]"
                 ></v-text-field>
               </td>
-             <v-btn v-if="index===0" @click="send">인증 메일 발송
-             </v-btn>
-             <v-btn v-if="index===1" @click="certified">인증 확인
-             </v-btn>
+              <v-btn v-if="index === 0" @click="send">인증 메일 발송 </v-btn>
+              <v-btn v-if="index === 1" @click="certified">인증 확인 </v-btn>
             </tr>
           </tbody>
         </v-simple-table>
@@ -48,7 +46,9 @@
         ></v-checkbox>
       </v-col>
       <v-col cols="12"></v-col>
-      <span @click="signup" class="text-white text-right ma-8 pr-16">가입하기</span>
+      <span @click="signup" class="text-white text-right ma-8 pr-16"
+        >가입하기</span
+      >
     </v-row>
 
     <!-- Validation Form -->
@@ -148,102 +148,107 @@
 </template>
 
 <script>
- import axios from 'axios';
+import axios from "axios"
 
-const SERVER_URL = "https://localhost:8080/";
+const SERVER_URL = "https://localhost:8080/"
 
 export default {
   name: "Signup",
   components: {},
   data: () => ({
     userInfo: [
-      { label: "이메일", type: "text", value: 'hrEmail'},
-      { label: "이메일 인증번호", type: "text", value: 'hrEmailCode'},
-      { label: "이름", type: "text", value: 'hrName'},
-      { label: "비밀번호", type: "password", value: 'hrPassword'},
-      { label: "비밀번호 확인", type: "password", value: 'hrPasswordConfirmation'},
-      { label: "연락처", type: "text", value: 'hrPhone' },
-      { label: "기업명", type: "text", value: 'comName' },
+      { label: "이메일", type: "text", value: "hrEmail" },
+      { label: "이메일 인증번호", type: "text", value: "hrEmailCode" },
+      { label: "이름", type: "text", value: "hrName" },
+      { label: "비밀번호", type: "password", value: "hrPassword" },
+      {
+        label: "비밀번호 확인",
+        type: "password",
+        value: "hrPasswordConfirmation",
+      },
+      { label: "연락처", type: "text", value: "hrPhone" },
+      { label: "기업명", type: "text", value: "comName" },
     ],
     credentials: {
-      hrEmail: '',
-      hrEmailCode:'',
-      hrName:'',
-      hrPassword: '',
-      hrPasswordConfirmation: '',
-      hrPhone: '',
-      comName: '',
-      hrCertified:'',
+      hrEmail: "",
+      hrEmailCode: "",
+      hrName: "",
+      hrPassword: "",
+      hrPasswordConfirmation: "",
+      hrPhone: "",
+      comName: "",
+      hrCertified: "",
       agreed: false,
     },
-    certifiedNum:'',
-    isCertified:false
+    certifiedNum: "",
+    isCertified: false,
   }),
   methods: {
     // 메일 발송
-    send:function(){
-      if(this.credentials.hrEmail){
-        axios.post(`${SERVER_URL}email/send`,this.credentials)
-          .then(res => {
-            this.certifiedNum=res.data;
+    send: function() {
+      if (this.credentials.hrEmail) {
+        axios
+          .post(`${SERVER_URL}email/send`, this.credentials)
+          .then((res) => {
+            this.certifiedNum = res.data
             alert("메일 보내기 성공")
           })
-          .catch(err => {
+          .catch((err) => {
             console.log(err)
             alert("메일 보내기 실패")
-          })        
+          })
       }
     },
 
     //메일 인증 확인
-    certified:function(){
-      console.log("입력:"+this.credentials.hrEmailCode)
-      console.log("인증번호:"+this.certifiedNum)
-      if(this.credentials.hrEmailCode==this.certifiedNum){
-        this.isCertified=true;
-        alert("인증 완료");
-      }
-      else{
-        alert("인증 실패");
-        this.isCertified=false;
+    certified: function() {
+      console.log("입력:" + this.credentials.hrEmailCode)
+      console.log("인증번호:" + this.certifiedNum)
+      if (this.credentials.hrEmailCode == this.certifiedNum) {
+        this.isCertified = true
+        alert("인증 완료")
+      } else {
+        alert("인증 실패")
+        this.isCertified = false
       }
     },
 
-    signup: function () {
-      if (this.credentials.hrPassword != this.credentials.hrPasswordConfirmation) {
-        alert("비밀번호가 다릅니다.");
-        return;
+    signup: function() {
+      if (
+        this.credentials.hrPassword != this.credentials.hrPasswordConfirmation
+      ) {
+        alert("비밀번호가 다릅니다.")
+        return
       }
 
-      let regexp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
+      let regexp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i
       if (!regexp.test(this.credentials.hrEmail)) {
-        alert("이메일은 이메일 형식으로 입력해주세요.");
-        return;
+        alert("이메일은 이메일 형식으로 입력해주세요.")
+        return
       }
 
-      if(this.isCertified==false){
+      if (this.isCertified == false) {
         alert("메일 인증을 진행하세요.")
-        return;
+        return
       }
 
-      if (this.credentials.agreed){
-        axios.post(`${SERVER_URL}hr/signup`, this.credentials)
-          .then(res => {
+      if (this.credentials.agreed) {
+        axios
+          .post(`${SERVER_URL}hr/signup`, this.credentials)
+          .then((res) => {
             console.log(res)
             alert("회원가입 성공")
-            this.$router.push({ name: 'Login' })
+            this.$router.push({ name: "Home" })
           })
-          .catch(err => {
+          .catch((err) => {
             console.log(err)
             alert("회원가입 정보가 올바르지 않습니다.")
           })
       } else {
         alert("개인정보 이용 약관에 동의해야 합니다.")
       }
-    
-    }
-    
-  }
+    },
+  },
 }
 </script>
 
@@ -254,40 +259,40 @@ export default {
 </style>
 
 <!--<script>
-import { required, digits, email, max, regex } from "vee-validate/dist/rules";
+import { required, digits, email, max, regex } from "vee-validate/dist/rules"
 import {
   extend,
   ValidationObserver,
   ValidationProvider,
   setInteractionMode,
-} from "vee-validate";
+} from "vee-validate"
 
-setInteractionMode("eager");
+setInteractionMode("eager")
 
 extend("digits", {
   ...digits,
   message: "{_field_} needs to be {length} digits. ({_value_})",
-});
+})
 
 extend("required", {
   ...required,
   message: "{_field_} can not be empty",
-});
+})
 
 extend("max", {
   ...max,
   message: "{_field_} may not be greater than {length} characters",
-});
+})
 
 extend("regex", {
   ...regex,
   message: "{_field_} {_value_} does not match {regex}",
-});
+})
 
 extend("email", {
   ...email,
   message: "Email must be valid",
-});
+})
 
 export default {
   name: "Singup",
@@ -306,16 +311,16 @@ export default {
 
   methods: {
     submit() {
-      this.$refs.observer.validate();
+      this.$refs.observer.validate()
     },
     clear() {
-      this.name = "";
-      this.phoneNumber = "";
-      this.email = "";
-      this.select = null;
-      this.checkbox = null;
-      this.$refs.observer.reset();
+      this.name = ""
+      this.phoneNumber = ""
+      this.email = ""
+      this.select = null
+      this.checkbox = null
+      this.$refs.observer.reset()
     },
   },
-};
+}
 </script>-->

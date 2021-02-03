@@ -150,7 +150,7 @@ public class GroupAllController {
 				GroupDetail nowGroupDetail=groupDetailList.get(i);
 				List<ApplicantGroup> tmpApplicantGroupList=new ArrayList<ApplicantGroup>();
 				
-				tmpApplicantGroupList=applicantGroupDao.findAllApplicantGroupByGroupDetailDetailSeq(nowGroupDetail.getDetailSeq());
+				tmpApplicantGroupList=applicantGroupDao.findListApplicantGroupByGroupDetailDetailSeq(nowGroupDetail.getDetailSeq());
 				
 				for (int j = 0; j < tmpApplicantGroupList.size(); j++) {
 					applicantGroupList.add(tmpApplicantGroupList.get(j));

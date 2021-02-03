@@ -1,7 +1,7 @@
 <template>
   <div id="home" class="main-bg-navy">
     <v-row justify="center" class="pt-10" no-gutters>
-      <v-col cols="4" class="main-box text-center">
+      <v-col cols="8" class="main-box text-center">
         <div class="d-flex flex-column justify-center text-white">
           <v-col class="wiev-box">
             <v-col class="text-h5 mb-3">View Everywhere</v-col>
@@ -102,36 +102,13 @@
         .then(() => {this.$router.replace(this.$router.currentRoute) 
         this.credentials.userEmail = ""
         this.credentials.userPassword = ""
+        
+        
         })
-        .catch(({ message }) => (this.msg = message));
-        // 로그인 axios
-        // [BACK에게 요청] 로그인 했을 때, 인담자인지 면접관인지 값을 받아와야 해요, 회사정보(com_seq)도 주세요.
-        /*
-        axios.post('로그인 URL', this.credentials)
-          .then(res => {
-            console.log(res.data)
-            this.$set(this.$store.state, 'isLogin', true)
-            this.$set(this.$store.state, 'userEmail', res.data.userEmail)
-            if ('채용담당자') {
-              this.$set(this.$store.state, 'isManager', true)
-            }
-            this.$store.dispatch('getRecruits', res.data.com_seq)
-          })
-          .catch(err => {
-            console.log(err)
-          })
-        */
-
-        // this.$store.state.isLogin = true;
-        // this.$set(this.$store.state, "isLogin", true)
-
-        //일단은 테스트해야해서 isViewer를 false로 해놓음
-        //인담자 페이지를 보고싶으면 아래 값을 true로 변경하면 됨
-        // this.$set(this.$store.state, "isManager", true)
-        //######여기에는 로그인 하고나서 그 사람의 신분을 확인하는 로직이 들어가야 함######
-        // ### back단에서 로그인 했을 때 isViewer(boolean) 인가 데이터를 주면 좋겠어요.
-        //if(res.data.isViewer)가 아니면 면접관이므로 this.$router.push({name: 'Main' })
+        .catch(({ message }) => (this.msg = message))
+        
       },
+      
     },
   }
 </script>

@@ -103,10 +103,10 @@
 
 
 
-      };
+      }
     },
     created: function () {},
-  };
+  }
 </script>
 
 <style>

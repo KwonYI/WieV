@@ -1,9 +1,12 @@
 package com.web.project.controller.recruit;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
+import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,6 +17,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import javax.mail.MessagingException;
+import javax.servlet.MultipartConfigElement;
 import javax.validation.Valid;
 
 import org.apache.poi.EncryptedDocumentException;
@@ -26,6 +30,8 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.MultipartConfigFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -38,6 +44,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
 import com.web.project.controller.hr.HrController;
 import com.web.project.dao.group.GroupAllDao;
@@ -113,7 +121,26 @@ public class ApplicantController {
 		List<Applicant> applicantList=applicantDao.findAllApplicantByRecruitReSeq(reSeq);
 		return new ResponseEntity<List<Applicant>>(applicantList, HttpStatus.OK);
 	}
-
+	
+	
+	@GetMapping(value = "/getListByCompany/{comSeq}")
+	@ApiOperation(value = "회사에 따른 지원자 리스트 모두 가져오기")
+	public ResponseEntity<List<Applicant>> getApplicationListByCompany(@PathVariable("comSeq") int comSeq) {
+		
+		List<Applicant> AllapplicantList=applicantDao.findAll();
+		List<Applicant> resultApplicantList=new ArrayList<Applicant>();
+		
+		for (int i = 0; i <AllapplicantList.size(); i++) {
+			Applicant applicant=AllapplicantList.get(i);
+			int recruitSeq=applicant.getRecruitReSeq();
+			Recruit recruit=recruitDao.findRecruitByReSeq(recruitSeq);
+			if(comSeq==recruit.getCompanyComSeq()) {
+				resultApplicantList.add(applicant);
+			}
+		}
+		return new ResponseEntity<List<Applicant>>(resultApplicantList, HttpStatus.OK);
+	}
+	
 //	@PostMapping("/assign/{groupSeq}")
 //	@ApiOperation(value = "지원자 자동 배정")
 	public void applicantAssign(int groupSeq) {
@@ -246,32 +273,18 @@ public class ApplicantController {
 
 	};
 
-	@PostMapping("/getExcel")
-	private Object insertSalePost(@RequestParam MultipartFile file) {
-		ResponseEntity response = null;
-		
-		logger.info("file = " + file);
-	  
-		final BasicResponse result = new BasicResponse();
-		result.status = true;
-		result.data = "success";
-
-		response = new ResponseEntity<>(result, HttpStatus.OK);
-
-		return response;
-	}
 	
-	@PostMapping("/register")
+	@PostMapping("/register/{reSeq}")
 	@ApiOperation(value = "지원자등록")
-	public List<Applicant> applicantRegister(@Valid @RequestBody Recruit recruit)
+	public List<Applicant> applicantRegister( @PathVariable("reSeq") int reSeq,MultipartFile files)
 			throws EncryptedDocumentException, IOException, ParseException {
 		// 웹상에서 업로드 되어 MultipartFile인 경우 바로 InputStream으로 변경하여 사용.
-		// InputStream inputStream = new ByteArrayInputStream(file.getBytes());
+		 InputStream inputStream = new ByteArrayInputStream(files.getBytes());
 
-		String filePath = "C:\\example.xlsx"; // xlsx 형식
+		//String filePath = "C:\\example.xlsx"; // xlsx 형식
 		// String filePath = "D:\\applicant.xls"; // xls 형식
 
-		InputStream inputStream = new FileInputStream(filePath);
+		//InputStream inputStream = new FileInputStream(filePath);
 
 		// 엑셀 로드
 		Workbook workbook = WorkbookFactory.create(inputStream);
@@ -325,7 +338,6 @@ public class ApplicantController {
 					break;
 				case 5:
 					// 생년월일
-					System.out.println(row);
 					Date birth = (Date) getValueFromCell(cell);
 					// SimpleDateFormat trans = new SimpleDateFormat("yyyy-MM-dd");
 					applicant.setApplyBirth(birth);
@@ -364,7 +376,9 @@ public class ApplicantController {
 
 			// 랜덤아이디부여
 			applicant.setApplyId(getUUID());
-
+			
+			Recruit recruit=recruitDao.findRecruitByReSeq(reSeq);
+			
 			int comSeq = recruit.getCompanyComSeq();
 			Part part = partDao.findPartByCompanyComSeqAndPartName(comSeq, partName);
 

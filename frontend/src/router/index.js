@@ -38,6 +38,11 @@ const routes = [
     component: Signup,
   },
   {
+    path: 'profile',
+    name: 'Profile',
+    component: Profile,
+  },
+  {
     path: '/menu',
     name: 'Menu',
     component: Menu,
@@ -68,11 +73,7 @@ const routes = [
         name: 'Viewers',
         component: Viewers,
       },
-      {
-        path: 'profile',
-        name: 'Profile',
-        component: Profile,
-      },
+      
     ]
   },
   {

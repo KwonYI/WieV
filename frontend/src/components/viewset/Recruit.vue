@@ -47,27 +47,27 @@
             text: "지원자 관리",
           },
         ],
-      };
+      }
     },
     props: {
       recruitNo: [Object, String, Number],
       selectRecruitTrigger: [Object, String, Number],
     },
     created: function () {
-      console.log("reno:", this.recruitNo);
+      console.log("reno:", this.recruitNo)
     },
     watch: {
       recruitNo: function () {
         if (this.$route.path != "/recruitmenu/progress") {
           this.$router.push({
             name: "Progress"
-          });
+          })
           // if (this.$route.path != "/recruitmenu") {
-          //   this.$router.go(1);
+          //   this.$router.go(1)
         }
       },
     },
-  };
+  }
 </script>
 
 <style>
