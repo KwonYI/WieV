@@ -19,9 +19,11 @@
 		<java.version>13.0.1</java.version>
 		<!-- In OpenVidu -->
 		<docker.image.prefix>openvidu</docker.image.prefix>
+		
 	</properties>
 
 	<dependencies>
+	
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger2</artifactId>
@@ -134,8 +136,19 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
+	
+	<!-- 파일 업로드 주석 -->
+<dependency>
+  <groupId>commons-fileupload</groupId>
+  <artifactId>commons-fileupload</artifactId>
+  <version>1.2</version>
+</dependency>
 
-
+<dependency>
+  <groupId>commons-io</groupId>
+  <artifactId>commons-io</artifactId>
+  <version>1.2</version>
+</dependency>
 
 
 	</dependencies>

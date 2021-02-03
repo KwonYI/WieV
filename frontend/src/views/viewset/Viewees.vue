@@ -201,7 +201,9 @@
       //var excelfile=document.querySelector(`#files`);
       fd.append('files', this.files)
       //console.log( excelfile.files[0])
-      console.log(fd)
+      for (var pair of fd.values()) 
+      { console.log(pair); }
+
       axios.post(`${SERVER_URL}applicant/getExcel`,
             fd, {
               headers: {

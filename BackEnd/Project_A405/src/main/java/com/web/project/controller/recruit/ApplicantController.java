@@ -1,9 +1,11 @@
 package com.web.project.controller.recruit;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
+import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import javax.mail.MessagingException;
+import javax.servlet.MultipartConfigElement;
 import javax.validation.Valid;
 
 import org.apache.poi.EncryptedDocumentException;
@@ -26,6 +29,8 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.MultipartConfigFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -38,6 +43,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
 import com.web.project.controller.hr.HrController;
 import com.web.project.dao.group.GroupAllDao;
@@ -247,11 +254,17 @@ public class ApplicantController {
 	};
 
 	@PostMapping("/getExcel")
-	private Object insertSalePost(@RequestParam MultipartFile file) {
+	private Object insertSalePost(@RequestParam(value = "fd") MultipartFile fd) {
+		System.out.println("들왔찌롱");
+	    if (fd.isEmpty()) {
+	    	System.out.println("비었지롱");
+	        return new ResponseEntity<>("please select a file!", HttpStatus.OK);
+	    }
 		ResponseEntity response = null;
+		System.out.println("들어와씀");
+		String uuid_filename=fileWrite(fd);
+		System.out.println(uuid_filename);
 		
-		logger.info("file = " + file);
-	  
 		final BasicResponse result = new BasicResponse();
 		result.status = true;
 		result.data = "success";
@@ -260,6 +273,53 @@ public class ApplicantController {
 
 		return response;
 	}
+	
+
+    // 파일 저장 메소드
+    private String fileWrite(MultipartFile uploadfile) {
+        OutputStream out = null;
+        String targetFilename = null;
+        try {
+            String filePath = "C:/test"; // 설정파일로 뺀다.
+             
+            // 파일명 얻기
+            String fileName = uploadfile.getOriginalFilename();
+             
+            // 파일의 바이트 정보 얻기
+            byte[] bytes = uploadfile.getBytes();
+     
+            String originalFilename = uploadfile.getOriginalFilename(); // 파일명
+             
+            // 파일 확장자 추출
+            int pos = originalFilename.lastIndexOf( "." );
+            String fileExt = originalFilename.substring( pos + 1 );
+            
+            UUID uuid = UUID.randomUUID();
+            targetFilename = uuid.toString() + "." + fileExt.toLowerCase();
+     
+            String fileFullPath = filePath + "/" + targetFilename; // 파일 전체 경로
+             
+            // 파일 객체 생성
+            File file = new File(fileFullPath);
+            // 상위 폴더 존재 여부 확인
+            if (!file.getParentFile().exists()) {
+                // 상위 폴더가 존재 하지 않는 경우 상위 폴더 생성
+                file.getParentFile().mkdirs();
+            }
+             
+            // 파일 아웃풋 스트림 생성
+            out = new FileOutputStream(file);
+            // 파일 아웃풋 스트림에 파일의 바이트 쓰기
+            out.write(bytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try { if (out != null) { out.close(); } } catch (IOException e) { e.printStackTrace(); }
+        }
+        return targetFilename;
+    }
+
+
 	
 	@PostMapping("/register")
 	@ApiOperation(value = "지원자등록")
