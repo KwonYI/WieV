@@ -9,4 +9,6 @@ import com.web.project.model.hr.Part;
 public interface PartDao extends JpaRepository<Part, String>{
 	Part findPartByPartName(String partName);
 	Part findPartByCompanyComSeqAndPartName(int companyComSeq, String partName);
+	
+	Part findPartByPartSeq(int partSeq);
 }
