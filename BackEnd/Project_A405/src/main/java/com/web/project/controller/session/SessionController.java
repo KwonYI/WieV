@@ -119,8 +119,9 @@ public class SessionController {
 							token = session.createConnection(connectionProperties).getToken();
 							this.tokensInSession.get(sessionName).put(token, role);
 
-							resultMap.put("token", token);
 							resultMap.put("type", type);
+							resultMap.put("token", token);
+							resultMap.put("sessionName", sessionName);
 							resultMap.put("interviewerName", interviewer.getViewName());
 
 							result.status = true;
@@ -156,8 +157,9 @@ public class SessionController {
 								this.tokensInSession.put(sessionName, new ConcurrentHashMap<>());
 								this.tokensInSession.get(sessionName).put(token, role);
 
-								resultMap.put("token", token);
 								resultMap.put("type", type);
+								resultMap.put("token", token);
+								resultMap.put("sessionName", sessionName);
 								resultMap.put("interviewerName", interviewer.getViewName());
 
 								result.status = true;
@@ -231,6 +233,7 @@ public class SessionController {
 
 				resultMap.put("token", token);
 				resultMap.put("type", "interviewee");
+				resultMap.put("sessionName", sessionName);
 				resultMap.put("applicantName", applicantName);
 
 				result.status = true;

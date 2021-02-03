@@ -1,5 +1,5 @@
 <template>
-  <div id="standbyRoom">
+  <div id="waitRoom">
     <!-- 대기실 페이지. 신분에 따라 보여지는 컴포넌트가 다르다.  -->
 
     <!--상단 바-->
@@ -27,16 +27,15 @@
       <v-row>
         <!-- row2[왼쪽] : 관리자 리스트-->
         <v-col cols="3">
-          <ManagerList />
+          <!-- <ManagerList /> -->
         </v-col>
 
         <!-- row2[가운데] : 지원자 리스트-->
         <v-col cols="6">
-          <VieweeList />
+          <!-- <VieweeList /> -->
         </v-col>
-
         <!-- row2[오른쪽] : 우측에 FAQ 채팅창 잡동사니 -->
-        <v-col cols="3"> </v-col>
+        <v-col cols="3"></v-col>
       </v-row>
     </v-container>
   </div>
@@ -48,19 +47,27 @@ import { OpenVidu } from "openvidu-browser";
 
 import { mapState } from "vuex";
 
-import ManagerList from "@/components/room/ManagerList.vue";
-import VieweeList from "@/components/room/VieweeList.vue";
+// import ManagerList from "@/components/room/ManagerList.vue";
+// import VieweeList from "@/components/room/VieweeList.vue";
 // import UserVideo from "@/components/room/UserVideo";
 
 export default {
-  name: "StandbyRoom",
+  name: "WaitRoom",
   components: {
     // UserVideo,
-    ManagerList,
-    VieweeList,
+    // ManagerList,
+    // VieweeList,
   },
   data: function() {
     return {
+      participants: {
+        김면접1: "manager",
+        김지원1: "interviewer",
+        박면접2: "manager",
+        박지원2: "interviewer",
+        송지원3: "interviewer",
+      },
+
       com_name: "버즈글로벌",
       re_year: 2021,
       re_flag: "상반기",
@@ -70,29 +77,30 @@ export default {
       session: undefined,
       mainStreamManager: undefined, // 메인 비디오
       publisher: undefined, // 연결 객체
-      subscribers: [], // 나를 제외한 연결들
+      subscribers: [],
 
       // From SessionController
+      sessionName: undefined,
       token: undefined,
       userName: undefined,
       type: undefined, // 대기실 관리자(manager) / 면접관(interviewer) / 면접자(interviewee)
     };
   },
   mounted() {
-    this.OV = new OpenVidu();
-    this.session = this.OV.initSession();
+    this.OV = new OpenVidu()
+    this.session = this.OV.initSession()
+
     this.session.on("streamCreated", ({ stream }) => {
-      const subscriber = this.session.subscribe(stream);
-      // 나를 제외한 모든 비디오 객체들 담아 -> 어떻게하면 면접관과 면접자를 따로 담을 수 있을가
-      this.subscribers.push(subscriber);
-    });
+      const subscriber = this.session.subscribe(stream)
+      this.subscribers.push(subscriber)
+    })
 
     this.session.on("streamDestroyed", ({ stream }) => {
-      const index = this.subscribers.indexOf(stream.streamManager, 0);
+      const index = this.subscribers.indexOf(stream.streamManager, 0)
       if (index >= 0) {
-        this.subscribers.splice(index, 1);
+        this.subscribers.splice(index, 1)
       }
-    });
+    })
 
     this.session
       .connect(this.token, { clienData: this.userName })
@@ -129,7 +137,6 @@ export default {
 
   methods: {
     leaveSession() {
-      // --- Leave the session by calling 'disconnect' method over the Session object ---
       if (this.session) this.session.disconnect();
 
       this.session = undefined;

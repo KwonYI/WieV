@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import io.openvidu.java.client.OpenViduRole;
 
-// 로그인, 로그아웃 관리
 @Controller
 public class LoginController {
 

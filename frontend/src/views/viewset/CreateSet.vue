@@ -89,12 +89,56 @@
         
         <hr>
         <!-- 스케줄 -->
-        
         <v-data-table
-          :headers="scheduleTable.headers"
-          :items="scheduleTable.schedules"
+          :headers="schGroupTable.headers"
+          :items="schGroupTable.schGroups"
+          expand
         >
+          <template v-slot:body="{ items }">
+            <tbody>
+              <tr v-for="item in items" :key="item.schGroupsNo" @click="props.expanded = !props.expanded">
+                <td>{{ item.schGroupsNo }}</td>
+                <td>{{ item.schGroupsDate }}</td>
+                <td>{{ item.schGroupsTime }}</td>
+                <td>{{ item.schGroupsCareer }}</td>
+                <td>{{ item.schGroupsInterview }}</td>
+                <td>{{ item.schGroupsViewee }}</td>
+                <td>{{ item.schGroupsGuide }}</td>
+                <td>{{ item.schGroupsViewer }}</td>
+                <div></div>
+              </tr>
+              <!-- <v-expansion-panels scordion>
+                <v-expansion-panel>
+                  <v-expansion-panel-header>
+                  </v-expansion-panel-header>
+                  <v-expansion-panel-content>
+                    뜨라고!!!
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+              </v-expansion-panels> -->
 
+
+
+              <!-- <v-expansion-panels scordion>
+                <v-expansion-panel v-for="item in items" :key="item.schGroupNo">
+                  <v-expansion-panel-header>
+                    <tr>
+                      <td>{{ item.schGroupsNo }}</td>
+                      <td>{{ item.schGroupsDate }}</td>
+                      <td>{{ item.schGroupsTime }}</td>
+                      <td>{{ item.schGroupsCareer }}</td>
+                      <td>{{ item.schGroupsViewee }}</td>
+                      <td>{{ item.schGroupsGuide }}</td>
+                      <td>{{ item.schGroupsViewer }}</td>
+                    </tr>
+                  </v-expansion-panel-header>
+                  <v-expansion-panel-content>
+                    좀 떠라 떠
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+              </v-expansion-panels> -->
+            </tbody>
+          </template>
         </v-data-table>
         
       </v-col>
@@ -103,15 +147,19 @@
 </template>
 
 <script>
+import axios from 'axios'
 import _ from "lodash"
 
 export default {
   name: "CreateSet",
+  props: {
+    recruitNo: [Object, String, Number]
+  },
   data() {
     return {
       dialog: false,
       // 시즌 데이터
-      seasonData: [
+      seasonForm: [
         {
           name: "시즌",
           data: ["2020 하반기", "2021 상반기", "2021 하반기"],
@@ -219,6 +267,7 @@ export default {
 
       ],
       // 일정 생성 V-Model
+      seasonData: 1,
       formData: {
         // 부서
         part: '',
@@ -234,44 +283,66 @@ export default {
         endDate: '',
         // 종료 시간
         endTime: '',
-        // 면접 그룹당 면접관 수
+        // 면접 그룹당 면접관 수, int
         viewerNum: 0.1,
-        // 면접 그룹당 지원자 수
+        // 면접 그룹당 지원자 수, int
         vieweeNum: 0.1,
-        // 면접 그룹당 소요 시간
+        // 면접 그룹당 소요 시간, int
         duration: '',
-        // 면접 세부그룹 당 지원자 수
+        // 블라인드 여부
+        blindView: false,
+        // 면접 세부그룹 당 지원자 수, int
         vieweePerGroup: 0.1,
         // 면접 그룹당 세부 그룹 수(자동 계산)
         groupNum: 0
       },
       // 일정 데이터
-      scheduleTable: {
+      schGroupTable: {
+        expanded: [],
         headers: [
           {
             text: 'No.',
             align: 'start',
             sortable: false,
-            value: 'scheduleNo',
+            value: 'schGroupNo',
           },
-          { text: '날짜', value: 'scheduleDate' },
-          { text: '시간', value: 'scheduleTime' },
-          { text: '직무', value: 'scheduleCareer' },
-          { text: '면접 유형', value: 'scheduleInterview' },
-          { text: '지원자', value: 'scheduleViewee' },
-          { text: '대기실', value: 'scheduleGuide' },
-          { text: '면접실', value: 'scheduleViewer' },
+          { text: '날짜', value: 'schGroupDate' },
+          { text: '시간', value: 'schGroupTime' },
+          { text: '직무', value: 'schGroupCareer' },
+          { text: '면접 유형', value: 'schGroupInterview' },
+          { text: '지원자', value: 'schGroupViewee' },
+          { text: '대기실', value: 'schGroupGuide' },
+          { text: '면접실', value: 'schGroupViewer' },
         ],
-        schedules: [
+        // 면접 그룹
+        schGroups: [
           {
-            scheduleNo: 1,
-            scheduleDate: '7/10',
-            scheduleTime: '14:00',
-            scheduleJob: '마케팅',
-            scheduleInterview: '직무, PT, 그룹',
-            scheduleViewee: '',
-            scheduleGuide: '',
-            scheduleViewer: ''
+            // 면접 그룹 seq
+            schGroupsNo: 1,
+            // 면접 그룹 시작 날짜
+            schGroupsDate: '7/10',
+            // 면접 그룹 시작 시간
+            schGroupsTime: '14:00',
+            // 면접 그룹 직군
+            schGroupsCareer: '마케팅',
+            // 면접 그룹 면접 종류
+            schGroupsInterview: '직무, PT, 그룹',
+            // 면접 그룹 
+            schGroupsViewee: '',
+            // 면접 그룹
+            schGroupsGuide: '',
+            // 면접 그룹
+            schGroupsViewer: '',
+            // 면접 그룹
+            schGroup: [
+              {
+                schGroupNo: 1,
+                schGroupsCareer: '마케팅',
+                // 
+                schGroupsInterview: ['직무', 'PT', '그룹'],
+                schGroupsViewee: '',
+              }
+            ]
           }
         ]
       },
@@ -280,8 +351,15 @@ export default {
     }
   },
   methods: {
+    // 면접 스케줄 추가
     addSchedule: function () {
-      
+      axios.post(`https://localhost:8080/groupAll/divide` + this.recruitNo, this.formData)
+        .then(res => {
+          console.log(res)
+          // DB에서 정보 받아오기
+          // 정보 schedules에 저장하기
+        })
+        .catch(err => console.log(err))
     }
   },
   watch: {
@@ -306,15 +384,23 @@ export default {
     viewTypesNum() {
       return _.findLastIndex(this.formData.viewTypes) + 1
     },
+  },
+  created () {
+    this.scheduleTable.schedules.forEach(i => {
+      this.$set(this.scheduleTable.expanded, i.name, false)
+    })
   }
-};
+}
 </script>
 
 <style scoped>
-.brd {
-  border: 0.5px solid lightgray;
-}
-.v-input input {
-  font-size: 10px;
-}
+  /* .schTable::before {
+    content: '';
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: black;
+  } */
 </style>

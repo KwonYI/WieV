@@ -63,6 +63,7 @@
     }),
      function () {
       return {
+        loading: false,
         search: null,
         select: null,
         items: [],
@@ -187,6 +188,8 @@
       console.log("reno:", this.reno);
       console.log("지원자들어있나 created때?", this.recruitVieweeList)
       this.filterdVieweeList();
+      // console.log(this.filterdVieweeList)
+      // this.createVieweeDB();
 
 
 
