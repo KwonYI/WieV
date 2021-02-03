@@ -92,14 +92,14 @@ public class InterviewerController {
 		return new ResponseEntity<List<Interviewer>>(interviewerList, HttpStatus.OK);
 	}
 		
-	@PostMapping("/assign/{groupSeq}")
-	@ApiOperation(value = "면접관 자동 배정")
-	public Object interviewerAssign(@PathVariable("groupSeq") int groupSeq) {
-		HttpStatus status = null;
+	//@PostMapping("/assign/{groupSeq}")
+	//@ApiOperation(value = "면접관 자동 배정")
+	public void interviewerAssign(int groupSeq) {
+//		HttpStatus status = null;
 		List<Interviewer> interviewerList = new ArrayList<Interviewer>();
 		List<GroupType> groupTypeList = new ArrayList<GroupType>();
 
-		try {
+//		try {
 
 			GroupAll nowGroupAll = groupAllDao.findGroupAllByGroupSeq(groupSeq);
 
@@ -197,12 +197,12 @@ public class InterviewerController {
 				}
 
 			}
-			status = HttpStatus.OK;
-		} catch (RuntimeException e) {
-			logger.error("면접관 자동 배정 실패", e);
-			status = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<>("면접관 자동 배정 완료", status);
+//			status = HttpStatus.OK;
+//		} catch (RuntimeException e) {
+//			logger.error("면접관 자동 배정 실패", e);
+//			status = HttpStatus.INTERNAL_SERVER_ERROR;
+//		}
+//		return new ResponseEntity<>("면접관 자동 배정 완료", status);
 	}
 
 	@PostMapping("/register")

@@ -124,6 +124,7 @@
           },
 
         ],
+    
       };
     },
     created: function () {

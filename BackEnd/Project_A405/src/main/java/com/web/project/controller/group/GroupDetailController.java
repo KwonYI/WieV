@@ -55,13 +55,13 @@ public class GroupDetailController {
 	
 	public static final Logger logger = LoggerFactory.getLogger(HrController.class);
 	
-	@PostMapping("/divide/{divideNum}")
-	@ApiOperation(value = "세부 그룹 인원수로 세부 그룹 나누기")
-	public Object divideDetail(@PathVariable("divideNum") int divideNum, int groupSeq) {
-		HttpStatus status = null;
+//	@PostMapping("/divide/{groupSeq}/{divideNum}")
+//	@ApiOperation(value = "세부 그룹 인원수로 세부 그룹 나누기")
+	public void divideDetail(int divideNum,int groupSeq) {
+		//HttpStatus status = null;
 		GroupDetail groupDetail = null;
 		
-		try {
+		//try {
 			// 1. 각 그룹의 인원 수를 가져온다.
 			int groupAllNum = groupAllDao.findGroupAllByGroupSeq(groupSeq).getGroupDivide();
 			
@@ -90,18 +90,18 @@ public class GroupDetailController {
 				groupDetailDao.save(groupDetail);
 			}
 			
-			status = HttpStatus.OK;
-		} catch (RuntimeException e) {
-			logger.error("세부 그룹 등록 실패", e);
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		
-		return new ResponseEntity<> ("세부 그룹 등록 완료", status);
+			//status = HttpStatus.OK;
+//		} catch (RuntimeException e) {
+//			logger.error("세부 그룹 등록 실패", e);
+//            status = HttpStatus.INTERNAL_SERVER_ERROR;
+//		}
+//		
+		//return new ResponseEntity<> ("세부 그룹 등록 완료", status);
 	}
 	
-	@GetMapping("/calculate/divideCount/{divideNum}")
+	@GetMapping("/calculate/divideCount/{groupSeq}/{divideNum}")
 	@ApiOperation(value = "세부 그룹이 몇 개인지 확인하기")
-	public Object getDivideCount(@PathVariable("divideNum") int divideNum, int groupSeq) {
+	public Object getDivideCount(@PathVariable("divideNum") int divideNum,@PathVariable("groupSeq") int groupSeq) {
 		int divideCount = 0;
 		HttpStatus status = null;
 		
@@ -125,12 +125,12 @@ public class GroupDetailController {
 		return new ResponseEntity<Integer> (divideCount, status);
 	}
 	
-	@PostMapping("/allocate/detailOrder/{groupSeq}")
-	@ApiOperation(value = "세부 그룹에 순서 부여하기")
-	public Object allocateDetailOrder(@PathVariable("groupSeq") int groupSeq) {
-		HttpStatus status = null;
+//	@PostMapping("/allocate/detailOrder/{groupSeq}")
+//	@ApiOperation(value = "세부 그룹에 순서 부여하기")
+	public void allocateDetailOrder(int groupSeq) {
+	//	HttpStatus status = null;
 		
-		try {
+	//	try {
 			// 1. 각 그룹의 면접 리스트, 세부 그룹 리스트를 구해준다.
 			List<GroupDetail> groupDetailList = groupDetailDao.findListGroupDetailByGroupGroupSeq(groupSeq);
 			List<GroupType> groupTypeList = groupTypeDao.findListGroupTypeByGroupGroupSeq(groupSeq);
@@ -172,13 +172,13 @@ public class GroupDetailController {
 				sequenceQ.offer(sequenceQ.poll());
 			}
 			
-			status = HttpStatus.OK;
-		} catch (RuntimeException e) {
-			logger.error("세부 그룹 순서 부여 실패", e);
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		
-		return new ResponseEntity<> ("순서 부여 완료", status);
+//			status = HttpStatus.OK;
+//		} catch (RuntimeException e) {
+//			logger.error("세부 그룹 순서 부여 실패", e);
+//            status = HttpStatus.INTERNAL_SERVER_ERROR;
+//		}
+//		
+//		return new ResponseEntity<> ("순서 부여 완료", status);
 	}
 	
 	@GetMapping("/show/detailOrder/{groupSeq}")

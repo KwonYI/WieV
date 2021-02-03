@@ -35,7 +35,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.web.project.controller.hr.HrController;
 import com.web.project.dao.group.GroupAllDao;
@@ -112,14 +114,14 @@ public class ApplicantController {
 		return new ResponseEntity<List<Applicant>>(applicantList, HttpStatus.OK);
 	}
 
-	@PostMapping("/assign/{groupSeq}")
-	@ApiOperation(value = "지원자 자동 배정")
-	public Object applicantAssign(@PathVariable("groupSeq") int groupSeq) {
-		HttpStatus status = null;
+//	@PostMapping("/assign/{groupSeq}")
+//	@ApiOperation(value = "지원자 자동 배정")
+	public void applicantAssign(int groupSeq) {
+//		HttpStatus status = null;
 		List<Applicant> applicantList = new ArrayList<Applicant>();
 		List<GroupDetail> groupDetailList = new ArrayList<GroupDetail>();
 
-		try {
+//		try {
 
 			GroupAll nowGroupAll = groupAllDao.findGroupAllByGroupSeq(groupSeq);
 
@@ -178,12 +180,12 @@ public class ApplicantController {
 				}
 
 			}
-			status = HttpStatus.OK;
-		} catch (RuntimeException e) {
-			logger.error("지원자 자동 배정 실패", e);
-			status = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<>("지원자 자동 배정 완료", status);
+//			status = HttpStatus.OK;
+//		} catch (RuntimeException e) {
+//			logger.error("지원자 자동 배정 실패", e);
+//			status = HttpStatus.INTERNAL_SERVER_ERROR;
+//		}
+//		return new ResponseEntity<>("지원자 자동 배정 완료", status);
 	}
 
 	@PostMapping("/send")
@@ -244,6 +246,21 @@ public class ApplicantController {
 
 	};
 
+	@PostMapping("/getExcel")
+	private Object insertSalePost(@RequestParam MultipartFile file) {
+		ResponseEntity response = null;
+		
+		logger.info("file = " + file);
+	  
+		final BasicResponse result = new BasicResponse();
+		result.status = true;
+		result.data = "success";
+
+		response = new ResponseEntity<>(result, HttpStatus.OK);
+
+		return response;
+	}
+	
 	@PostMapping("/register")
 	@ApiOperation(value = "지원자등록")
 	public List<Applicant> applicantRegister(@Valid @RequestBody Recruit recruit)
