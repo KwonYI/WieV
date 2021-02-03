@@ -1,5 +1,6 @@
 package com.web.project.controller.interview;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.web.project.controller.hr.HrController;
 import com.web.project.dao.group.GroupAllDao;
@@ -205,17 +207,17 @@ public class InterviewerController {
 //		return new ResponseEntity<>("면접관 자동 배정 완료", status);
 	}
 
-	@PostMapping("/register")
+	@PostMapping("/register/{reSeq}")
 	@ApiOperation(value = "면접관등록")
-	public List<Interviewer> interviewerRegister(@Valid @RequestBody Recruit recruit)
+	public List<Interviewer> interviewerRegister(@PathVariable("reSeq") int reSeq,MultipartFile files)
 			throws EncryptedDocumentException, IOException {
 		// 웹상에서 업로드 되어 MultipartFile인 경우 바로 InputStream으로 변경하여 사용.
-		// InputStream inputStream = new ByteArrayInputStream(file.getBytes());
+		 InputStream inputStream = new ByteArrayInputStream(files.getBytes());
 
-		String filePath = "C:\\example.xlsx"; // xlsx 형식
+		//String filePath = "C:\\example.xlsx"; // xlsx 형식
 		// String filePath = "D:\\applicant.xls"; // xls 형식
 
-		InputStream inputStream = new FileInputStream(filePath);
+		//InputStream inputStream = new FileInputStream(filePath);
 
 		// 엑셀 로드
 		Workbook workbook = WorkbookFactory.create(inputStream);
@@ -281,7 +283,9 @@ public class InterviewerController {
 					break;
 				}
 			}
-
+			
+			Recruit recruit=recruitDao.findRecruitByReSeq(reSeq);
+			
 			int comSeq = recruit.getCompanyComSeq();
 			interviewer.setCompanyComSeq(comSeq);
 
