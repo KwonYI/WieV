@@ -1,9 +1,9 @@
-import Vue from "vue";
-import Vuex from "vuex";
-import axios from "axios";
+import Vue from "vue"
+import Vuex from "vuex"
+import axios from "axios"
 
-Vue.use(Vuex);
-const SERVER_URL = "https://localhost:8080";
+Vue.use(Vuex)
+const SERVER_URL = "https://localhost:8080"
 // import axios from 'axios'
 
 export default new Vuex.Store({
@@ -210,29 +210,29 @@ export default new Vuex.Store({
 
   getters: {
     getUser(state) {
-      return state.user;
+      return state.user
     },
     getAccessToken(state) {
-      return state.accessToken;
+      return state.accessToken
     },
     getUserViewWait(state) {
-      return state.user.userViewWait;
+      return state.user.userViewWait
     },
     getUserComSeq(state) {
-      return state.user.userComSeq;
+      return state.user.userComSeq
     },
     // getParticipantsInInterview(state) {
     //   return (sessionName) =>
     //     state.participantsInInterviews.filter((interview) => {
-    //       return interview.sessionName === sessionName;
-    //     });
+    //       return interview.sessionName === sessionName
+    //     })
     // },
   },
   mutations: {
     // 공고 리스트 가져오는 요청
     // 필요한 데이터 : re_seq, re_year, re_flag, re_status, re_startdate, re_enddate
     GET_RECRUITS: function(state, res) {
-      console.log(state, res);
+      console.log(state, res)
 
       // this.$set(state, comData, res.'회사 정보')
       // this.$set(state, recruitList, res.'공고 리스트')
@@ -251,69 +251,69 @@ export default new Vuex.Store({
 
     //############# Schedule.vue 에서 새로 추가한 공고 store에 넣는 작업 ###################################
     ADD_RECRUIT: function(state, recruitData) {
-      console.log("state의 ADD_RECRUIT실행:", state, recruitData);
-      state.recruit_list.push(recruitData);
+      console.log("state의 ADD_RECRUIT실행:", state, recruitData)
+      state.recruit_list.push(recruitData)
       //필요하다면, recruitData 형식을 가공해서 넣어줘야 함
     },
 
     LOGIN(state, res) {
-      state.accessToken = res["auth-token"];
-      state.user.userEmail = res["user-Email"];
-      state.user.userName = res["user-Name"];
-      state.user.userPhone = res["user-Phone"];
-      state.user.userViewWait = res["user-View-Wait"];
-      state.user.userComSeq = res["user-Company-Seq"];
-      state.user.userComName = res["user-Company-Name"];
-      state.user.userComLogo = res["user-Company-Logo"];
-      state.user.userComAddress = res["user-Company-Address"];
-      state.user.userComHomepage = res["user-Company-Homepage"];
+      state.accessToken = res["auth-token"]
+      state.user.userEmail = res["user-Email"]
+      state.user.userName = res["user-Name"]
+      state.user.userPhone = res["user-Phone"]
+      state.user.userViewWait = res["user-View-Wait"]
+      state.user.userComSeq = res["user-Company-Seq"]
+      state.user.userComName = res["user-Company-Name"]
+      state.user.userComLogo = res["user-Company-Logo"]
+      state.user.userComAddress = res["user-Company-Address"]
+      state.user.userComHomepage = res["user-Company-Homepage"]
     },
     LOGOUT(state) {
-      state.accessToken = null;
-      state.user.userEmail = "";
-      state.user.userName = "";
-      state.user.userPhone = "";
-      state.user.userViewWait = 0;
-      state.user.userComSeq = 0;
-      state.user.userComName = "";
-      state.user.userComLogo = "";
-      state.user.userComAddress = "";
-      state.user.userComHomepage = "";
+      state.accessToken = null
+      state.user.userEmail = ""
+      state.user.userName = ""
+      state.user.userPhone = ""
+      state.user.userViewWait = 0
+      state.user.userComSeq = 0
+      state.user.userComName = ""
+      state.user.userComLogo = ""
+      state.user.userComAddress = ""
+      state.user.userComHomepage = ""
     },
     GET_RECRUIT_LIST(state, res) {
-      state.recruitList = res;
+      state.recruitList = res
     },
     INSERT_RECRUIT(state, res) {
-      state.recruitList.push(res);
+      state.recruitList.push(res)
     },
     GETVIEWEELIST(state, res) {
-      console.log("mutaions의 GETVIEWEELIST", res);
-      state.recruitVieweeList = res;
-      console.log(state.recruitVieweeList);
+      console.log("mutaions의 GETVIEWEELIST", res)
+      state.recruitVieweeList = res
+      console.log(state.recruitVieweeList)
     },
   },
 
   actions: {
     getRecruits: function({ commit }, res) {
-      commit("GET_RECRUITS", res);
+      commit("GET_RECRUITS", res)
     },
 
     addRecruit: function({ commit }, recruitData) {
-      commit("ADD_RECRUIT", recruitData);
+      commit("ADD_RECRUIT", recruitData)
     },
 
     // 로그인, 로그아웃
     LOGIN(context, user) {
       axios.post(`${SERVER_URL}/hr/login`, user).then((response) => {
-        context.commit("LOGIN", response.data);
+        context.commit("LOGIN", response.data)
         axios.defaults.headers.common[
           "auth-token"
-        ] = `${response.data["auth-token"]}`;
-      });
+        ] = `${response.data["auth-token"]}`
+      })
     },
     LOGOUT(context) {
-      context.commit("LOGOUT");
-      axios.defaults.headers.common["auth-token"] = undefined;
+      context.commit("LOGOUT")
+      axios.defaults.headers.common["auth-token"] = undefined
     },
 
     // 공고 리스트 가져오기, 추가
@@ -321,10 +321,10 @@ export default new Vuex.Store({
       axios
         .get(`${SERVER_URL}/recruit/getList/` + this.state.user.userComSeq)
         .then((response) => {
-          context.commit("GET_RECRUIT_LIST", response.data);
-          console.log(response.data);
-        });
-      context.commit("GET_RECRUIT_LIST");
+          context.commit("GET_RECRUIT_LIST", response.data)
+          console.log(response.data)
+        })
+      context.commit("GET_RECRUIT_LIST")
     },
     INSERT_RECRUIT(context, newRecruit) {
       axios
@@ -333,8 +333,8 @@ export default new Vuex.Store({
           newRecruit
         )
         .then((response) => {
-          context.commit("INSERT_RECRUIT", response.data);
-        });
+          context.commit("INSERT_RECRUIT", response.data)
+        })
     },
 
     //지원자를 저장
@@ -342,11 +342,11 @@ export default new Vuex.Store({
       axios
         .get(`${SERVER_URL}/applicant/getList/${recruitNo}`)
         .then((res) => {
-          context.commit("GETVIEWEELIST", res.data);
+          context.commit("GETVIEWEELIST", res.data)
         })
         .catch((err) => {
-          console.log(err);
-        });
+          console.log(err)
+        })
     },
   },
-});
+})

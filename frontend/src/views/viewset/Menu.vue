@@ -40,10 +40,10 @@
 </template>
 
 <script>
-import Recruit from "../../components/viewset/Recruit.vue";
-import Profile from "../../views/accounts/Profile.vue";
+import Recruit from "../../components/viewset/Recruit.vue"
+import Profile from "../../views/accounts/Profile.vue"
 
-import { mapState } from "vuex";
+import { mapState } from "vuex"
 
 export default {
   name: "Menu",
@@ -67,7 +67,7 @@ export default {
     selectRecruit: function (selectedreno) {
       console.log("selectRecruit클릭!", selectedreno)
       this.$store.state.selectedRecruitNo = selectedreno
-      this.recruitno = selectedreno;
+      this.recruitno = selectedreno
     },
     goToProfile: function () {
       this.recruitno = -1
@@ -82,7 +82,7 @@ export default {
     ...mapState(["selectedRecruitNo", "recruitList"]),
   },
 
-};
+}
 </script>
 
 <style>

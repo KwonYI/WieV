@@ -92,55 +92,36 @@
         <v-data-table
           :headers="schGroupTable.headers"
           :items="schGroupTable.schGroups"
-          expand
+          single-expand
+          :expanded.sync="schGroupTable.expanded"
+          item-key="schGroupNo"
+          @click:row="(item, slot) => slot.expand(!slot.isExpanded)"
         >
-          <template v-slot:body="{ items }">
-            <tbody>
-              <tr v-for="item in items" :key="item.schGroupsNo" @click="props.expanded = !props.expanded">
-                <td>{{ item.schGroupsNo }}</td>
-                <td>{{ item.schGroupsDate }}</td>
-                <td>{{ item.schGroupsTime }}</td>
-                <td>{{ item.schGroupsCareer }}</td>
-                <td>{{ item.schGroupsInterview }}</td>
-                <td>{{ item.schGroupsViewee }}</td>
-                <td>{{ item.schGroupsGuide }}</td>
-                <td>{{ item.schGroupsViewer }}</td>
-                <div></div>
-              </tr>
-              <!-- <v-expansion-panels scordion>
-                <v-expansion-panel>
-                  <v-expansion-panel-header>
-                  </v-expansion-panel-header>
-                  <v-expansion-panel-content>
-                    뜨라고!!!
-                  </v-expansion-panel-content>
-                </v-expansion-panel>
-              </v-expansion-panels> -->
-
-
-
-              <!-- <v-expansion-panels scordion>
-                <v-expansion-panel v-for="item in items" :key="item.schGroupNo">
-                  <v-expansion-panel-header>
-                    <tr>
-                      <td>{{ item.schGroupsNo }}</td>
-                      <td>{{ item.schGroupsDate }}</td>
-                      <td>{{ item.schGroupsTime }}</td>
-                      <td>{{ item.schGroupsCareer }}</td>
-                      <td>{{ item.schGroupsViewee }}</td>
-                      <td>{{ item.schGroupsGuide }}</td>
-                      <td>{{ item.schGroupsViewer }}</td>
-                    </tr>
-                  </v-expansion-panel-header>
-                  <v-expansion-panel-content>
-                    좀 떠라 떠
-                  </v-expansion-panel-content>
-                </v-expansion-panel>
-              </v-expansion-panels> -->
-            </tbody>
+          <!-- <tbody>
+            <template v-slot:body="{ items }">
+            <tr v-for="item in items" :key="item.schGroupNo" @click="props.expanded = !props.expanded">
+              <td>{{ props.item.schGroupNo }}</td>
+              <td>{{ props.item.schGroupDate }}</td>
+              <td>{{ props.item.schGroupTime }}</td>
+              <td>{{ props.item.schGroupCareer }}</td>
+              <td>{{ props.item.schGroupInterview }}</td>
+              <td>{{ props.item.schGroupViewee }}</td>
+              <td>{{ props.item.schGroupGuide }}</td>
+              <td>{{ props.item.schGroupViewer }}</td>
+            </tr>
           </template>
+          </tbody> -->
+          <template v-slot:expanded-item="{ headers, item }">
+            <td :colspan="headers.length">
+              {{ item }}
+            </td>
+          </template>
+          <!-- <template v-slot:expanded-item="{ headers, item }">
+            <td :colspan="headers.length">
+              {{ item }}
+            </td>
+          </template> -->
         </v-data-table>
-        
       </v-col>
     </v-row>
   </div>
@@ -205,7 +186,7 @@ export default {
         },
         {
           name: "시간",
-          data: ["1시", "2시"],
+          data: ["13", "14"],
           col: 2,
           multiple: false,
           value: 'startTime'
@@ -223,7 +204,7 @@ export default {
         },
         {
           name: "시간",
-          data: ["7시", "8시"],
+          data: ["19", "20"],
           col: 2,
           multiple: false,
           value: 'endTime'
@@ -234,7 +215,7 @@ export default {
         },
         {
           name: "면접관 수",
-          data: ["2명", "3명"],
+          data: [2, 3],
           col: 3,
           multiple: false,
           value: 'viewerNum'
@@ -248,7 +229,7 @@ export default {
         },
         {
           name: "소요 시간",
-          data: ["1시간", "2시간"],
+          data: [1, 2],
           col: 3,
           multiple: false,
           value: 'duration'
@@ -275,7 +256,7 @@ export default {
         career: '',
         // 면접 유형
         viewTypes: [],
-        // 시작 날짜
+        // 시작 날짜, 7/10
         startDate: '',
         // 시작 시간
         startTime: '',
@@ -318,34 +299,79 @@ export default {
         schGroups: [
           {
             // 면접 그룹 seq
-            schGroupsNo: 1,
+            schGroupNo: 1,
             // 면접 그룹 시작 날짜
-            schGroupsDate: '7/10',
+            schGroupDate: '7/10',
             // 면접 그룹 시작 시간
-            schGroupsTime: '14:00',
+            schGroupTime: '14:00',
             // 면접 그룹 직군
-            schGroupsCareer: '마케팅',
+            schGroupCareer: '마케팅',
             // 면접 그룹 면접 종류
-            schGroupsInterview: '직무, PT, 그룹',
-            // 면접 그룹 
-            schGroupsViewee: '',
-            // 면접 그룹
-            schGroupsGuide: '',
-            // 면접 그룹
-            schGroupsViewer: '',
-            // 면접 그룹
+            schGroupInterview: ['직무', 'PT', '그룹'],
+            // 면접 그룹 지원자(면접자)
+            schGroupViewee: ['김일번', '박이번', '김삼번', '박사번'],
+            // 면접 그룹 대기관
+            schGroupGuide: [],
+            // 면접 그룹 면접관
+            schGroupViewer: [{
+              name: '김면접',
+            }],
+            // 면접 세부 그룹
+            schSmallGroups: [
+              {
+                schSmallGroupNo: 1,
+                // 세부그룹 면접 순서
+                schSmallGroupInterview: ['직무', 'PT', '그룹'],
+                // 세부 그룹의 지원자(면잡자)
+                schSmallGroupViewee: ['김일번', '박사번'],
+              },
+              {
+                schSmallGroupNo: 2,
+                schSmallGroupInterview: ['그룹', '직무', 'PT'],
+                schSmallGroupViewee: ['박이번', '김삼번'],
+              },
+            ]
+          },
+          {
+            schGroupsNo: 2,
+            schGroupsDate: '7/10',
+            schGroupsTime: '16:00',
+            schGroupsCareer: '마케팅',
+            schGroupsInterview: ['직무, PT, 그룹'],
+            schGroupsViewee: [],
+            schGroupsGuide: [],
+            schGroupsViewer: [],
             schGroup: [
               {
                 schGroupNo: 1,
                 schGroupsCareer: '마케팅',
-                // 
                 schGroupsInterview: ['직무', 'PT', '그룹'],
                 schGroupsViewee: '',
               }
             ]
-          }
+          },
+          {
+            schGroupsNo: 3,
+            schGroupsDate: '7/10',
+            schGroupsTime: '17:00',
+            schGroupsCareer: 'SW개발',
+            schGroupsInterview: ['인성', '직무', 'PT'], 
+            schGroupsViewee: [],
+            schGroupsGuide: [],
+            schGroupsViewer: [],
+            schGroup: [
+              {
+                schGroupNo: 1,
+                schGroupsCareer: 'SW개발',
+                schGroupsInterview: ['PT', '직무', '인성'],
+                schGroupsViewee: '',
+              }
+            ]
+          },
         ]
       },
+      
+
       loader: null,
       loading: false,
     }
@@ -356,10 +382,23 @@ export default {
       axios.post(`https://localhost:8080/groupAll/divide` + this.recruitNo, this.formData)
         .then(res => {
           console.log(res)
-          // DB에서 정보 받아오기
-          // 정보 schedules에 저장하기
+          axios.get('면접스케줄 받기')
+            .then(res => console.log(res))
+            .catch(err => console.log(err))
+          axios.get('지원자 정보 받기')
+            .then(res => console.log(res))
+            .catch(err => console.log(err))
+          axios.get('면접관 정보 받기')
+            .then(res => console.log(res))
+            .catch(err => console.log(err))
+          axios.get('면접 유형 받기')
+            .then(res => console.log(res))
+            .catch(err => console.log(err))
         })
         .catch(err => console.log(err))
+    },
+    clicked: function (value) {
+      this.schGroupTable.expanded.push(value)
     }
   },
   watch: {
@@ -386,9 +425,6 @@ export default {
     },
   },
   created () {
-    this.scheduleTable.schedules.forEach(i => {
-      this.$set(this.scheduleTable.expanded, i.name, false)
-    })
   }
 }
 </script>
@@ -403,4 +439,33 @@ export default {
     top: 0;
     color: black;
   } */
+table.table {
+  margin:0 auto;
+  width: 98%;
+  max-width: 98%;
+}
+.datatable-cell-wrapper {
+  width: inherit;
+  position: relative;
+  z-index: 4;
+  padding: 10px 24px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.datatable__expand-content .card__text {
+  z-index: 3;
+  position: relative;
+}
+.datatable-container {
+  position: absolute;
+  background-color: white;
+  top: -50px;
+  left: -14px;
+  right: -14px;
+  bottom: 0;
+  z-index: 2;
+  border:1px solid #ccc;
+  box-shadow: 0 4px 5px 0 rgba(0,0,0,0.15), 0 1px 10px 0 rgba(0,0,0,0.15), 0 2px 4px -1px rgba(0,0,0,0.2);
+}
 </style>
