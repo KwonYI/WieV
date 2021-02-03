@@ -80,121 +80,98 @@ public class SessionController {
 		this.OPENVIDU_URL = openviduUrl;
 		this.openVidu = new OpenVidu(OPENVIDU_URL, SECRET);
 	}
-
-	@PostMapping("/create")
+	
+	@GetMapping("/create")
 	@ApiOperation(value = "면접관/대기관 세션 객체 생성 및 입장")
-	public Object createSession(@RequestBody Interviewer interviewer) {
-
+	public Object createSession(@RequestParam int interviewerWait, @RequestParam String interviewerName, @RequestParam String sessionName) {
 		final BasicResponse result = new BasicResponse();
 		Map<String, Object> resultMap = new HashMap<>();
 		HttpStatus status = null;
-
+		
 		Session session = null;
 		ConnectionProperties connectionProperties = null;
 		OpenViduRole role = OpenViduRole.MODERATOR; // 기본 세팅은 관리자
 		String type = "manager"; // 면접관, 대기실 관리자, 면접자 구분
 		String token = null;
 		
-		try {
-			int groupTypeGroupTypeSeq = typeInterviewerDao.findTypeInterviewerByInterviewerViewSeq(interviewer.getViewSeq())
-					.getGroupTypeGroupTypeSeq();
+		if (this.sessions.get(sessionName) != null) { // 존재한다
 			try {
-				String sessionName = groupTypeDao.findGroupTypeByGroupTypeSeq(groupTypeGroupTypeSeq).getSessionName();
-				
-				// 1. 방이 존재하는지 체크
-				if (this.sessions.get(sessionName) != null) { // 존재한다
-					try {
-						int viewWait = interviewer.getViewWait();
-						
-						if (viewWait == 1) { // 1이면 면접관
-							type = "interviewer";
-							role = OpenViduRole.PUBLISHER;
-						}
-						
-						connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC).role(role)
-								.data(interviewer.getViewName()).build();
-
-						try {
-							session = this.sessions.get(sessionName);
-							token = session.createConnection(connectionProperties).getToken();
-							this.tokensInSession.get(sessionName).put(token, role);
-
-							resultMap.put("type", type);
-							resultMap.put("token", token);
-							resultMap.put("sessionName", sessionName);
-							resultMap.put("interviewerName", interviewer.getViewName());
-
-							result.status = true;
-							result.data = "success";
-							result.object = resultMap;
-
-							status = HttpStatus.OK;
-						} catch (Exception e) {
-							logger.error("방 입장 실패", e);
-							resultMap.put("message", e.getMessage());
-							status = HttpStatus.INTERNAL_SERVER_ERROR;
-						}
-						
-					}catch (Exception e) {
-						logger.error("면접관 정보가 잘못되었습니다.", e);
-						resultMap.put("message", e.getMessage());
-						status = HttpStatus.INTERNAL_SERVER_ERROR;
-					}
-				} else { // 존재하지않는다
-					// 2. 역할 체크 -> 대기 관리자일 경우 방 생성하고 들어간다, 면접관인 경우 에러
-					try {
-						int viewWait = interviewer.getViewWait();
-						
-						if (viewWait == 0) { // 대기관리자
-							try {
-								session = this.openVidu.createSession();
-								connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC).role(role)
-										.data(interviewer.getViewName()).build();
-
-								token = session.createConnection(connectionProperties).getToken();
-
-								this.sessions.put(sessionName, session);
-								this.tokensInSession.put(sessionName, new ConcurrentHashMap<>());
-								this.tokensInSession.get(sessionName).put(token, role);
-
-								resultMap.put("type", type);
-								resultMap.put("token", token);
-								resultMap.put("sessionName", sessionName);
-								resultMap.put("interviewerName", interviewer.getViewName());
-
-								result.status = true;
-								result.data = "success";
-								result.object = resultMap;
-
-								status = HttpStatus.OK;
-							} catch (Exception e) {
-								logger.error("방 입장 실패", e);
-								resultMap.put("message", e.getMessage());
-								status = HttpStatus.INTERNAL_SERVER_ERROR;
-							}
-						} else { // 면접관
-							logger.error("방이 아직 존재하지않습니다.");
-							resultMap.put("message", "방이 아직 존재하지않습니다");
-							status = HttpStatus.INTERNAL_SERVER_ERROR;
-						}
-						
-					}catch (Exception e) {
-						logger.error("면접관 정보가 잘못되었습니다.", e);
-						resultMap.put("message", e.getMessage());
-						status = HttpStatus.INTERNAL_SERVER_ERROR;
-					}
+				if (interviewerWait == 1) { // 1이면 면접관
+					type = "interviewer";
+					role = OpenViduRole.PUBLISHER;
 				}
-			} catch (Exception e) {
-				logger.error("그룹 번호가 잘못되었습니다.", e);
+				
+				connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC).role(role)
+						.data(interviewerName).build();
+
+				try {
+					session = this.sessions.get(sessionName);
+					token = session.createConnection(connectionProperties).getToken();
+					this.tokensInSession.get(sessionName).put(token, role);
+
+					resultMap.put("type", type);
+					resultMap.put("token", token);
+					resultMap.put("sessionName", sessionName);
+					resultMap.put("interviewerName", interviewerName);
+
+					result.status = true;
+					result.data = "success";
+					result.object = resultMap;
+
+					status = HttpStatus.OK;
+				} catch (Exception e) {
+					logger.error("방 입장 실패", e);
+					resultMap.put("message", e.getMessage());
+					status = HttpStatus.INTERNAL_SERVER_ERROR;
+				}
+				
+			}catch (Exception e) {
+				logger.error("면접관 정보가 잘못되었습니다.", e);
 				resultMap.put("message", e.getMessage());
 				status = HttpStatus.INTERNAL_SERVER_ERROR;
 			}
-		} catch (Exception e) {
-			logger.error("면접관 정보가 잘못되었습니다.", e);
-			resultMap.put("message", e.getMessage());
-			status = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
+		}else { // 없다
+			try {				
+				if (interviewerWait == 0) { // 대기관리자
+					try {
+						session = this.openVidu.createSession();
+						connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC).role(role)
+								.data(interviewerName).build();
 
+						token = session.createConnection(connectionProperties).getToken();
+
+						this.sessions.put(sessionName, session);
+						this.tokensInSession.put(sessionName, new ConcurrentHashMap<>());
+						this.tokensInSession.get(sessionName).put(token, role);
+
+						resultMap.put("type", type);
+						resultMap.put("token", token);
+						resultMap.put("sessionName", sessionName);
+						resultMap.put("interviewerName", interviewerName);
+
+						result.status = true;
+						result.data = "success";
+						result.object = resultMap;
+
+						status = HttpStatus.OK;
+					} catch (Exception e) {
+						logger.error("방 입장 실패", e);
+						resultMap.put("message", e.getMessage());
+						status = HttpStatus.INTERNAL_SERVER_ERROR;
+					}
+				} else { // 면접관
+					logger.error("방이 아직 존재하지않습니다.");
+					resultMap.put("message", "방이 아직 존재하지않습니다");
+					status = HttpStatus.INTERNAL_SERVER_ERROR;
+				}
+				
+			}catch (Exception e) {
+				logger.error("면접관 정보가 잘못되었습니다.", e);
+				resultMap.put("message", e.getMessage());
+				status = HttpStatus.INTERNAL_SERVER_ERROR;
+			}
+		}
+		
 		printMap(); // 방 정보 출력
 		return new ResponseEntity<>(resultMap, status);
 	}
