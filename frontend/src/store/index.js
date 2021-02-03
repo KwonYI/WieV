@@ -1,9 +1,9 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import axios from "axios"
+import Vue from "vue";
+import Vuex from "vuex";
+import axios from "axios";
 
-Vue.use(Vuex)
-const SERVER_URL = "https://localhost:8080"
+Vue.use(Vuex);
+const SERVER_URL = "https://localhost:8080";
 // import axios from 'axios'
 
 export default new Vuex.Store({
@@ -24,26 +24,26 @@ export default new Vuex.Store({
       userComName: "",
       userComLogo: "",
       userComAddress: "",
-      userComHomepage: ""
+      userComHomepage: "",
     },
 
-    //관리자가 선택한 현재 공고 : 
+    //관리자가 선택한 현재 공고 :
     selectRecruitTrigger: false,
     selectedRecruitNo: -1,
 
-
     //그냥 인담자, 면접관, 지원자 로그인 상황 한 변수로 통일하는 게 낫다.
-    whoLogin: 'viewer', //Manager, viewer, viewee
+    whoLogin: "viewer", //Manager, viewer, viewee
 
     comData: {
-      comSeq: '1',
-      comName: '버즈글로벌',
-      comLogo: 'asdf',
-      comAddress: '서울특별시 강남구 테헤란로',
-      comHomepage: 'https://www.naver.com',
+      comSeq: "1",
+      comName: "버즈글로벌",
+      comLogo: "asdf",
+      comAddress: "서울특별시 강남구 테헤란로",
+      comHomepage: "https://www.naver.com",
     },
 
-    recruitList: [{
+    recruitList: [
+      {
         reSeq: 1003,
         reYear: 2021,
         reFlag: "상반기",
@@ -66,11 +66,11 @@ export default new Vuex.Store({
         reStatus: "신입",
         reStartDate: "2020-08-22",
         reEndDate: "2020-08-24",
-      }
+      },
     ],
 
-
-    recruitProgressList: [{
+    recruitProgressList: [
+      {
         reSeq: 1003,
         progress_no: 1,
         group_date: "07/20",
@@ -118,8 +118,6 @@ export default new Vuex.Store({
         interviewers: "김면접 외 14",
         infomail: "",
       },
-
-
 
       {
         reSeq: 1002,
@@ -169,7 +167,6 @@ export default new Vuex.Store({
         interviewers: "김면접 외 14",
         infomail: "",
       },
-
 
       {
         reSeq: 1001,
@@ -221,21 +218,12 @@ export default new Vuex.Store({
       },
     ],
 
+    recruitVieweeList: [],
 
+    recruitViewerList: [],
 
-
-    recruitVieweeList: [
-
-    ],
-
-    recruitViewerList: [
-
-    ],
-
-
-
+    // participantsInInterviews: [],
   },
-
 
   getters: {
     getUser(state) {
@@ -246,14 +234,19 @@ export default new Vuex.Store({
     },
     getUserViewWait(state) {
       return state.user.userViewWait;
-    }
+    },
+    // getParticipantsInInterview(state) {
+    //   return (sessionName) =>
+    //     state.participantsInInterviews.filter((interview) => {
+    //       return interview.sessionName === sessionName;
+    //     });
+    // },
   },
   mutations: {
-
     // 공고 리스트 가져오는 요청
     // 필요한 데이터 : re_seq, re_year, re_flag, re_status, re_startdate, re_enddate
-    GET_RECRUITS: function (state, res) {
-      console.log(state, res)
+    GET_RECRUITS: function(state, res) {
+      console.log(state, res);
 
       // this.$set(state, comData, res.'회사 정보')
       // this.$set(state, recruitList, res.'공고 리스트')
@@ -270,19 +263,12 @@ export default new Vuex.Store({
       //   })
     },
 
-
-
     //############# Schedule.vue 에서 새로 추가한 공고 store에 넣는 작업 ###################################
-    ADD_RECRUIT: function (state, recruitData) {
-      console.log("state의 ADD_RECRUIT실행:", state, recruitData)
-      state.recruit_list.push(recruitData)
-      //필요하다면, recruitData 형식을 가공해서 넣어줘야 함 
-
+    ADD_RECRUIT: function(state, recruitData) {
+      console.log("state의 ADD_RECRUIT실행:", state, recruitData);
+      state.recruit_list.push(recruitData);
+      //필요하다면, recruitData 형식을 가공해서 넣어줘야 함
     },
-
-
-
-
 
     LOGIN(state, res) {
       state.accessToken = res["auth-token"];
@@ -307,33 +293,28 @@ export default new Vuex.Store({
       state.user.userComLogo = "";
       state.user.userComAddress = "";
       state.user.userComHomepage = "";
-    }
+    },
   },
   actions: {
-    getRecruits: function ({
-      commit
-    }, res) {
-      commit('GET_RECRUITS', res)
+    getRecruits: function({ commit }, res) {
+      commit("GET_RECRUITS", res);
     },
 
-    addRecruit: function ({
-      commit
-    }, recruitData) {
-      commit('ADD_RECRUIT', recruitData)
+    addRecruit: function({ commit }, recruitData) {
+      commit("ADD_RECRUIT", recruitData);
     },
     LOGIN(context, user) {
-      axios.post(`${SERVER_URL}/hr/login`, user)
-        .then(response => {
-          context.commit("LOGIN", response.data);
-          console.log(response.data);
-          axios.defaults.headers.common[
-            "auth-token"
-          ] = `${response.data["auth-token"]}`;
-        });
+      axios.post(`${SERVER_URL}/hr/login`, user).then((response) => {
+        context.commit("LOGIN", response.data);
+        console.log(response.data);
+        axios.defaults.headers.common[
+          "auth-token"
+        ] = `${response.data["auth-token"]}`;
+      });
     },
     LOGOUT(context) {
       context.commit("LOGOUT");
       axios.defaults.headers.common["auth-token"] = undefined;
     },
-  }
-})
+  },
+});
