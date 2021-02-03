@@ -1,5 +1,5 @@
 <template>
-  <div id="standbyRoom">
+  <div id="waitRoom">
     <!-- 대기실 페이지. 신분에 따라 보여지는 컴포넌트가 다르다.  -->
 
     <!--상단 바-->
@@ -52,7 +52,7 @@ import { mapState } from "vuex";
 // import UserVideo from "@/components/room/UserVideo";
 
 export default {
-  name: "StandbyRoom",
+  name: "WaitRoom",
   components: {
     // UserVideo,
     // ManagerList,
@@ -87,20 +87,20 @@ export default {
     };
   },
   mounted() {
-    this.OV = new OpenVidu();
-    this.session = this.OV.initSession();
+    this.OV = new OpenVidu()
+    this.session = this.OV.initSession()
 
     this.session.on("streamCreated", ({ stream }) => {
-      const subscriber = this.session.subscribe(stream);
-      this.subscribers.push(subscriber);
-    });
+      const subscriber = this.session.subscribe(stream)
+      this.subscribers.push(subscriber)
+    })
 
     this.session.on("streamDestroyed", ({ stream }) => {
-      const index = this.subscribers.indexOf(stream.streamManager, 0);
+      const index = this.subscribers.indexOf(stream.streamManager, 0)
       if (index >= 0) {
-        this.subscribers.splice(index, 1);
+        this.subscribers.splice(index, 1)
       }
-    });
+    })
 
     this.session
       .connect(this.token, { clienData: this.userName })

@@ -56,16 +56,21 @@ export default {
       recruitno: this.$route.params.recruitNo,
       selectedItem: -1,
       tempReList:[],
-    };
+      curRecruit: {
+        reYear: '',
+        reFlag: '',
+        reStatus: ''
+      }
+    }
   },
   methods: {
     selectRecruit: function (selectedreno) {
-      console.log("selectRecruit클릭!", selectedreno);
-      this.$store.state.selectedRecruitNo = selectedreno;
+      console.log("selectRecruit클릭!", selectedreno)
+      this.$store.state.selectedRecruitNo = selectedreno
       this.recruitno = selectedreno;
     },
     goToProfile: function () {
-      this.recruitno = -1;
+      this.recruitno = -1
     },
   },
   created: function () {

@@ -35,11 +35,11 @@ export default new Vuex.Store({
     whoLogin: "viewer", //Manager, viewer, viewee
 
     comData: {
-      comSeq: "1",
-      comName: "버즈글로벌",
-      comLogo: "asdf",
-      comAddress: "서울특별시 강남구 테헤란로",
-      comHomepage: "https://www.naver.com",
+      comSeq:'1',
+      comName:'WieV Inc.',
+      comLogo:'asdf',
+      comAddress:'서울특별시 강남구 테헤란로',
+      comHomepage:'https://www.naver.com',
     },
 
     recruitList: [
