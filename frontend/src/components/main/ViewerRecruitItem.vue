@@ -5,15 +5,18 @@
       <v-container>
         <v-row>
           <v-col cols="3" class="d-flex align-center">
-            <div class="h2 mx-5">{{ com_name }}</div>
+            <div class="h2 mx-5">{{ interview.comName }}</div>
           </v-col>
 
           <v-col cols="9">
-            <v-card-title
-              >{{ re_year }} {{ re_flag }} {{ re_status }}
+            <v-card-title>
+              {{ this.interview.recruitYear }}
+              {{ this.interview.recruitFlag }}
+              {{ this.interview.recruitStatus }}
             </v-card-title>
             <v-card-subtitle>
-              {{ re_startdate }} ~ {{ re_enddate }}
+              {{ interview.recruitStartDate }} ~
+              {{ interview.recruitEndDate }}
             </v-card-subtitle>
           </v-col>
         </v-row>
@@ -22,28 +25,31 @@
           <v-expand-transition>
             <!-- <div v-show="show"> -->
             <div class="blue-grey darken-1 pb-5 rounded-b-lg">
-              <v-card
-                class="mx-auto m-3"
-                max-width="1000"
-                v-for="item in re_data"
-                :key="item"
-              >
+              <v-card class="mx-auto m-3" max-width="1000">
                 <v-card-text class="d-flex justify-space-around align-center">
-                  <div class="text--primary">1</div>
+                  <!-- <div class="text--primary">{{ this.index }}</div> -->
 
                   <div class="text--primary">
-                    {{ group_date }}
+                    {{ interview.groupDate }}
+                  </div>
+                  <!-- 시간이 조금 이상하게 생겼다 -->
+                  <div class="text--primary">
+                    {{ interview.groupStartTime }} : 00
                   </div>
                   <div class="text--primary">
-                    {{ group_start_time }}
+                    {{ interview.partName }} - {{ interview.careerName }} 직군
                   </div>
                   <div class="text--primary">
-                    {{ ca_name }}
+                    {{ interview.interviewType }} 면접
                   </div>
-                  <div class="text--primary">
-                    {{ type_name }}
-                  </div>
-
+                  <v-btn
+                    color="blue lighten-3 yellow--text"
+                    dark
+                    @click="goSession"
+                  >
+                    대기실 입장
+                  </v-btn>
+                  <!--
                   <div>
                     <v-dialog v-model="dialog" persistent max-width="600px">
                       <template v-slot:activator="{ on, attrs }">
@@ -145,6 +151,7 @@
                       </v-card>
                     </v-dialog>
                   </div>
+                    -->
                 </v-card-text>
               </v-card>
             </div>
@@ -156,28 +163,57 @@
 </template>
 
 <script>
+import axios from "axios";
+
+const SERVER_URL = "https://localhost:8080/";
+
 export default {
   name: "ViewerRecruitItem",
+  props: {
+    interview: {
+      type: Object,
+    },
+    user: {
+      type: Object,
+    },
+  },
   data: function() {
     return {
-      re_data: [1, 2, 3],
-      show: false,
-      com_name: "버즈글로벌",
-      re_year: 2021,
-      re_flag: "상반기",
-      re_status: "신입",
-      re_startdate: "2021-08-07",
-      re_enddate: "2021-08-08",
-
-      group_date: "20-08-07",
-      group_start_time: "14:00",
-      ca_name: "마케팅",
-      type_name: "PT면접",
-
-      dialog: false,
+      // re_data: [1, 2, 3],
+      // show: false,
+      // com_name: "버즈글로벌",
+      // re_year: 2021,
+      // re_flag: "상반기",
+      // re_status: "신입",
+      // re_startdate: "2021-08-07",
+      // re_enddate: "2021-08-08",
+      // group_date: "20-08-07",
+      // group_start_time: "14:00",
+      // ca_name: "마케팅",
+      // type_name: "PT면접",
+      // dialog: false,
     };
   },
-  created: function() {},
+  methods: {
+    goSession() {
+      console.log(this.user);
+      console.log(this.interview);
+      axios
+        .get(`${SERVER_URL}session/create`, {
+          params: {
+            interviewerWait: this.user.userViewWait,
+            interviewerName: this.user.userName,
+            sessionName: this.interview.sessionName,
+          },
+        })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+  },
 };
 </script>
 

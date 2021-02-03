@@ -1,15 +1,19 @@
 package com.web.project.controller.interview;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.validation.Valid;
 
+import org.apache.ibatis.annotations.Param;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -28,13 +32,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.web.project.controller.hr.HrController;
 import com.web.project.dao.group.GroupAllDao;
 import com.web.project.dao.group.GroupTypeDao;
 import com.web.project.dao.hr.CareerDao;
+import com.web.project.dao.hr.CompanyDao;
 import com.web.project.dao.hr.PartDao;
+import com.web.project.dao.interview.InterviewTypeDao;
 import com.web.project.dao.interview.InterviewerDao;
 import com.web.project.dao.interview.TypeInterviewerDao;
 import com.web.project.dao.recruit.RecruitDao;
@@ -43,6 +51,7 @@ import com.web.project.model.group.GroupAll;
 import com.web.project.model.group.GroupType;
 import com.web.project.model.hr.Career;
 import com.web.project.model.hr.Part;
+import com.web.project.model.interview.Interview;
 import com.web.project.model.interview.InterviewType;
 import com.web.project.model.interview.Interviewer;
 import com.web.project.model.interview.TypeInterviewer;
@@ -83,17 +92,20 @@ public class InterviewerController {
 	@Autowired
 	TypeInterviewerDao typeInterviewerDao;
 
+	@Autowired
+	InterviewTypeDao interviewTypeDao;
+
 	public static final Logger logger = LoggerFactory.getLogger(HrController.class);
 
 	@GetMapping("/getList/{comSeq}")
 	@ApiOperation(value = "회사에 따른 면접관리스트 모두 가져오기")
 	public ResponseEntity<List<Interviewer>> getInterviewerList(@PathVariable("comSeq") int comSeq) {
-		List<Interviewer> interviewerList=interviewerDao.findAllInterviewerByCompanyComSeq(comSeq);
+		List<Interviewer> interviewerList = interviewerDao.findAllInterviewerByCompanyComSeq(comSeq);
 		return new ResponseEntity<List<Interviewer>>(interviewerList, HttpStatus.OK);
 	}
-		
-	//@PostMapping("/assign/{groupSeq}")
-	//@ApiOperation(value = "면접관 자동 배정")
+
+	// @PostMapping("/assign/{groupSeq}")
+	// @ApiOperation(value = "면접관 자동 배정")
 	public void interviewerAssign(int groupSeq) {
 //		HttpStatus status = null;
 		List<Interviewer> interviewerList = new ArrayList<Interviewer>();
@@ -101,102 +113,102 @@ public class InterviewerController {
 
 //		try {
 
-			GroupAll nowGroupAll = groupAllDao.findGroupAllByGroupSeq(groupSeq);
+		GroupAll nowGroupAll = groupAllDao.findGroupAllByGroupSeq(groupSeq);
 
-			// 1.group에 해당하는 회사번호,직군,부서 seq 찾기
-			int comSeq = recruitDao.findRecruitByReSeq(nowGroupAll.getRecruitReSeq()).getCompanyComSeq();
-			int caSeq = nowGroupAll.getCareerCaSeq();
-			int partSeq = careerDao.findCareerByCaSeq(caSeq).getPartPartSeq();
+		// 1.group에 해당하는 회사번호,직군,부서 seq 찾기
+		int comSeq = recruitDao.findRecruitByReSeq(nowGroupAll.getRecruitReSeq()).getCompanyComSeq();
+		int caSeq = nowGroupAll.getCareerCaSeq();
+		int partSeq = careerDao.findCareerByCaSeq(caSeq).getPartPartSeq();
 
-			// 2. group안에 있는 그룹별 면접 종류 list만들기
-			groupTypeList = groupeTypeDao.findListGroupTypeByGroupGroupSeq(nowGroupAll.getGroupSeq());
+		// 2. group안에 있는 그룹별 면접 종류 list만들기
+		groupTypeList = groupeTypeDao.findListGroupTypeByGroupGroupSeq(nowGroupAll.getGroupSeq());
 
-			// 3. group과 같은 회사,공고,부서,직군&&면접일정 배정하지않은 interviewerList 만들기
-			interviewerList = interviewerDao
-					.findAllInterviewerByCompanyComSeqAndCareerCaSeqAndCareerPartPartSeqAndViewAssigned(comSeq, caSeq,
-							partSeq, 0);
+		// 3. group과 같은 회사,공고,부서,직군&&면접일정 배정하지않은 interviewerList 만들기
+		interviewerList = interviewerDao
+				.findAllInterviewerByCompanyComSeqAndCareerCaSeqAndCareerPartPartSeqAndViewAssigned(comSeq, caSeq,
+						partSeq, 0);
 
-			// 그룹별 면접 종류 만큼 반복
-			for (int i = 0; i < groupTypeList.size(); i++) {
+		// 그룹별 면접 종류 만큼 반복
+		for (int i = 0; i < groupTypeList.size(); i++) {
 
-				GroupType nowGroupType = groupTypeList.get(i);
+			GroupType nowGroupType = groupTypeList.get(i);
 
-				// 4.관리자 1명 배정하기
-				for (int j = 0; j < interviewerList.size(); j++) {
-					Interviewer nowInterviewer = interviewerList.get(j);
-					// 관리자면
-					if (nowInterviewer.getViewWait() == 0) {
-						// typeInterviewer 설정
-						TypeInterviewer typeInterviewer = new TypeInterviewer();
-						typeInterviewer.setInterviewerViewSeq(nowInterviewer.getViewSeq());
-						typeInterviewer.setGroupTypeGroupTypeSeq(nowGroupType.getGroupTypeSeq());
-						typeInterviewer.setGroupTypeInterviewTypeTypeSeq(nowGroupType.getInterviewTypeTypeSeq());
-						typeInterviewer.setInterviewerCareerCaSeq(caSeq);
-						typeInterviewer.setInterviewerCareerPartPartSeq(partSeq);
+			// 4.관리자 1명 배정하기
+			for (int j = 0; j < interviewerList.size(); j++) {
+				Interviewer nowInterviewer = interviewerList.get(j);
+				// 관리자면
+				if (nowInterviewer.getViewWait() == 0) {
+					// typeInterviewer 설정
+					TypeInterviewer typeInterviewer = new TypeInterviewer();
+					typeInterviewer.setInterviewerViewSeq(nowInterviewer.getViewSeq());
+					typeInterviewer.setGroupTypeGroupTypeSeq(nowGroupType.getGroupTypeSeq());
+					typeInterviewer.setGroupTypeInterviewTypeTypeSeq(nowGroupType.getInterviewTypeTypeSeq());
+					typeInterviewer.setInterviewerCareerCaSeq(caSeq);
+					typeInterviewer.setInterviewerCareerPartPartSeq(partSeq);
 
-						// interviewer viewAsssigned에 면접 배치했다고 update
-						Optional<Interviewer> interviewer = interviewerDao
-								.findOptionalInterviewerByViewSeq(nowInterviewer.getViewSeq());
+					// interviewer viewAsssigned에 면접 배치했다고 update
+					Optional<Interviewer> interviewer = interviewerDao
+							.findOptionalInterviewerByViewSeq(nowInterviewer.getViewSeq());
 
-						// UPDATE(U) -> SELECT(R) + INSERT(C)
-						interviewer.ifPresent(selectInterviewer -> {
-							selectInterviewer.setViewAssigned(1);
-							// INSERT!
-							interviewerDao.save(selectInterviewer);
-						});
+					// UPDATE(U) -> SELECT(R) + INSERT(C)
+					interviewer.ifPresent(selectInterviewer -> {
+						selectInterviewer.setViewAssigned(1);
+						// INSERT!
+						interviewerDao.save(selectInterviewer);
+					});
 
-						// 관리자 insert
-						typeInterviewerDao.save(typeInterviewer);
+					// 관리자 insert
+					typeInterviewerDao.save(typeInterviewer);
 
-						// 면접 배정한 관리자 list에서 지우기
-						interviewerList.remove(j);
-						break;
-					}
+					// 면접 배정한 관리자 list에서 지우기
+					interviewerList.remove(j);
+					break;
+				}
+			}
+
+			// 5.면접관 InterviewerDivide 수 만큼 배정하기
+			int interviewerCnt = 0;
+			for (int j = 0; j < interviewerList.size(); j++) {
+				Interviewer nowInterviewer = interviewerList.get(j);
+
+				// 면접 당 면접관 수 만큼 반복
+				if (interviewerCnt == nowGroupAll.getInterviewerDivide()) {
+					break;
 				}
 
-				// 5.면접관 InterviewerDivide 수 만큼 배정하기
-				int interviewerCnt = 0;
-				for (int j = 0; j < interviewerList.size(); j++) {
-					Interviewer nowInterviewer = interviewerList.get(j);
+				// 면접관이면
+				if (nowInterviewer.getViewWait() == 1) {
+					// typeInterviewer 설정
+					TypeInterviewer typeInterviewer = new TypeInterviewer();
+					typeInterviewer.setInterviewerViewSeq(nowInterviewer.getViewSeq());
+					typeInterviewer.setGroupTypeGroupTypeSeq(nowGroupType.getGroupTypeSeq());
+					typeInterviewer.setGroupTypeInterviewTypeTypeSeq(nowGroupType.getInterviewTypeTypeSeq());
+					typeInterviewer.setInterviewerCareerCaSeq(caSeq);
+					typeInterviewer.setInterviewerCareerPartPartSeq(partSeq);
 
-					// 면접 당 면접관 수 만큼 반복
-					if (interviewerCnt == nowGroupAll.getInterviewerDivide()) {
-						break;
-					}
+					// interviewer viewAsssigned에 면접 배치했다고 update
+					Optional<Interviewer> interviewer = interviewerDao
+							.findOptionalInterviewerByViewSeq(nowInterviewer.getViewSeq());
 
-					// 면접관이면
-					if (nowInterviewer.getViewWait() == 1) {
-						// typeInterviewer 설정
-						TypeInterviewer typeInterviewer = new TypeInterviewer();
-						typeInterviewer.setInterviewerViewSeq(nowInterviewer.getViewSeq());
-						typeInterviewer.setGroupTypeGroupTypeSeq(nowGroupType.getGroupTypeSeq());
-						typeInterviewer.setGroupTypeInterviewTypeTypeSeq(nowGroupType.getInterviewTypeTypeSeq());
-						typeInterviewer.setInterviewerCareerCaSeq(caSeq);
-						typeInterviewer.setInterviewerCareerPartPartSeq(partSeq);
+					// UPDATE(U) -> SELECT(R) + INSERT(C)
+					interviewer.ifPresent(selectInterviewer -> {
+						selectInterviewer.setViewAssigned(1);
+						// INSERT!
+						interviewerDao.save(selectInterviewer);
+					});
 
-						// interviewer viewAsssigned에 면접 배치했다고 update
-						Optional<Interviewer> interviewer = interviewerDao
-								.findOptionalInterviewerByViewSeq(nowInterviewer.getViewSeq());
+					// 관리자 insert
+					typeInterviewerDao.save(typeInterviewer);
+					interviewerCnt++;
 
-						// UPDATE(U) -> SELECT(R) + INSERT(C)
-						interviewer.ifPresent(selectInterviewer -> {
-							selectInterviewer.setViewAssigned(1);
-							// INSERT!
-							interviewerDao.save(selectInterviewer);
-						});
-
-						// 관리자 insert
-						typeInterviewerDao.save(typeInterviewer);
-						interviewerCnt++;
-
-						// 면접 배정한 관리자 list에서 지우기
-						interviewerList.remove(j);
-						j--;
-					}
-
+					// 면접 배정한 관리자 list에서 지우기
+					interviewerList.remove(j);
+					j--;
 				}
 
 			}
+
+		}
 //			status = HttpStatus.OK;
 //		} catch (RuntimeException e) {
 //			logger.error("면접관 자동 배정 실패", e);
@@ -205,17 +217,17 @@ public class InterviewerController {
 //		return new ResponseEntity<>("면접관 자동 배정 완료", status);
 	}
 
-	@PostMapping("/register")
+	@PostMapping("/register/{reSeq}")
 	@ApiOperation(value = "면접관등록")
-	public List<Interviewer> interviewerRegister(@Valid @RequestBody Recruit recruit)
+	public List<Interviewer> interviewerRegister(@PathVariable("reSeq") int reSeq,MultipartFile files)
 			throws EncryptedDocumentException, IOException {
 		// 웹상에서 업로드 되어 MultipartFile인 경우 바로 InputStream으로 변경하여 사용.
-		// InputStream inputStream = new ByteArrayInputStream(file.getBytes());
+		 InputStream inputStream = new ByteArrayInputStream(files.getBytes());
 
-		String filePath = "C:\\example.xlsx"; // xlsx 형식
+		//String filePath = "C:\\example.xlsx"; // xlsx 형식
 		// String filePath = "D:\\applicant.xls"; // xls 형식
 
-		InputStream inputStream = new FileInputStream(filePath);
+		//InputStream inputStream = new FileInputStream(filePath);
 
 		// 엑셀 로드
 		Workbook workbook = WorkbookFactory.create(inputStream);
@@ -281,7 +293,9 @@ public class InterviewerController {
 					break;
 				}
 			}
-
+			
+			Recruit recruit=recruitDao.findRecruitByReSeq(reSeq);
+			
 			int comSeq = recruit.getCompanyComSeq();
 			interviewer.setCompanyComSeq(comSeq);
 
@@ -296,7 +310,7 @@ public class InterviewerController {
 			interviewer.setViewAssigned(0);
 			// insert문
 			interviewer.setViewWait(1);
-			//insert문
+			// insert문
 			interviewerDao.save(interviewer);
 
 			interviewerList.add(interviewer);
@@ -323,5 +337,70 @@ public class InterviewerController {
 		default:
 			return "";
 		}
+	}
+
+	@GetMapping("/getMyInterview")
+	@ApiOperation(value = "면접관에게 할당된 면접방 리스트")
+	public Object getMyInterview(@RequestParam String userComName, @RequestParam String interviewerEmail){
+		
+		final BasicResponse result = new BasicResponse();
+		Map<String, Object> resultMap = new HashMap<>();
+		HttpStatus status = HttpStatus.OK;
+		
+		Interview interviewInfo = null;
+		
+		try {
+			Interviewer interviewer = interviewerDao.findInterviewerByViewEmail(interviewerEmail);
+			if(interviewer != null) {
+				int interviewSeq = interviewer.getViewSeq();
+				
+				// 면접관 한명은 하나의 면접만 담당한다, list말고 객체로 받아온다
+				TypeInterviewer typeInterviewer = typeInterviewerDao.findTypeInterviewerByInterviewerViewSeq(interviewSeq);
+				
+				String careerName = careerDao.findCareerByCaSeq(typeInterviewer.getInterviewerCareerCaSeq()).getCaName(); // 직군 이름
+				String partName = partDao.findPartByPartSeq(typeInterviewer.getInterviewerCareerPartPartSeq()).getPartName(); // 부서 이름
+				String interviewType = interviewTypeDao.findInterviewTypeByTypeSeq(typeInterviewer.getGroupTypeInterviewTypeTypeSeq()).getTypeName(); // 면접 종류
+
+				GroupType groupeType= groupeTypeDao.findGroupTypeByGroupTypeSeq(typeInterviewer.getGroupTypeGroupTypeSeq());
+				
+				String sessionName = groupeType.getSessionName(); // 세션이름
+				
+				GroupAll groupAll = groupAllDao.findGroupAllByGroupSeq(groupeType.getGroupGroupSeq());
+				Recruit recruit = recruitDao.findRecruitByReSeq(groupAll.getRecruitReSeq()); // 공고 정보
+				
+				interviewInfo = new Interview();
+				interviewInfo.setComName(userComName);
+				interviewInfo.setGroupDate(groupAll.getGroupDate());
+				interviewInfo.setGroupStartTime(groupAll.getGroupStartTime());
+				interviewInfo.setRecruitYear(recruit.getReYear());
+				interviewInfo.setRecruitStartDate(recruit.getReStartDate());
+				interviewInfo.setRecruitEndDate(recruit.getReEndDate());
+				interviewInfo.setRecruitFlag(recruit.getReFlag());
+				interviewInfo.setRecruitStatus(recruit.getReStatus());
+				interviewInfo.setCareerName(careerName);
+				interviewInfo.setPartName(partName);
+				interviewInfo.setInterviewType(interviewType);
+				interviewInfo.setSessionName(sessionName);
+				
+				resultMap.put("interview", interviewInfo);
+				
+				result.status = true;
+				result.data = "success";
+				result.object = resultMap;
+
+				status = HttpStatus.OK;
+			}else {
+				logger.error("조회 에러 발생");
+				resultMap.put("message", "조회실패");
+				status = HttpStatus.INTERNAL_SERVER_ERROR;
+			}
+			
+		} catch (Exception e) {
+			logger.error("조회 에러 발생", e);
+			resultMap.put("message", e.getMessage());
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		
+		return new ResponseEntity<>(resultMap, status);
 	}
 }

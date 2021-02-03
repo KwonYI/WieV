@@ -12,6 +12,7 @@ import com.web.project.model.interview.TypeInterviewer;
 @Repository
 public interface TypeInterviewerDao extends JpaRepository<TypeInterviewer, String>{
 
+	List<TypeInterviewer> findListTypeInterviewerByGroupTypeGroupTypeSeq(int groupTypeGroupTypeSeq);
 	List<TypeInterviewer> findAllTypeInterviewerByGroupTypeGroupTypeSeqAndGroupTypeInterviewTypeTypeSeq(int groupTypeGroupTypeSeq,int groupTypeInterviewTypeTypeSeq);
 	TypeInterviewer findTypeInterviewerByInterviewerViewSeq(int interviewViewSeq);
 }

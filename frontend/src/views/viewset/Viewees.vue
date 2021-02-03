@@ -5,12 +5,17 @@
       <v-autocomplete v-model="select" :loading="loading" :items="items" :search-input.sync="search" cache-items
         class="mx-4" flat hide-no-data hide-details label="지원자 이름 검색" solo-inverted></v-autocomplete>
       <v-btn class="m-3"> 검색 </v-btn>
-      <v-file-input v-model="files" show-size label="File input"></v-file-input>
+      <div class="large-12 medium-12 small-12 cell">
+                <label>File
+                    <input v-model="title">
+                    <input type="file" id="files" ref="files" v-on:change="handleFileUpload()" multiple />
+                </label>
+                <button v-on:click="submitFile()">Submit</button>
+          </div>      
+      <!-- <v-file-input v-model="files" show-size label="File input"></v-file-input>
       <v-btn @click="upload" color="primary">Upload</v-btn>
-      <p>File Name : {{ files.name }}</p>
+      <p>File Name : {{ files.name }}</p> -->
       <v-btn class="m-3" @click="createVieweeDB"> DB업데이트 </v-btn>
-      <!-- <v-file-input show-size counter multiple label="File input"></v-file-input>
-      <v-btn class="m-3" @click="createVieweeDB"> DB업데이트 </v-btn> -->
     </v-toolbar>
     <v-simple-table fixed-header class="mt-5">
       <thead>
@@ -58,11 +63,11 @@
 
   export default {
     name: "Viewees",
-    data:()=>({
-      files:[],
-    }),
+    data:
      function () {
       return {
+        title:"",
+        files:[],
         loading: false,
         search: null,
         select: null,
@@ -182,6 +187,9 @@
 
       };
     },
+    // props: {
+    //   recruitNo: [Object, String, Number],
+    // },
     created: function () {
       // this.reno = this.$route.params.recruitNo;
       this.reno = this.$store.state.selectedRecruitNo;
@@ -198,29 +206,31 @@
     },
 
     methods: {
-      upload:function() {
-      var fd = new FormData();
-      console.log(this.files)
-      //var excelfile=document.querySelector(`#files`);
-      fd.append('files', this.files)
-      //console.log( excelfile.files[0])
-      for (var pair of fd.values()) 
-      { console.log(pair); }
+                     submitFile() {
+                 
+                        let formData = new FormData();
+                        formData.append('title', this.title);
+                        formData.append('files', this.files[0]);
+                        console.log(this.reno)
+                        axios.post(`${SERVER_URL}applicant/register/`+this.reno,
+                                formData, {
+                                    headers: {
+                                        'Content-Type': 'multipart/form-data'
+                                    }
+                                }
+                            ).then(function() {
+                                console.log('SUCCESS!!');
+                            })
+                            .catch(function() {
+                                console.log('FAILURE!!');
+                            });
 
-      axios.post(`${SERVER_URL}applicant/getExcel`,
-            fd, {
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              }
-            }
-          ).then( response => {
-            console.log('SUCCESS!!');
-            console.log(response.data)
-          })
-          .catch(function () {
-            console.log('FAILURE!!');
-          });
-    },
+                },
+
+                handleFileUpload() {
+                    this.files = this.$refs.files.files;
+                    console.log(this.files);
+                },
 
         //여기서 요청을 보내면, excel파일대로 DB를 저장한 뒤 여기에 뿌려줘야 합니다.
         //공고 데이터를 보내면, 받는 데이터는 해당 공고 지원자 전체입니다.
