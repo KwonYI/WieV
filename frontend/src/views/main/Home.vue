@@ -1,7 +1,7 @@
 <template>
   <div id="home" class="main-bg-navy">
     <v-row justify="center" class="pt-10" no-gutters>
-      <v-col cols="4" class="main-box text-center">
+      <v-col cols="8" class="main-box text-center">
         <div class="d-flex flex-column justify-center text-white">
           <v-col class="wiev-box">
             <v-col class="text-h5 mb-3">View Everywhere</v-col>

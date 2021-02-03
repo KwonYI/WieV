@@ -1,10 +1,12 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
+import _ from "lodash"
 
 Vue.use(Vuex);
 const SERVER_URL = "https://localhost:8080";
 // import axios from 'axios'
+
 
 export default new Vuex.Store({
   state: {
@@ -201,9 +203,17 @@ export default new Vuex.Store({
       },
     ],
 
+    //얘는 공고별 저장인데 comVieweeList 쓸거같다.
     recruitVieweeList: [],
 
-    recruitViewerList: [],
+    //회사 전체 지원자 리스트
+    comVieweeList: [],
+
+    comViewerList: [
+      //careerCaSeq , careerPartPartSeq , companyComSeq, viewAssigned,
+      //viewEamil, viewName, viewPassword, viewPhone,
+      // viewSeq, viewWait
+    ],
 
     // participantsInInterviews: [],
   },
@@ -227,35 +237,26 @@ export default new Vuex.Store({
     //       return interview.sessionName === sessionName;
     //     });
     // },
+    
+    //공고 최근순으로 정렬해서 가져오기
+    getRecruitListLately: function (state) {
+      // return _.sortBy(state.recruitList, 'reSeq').reverse()
+      return _.orderBy(state.recruitList, ['reSeq'], ['desc'])
+
+    },
+
+    //현재 공고의 지원자만 가져오는 로직
+    getVieweeListCurrentRecruit: function (state) {
+      return state.comVieweeList.filter(re => re.recruitReSeq === state.user.userComSeq)
+    },
+
+    getComViewerList(state) {
+      return state.user.comViewerList
+    }
   },
   mutations: {
-    // 공고 리스트 가져오는 요청
-    // 필요한 데이터 : re_seq, re_year, re_flag, re_status, re_startdate, re_enddate
-    GET_RECRUITS: function(state, res) {
-      console.log(state, res);
-
-      // this.$set(state, comData, res.'회사 정보')
-      // this.$set(state, recruitList, res.'공고 리스트')
-
-      // axios.post('공고요청하는URL', state.com_seq)
-      //   .then(res => {
-      //     const recruits = res.data
-      //     for (const recruit of recruits) {
-      //       state.recruit_list.push(recruit)
-      //     }
-      //   })
-      //   .catch(err => {
-      //     console.log(err)
-      //   })
-    },
-
-    //############# Schedule.vue 에서 새로 추가한 공고 store에 넣는 작업 ###################################
-    ADD_RECRUIT: function(state, recruitData) {
-      console.log("state의 ADD_RECRUIT실행:", state, recruitData);
-      state.recruit_list.push(recruitData);
-      //필요하다면, recruitData 형식을 가공해서 넣어줘야 함
-    },
-
+    
+  
     LOGIN(state, res) {
       state.accessToken = res["auth-token"];
       state.user.userEmail = res["user-Email"];
@@ -296,16 +297,15 @@ export default new Vuex.Store({
       state.recruitVieweeList = res;
       console.log(state.recruitVieweeList);
     },
+    GET_VIEWER_LIST(state, res) {
+      console.log("mutaions의 GET면접관LIST", res);
+      state.comViewerList = res;
+      console.log(state.comViewerList);
+    },
   },
 
   actions: {
-    getRecruits: function({ commit }, res) {
-      commit("GET_RECRUITS", res);
-    },
-
-    addRecruit: function({ commit }, recruitData) {
-      commit("ADD_RECRUIT", recruitData);
-    },
+   
 
     // 로그인, 로그아웃
     LOGIN(context, user) {
@@ -322,6 +322,8 @@ export default new Vuex.Store({
     },
 
     // 공고 리스트 가져오기, 추가
+    // 공고 리스트 가져오는 요청
+    // 필요한 데이터 : re_seq, re_year, re_flag, re_status, re_startdate, re_enddate
     GET_RECRUIT_LIST(context) {
       axios
         .get(`${SERVER_URL}/recruit/getList/` + this.state.user.userComSeq)
@@ -356,9 +358,9 @@ export default new Vuex.Store({
 
 
     //지원자 리스트를 불러온다. //이거.. 공고별이 아니라, 회사 전체의 리스트를 불러올 수 있어야 함.
-    GET_VIEWEE_LIST(context, recruitNo) {
+    GET_VIEWEE_LIST(context, comSeq) {
       axios
-        .get(`${SERVER_URL}/applicant/getList/${recruitNo}`)
+        .get(`${SERVER_URL}/applicant/getList/${comSeq}`)
         .then((res) => {
           context.commit("GET_VIEWEE_LIST", res.data);
         })
@@ -366,6 +368,18 @@ export default new Vuex.Store({
           console.log(err);
         });
     },
+
+    GET_VIEWER_LIST(context, comSeq) {
+      axios
+      .get(`${SERVER_URL}/interviewer/getList/${comSeq}`)
+      .then((res) => {
+        context.commit("GET_VIEWER_LIST", res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    }
 
   },
 });

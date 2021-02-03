@@ -63,18 +63,25 @@
         </v-card>
       </v-dialog>
 
-
-      <v-simple-table fixed-header class="mt-5">
+      <div>
+        최근 등록된 순으로 보여집니다. 
+      </div>
+      <v-simple-table fixed-header height="300px" class="mt-5">
         <thead>
           <tr>
+            <th class="text-center">No</th>
             <th class="text-center">시즌</th>
             <th class="text-center">분류</th>
             <th class="text-center">기간</th>
             <th class="text-center">관리</th>
+            <th class="text-center">삭제</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="recruit in recruitList" :key="recruit.reSeq" class="text-center">
+          <!-- reSeq 내림차순으로 정렬된 상태입니다.(최근 만든 순으로 보여줌)  -->
+          <tr v-for="(recruit, index) in getRecruitListLately" :key="index" class="text-center">
+            <td>{{ index+1 }}</td>
+            <!-- <td>{{ recruit.reSeq }}</td> -->
             <td>{{ recruit.reYear }} {{ recruit.reFlag }}</td>
             <td>{{ recruit.reStatus }}</td>
             <td>{{ recruit.reStartDate }} ~ {{recruit.reEndDate }}</td>
@@ -83,7 +90,10 @@
               <!-- <v-btn :to="{ name: 'Progress', params: { recruitNo: recruit.reSeq } }" >관리하기</v-btn> -->
               <v-btn @click="goToProgress(recruit.reSeq)" >관리하기</v-btn>
             </td>
-            <!--여기에 recruitMenu라우터 연결해야 합니다.-->
+            <td>
+              <v-btn @click="goToProgress(recruit.reSeq)" >삭제</v-btn>
+            </td>
+            
           </tr>
         </tbody>
       </v-simple-table>
@@ -95,7 +105,7 @@
 </template>
 
 <script>
-  import { mapState } from "vuex";
+  import { mapState, mapGetters } from "vuex";
 
   export default {
     name: "Schedule",
@@ -154,9 +164,12 @@
     },
     computed: {
       ...mapState(["recruitList"]),
+      ...mapGetters(["getRecruitListLately"]),
+
       dateRangeText() {
         return this.dates.join(' ~ ')
       },
+      
     },
   }
 </script>

@@ -42,6 +42,13 @@
                   WieV Inc.
                 </router-link>
               </span>
+
+              <span>
+                <router-link class="title" :to="{ name: 'Profile' }">
+                  내 정보
+                </router-link>
+              </span>
+
               <v-btn plain style="font-size: 1rem" @click="logout">
                 로그아웃
               </v-btn>
