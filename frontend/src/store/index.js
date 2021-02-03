@@ -247,7 +247,7 @@ export default new Vuex.Store({
 
     //현재 공고의 지원자만 가져오는 로직
     getVieweeListCurrentRecruit: function (state) {
-      return state.comVieweeList.filter(re => re.recruitReSeq === state.user.userComSeq)
+      return state.comVieweeList.filter(re => re.recruitReSeq === state.selectedRecruitNo)
     },
 
     getComViewerList(state) {
@@ -288,19 +288,19 @@ export default new Vuex.Store({
       state.recruitList.push(res);
     },
     GET_VIEWEE_LIST(state, res) {
-      console.log("mutaions의 GETVIEWEELIST", res);
-      state.recruitVieweeList = res;
-      console.log(state.recruitVieweeList);
+      console.log("mutaions의 GET_VIEWEE_LIST", res);
+      state.comVieweeList = res;
+      // console.log(state.comVieweeList);
     },
     UPDATE_VIEWEE_LIST(state, res) {
       console.log("mutaions의 UPDATE_VIEWEE_LIST", res);
       state.recruitVieweeList = res;
-      console.log(state.recruitVieweeList);
+      // console.log(state.recruitVieweeList);
     },
     GET_VIEWER_LIST(state, res) {
       console.log("mutaions의 GET면접관LIST", res);
       state.comViewerList = res;
-      console.log(state.comViewerList);
+      // console.log(state.comViewerList);
     },
   },
 
@@ -321,9 +321,6 @@ export default new Vuex.Store({
       axios.defaults.headers.common["auth-token"] = undefined;
     },
 
-    // 공고 리스트 가져오기, 추가
-    // 공고 리스트 가져오는 요청
-    // 필요한 데이터 : re_seq, re_year, re_flag, re_status, re_startdate, re_enddate
     GET_RECRUIT_LIST(context) {
       axios
         .get(`${SERVER_URL}/recruit/getList/` + this.state.user.userComSeq)
@@ -333,6 +330,7 @@ export default new Vuex.Store({
         });
       context.commit("GET_RECRUIT_LIST");
     },
+
     INSERT_RECRUIT(context, newRecruit) {
       axios
         .post(
@@ -360,7 +358,7 @@ export default new Vuex.Store({
     //지원자 리스트를 불러온다. //이거.. 공고별이 아니라, 회사 전체의 리스트를 불러올 수 있어야 함.
     GET_VIEWEE_LIST(context, comSeq) {
       axios
-        .get(`${SERVER_URL}/applicant/getList/${comSeq}`)
+        .get(`${SERVER_URL}/applicant/getListByCompany/${comSeq}`)
         .then((res) => {
           context.commit("GET_VIEWEE_LIST", res.data);
         })

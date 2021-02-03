@@ -1,20 +1,14 @@
 <template>
   <div id="schedule">
     <!--스케줄 (공고 리스트) 컴포넌트 // 나중에 라우터로 변경 될 수 있다. -->
-    <h3>반갑습니다. {{com_name}}님</h3>
+    <h3>반갑습니다. [{{user.userComName}}] - {{user.userName}}님</h3>
+    <br>
 
     <div>
-      <!--데이터 테이블 <v-data-table :headers="headers" :items="recruits" class="elevation-1">
-        <template v-slot:[`item.re_flag`]="{ item }">
-          <v-chip :color="getColor(item.re_flag)" dark>
-            {{ item.calories }}
-          </v-chip>
-        </template>
-      </v-data-table> -->
 
       <v-dialog v-model="dialog" persistent max-width="600px">
         <template v-slot:activator="{ on, attrs }">
-          <v-btn color="primary" dark v-bind="attrs" v-on="on">
+          <v-btn x-large color="primary" dark v-bind="attrs" v-on="on">
             공고 추가하기
           </v-btn>
         </template>
@@ -43,10 +37,10 @@
                 </v-col>
                 <v-col cols="12" sm="6">
                   <v-date-picker v-model="dates" range></v-date-picker>
-                  
+
                 </v-col>
 
-              
+
               </v-row>
             </v-container>
             <small>*indicates required field</small>
@@ -63,9 +57,16 @@
         </v-card>
       </v-dialog>
 
-      <div>
-        최근 등록된 순으로 보여집니다. 
-      </div>
+      <br>
+      <br>
+
+
+
+        <div>
+          최근 등록된 공고 순으로 보여집니다.
+        </div>
+
+
       <v-simple-table fixed-header height="300px" class="mt-5">
         <thead>
           <tr>
@@ -87,13 +88,12 @@
             <td>{{ recruit.reStartDate }} ~ {{recruit.reEndDate }}</td>
             <td>
               <!-- <v-btn :to="{ name: 'Progress', params: { recruitNo: recruit.reSeq } }" >관리하기</v-btn> -->
-              <!-- <v-btn :to="{ name: 'Progress', params: { recruitNo: recruit.reSeq } }" >관리하기</v-btn> -->
-              <v-btn @click="goToProgress(recruit.reSeq)" >관리하기</v-btn>
+              <v-btn @click="goToProgress(recruit)">관리하기</v-btn>
             </td>
             <td>
-              <v-btn @click="goToProgress(recruit.reSeq)" >삭제</v-btn>
+              <v-btn @click="goToProgress(recruit.reSeq)">삭제</v-btn>
             </td>
-            
+
           </tr>
         </tbody>
       </v-simple-table>
@@ -105,7 +105,10 @@
 </template>
 
 <script>
-  import { mapState, mapGetters } from "vuex";
+  import {
+    mapState,
+    mapGetters
+  } from "vuex";
 
   export default {
     name: "Schedule",
@@ -116,11 +119,11 @@
         myReno: '',
 
         dates: ['2021-01-01', '2021-01-01'],
-        new_recruit :{
-          reYear:'',
-          reFlag:'',
-          reStatus:'',
-          reStartDate:'',
+        new_recruit: {
+          reYear: '',
+          reFlag: '',
+          reStatus: '',
+          reStartDate: '',
           reEndDate: '',
         },
       }
@@ -146,30 +149,36 @@
         //this.$store.dispatch('addRecruit', 응답으로 받은 데이터 res.data)
 
       },
-      goToProgress: function (reno) {
-        this.myReno = reno
-        this.$store.state.selectedRecruitNo = reno
+      goToProgress: function (recruit) {
+        this.myReno = recruit.reSeq
+        this.$store.state.selectedRecruitNo = recruit.reSeq
         console.log("goToProgres!!", this.$store.state.selectedRecruitNo)
-        this.$router.push({name:'Menu', params: { recruitNo: this.myReno }})
+        this.$router.push({
+          name: 'Menu',
+          params: {
+            recruitNo: recruit.reSeq,
+            recruitInfo: recruit
+          }
+        })
       },
 
-        
-      },
-    
-    created : function () {
+
+    },
+
+    created: function () {
       this.$store
         .dispatch("GET_RECRUIT_LIST")
         .then(() => console.log("getRecruitList"))
-        console.log(this.$store.state.recruitList);
+      console.log(this.$store.state.recruitList);
     },
     computed: {
-      ...mapState(["recruitList"]),
+      ...mapState(["recruitList", "user"]),
       ...mapGetters(["getRecruitListLately"]),
 
       dateRangeText() {
         return this.dates.join(' ~ ')
       },
-      
+
     },
   }
 </script>

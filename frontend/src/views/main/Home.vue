@@ -13,7 +13,6 @@
           <div v-if="getAccessToken" class="mt-10">
             <!-- 로그인 완료 -->
             <div v-if="getUserViewWait === -1">
-              <h1>인사담당자 페이지</h1>
               <Schedule />
             </div>
             <div v-else>

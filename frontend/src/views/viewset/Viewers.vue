@@ -1,6 +1,6 @@
 <template>
   <div id="viewers">
-    <v-simple-table class="mt-5">
+    <v-simple-table fixed-header  height="500px" class="mt-5">
       <thead>
         <tr>
           <th class="text-center">No</th>
