@@ -228,7 +228,7 @@
         //axios.post(보낼url, reno)
       createVieweeDB: function () {
 
-        this.$store.dispatch("GETVIEWEELIST", this.reno)
+        this.$store.dispatch("UPDATE_VIEWEE_LIST", this.reno)
         this.filterdVieweeList();
 
       },

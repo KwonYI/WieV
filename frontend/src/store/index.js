@@ -286,8 +286,13 @@ export default new Vuex.Store({
     INSERT_RECRUIT(state, res) {
       state.recruitList.push(res);
     },
-    GETVIEWEELIST(state, res) {
+    GET_VIEWEE_LIST(state, res) {
       console.log("mutaions의 GETVIEWEELIST", res);
+      state.recruitVieweeList = res;
+      console.log(state.recruitVieweeList);
+    },
+    UPDATE_VIEWEE_LIST(state, res) {
+      console.log("mutaions의 UPDATE_VIEWEE_LIST", res);
       state.recruitVieweeList = res;
       console.log(state.recruitVieweeList);
     },
@@ -337,16 +342,30 @@ export default new Vuex.Store({
         });
     },
 
-    //지원자를 저장
-    GETVIEWEELIST(context, recruitNo) {
+    //지원자를 엑셀로 저장
+    UPDATE_VIEWEE_LIST(context, recruitNo) {
       axios
         .get(`${SERVER_URL}/applicant/getList/${recruitNo}`)
         .then((res) => {
-          context.commit("GETVIEWEELIST", res.data);
+          context.commit("UPDATE_VIEWEE_LIST", res.data);
         })
         .catch((err) => {
           console.log(err);
         });
     },
+
+
+    //지원자 리스트를 불러온다. //이거.. 공고별이 아니라, 회사 전체의 리스트를 불러올 수 있어야 함.
+    GET_VIEWEE_LIST(context, recruitNo) {
+      axios
+        .get(`${SERVER_URL}/applicant/getList/${recruitNo}`)
+        .then((res) => {
+          context.commit("GET_VIEWEE_LIST", res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
   },
 });

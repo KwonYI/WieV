@@ -72,12 +72,20 @@ export default {
     goToProfile: function () {
       this.recruitno = -1
     },
+
+    // 지금문제점이 뭐냐면, 이렇게 되면 this.reno 말고 전체 지원자 리스트 가져와야해요
+      // filterdVieweeList: function () { //re.recruitReSeq === this.reno 로 수정해야함
+      //   return this.recruitVieweeList.filter(re => re.recruitReSeq === this.reno)
   },
   created: function () {
     this.tempReList = this.recruitList
     console.log("Menu의 createD의 reno", this.recruitno)
     // console.log("Menu의 createD의 recruitList",this.tempReList )
+
+    // this.$store.dispatch("GET_VIEWEE_LIST", this.reno)
+        // this.filterdVieweeList();
   },
+
   computed: {
     ...mapState(["selectedRecruitNo", "recruitList"]),
   },
