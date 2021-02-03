@@ -12,6 +12,6 @@ import com.web.project.model.recruit.ApplicantGroup;
 @Repository
 public interface ApplicantGroupDao extends JpaRepository<ApplicantGroup, String> {
 
-	List<ApplicantGroup> findAllApplicantGroupByGroupDetailDetailSeq(int groupDetailDetailSeq);
+	List<ApplicantGroup> findListApplicantGroupByGroupDetailDetailSeq(int groupDetailDetailSeq);
 	ApplicantGroup findApplicantGroupByApplicantApplySeq(int applicantApplySeq);
 }
