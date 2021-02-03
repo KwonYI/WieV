@@ -12,7 +12,7 @@
       <!-- <v-file-input show-size counter multiple label="File input"></v-file-input>
       <v-btn class="m-3" @click="createVieweeDB"> DB업데이트 </v-btn> -->
     </v-toolbar>
-    <v-simple-table fixed-header class="mt-5">
+    <v-simple-table fixed-header height="500px" class="mt-5">
       <thead>
         <tr>
           <th class="text-center">No</th>
@@ -49,136 +49,25 @@
 
 <script>
   import axios from 'axios';
-   const SERVER_URL = "https://localhost:8080/";
+  const SERVER_URL = "https://localhost:8080/";
 
   import {
-    mapState
+    mapState, mapGetters
   } from "vuex";
 
 
   export default {
     name: "Viewees",
-    data:()=>({
-      files:[],
+    data: () => ({
+      files: [],
     }),
-     function () {
+    function () {
       return {
         loading: false,
         search: null,
         select: null,
         items: [],
         reno: "",
-        applicants: [
-          {
-            no: 1,
-            name: "김지원",
-            email: "apply123@naver.com",
-            phone: "010-0000-1234",
-            ca: "SW개발",
-            birth: "94-09-15",
-          },
-          {
-            no: 2,
-            name: "김지원",
-            ca: "SW개발",
-            email: "apply123@naver.com",
-            phone: "010-0000-1234",
-            password: "1234",
-            birth: "94-09-15",
-          },
-          {
-            no: 3,
-            name: "김지원",
-            ca: "마케팅",
-            email: "apply123@naver.com",
-            phone: "010-0000-1234",
-            password: "1234",
-            birth: "94-09-15",
-          },
-          {
-            no: 4,
-            name: "김지원",
-            ca: "회로개발",
-            email: "apply123@naver.com",
-            phone: "010-0000-1234",
-            password: "1234",
-            birth: "94-09-15",
-          },
-
-          {
-            no: 5,
-            name: "이지원",
-            email: "apply123@naver.com",
-            phone: "010-0000-1234",
-            password: "1234",
-            ca: "SW개발",
-            birth: "94-09-15",
-          },
-          {
-            no: 6,
-            name: "이지원",
-            email: "apply123@naver.com",
-            phone: "010-0000-1234",
-            password: "1234",
-            ca: "SW개발",
-            birth: "94-09-15",
-          },
-          {
-            no: 7,
-            name: "이지원",
-            email: "apply123@naver.com",
-            phone: "010-0000-1234",
-            password: "1234",
-            ca: "인사",
-            birth: "94-09-15",
-          },
-          {
-            no: 8,
-            name: "이지원",
-            email: "apply123@naver.com",
-            phone: "010-0000-1234",
-            password: "1234",
-            ca: "VOC",
-            birth: "94-09-15",
-          },
-
-          {
-            no: 9,
-            name: "박지원",
-            email: "apply123@naver.com",
-            phone: "010-0000-1234",
-            password: "1234",
-            ca: "SW개발",
-            birth: "94-09-15",
-          },
-          {
-            no: 10,
-            name: "박지원",
-            email: "apply123@naver.com",
-            phone: "010-0000-1234",
-            password: "1234",
-            ca: "QA",
-            birth: "94-09-15",
-          },
-          {
-            no: 11,
-            name: "박지원",
-            email: "apply123@naver.com",
-            phone: "010-0000-1234",
-            password: "1234",
-            ca: "총무",
-            birth: "94-09-15",
-          },
-          {
-            no: 12,
-            name: "박지원",
-            email: "apply123@naver.com",
-            phone: "010-0000-1234",
-            password: "1234",
-            ca: "리서치",
-            birth: "94-09-15",
-          },
-        ]
 
       };
     },
@@ -192,46 +81,45 @@
       // this.createVieweeDB();
 
 
-
-
-
     },
 
     methods: {
-      upload:function() {
-      var fd = new FormData();
-      console.log(this.files)
-      //var excelfile=document.querySelector(`#files`);
-      fd.append('files', this.files)
-      //console.log( excelfile.files[0])
-      for (var pair of fd.values()) 
-      { console.log(pair); }
+      upload: function () {
+        var fd = new FormData();
+        console.log(this.files)
+        //var excelfile=document.querySelector(`#files`);
+        fd.append('files', this.files)
+        //console.log( excelfile.files[0])
+        for (var pair of fd.values()) {
+          console.log(pair);
+        }
 
-      axios.post(`${SERVER_URL}applicant/getExcel`,
+        axios.post(`${SERVER_URL}applicant/getExcel`,
             fd, {
               headers: {
                 'Content-Type': 'multipart/form-data'
               }
             }
-          ).then( response => {
+          ).then(response => {
             console.log('SUCCESS!!');
             console.log(response.data)
           })
           .catch(function () {
             console.log('FAILURE!!');
           });
-    },
+      },
 
-        //여기서 요청을 보내면, excel파일대로 DB를 저장한 뒤 여기에 뿌려줘야 합니다.
-        //공고 데이터를 보내면, 받는 데이터는 해당 공고 지원자 전체입니다.
+      //여기서 요청을 보내면, excel파일대로 DB를 저장한 뒤 여기에 뿌려줘야 합니다.
+      //공고 데이터를 보내면, 받는 데이터는 해당 공고 지원자 전체입니다.
 
-        //axios.post(보낼url, reno)
+      //axios.post(보낼url, reno)
+
       createVieweeDB: function () {
 
         this.$store.dispatch("UPDATE_VIEWEE_LIST", this.reno)
         this.filterdVieweeList();
-
       },
+
       filterdVieweeList: function () { //re.recruitReSeq === this.reno 로 수정해야함
         return this.recruitVieweeList.filter(re => re.recruitReSeq === this.reno)
 
@@ -242,6 +130,7 @@
     },
     computed: {
       ...mapState(["recruitVieweeList"]),
+      ...mapGetters(["getUserComSeq"])
       //지원자 리스트에서 공고에 해당하는 것만 골라서 필터링
       // filterdVieweeList: function () { //re.recruitReSeq === this.reno 로 수정해야함
       //   return this.recruitVieweeList.filter(re => re.recruitReSeq === this.reno)

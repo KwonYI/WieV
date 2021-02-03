@@ -1,6 +1,6 @@
 <template>
   <div id="progress">
-    <v-simple-table fixed-header class="mt-5">
+    <v-simple-table fixed-header height="1000px" class="mt-5">
       <thead>
         <tr>
           <th class="text-center">날짜</th>
