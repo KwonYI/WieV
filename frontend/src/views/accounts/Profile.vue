@@ -4,10 +4,10 @@
       <v-row class="h-100">
         <v-col col="6">
           <div>
-            <h2 class="text-center m-5">{{ com_name }}</h2>
-            <v-img :src="com_logo" max-height="150" max-width="250"></v-img>
-            <h3>주소 : {{ com_address }}</h3>
-            <h3>홈페이지 : {{ com_homepage }}</h3>
+            <h2 class="text-center m-5">{{ user.userComName }}</h2>
+            <v-img :src="user.userComLogo" max-height="150" max-width="250" class="m-4"></v-img>
+            <h4>주소 : {{ user.userComAddress }}</h4>
+            <h4>홈페이지 : {{ user.userComHomepage  }}</h4>
           </div>
         </v-col>
 
@@ -18,10 +18,10 @@
               <v-icon>mdi-cog</v-icon>
             </v-btn>
             <div class="">
-              <h4>이메일 : {{ hr_email }}</h4>
-              <h4>연락처 : {{ hr_phone }}</h4>
-              <h4>가입일 : {{ hr_create_date }}</h4>
-              <h4>인증여부 : {{ com_homepage }}</h4>
+              <h4>이메일 : {{ user.userEmail }}</h4>
+              <h4>이름 : {{ user.userName }}</h4>
+              <h4>연락처 : {{ user.Phone }}</h4>
+              
             </div>
           </div>
 
@@ -35,6 +35,12 @@
 </template>
 
 <script>
+
+import {
+    mapState,
+  } from "vuex";
+
+
 export default {
   name: "Profile",
   data: function () {
@@ -55,7 +61,12 @@ export default {
     this.reno = this.$store.state.selectedRecruitNo
     console.log("reno:", this.reno)
   },
-}
+
+  computed: {
+    ...mapState(['user']),
+
+  }
+};
 </script>
 
 <style>

@@ -37,13 +37,13 @@
           <div v-if="currentRouteName !== 'WaitRoom' && currentRouteName !== 'ViewRoom'">
             <v-toolbar-items class="align-center">
               <!-- 인사담당자일 경우 면접 스케줄 생성 버튼 -->
-              <span>
+              <span class="mx-2">
                 <router-link class="title" :to="{ name: 'Menu' }">
-                  WieV Inc.
+                  공고관리
                 </router-link>
               </span>
 
-              <span>
+              <span class="mx-2">
                 <router-link class="title" :to="{ name: 'Profile' }">
                   내 정보
                 </router-link>
