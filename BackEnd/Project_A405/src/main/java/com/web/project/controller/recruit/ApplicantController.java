@@ -1,5 +1,6 @@
 package com.web.project.controller.recruit;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -120,7 +121,26 @@ public class ApplicantController {
 		List<Applicant> applicantList=applicantDao.findAllApplicantByRecruitReSeq(reSeq);
 		return new ResponseEntity<List<Applicant>>(applicantList, HttpStatus.OK);
 	}
-
+	
+	
+	@GetMapping(value = "/getListByCompany/{comSeq}")
+	@ApiOperation(value = "회사에 따른 지원자 리스트 모두 가져오기")
+	public ResponseEntity<List<Applicant>> getApplicationListByCompany(@PathVariable("comSeq") int comSeq) {
+		
+		List<Applicant> AllapplicantList=applicantDao.findAll();
+		List<Applicant> resultApplicantList=new ArrayList<Applicant>();
+		
+		for (int i = 0; i <AllapplicantList.size(); i++) {
+			Applicant applicant=AllapplicantList.get(i);
+			int recruitSeq=applicant.getRecruitReSeq();
+			Recruit recruit=recruitDao.findRecruitByReSeq(recruitSeq);
+			if(comSeq==recruit.getCompanyComSeq()) {
+				resultApplicantList.add(applicant);
+			}
+		}
+		return new ResponseEntity<List<Applicant>>(resultApplicantList, HttpStatus.OK);
+	}
+	
 //	@PostMapping("/assign/{groupSeq}")
 //	@ApiOperation(value = "지원자 자동 배정")
 	public void applicantAssign(int groupSeq) {
@@ -253,85 +273,18 @@ public class ApplicantController {
 
 	};
 
-	@PostMapping("/getExcel")
-	private Object insertSalePost(@RequestParam(value = "fd") MultipartFile fd) {
-		System.out.println("들왔찌롱");
-	    if (fd.isEmpty()) {
-	    	System.out.println("비었지롱");
-	        return new ResponseEntity<>("please select a file!", HttpStatus.OK);
-	    }
-		ResponseEntity response = null;
-		System.out.println("들어와씀");
-		String uuid_filename=fileWrite(fd);
-		System.out.println(uuid_filename);
-		
-		final BasicResponse result = new BasicResponse();
-		result.status = true;
-		result.data = "success";
-
-		response = new ResponseEntity<>(result, HttpStatus.OK);
-
-		return response;
-	}
 	
-
-    // 파일 저장 메소드
-    private String fileWrite(MultipartFile uploadfile) {
-        OutputStream out = null;
-        String targetFilename = null;
-        try {
-            String filePath = "C:/test"; // 설정파일로 뺀다.
-             
-            // 파일명 얻기
-            String fileName = uploadfile.getOriginalFilename();
-             
-            // 파일의 바이트 정보 얻기
-            byte[] bytes = uploadfile.getBytes();
-     
-            String originalFilename = uploadfile.getOriginalFilename(); // 파일명
-             
-            // 파일 확장자 추출
-            int pos = originalFilename.lastIndexOf( "." );
-            String fileExt = originalFilename.substring( pos + 1 );
-            
-            UUID uuid = UUID.randomUUID();
-            targetFilename = uuid.toString() + "." + fileExt.toLowerCase();
-     
-            String fileFullPath = filePath + "/" + targetFilename; // 파일 전체 경로
-             
-            // 파일 객체 생성
-            File file = new File(fileFullPath);
-            // 상위 폴더 존재 여부 확인
-            if (!file.getParentFile().exists()) {
-                // 상위 폴더가 존재 하지 않는 경우 상위 폴더 생성
-                file.getParentFile().mkdirs();
-            }
-             
-            // 파일 아웃풋 스트림 생성
-            out = new FileOutputStream(file);
-            // 파일 아웃풋 스트림에 파일의 바이트 쓰기
-            out.write(bytes);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try { if (out != null) { out.close(); } } catch (IOException e) { e.printStackTrace(); }
-        }
-        return targetFilename;
-    }
-
-
-	
-	@PostMapping("/register")
+	@PostMapping("/register/{reSeq}")
 	@ApiOperation(value = "지원자등록")
-	public List<Applicant> applicantRegister(@Valid @RequestBody Recruit recruit)
+	public List<Applicant> applicantRegister( @PathVariable("reSeq") int reSeq,MultipartFile files)
 			throws EncryptedDocumentException, IOException, ParseException {
 		// 웹상에서 업로드 되어 MultipartFile인 경우 바로 InputStream으로 변경하여 사용.
-		// InputStream inputStream = new ByteArrayInputStream(file.getBytes());
+		 InputStream inputStream = new ByteArrayInputStream(files.getBytes());
 
-		String filePath = "C:\\example.xlsx"; // xlsx 형식
+		//String filePath = "C:\\example.xlsx"; // xlsx 형식
 		// String filePath = "D:\\applicant.xls"; // xls 형식
 
-		InputStream inputStream = new FileInputStream(filePath);
+		//InputStream inputStream = new FileInputStream(filePath);
 
 		// 엑셀 로드
 		Workbook workbook = WorkbookFactory.create(inputStream);
@@ -385,7 +338,6 @@ public class ApplicantController {
 					break;
 				case 5:
 					// 생년월일
-					System.out.println(row);
 					Date birth = (Date) getValueFromCell(cell);
 					// SimpleDateFormat trans = new SimpleDateFormat("yyyy-MM-dd");
 					applicant.setApplyBirth(birth);
@@ -424,7 +376,9 @@ public class ApplicantController {
 
 			// 랜덤아이디부여
 			applicant.setApplyId(getUUID());
-
+			
+			Recruit recruit=recruitDao.findRecruitByReSeq(reSeq);
+			
 			int comSeq = recruit.getCompanyComSeq();
 			Part part = partDao.findPartByCompanyComSeqAndPartName(comSeq, partName);
 
