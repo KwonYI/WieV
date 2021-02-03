@@ -105,14 +105,10 @@
 </template>
 
 <script>
-<<<<<<< HEAD
-  import { mapState, mapGetters } from "vuex"
-=======
   import {
     mapState,
     mapGetters
   } from "vuex";
->>>>>>> f_recruitList
 
   export default {
     name: "Schedule",
@@ -173,11 +169,7 @@
       this.$store
         .dispatch("GET_RECRUIT_LIST")
         .then(() => console.log("getRecruitList"))
-<<<<<<< HEAD
-        console.log(this.$store.state.recruitList)
-=======
       console.log(this.$store.state.recruitList);
->>>>>>> f_recruitList
     },
     computed: {
       ...mapState(["recruitList", "user"]),
