@@ -39,7 +39,7 @@
               <!-- 인사담당자일 경우 면접 스케줄 생성 버튼 -->
               <span>
                 <router-link class="title" :to="{ name: 'Menu' }">
-                  WeiV Inc.
+                  WieV Inc.
                 </router-link>
               </span>
               <v-btn plain style="font-size: 1rem" @click="logout">

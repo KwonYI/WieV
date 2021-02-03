@@ -18,7 +18,7 @@
             <v-tab :to="{ name: 'Viewees', params: { recruitNo: recruitNo } }">지원자 관리</v-tab>
           </v-tabs>
           <v-chip style="" outlined>
-            <router-link :to="{ name: 'CreateSet'}">
+            <router-link :to="{ name: 'CreateSet', params: { recruitNo: recruitNo }}">
               면접스케줄 생성
             </router-link>
           </v-chip>

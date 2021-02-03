@@ -56,20 +56,25 @@ export default {
       recruitno: -1,
       selectedItem: -1,
       tempReList:[],
-    };
+      curRecruit: {
+        reYear: '',
+        reFlag: '',
+        reStatus: ''
+      }
+    }
   },
   methods: {
     selectRecruit: function (selectedreno) {
-      console.log("selectRecruit클릭!", selectedreno);
-      this.$store.state.selectedRecruitNo = selectedreno;
+      console.log("selectRecruit클릭!", selectedreno)
+      this.$store.state.selectedRecruitNo = selectedreno
       // this.selectedRecruitNo = selectedreno;
-      this.recruitno = selectedreno;
+      this.recruitno = selectedreno
       // this.selectRecruitTrigger = true;
     },
     goToProfile: function () {
       // this.$store.state.selectedRecruitNo = -1;
       // this.selectedRecruitNo = -1;
-      this.recruitno = -1;
+      this.recruitno = -1
     },
   },
   created: function () {
