@@ -53,7 +53,7 @@ export default {
   },
   data: function () {
     return {
-      recruitno: -1,
+      recruitno: this.$route.params.recruitNo,
       selectedItem: -1,
       tempReList:[],
     };

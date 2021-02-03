@@ -140,7 +140,7 @@
         this.myReno = reno
         this.$store.state.selectedRecruitNo = reno
         console.log("goToProgres!!", this.$store.state.selectedRecruitNo)
-        this.$router.push({name:'Progress', params: { recruitNo: this.myReno }})
+        this.$router.push({name:'Menu', params: { recruitNo: this.myReno }})
       },
 
         
