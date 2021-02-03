@@ -47,20 +47,17 @@ const routes = [
       //   name: 'Recruit',
       //   component: Recruit,
       // },
-      {
-        path: '',
-        redirect: 'progress',
-      },
-      {
-        path: 'profile',
-        name: 'Profile',
-        component: Profile,
-      },
+      // {
+      //   path: '',
+      //   redirect: 'progress',
+      // },
       {
         path: 'progress',
         name: 'Progress',
         component: Progress,
       },
+      
+      
       {
         path: 'viewees',
         name: 'Viewees',
@@ -70,7 +67,12 @@ const routes = [
         path: 'viewers',
         name: 'Viewers',
         component: Viewers,
-      }
+      },
+      {
+        path: 'profile',
+        name: 'Profile',
+        component: Profile,
+      },
     ]
   },
   {

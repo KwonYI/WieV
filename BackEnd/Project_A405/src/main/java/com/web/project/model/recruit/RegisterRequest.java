@@ -23,10 +23,10 @@ public class RegisterRequest {
 	String reStatus;
 	@ApiModelProperty(required = true)
 	@NotNull
-	String reStartdate;
+	String reStartDate;
 	@ApiModelProperty(required = true)
 	@NotNull
-	String reEnddate;
+	String reEndDate;
 	
 	public int getReYear() {
 		return reYear;
@@ -46,17 +46,18 @@ public class RegisterRequest {
 	public void setReStatus(String reStatus) {
 		this.reStatus = reStatus;
 	}
-	public String getReStartdate() {
-		return reStartdate;
+	public String getReStartDate() {
+		return reStartDate;
 	}
-	public void setReStartdate(String reStartdate) {
-		this.reStartdate = reStartdate;
+	public void setReStartDate(String reStartDate) {
+		this.reStartDate = reStartDate;
 	}
-	public String getReEnddate() {
-		return reEnddate;
+	public String getReEndDate() {
+		return reEndDate;
 	}
-	public void setReEnddate(String reEnddate) {
-		this.reEnddate = reEnddate;
+	public void setReEndDate(String reEndDate) {
+		this.reEndDate = reEndDate;
 	}
+	
 
 }

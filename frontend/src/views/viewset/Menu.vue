@@ -53,7 +53,7 @@ export default {
   },
   data: function () {
     return {
-      recruitno: -1,
+      recruitno: this.$route.params.recruitNo,
       selectedItem: -1,
       tempReList:[],
       curRecruit: {
@@ -67,25 +67,21 @@ export default {
     selectRecruit: function (selectedreno) {
       console.log("selectRecruit클릭!", selectedreno)
       this.$store.state.selectedRecruitNo = selectedreno
-      // this.selectedRecruitNo = selectedreno;
-      this.recruitno = selectedreno
-      // this.selectRecruitTrigger = true;
+      this.recruitno = selectedreno;
     },
     goToProfile: function () {
-      // this.$store.state.selectedRecruitNo = -1;
-      // this.selectedRecruitNo = -1;
       this.recruitno = -1
     },
   },
   created: function () {
-    // this.recruitno = this.$store.state.selectedRecruitNo;
     this.tempReList = this.recruitList
-    console.log("createD????",this.tempReList )
+    console.log("Menu의 createD의 reno", this.recruitno)
+    // console.log("Menu의 createD의 recruitList",this.tempReList )
   },
   computed: {
     ...mapState(["selectedRecruitNo", "recruitList"]),
   },
-  
+
 };
 </script>
 
