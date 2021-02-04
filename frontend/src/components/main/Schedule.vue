@@ -24,34 +24,34 @@
               <v-container>
                 <v-row>
                   <v-col cols="12" sm="6" md="4">
-                    <v-autocomplete
+                    <v-select
                       :items="[2021, 2022, 2023]"
                       :rules="[v => !!v || '연도값은 필수입니다.']"
                       label="Year"
                       required
                       v-model="new_recruit.reYear"
                     >
-                    </v-autocomplete>
+                    </v-select>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
-                    <v-autocomplete
+                    <v-select
                       :items="['상반기', '하반기']"
                       :rules="[v => !!v || '시즌값은 필수입니다.']"
                       label="Season"
                       required
                       v-model="new_recruit.reFlag"
                     >
-                    </v-autocomplete>
+                    </v-select>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
-                    <v-autocomplete
+                    <v-select
                     :items="['신입', '경력', '계약']"
                     :rules="[v => !!v || '채용 형태 값은 필수입니다.']"
                     label="Type"
                     required
                     v-model="new_recruit.reStatus"
                   >
-                  </v-autocomplete>
+                  </v-select>
                   </v-col>
 
                   <v-col cols="12" sm="6">
@@ -152,18 +152,19 @@
           () => this.dates[0] <= this.dates[1] || '면접 기간이 올바르지 않습니다.'
         ],
         new_recruit: {
-          reYear: '',
-          reFlag: '',
-          reStatus: '',
+          reYear: [],
+          reFlag: [],
+          reStatus: [],
           reStartDate: '',
           reEndDate: '',
         },
+        reYear: ''
       }
     },
 
     methods: {
       createRecruit: function () {
-        if (this.$refs.form.validate()) {
+        // if (this.$refs.form.validate()) {
           this.dialog = false
           // this.dialog = false
           // console.log("createRecruit 실행!")
@@ -205,6 +206,10 @@
             }
           }
         }
+        
+        console.log("recruit")
+        console.log(this.reYear)
+        console.log(this.new_recruit)
 
         this.$store
           .dispatch("INSERT_RECRUIT", this.new_recruit)
@@ -214,8 +219,8 @@
         // 새로 저장된 공고의 정보 (seq포함)를 가져오고, state 에 저장합니다. 
         //this.$store.dispatch('addRecruit', 응답으로 받은 데이터 res.data)
 
-          this.$refs.form.reset()
-        }
+          // this.$refs.form.reset()
+        // }
       },
 
       deleteRecruit: function (reSeq) {
