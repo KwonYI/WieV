@@ -1,6 +1,6 @@
 <template>
-  <div id="progress">
-    <v-simple-table fixed-header height="1000px" class="mt-5">
+  <div id="progress"  v-if="givenreno">
+    <v-simple-table fixed-header height="1000px" class="mt-5" >
       <thead>
         <tr>
           <th class="text-center">날짜</th>
@@ -14,11 +14,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="item in filterdProgressList"
-          :key="item.progress_no"
-          class="text-center"
-        >
+        <tr v-for="item in filterdProgressList" :key="item.progress_no" class="text-center">
           <td>{{ item.group_date }}</td>
           <td>{{ item.group_start_time }}</td>
           <td>{{ item.ca }}</td>
@@ -34,39 +30,44 @@
       </tbody>
     </v-simple-table>
     <div class="d-flex justify-end">
-    <v-btn>안내메일전송</v-btn>
-     </div>
+      <v-btn>안내메일전송</v-btn>
+    </div>
   </div>
 </template>
 
 <script>
+  import {
+    mapState
+  } from "vuex";
 
-import { mapState } from "vuex";
 
+  export default {
+    name: "Progress",
+    data: function () {
+      return {
+        reno: "",
+        givnereno: "",
+      };
+    },
+    created: function () {
+      this.givnereno = this.$route.params.recruitNo;
+      this.reno = this.$store.state.selectedRecruitNo;
+      console.log("프로그레스 created의 reno:", this.reno);
+    },
+   
 
-export default {
-  name: "Progress",
-  data: function () {
-    return {
-      reno: "",
-    };
-  },
-  created: function () {
-    this.reno = this.$store.state.selectedRecruitNo;
-    console.log("프로그레스 created의 reno:", this.reno);
-  },
+    computed: {
 
-  computed: {
-    ...mapState(["recruitList", "recruitProgressList"]),
+      ...mapState(["recruitList", "recruitProgressList"]),
 
-    filterdProgressList: function() {
-      return this.recruitProgressList.filter( re => re.reSeq === this.reno)
+      filterdProgressList: function () {
+        return this.recruitProgressList.filter(re => re.reSeq === this.reno)
 
-    }
+      }
 
-  },
-  
-};
+    },
+
+  };
 </script>
 
 <style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="recruit">
+  <div id="recruit">
     <!--######## 공고 별 컴포넌트##############-->
     <v-container>
       <v-row>
@@ -57,14 +57,28 @@
       console.log("reno:", this.recruitNo);
     },
     watch: {
+      // recruitNo: function () {
+      //   if (this.$route.path != "/recruitmenu/progress") {
+      //     this.$router.push({
+      //       name: "Progress"
+      //     });
+      //     // if (this.$route.path != "/recruitmenu") {
+      //     //   this.$router.go(1);
+      //   }
+      // },
+
+
       recruitNo: function () {
-        if (this.$route.path != "/recruitmenu/progress") {
-          this.$router.push({
-            name: "Progress"
-          });
-          // if (this.$route.path != "/recruitmenu") {
-          //   this.$router.go(1);
-        }
+          
+          // this.$router.push({
+          //   name: "Progress"
+          // });
+         
+            this.$router.go(1);
+
+            // this.$router.go(this.$router.currentRoute)
+        
+       
       },
     },
   };

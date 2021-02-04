@@ -15,7 +15,7 @@
           <div class="">
             <h2 class="text-center m-5">Profile</h2>
             <v-btn class="ma-2" text icon color="red lighten-2">
-              <v-icon>mdi-cog</v-icon>
+              <!-- <v-icon>mdi-cog</v-icon> -->
             </v-btn>
             <div class="">
               <h4>이메일 : {{ user.userEmail }}</h4>
@@ -25,9 +25,9 @@
             </div>
           </div>
 
-          <div class="text-center">
+          <!-- <div class="text-center">
             <v-btn rounded color="primary" dark> 웹 화면 테스트 </v-btn>
-          </div>
+          </div> -->
         </v-col>
       </v-row>
     </v-container>
