@@ -1,9 +1,9 @@
 <template>
-  <div id="signup" class="mt-12 ml-14 text-white">
+  <div id="signup" class="mt-12 ml-16 text-white">
     <div class="h4">회원가입</div>
     <!-- 정보입력 Form -->
     <v-row no-gutters>
-      <v-col cols="5" class="mt-5 ml-6">
+      <v-col cols="5" class="mt-5 ml-16">
         <v-simple-table class="info-table" dark>
           <tbody>
             <tr v-for="(item, index) in userInfo" :key="index">
@@ -15,8 +15,10 @@
                   v-model="credentials[item.value]"
                 ></v-text-field>
               </td>
-              <v-btn v-if="index === 0" @click="send">인증 메일 발송 </v-btn>
-              <v-btn v-if="index === 1" @click="certified">인증 확인 </v-btn>
+              <td>
+                <v-btn v-if="index === 0" @click="send">인증 메일 발송 </v-btn>
+                <v-btn v-if="index === 1" @click="certified">인증 확인 </v-btn>
+              </td>
             </tr>
           </tbody>
         </v-simple-table>
@@ -46,104 +48,10 @@
         ></v-checkbox>
       </v-col>
       <v-col cols="12"></v-col>
-      <span @click="signup" class="text-white text-right ma-8 pr-16"
-        >가입하기</span
-      >
+      <span @click="signup" class="text-white text-right ma-8 pr-16">
+        가입하기
+      </span>
     </v-row>
-
-    <!-- Validation Form -->
-    <!-- <v-simple-table>
-      <template v-slot:default>
-        <tbody>
-          <tr v-for="item in userInfo" :key="item.label">
-            <td>{{ item.label }}</td>
-            <td>
-              <template>
-                <validation-observer ref="observer" v-slot="{ invalid }">
-                  <form @submit.prevent="submit">
-                    <validation-provider
-                      v-slot="{ errors }"
-                      name="Name"
-                      rules="required|max:10"
-                    >
-                      <v-text-field
-                        v-model="name"
-                        :counter="10"
-                        :error-messages="errors"
-                        label="Name"
-                        required
-                      ></v-text-field>
-                    </validation-provider>
-                    <validation-provider
-                      v-slot="{ errors }"
-                      name="phoneNumber"
-                      :rules="{
-                        required: true,
-                        digits: 7,
-                        regex: '^(71|72|74|76|81|82|84|85|86|87|88|89)\\d{5}$',
-                      }"
-                    >
-                      <v-text-field
-                        v-model="phoneNumber"
-                        :counter="7"
-                        :error-messages="errors"
-                        label="Phone Number"
-                        required
-                      ></v-text-field>
-                    </validation-provider>
-                    <validation-provider
-                      v-slot="{ errors }"
-                      name="email"
-                      rules="required|email"
-                    >
-                      <v-text-field
-                        v-model="email"
-                        :error-messages="errors"
-                        label="E-mail"
-                        required
-                      ></v-text-field>
-                    </validation-provider>
-                    <validation-provider
-                      v-slot="{ errors }"
-                      name="select"
-                      rules="required"
-                    >
-                      <v-select
-                        v-model="select"
-                        :items="items"
-                        :error-messages="errors"
-                        label="Select"
-                        data-vv-name="select"
-                        required
-                      ></v-select>
-                    </validation-provider>
-                    <validation-provider
-                      v-slot="{ errors }"
-                      rules="required"
-                      name="checkbox"
-                    >
-                      <v-checkbox
-                        v-model="checkbox"
-                        :error-messages="errors"
-                        value="1"
-                        label="Option"
-                        type="checkbox"
-                        required
-                      ></v-checkbox>
-                    </validation-provider>
-
-                    <v-btn class="mr-4" type="submit" :disabled="invalid">
-                      submit
-                    </v-btn>
-                    <v-btn @click="clear"> clear </v-btn>
-                  </form>
-                </validation-observer>
-              </template>
-            </td>
-          </tr>
-        </tbody>
-      </template>
-    </v-simple-table> -->
   </div>
 </template>
 
@@ -258,71 +166,12 @@ export default {
 .info-table {
   background-color: transparent !important;
 }
-</style>
 
-<!--<script>
-import { required, digits, email, max, regex } from "vee-validate/dist/rules"
-import {
-  extend,
-  ValidationObserver,
-  ValidationProvider,
-  setInteractionMode,
-} from "vee-validate"
-
-setInteractionMode("eager")
-
-extend("digits", {
-  ...digits,
-  message: "{_field_} needs to be {length} digits. ({_value_})",
-})
-
-extend("required", {
-  ...required,
-  message: "{_field_} can not be empty",
-})
-
-extend("max", {
-  ...max,
-  message: "{_field_} may not be greater than {length} characters",
-})
-
-extend("regex", {
-  ...regex,
-  message: "{_field_} {_value_} does not match {regex}",
-})
-
-extend("email", {
-  ...email,
-  message: "Email must be valid",
-})
-
-export default {
-  name: "Singup",
-  components: {
-    ValidationProvider,
-    ValidationObserver,
-  },
-  data: () => ({
-    name: "",
-    phoneNumber: "",
-    email: "",
-    select: null,
-    items: ["Item 1", "Item 2", "Item 3", "Item 4"],
-    checkbox: null,
-  }),
-
-  methods: {
-    submit() {
-      this.$refs.observer.validate()
-    },
-    clear() {
-      this.name = ""
-      this.phoneNumber = ""
-      this.email = ""
-      this.select = null
-      this.checkbox = null
-      this.$refs.observer.reset()
-    },
-  },
+table tbody tr:hover {
+  background: inherit !important;
 }
-</script>-->
+
+td {
+  border: none !important;
+}
+</style>

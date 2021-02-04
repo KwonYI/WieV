@@ -56,9 +56,9 @@
 <script>
   import axios from 'axios'
 import XLSX from 'xlsx'
-  // const SERVER_URL = "https://localhost:8080/"
+  const SERVER_URL = "https://localhost:8080/"
   // const SERVER_URL = "https://i4a405.p.ssafy.io:8080"
-  const SERVER_URL = process.env.VUE_APP_SERVER_URL
+  // const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
   import {
     mapState,
@@ -112,7 +112,7 @@ import XLSX from 'xlsx'
       
       XLSX.utils.book_append_sheet(wb, ws, 'sheet1')  // 엑셀 파일에 시트 추가
 
-      XLSX.writeFile(wb, '엑셀양식.xlsx') // 엑셀 다운로드
+      XLSX.writeFile(wb, '지원자등록_양식.xlsx') // 엑셀 다운로드
     },
       filterdVieweeList: function () { 
         return this.comVieweeList.filter(re => re.recruitReSeq === this.reno)

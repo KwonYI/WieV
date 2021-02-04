@@ -4,20 +4,26 @@
     color: white;
 }
 
-​ .main-ft-beige {
+.main-bg-img {
+    background-color: #304B61 !important;
+    color: white;
+    opacity: 0.93;
+}
+
+​.main-ft-beige {
     color: #FFF1C3;
 }
 
-​ .main-ft-white {
+​.main-ft-white {
     color: white;
 }
 
 /* 버튼 속성 */
-​ .btn-active {
+​.btn-active {
     background-color: #758EF5;
 }
 
-​ .btn-inactive {
+​.btn-inactive {
     background-color: #ABABAB;
 }
 
@@ -25,4 +31,12 @@
 a {
     text-decoration: none !important;
     color: inherit !important;
+}
+
+input[type=password] {
+    font-family: initial;
+    
+    &::placeholder {
+      font-family: "NanumSquare";
+    }
 }

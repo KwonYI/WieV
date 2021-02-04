@@ -82,7 +82,7 @@
       >
         <v-container
           class="p-0 m-0 pt-16"
-          :class="{ 'main-bg-navy': accessToken === null }"
+          :class="[!accessToken || isHome ? 'main-bg-navy' : '']"
           style="min-height: 100vh; max-width: initial"
         >
           <router-view></router-view>
@@ -94,22 +94,19 @@
           style="min-height: 100vh"
         >
         </v-parallax> -->
+
+        
       </v-sheet>
     </v-card>
-    <!-- <div v-if="Manager">
-      <RecruitMenu />
-    </div> -->
   </v-app>
 </template>
 
 <script>
-// import RecruitMenu from "@/views/viewset/RecruitMenu.vue"
 import { mapGetters, mapState } from "vuex"
 
 export default {
   name: "App",
   components: {
-    // RecruitMenu,
   },
   data: () => ({
     Manager: "",
@@ -118,25 +115,27 @@ export default {
     ]
   }),
   computed: {
-    ...mapState(["accessToken"]),
+    ...mapState(["accessToken", 'user']),
     ...mapGetters(["getAccessToken"]),
     isNotRoom() {
-      console.log(this.$route.name)
       if (['WaitRoom', 'ViewRoom', 'Main'].includes(this.$route.name)) {
         return false
       } else {
         return true
       }
+    },
+    isHome() {
+      if (this.$route.name === 'Home') {
+        return true
+      } else {
+        return false
+      }
     }
   },
   methods: {
     logout: function () {
-      this.$store
-        .dispatch("LOGOUT")
+      this.$store.dispatch("LOGOUT")
         .then(() => this.$router.replace({ name: "Home" }))
-      // this.$store.state.isLogin = false
-      // // this.$store.state.isViewer = false
-      // this.$router.push({ name: "Home" })
     },
   },
   created: function () {
@@ -152,6 +151,14 @@ export default {
 * {
   font-family: "NanumSquare", sans-serif;
 }
+
+.v-parallax__image-container img {
+  /* max-width: 100%; */
+}
+
+.v-parallax__content{
+  padding: 0 !important;
+}
 </style>
 
 <style scoped>
@@ -162,7 +169,6 @@ export default {
   margin-left: 1rem;
   font-size: 1.5rem;
   font-weight: 700;
-  /* color: white; */
 }
 .srv-btn {
   font-size: 1.9rem;
@@ -172,7 +178,7 @@ export default {
   margin-left: 10rem;
 }
 .router-active {
-    text-decoration: none !important;
-    color: inherit !important;
+  text-decoration: none !important;
+  color: inherit !important;
 }
 </style>

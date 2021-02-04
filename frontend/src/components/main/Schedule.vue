@@ -179,6 +179,8 @@
           //여기에 axios.post 요청으로, DB에 새로운 공고를 저장할 수 있도록 합니다. 
           // 새로 저장된 공고의 정보 (seq포함)를 가져오고, state 에 저장합니다. 
           //this.$store.dispatch('addRecruit', 응답으로 받은 데이터 res.data)
+
+          this.$refs.form.reset()
         }
       },
       goToProgress: function (recruit) {
@@ -222,5 +224,8 @@
 .rec-header {
   text-align: center !important;
   background: #304B61 !important;
+}
+table tbody tr:hover {
+  background: inherit !important;
 }
 </style>

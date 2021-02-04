@@ -5,9 +5,9 @@ import createPersistedState from "vuex-persistedstate"
 import _ from "lodash"
 
 Vue.use(Vuex)
-// const SERVER_URL = "https://localhost:8080"
+ const SERVER_URL = "https://localhost:8080"
 // const SERVER_URL = "https://i4a405.p.ssafy.io:8080"
-const SERVER_URL = process.env.VUE_APP_SERVER_URL
+//const SERVER_URL = process.env.VUE_APP_SERVER_URL
 // import axios from 'axios'
 
 
@@ -317,7 +317,15 @@ export default new Vuex.Store({
         axios.defaults.headers.common[
           "auth-token"
         ] = `${response.data["auth-token"]}`
-      })
+      }).then((res) => {
+        console.log(res)
+      }).catch((err) => 
+      console.log("로그인에러", err))
+      //
+      // .then((res) => {
+      //   console.log(res)
+      // }).catch((err) => 
+      // console.log("로그인에러", err))
     },
     LOGOUT(context) {
       context.commit("LOGOUT")

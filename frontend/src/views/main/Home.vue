@@ -1,5 +1,5 @@
 <template>
-  <div id="home" class="main-bg-navy">
+  <div id="home">
     <v-row justify="center" class="pt-10" no-gutters>
       <v-col cols="8" class="main-box text-center">
         <div class="d-flex flex-column justify-center align-center text-white">
@@ -25,7 +25,7 @@
           <!-- 미로그인 시 -->
           <v-col v-else cols="5" class="login-box mt-5">
             <v-col class="login-input mb-4">
-              <v-simple-table dark dense style="background-color: transparent">
+              <v-simple-table dark style="background-color: transparent">
                 <!-- <form>
                   <v-form-group>
                     <label for="userEmail">이메일</label>
@@ -38,15 +38,25 @@
                 </form> -->
                 <tbody>
                   <tr>
-                    <td>이메일</td>
+                    <td class="pt-3">이메일</td>
                     <td>
-                      <v-text-field label="email" v-model="credentials.userEmail" hide-details></v-text-field>
+                      <v-text-field
+                        label="email"
+                        v-model="credentials.userEmail" hide-details
+                      >
+                      </v-text-field>
                     </td>
                   </tr>
                   <tr>
-                    <td>비밀번호</td>
+                    <td class="pt-3">비밀번호</td>
                     <td>
-                      <v-text-field label="password" v-model="credentials.userPassword" hide-details></v-text-field>
+                      <v-text-field
+                        label="password"
+                        v-model="credentials.userPassword"
+                        type="password"
+                        hide-details
+                      >
+                      </v-text-field>
                     </td>
                   </tr>
                 </tbody>
@@ -62,9 +72,6 @@
               </router-link>
             </v-col>
           </v-col>
-          
-          
-          <div style="height: 400px"></div>
         </div>
       </v-col>
     </v-row>
@@ -73,7 +80,6 @@
 
 <script>
   import { mapGetters } from "vuex"
-  // import axios from 'axios' 
 
   import Schedule from "@/components/main/Schedule"
 
@@ -84,48 +90,39 @@
     },
     data: () => ({
       credentials: {
-        // 로그인 - 유저 이메일
-        userEmail: "",
-        // 로그인 - 유저 비밀번호
-        userPassword: "",
+        userEmail: '',
+        userPassword: ''
       },
-      message: "",
+      message: ''
     }),
     computed: {
       ...mapGetters(["getUser", "getAccessToken", "getUserViewWait"]),
     },
     methods: {
       login: function () {
-        this.$store
-        .dispatch("LOGIN", this.credentials)
-        .then(() => {this.$router.replace(this.$router.currentRoute) 
-        this.credentials.userEmail = ""
-        this.credentials.userPassword = ""
-        
-        
-        })
-        .catch(({ message }) => (this.msg = message))
-        
+        this.$store.dispatch("LOGIN", this.credentials)
+          .then(() => {
+            this.$router.replace(this.$router.currentRoute) 
+            this.credentials.userEmail = ""
+            this.credentials.userPassword = ""
+          })
+          .catch(({ message }) => (this.msg = message))
       },
-      
     },
   }
 </script>
 
 <style scoped>
-  #home {
-    height: 100;
-  }
+tr * {
+  padding: 0;
+  /* margin-bottom: 2rem; */
+}
 
-  .login-input {
-    height: 6rem;
-  }
+table tbody tr:hover {
+  background: inherit !important;
+}
 
-  tr * {
-    padding: 0;
-  }
-
-  td {
-    font-size: 2px;
-  }
+td {
+  border: none !important;
+}
 </style>
