@@ -339,7 +339,7 @@ public class ApplicantController {
 				case 5:
 					// 생년월일
 					Date birth = (Date) getValueFromCell(cell);
-					// SimpleDateFormat trans = new SimpleDateFormat("yyyy-MM-dd");
+					//SimpleDateFormat trans = new SimpleDateFormat("yyyy-MM-dd");
 					applicant.setApplyBirth(birth);
 					break;
 				case 6:
