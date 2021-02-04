@@ -318,24 +318,16 @@ export default new Vuex.Store({
   actions: {
     // 로그인, 로그아웃
     LOGIN(context, user) {
-      axios
-        .post(`${SERVER_URL}/hr/login`, user)
-        .then((response) => {
-          context.commit("LOGIN", response.data);
-          axios.defaults.headers.common[
-            "auth-token"
-          ] = `${response.data["auth-token"]}`;
-        })
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => console.log("로그인에러", err));
-      //
-      // .then((res) => {
-      //   console.log(res)
-      // }).catch((err) =>
-      // console.log("로그인에러", err))
-    },
+      axios.post(`${SERVER_URL}/hr/login`, user).then((response) => {
+        context.commit("LOGIN", response.data)
+        axios.defaults.headers.common[
+          "auth-token"
+        ] = `${response.data["auth-token"]}`
+      }).then((res) => {
+        console.log(res)
+      }).catch(() => 
+      alert("이메일과 비밀번호를 확인해주십시오.")
+    )},
     LOGOUT(context) {
       context.commit("LOGOUT");
       axios.defaults.headers.common["auth-token"] = undefined;
@@ -363,6 +355,13 @@ export default new Vuex.Store({
           console.log("인서트 공고 실행");
           console.log(response.data);
         });
+    },
+
+    DELETE_RECRUIT(context, reSeq){
+      axios.delete(`${SERVER_URL}/recruit/delete/` + reSeq)
+      .then(
+        alert("삭제되었습니다!")
+      );
     },
 
     //지원자를 엑셀로 저장

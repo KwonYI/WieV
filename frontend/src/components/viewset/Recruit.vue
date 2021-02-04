@@ -10,7 +10,7 @@
         <v-app-bar>
           <v-tabs style="width: initial" align-with-title>
             <v-tab :to="{ name: 'Progress', params: { recruitNo: recruitNo } }">
-              reseq:{{ recruitNo }}의 면접 일정</v-tab>
+              면접 일정</v-tab>
             <!-- <v-tab>
               <router-link :to="{ name: 'Viewers' }">면접관 관리</router-link>
             </v-tab> -->

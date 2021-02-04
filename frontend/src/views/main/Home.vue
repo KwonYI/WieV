@@ -100,13 +100,12 @@
     },
     methods: {
       login: function () {
-        this.$store.dispatch("LOGIN", this.credentials)
-          .then(() => {
-            this.$router.replace(this.$router.currentRoute) 
-            this.credentials.userEmail = ""
-            this.credentials.userPassword = ""
-          })
-          .catch(({ message }) => (this.msg = message))
+        this.$store
+        .dispatch("LOGIN", this.credentials)
+        .then(() => {this.$router.replace(this.$router.currentRoute) 
+        this.credentials.userEmail = ""
+        this.credentials.userPassword = ""
+        })
       },
     },
   }

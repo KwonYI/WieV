@@ -76,9 +76,11 @@ public class RecruitController {//공고 등록
 	// 공고 삭제
 	@DeleteMapping("/delete/{reSeq}")
 	@ApiOperation(value = "공고 삭제하기")
-	public void delete(@PathVariable("reSeq") int reSeq) {
+	public Object delete(@PathVariable("reSeq") int reSeq) {
+		HttpStatus status = null;
+		String s = null;
 		
-		Map<String, Object> resultMap = new HashMap<>();
+		System.out.println("delete");
 		
 		try {
             Optional<Recruit> recruitOpt=recruitDao.findOptionalRecruitByReSeq(reSeq);
@@ -86,12 +88,15 @@ public class RecruitController {//공고 등록
             recruitOpt.ifPresent(selectRecruit -> {
             	recruitDao.delete(selectRecruit);
             });
-            
+            s = "Success";
+            status = HttpStatus.OK;
         } catch (RuntimeException e) {
-            logger.error("정보 삭제 실패 : {}", e);
-            resultMap.put("message", e.getMessage());
+            logger.error("정보 삭제 실패 ", e);
+            s = "Failure";
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
 		
+		return new ResponseEntity<String> (s, status);
 	}
 	
 	
