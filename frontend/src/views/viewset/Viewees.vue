@@ -58,7 +58,7 @@
   import XLSX from 'xlsx'
   const SERVER_URL = "https://localhost:8080/"
   // const SERVER_URL = "https://i4a405.p.ssafy.io:8080"
-  const SERVER_URL = process.env.VUE_APP_SERVER_URL
+  // const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
   import {
     mapState,
