@@ -150,7 +150,9 @@
 <script>
 import axios from "axios"
 
-const SERVER_URL = "https://localhost:8080/"
+// const SERVER_URL = "https://localhost:8080/"
+// const SERVER_URL = "https://i4a405.p.ssafy.io:8080"
+const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
 export default {
   name: "Signup",
@@ -188,7 +190,7 @@ export default {
     send: function() {
       if (this.credentials.hrEmail) {
         axios
-          .post(`${SERVER_URL}email/send`, this.credentials)
+          .post(`${SERVER_URL}/email/send`, this.credentials)
           .then((res) => {
             this.certifiedNum = res.data
             alert("메일 보내기 성공")
@@ -234,7 +236,7 @@ export default {
 
       if (this.credentials.agreed) {
         axios
-          .post(`${SERVER_URL}hr/signup`, this.credentials)
+          .post(`${SERVER_URL}/hr/signup`, this.credentials)
           .then((res) => {
             console.log(res)
             alert("회원가입 성공")

@@ -10,9 +10,9 @@
 
           <v-col cols="9">
             <v-card-title>
-              {{ this.interview.recruitYear }}
-              {{ this.interview.recruitFlag }}
-              {{ this.interview.recruitStatus }}
+              {{ interview.recruitYear }}
+              {{ interview.recruitFlag }}
+              {{ interview.recruitStatus }}
             </v-card-title>
             <v-card-subtitle>
               {{ interview.recruitStartDate }} ~
@@ -163,9 +163,9 @@
 </template>
 
 <script>
-import axios from "axios"
+import axios from "axios";
 
-const SERVER_URL = "https://localhost:8080/"
+const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 
 export default {
   name: "ViewerRecruitItem",
@@ -192,14 +192,12 @@ export default {
       // ca_name: "마케팅",
       // type_name: "PT면접",
       // dialog: false,
-    }
+    };
   },
   methods: {
     goSession() {
-      console.log(this.user)
-      console.log(this.interview)
       axios
-        .get(`${SERVER_URL}session/create`, {
+        .get(`${SERVER_URL}/session/create`, {
           params: {
             interviewerWait: this.user.userViewWait,
             interviewerName: this.user.userName,
@@ -207,14 +205,22 @@ export default {
           },
         })
         .then((res) => {
-          console.log(res)
+          console.log(res);
+          this.$router.push({
+            name: "WaitRoom",
+            params: { interview: this.interview, interviewer: res.data },
+          });
         })
         .catch((err) => {
-          console.log(err)
-        })
+          if (this.user.userViewWait == 0) {
+            console.log(err);
+          } else {
+            alert("방이 아직 개설되지 않았습니다.");
+          }
+        });
     },
   },
-}
+};
 </script>
 
 <style></style>

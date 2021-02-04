@@ -1,6 +1,6 @@
 <template>
-  <div id="viewees">
-    <v-toolbar dark color="teal">
+  <div id="viewees" v-if="givenreno">
+    <v-toolbar dark color="teal" >
       <v-toolbar-title>지원자 찾기</v-toolbar-title>
       <v-autocomplete v-model="select" :loading="loading" :items="items" :search-input.sync="search" cache-items
         class="mx-4" flat hide-no-data hide-details label="지원자 이름 검색" solo-inverted></v-autocomplete>
@@ -55,8 +55,10 @@
 
 <script>
   import axios from 'axios'
-  const SERVER_URL = "https://localhost:8080/"
 import XLSX from 'xlsx'
+  // const SERVER_URL = "https://localhost:8080/"
+  // const SERVER_URL = "https://i4a405.p.ssafy.io:8080"
+  const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
   import {
     mapState,
@@ -91,12 +93,14 @@ import XLSX from 'xlsx'
         select: null,
         items: [],
         reno: "",
+        givenreno: "",
 
       }
     },
     
     created: function () {
       this.reno = this.$store.state.selectedRecruitNo;
+      this.givenreno = this.$route.params.recruitNo;
       console.log("reno:", this.reno);
       console.log("회사모든지원자들어있나 created때?", this.comVieweeList)
     },

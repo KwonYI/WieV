@@ -1,5 +1,5 @@
 <template>
-  <div id="viewers">
+  <div id="viewers" v-if="givnereno">
     <v-toolbar dark color="teal">
       <v-toolbar-title>면접관 찾기</v-toolbar-title>
       <v-autocomplete v-model="select" :loading="loading" :items="items" :search-input.sync="search" cache-items
@@ -65,13 +65,14 @@ import XLSX from 'xlsx'
         title: "",
         files: [],
         reno: "",
+        givnereno:"",
 
       }
     },
     created: function () {
-      // this.reno = this.$route.params.recruitNo
-      this.reno = this.$store.state.selectedRecruitNo
-      console.log("reno:", this.reno)
+      this.givnereno = this.$route.params.recruitNo;
+      this.reno = this.$store.state.selectedRecruitNo;
+      console.log("reno:", this.reno);
     },
     methods:{
       exportExcel() {
