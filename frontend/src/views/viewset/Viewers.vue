@@ -1,15 +1,17 @@
 <template>
   <div id="viewers" v-if="givnereno">
     <v-toolbar dark color="teal">
-      <v-toolbar-title>면접관 찾기</v-toolbar-title>
+      <v-toolbar-title></v-toolbar-title>
+      <!-- <v-toolbar-title>면접관 찾기</v-toolbar-title>
       <v-autocomplete v-model="select" :loading="loading" :items="items" :search-input.sync="search" cache-items
         class="mx-4" flat hide-no-data hide-details label="지원자 이름 검색" solo-inverted></v-autocomplete>
-      <v-btn class="m-3"> 검색 </v-btn>
+      <v-btn class="m-3"> 검색 </v-btn> -->
 
-        <label>File
-          <input v-model="title">
+        <!-- <label>File
+          <input v-model="title"> -->
+          <v-text class="m-2">File:</v-text>
           <input type="file" id="files" ref="files" v-on:change="handleFileUpload()" multiple />
-        </label>
+        <!-- </label> -->
         <v-btn class="m-3" v-on:click="submitFile()">엑셀 업로드</v-btn>
     
       <v-btn class="m-3" @click="exportExcel">엑셀 양식 다운로드</v-btn>

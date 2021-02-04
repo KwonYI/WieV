@@ -1,8 +1,9 @@
 <template>
   <div id="viewees" v-if="givenreno">
     <v-toolbar dark color="teal">
-      <v-toolbar-title>지원자 찾기</v-toolbar-title>
-      <v-autocomplete
+      <v-toolbar-title></v-toolbar-title>
+      <!-- <v-toolbar-title>지원자 찾기</v-toolbar-title> -->
+      <!-- <v-autocomplete
         v-model="select"
         :loading="loading"
         :items="items"
@@ -15,26 +16,24 @@
         label="지원자 이름 검색"
         solo-inverted
       ></v-autocomplete>
-      <v-btn class="m-3"> 검색 </v-btn>
+      <v-btn class="m-3"> 검색 </v-btn> -->
 
-      <label
-        >File
-        <input v-model="title" />
+      <v-text class="m-2">File:</v-text>
+        <!-- <input v-model="title" /> -->
         <input
           type="file"
           id="files"
           ref="files"
           v-on:change="handleFileUpload()"
-          multiple
-        />
-      </label>
-      <v-btn class="m-3" v-on:click="submitFile()">엑셀 업로드</v-btn>
+          multiple/>
+       
+      <v-btn class="m-2" v-on:click="submitFile()">엑셀 업로드</v-btn>
 
-      <v-btn class="m-3" @click="exportExcel">엑셀 양식 다운로드</v-btn>
+      <v-btn class="m-2" @click="exportExcel">엑셀 양식 다운로드</v-btn>
       <!-- <v-file-input v-model="files" show-size label="File input"></v-file-input>
       <v-btn @click="upload" color="primary">Upload</v-btn>
       <p>File Name : {{ files.name }}</p> -->
-      <v-btn class="m-3" @click="createVieweeDB"> DB업데이트 </v-btn>
+      <v-btn class="m-2" @click="createVieweeDB">목록 업데이트 </v-btn>
     </v-toolbar>
     <v-simple-table fixed-header height="500px" class="mt-5">
       <thead>

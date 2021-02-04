@@ -17,7 +17,7 @@
               <v-list-item v-for="(item, i) in getRecruitListLately" :key="i">
                 <v-list-item-content>
                   <v-list-item-title v-text="`${item.reYear}${item.reFlag} ${item.reStatus}`"
-                    @click="selectRecruit(item.reSeq)"></v-list-item-title>
+                    @click="selectRecruit(item)"></v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
 
@@ -64,12 +64,19 @@
  
     methods: {
       selectRecruit: function (selectedreno) {
-        console.log("selectRecruit클릭!", selectedreno)
-        this.$store.state.selectedRecruitNo = selectedreno
-        this.recruitno = selectedreno
+        console.log("selectRecruit클릭!", selectedreno.reSeq)
+        this.$store.state.selectedRecruitNo = selectedreno.reSeq
+        this.recruitno = selectedreno.reSeq
+        this.$router.push({
+          name: 'Progress',
+          params: {
+            recruitNo: this.recruitno,
+            recruitInfo: selectedreno
+          }
+        })
       },
       goToProfile: function () {
-        this.recruitno = -1
+        this.recruitno = ''
       },
 
     },
