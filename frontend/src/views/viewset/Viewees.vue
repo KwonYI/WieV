@@ -13,9 +13,7 @@
         <v-btn class="m-3" v-on:click="submitFile()">엑셀 업로드</v-btn>
     
       <v-btn class="m-3" @click="exportExcel">엑셀 양식 다운로드</v-btn>
-      <!-- <v-file-input v-model="files" show-size label="File input"></v-file-input>
-      <v-btn @click="upload" color="primary">Upload</v-btn>
-      <p>File Name : {{ files.name }}</p> -->
+
       <v-btn class="m-3" @click="createVieweeDB"> DB업데이트 </v-btn>
     </v-toolbar>
     <v-simple-table fixed-header height="500px" class="mt-5">
@@ -132,10 +130,13 @@ import XLSX from 'xlsx'
               }
             }
           ).then(function () {
-            console.log('SUCCESS!!');
+            console.log('지원자 엑셀 업로드 성공')
+            alert("지원자 등록 성공")
           })
-          .catch(function () {
-            console.log('FAILURE!!');
+          .catch(function (err) {
+            console.log(err)
+            alert("지원자 등록 실패")
+            console.log('지원자 엑셀 업로드 실패')
           });
 
       },

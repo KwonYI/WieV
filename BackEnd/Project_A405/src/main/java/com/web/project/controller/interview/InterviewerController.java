@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.validation.Valid;
 
@@ -55,6 +56,7 @@ import com.web.project.model.interview.Interview;
 import com.web.project.model.interview.InterviewType;
 import com.web.project.model.interview.Interviewer;
 import com.web.project.model.interview.TypeInterviewer;
+import com.web.project.model.recruit.Applicant;
 import com.web.project.model.recruit.Recruit;
 
 import io.swagger.annotations.ApiOperation;
@@ -219,9 +221,11 @@ public class InterviewerController {
 
 	@PostMapping("/register/{reSeq}")
 	@ApiOperation(value = "면접관등록")
-	public List<Interviewer> interviewerRegister(@PathVariable("reSeq") int reSeq,MultipartFile files)
+	public ResponseEntity<List<Interviewer>> interviewerRegister(@PathVariable("reSeq") int reSeq,MultipartFile files)
 			throws EncryptedDocumentException, IOException {
 		System.out.println("면접관등록시작");
+		
+		HttpStatus status = HttpStatus.ACCEPTED;
 		// 웹상에서 업로드 되어 MultipartFile인 경우 바로 InputStream으로 변경하여 사용.
 		 InputStream inputStream = new ByteArrayInputStream(files.getBytes());
 
@@ -239,84 +243,105 @@ public class InterviewerController {
 		Sheet sheet = workbook.getSheetAt(0);
 		Iterator<Row> rowItr = sheet.iterator();
 
-		// 행만큼 반복
-		while (rowItr.hasNext()) {
-			Interviewer interviewer = new Interviewer();
-			Row row = rowItr.next();
-			String partName = "";
-			String careerName = "";
+		try {
+			// 행만큼 반복
+			Loop1:while (rowItr.hasNext()) {
+				Interviewer interviewer = new Interviewer();
+				Row row = rowItr.next();
+				String partName = "";
+				String careerName = "";
 
-			// 첫번재 행이 해더인 경우 스킵, 2번째 행부터 data 로드
-			if (row.getRowNum() == 0) {
-				continue;
-			}
-
-			Iterator<Cell> cellItr = row.cellIterator();
-
-			// 한행이 한열씩 읽기 (셀 읽기)
-			while (cellItr.hasNext()) {
-				Cell cell = cellItr.next();
-				int index = cell.getColumnIndex();
-				switch (index) {
-				case 0:
-					// 인덱스
-					interviewer.setViewSeq(((Double) getValueFromCell(cell)).intValue());
-					// 셀이 숫자형인 경우 Double형으로 변환 후 int형으로 변환
-					break;
-				case 1:
-					// 성명
-					interviewer.setViewName((String) getValueFromCell(cell));
-					break;
-				case 2:
-					// 이메일
-					interviewer.setViewEmail((String) getValueFromCell(cell));
-					break;
-				case 3:
-					// 부서
-					partName = (String) getValueFromCell(cell);
-					break;
-				case 4:
-					// 직군
-					careerName = (String) getValueFromCell(cell);
-					break;
-				case 5:
-					// 폰번호
-					interviewer.setViewPhone((String) getValueFromCell(cell));
-					break;
-				case 6:
-					// 관리자(0) or 면접관(1)
-					String tmp = (String) getValueFromCell(cell);
-					if (tmp.equals("관리자")) {
-						interviewer.setViewWait(0);
-					} else {
-						interviewer.setViewWait(1);
-					}
-					break;
+				// 첫번재 행이 해더인 경우 스킵, 2번째 행부터 data 로드
+				if (row.getRowNum() == 0) {
+					continue;
 				}
+
+				Iterator<Cell> cellItr = row.cellIterator();
+
+				// 한행이 한열씩 읽기 (셀 읽기)
+				while (cellItr.hasNext()) {
+					Cell cell = cellItr.next();
+					int index = cell.getColumnIndex();
+					switch (index) {
+					case 0:
+						// 인덱스
+						//interviewer.setViewSeq(((Double) getValueFromCell(cell)).intValue());
+						// 셀이 숫자형인 경우 Double형으로 변환 후 int형으로 변환
+						break;
+					case 1:
+						// 성명
+						interviewer.setViewName((String) getValueFromCell(cell));
+						break;
+					case 2:
+						// 이메일
+						String email = (String) getValueFromCell(cell);
+						Optional<Interviewer> interviewerEmailOpt =interviewerDao.findOptionalInterviewerByViewEmail(email);
+						if (interviewerEmailOpt.isPresent()) {
+							System.out.println("이메일 중복 되었음");
+							continue Loop1;
+						}
+						else {
+						interviewer.setViewEmail((String) getValueFromCell(cell));
+						}
+
+						break;
+					case 3:
+						// 부서
+						partName = (String) getValueFromCell(cell);
+						break;
+					case 4:
+						// 직군
+						careerName = (String) getValueFromCell(cell);
+						break;
+					case 5:
+						// 폰번호
+						interviewer.setViewPhone((String) getValueFromCell(cell));
+						break;
+					case 6:
+						// 관리자(0) or 면접관(1)
+						String tmp = (String) getValueFromCell(cell);
+						if (tmp.equals("관리자")) {
+							interviewer.setViewWait(0);
+						} else {
+							interviewer.setViewWait(1);
+						}
+						break;
+					}
+				}
+				
+				Recruit recruit=recruitDao.findRecruitByReSeq(reSeq);
+				
+				int comSeq = recruit.getCompanyComSeq();
+				interviewer.setCompanyComSeq(comSeq);
+
+				Part part = partDao.findPartByCompanyComSeqAndPartName(comSeq, partName);
+				int partSeq = part.getPartSeq();
+				interviewer.setCareerPartPartSeq(partSeq);
+
+				Career career = careerDao.findCareerByCaNameAndPartPartSeq(careerName, partSeq);
+				int careerSeq = career.getCaSeq();
+				interviewer.setCareerCaSeq(careerSeq);
+
+				interviewer.setViewAssigned(0);
+				interviewer.setViewPassword(getUUID().substring(0, 10));
+				// insert문
+				//interviewerDao.save(interviewer);
+				interviewerList.add(interviewer);
 			}
-			
-			Recruit recruit=recruitDao.findRecruitByReSeq(reSeq);
-			
-			int comSeq = recruit.getCompanyComSeq();
-			interviewer.setCompanyComSeq(comSeq);
-
-			Part part = partDao.findPartByCompanyComSeqAndPartName(comSeq, partName);
-			int partSeq = part.getPartSeq();
-			interviewer.setCareerPartPartSeq(partSeq);
-
-			Career career = careerDao.findCareerByCaNameAndPartPartSeq(careerName, partSeq);
-			int careerSeq = career.getCaSeq();
-			interviewer.setCareerCaSeq(careerSeq);
-
-			interviewer.setViewAssigned(0);
-			// insert문
-			interviewer.setViewWait(1);
-			// insert문
-			interviewerDao.save(interviewer);
-			System.out.println("면접관등록!!");
-			interviewerList.add(interviewer);
+		
+		for (int i = 0; i < interviewerList.size(); i++) {
+			interviewerDao.save(interviewerList.get(i));
 		}
-		return interviewerList;
+		status = HttpStatus.OK;
+		
+		} catch (Exception e) {
+			logger.error("면접관 등록 실패 : {}", e);
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			interviewerList=null;
+		}
+
+		return new ResponseEntity<List<Interviewer>>(interviewerList,status);
+
 	}
 
 	// 셀서식에 맞게 값 읽기
@@ -403,5 +428,10 @@ public class InterviewerController {
 		}
 		
 		return new ResponseEntity<>(resultMap, status);
+	}
+	
+	public String getUUID() {
+		String uuid = UUID.randomUUID().toString().replace("-", "");
+		return uuid;
 	}
 }

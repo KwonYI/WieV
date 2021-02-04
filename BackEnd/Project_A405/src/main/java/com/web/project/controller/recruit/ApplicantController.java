@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import javax.validation.Valid;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -111,36 +113,35 @@ public class ApplicantController {
 
 	@Autowired
 	ApplicantGroupDao applicantGroupDao;
-	
+
 	public static final Logger logger = LoggerFactory.getLogger(HrController.class);
-	
+
 	@GetMapping(value = "/getList/{reSeq}")
 	@ApiOperation(value = "공고에 따른 지원자 리스트 모두 가져오기")
 	public ResponseEntity<List<Applicant>> getApplicationList(@PathVariable("reSeq") int reSeq) {
 		System.out.println(reSeq);
-		List<Applicant> applicantList=applicantDao.findAllApplicantByRecruitReSeq(reSeq);
+		List<Applicant> applicantList = applicantDao.findAllApplicantByRecruitReSeq(reSeq);
 		return new ResponseEntity<List<Applicant>>(applicantList, HttpStatus.OK);
 	}
-	
-	
+
 	@GetMapping(value = "/getListByCompany/{comSeq}")
 	@ApiOperation(value = "회사에 따른 지원자 리스트 모두 가져오기")
 	public ResponseEntity<List<Applicant>> getApplicationListByCompany(@PathVariable("comSeq") int comSeq) {
-		
-		List<Applicant> AllapplicantList=applicantDao.findAll();
-		List<Applicant> resultApplicantList=new ArrayList<Applicant>();
-		
-		for (int i = 0; i <AllapplicantList.size(); i++) {
-			Applicant applicant=AllapplicantList.get(i);
-			int recruitSeq=applicant.getRecruitReSeq();
-			Recruit recruit=recruitDao.findRecruitByReSeq(recruitSeq);
-			if(comSeq==recruit.getCompanyComSeq()) {
+
+		List<Applicant> AllapplicantList = applicantDao.findAll();
+		List<Applicant> resultApplicantList = new ArrayList<Applicant>();
+
+		for (int i = 0; i < AllapplicantList.size(); i++) {
+			Applicant applicant = AllapplicantList.get(i);
+			int recruitSeq = applicant.getRecruitReSeq();
+			Recruit recruit = recruitDao.findRecruitByReSeq(recruitSeq);
+			if (comSeq == recruit.getCompanyComSeq()) {
 				resultApplicantList.add(applicant);
 			}
 		}
 		return new ResponseEntity<List<Applicant>>(resultApplicantList, HttpStatus.OK);
 	}
-	
+
 //	@PostMapping("/assign/{groupSeq}")
 //	@ApiOperation(value = "지원자 자동 배정")
 	public void applicantAssign(int groupSeq) {
@@ -150,63 +151,64 @@ public class ApplicantController {
 
 //		try {
 
-			GroupAll nowGroupAll = groupAllDao.findGroupAllByGroupSeq(groupSeq);
+		GroupAll nowGroupAll = groupAllDao.findGroupAllByGroupSeq(groupSeq);
 
-			// 1.group에 해당하는 공고,직군 seq 찾기
-			int reSeq = nowGroupAll.getRecruitReSeq();
-			int caSeq = nowGroupAll.getCareerCaSeq();
+		// 1.group에 해당하는 공고,직군 seq 찾기
+		int reSeq = nowGroupAll.getRecruitReSeq();
+		int caSeq = nowGroupAll.getCareerCaSeq();
 
-			// 2. group안에 있는 그룹별 세부그룹 list만들기
-			groupDetailList = groupDetailDao.findAllGroupDetailByGroupGroupSeq(nowGroupAll.getGroupSeq());
+		// 2. group안에 있는 그룹별 세부그룹 list만들기
+		groupDetailList = groupDetailDao.findAllGroupDetailByGroupGroupSeq(nowGroupAll.getGroupSeq());
 
-			// 3. group과 같은 공고,직군&&면접일정 배정하지않은 applicantList 만들기
-			applicantList = applicantDao.findApplicantByRecruitReSeqAndCareerCaSeqAndApplyAssigned(reSeq, caSeq, 0);
+		// 3. group과 같은 공고,직군&&면접일정 배정하지않은 applicantList 만들기
+		applicantList = applicantDao.findApplicantByRecruitReSeqAndCareerCaSeqAndApplyAssigned(reSeq, caSeq, 0);
 
-			// 그룹별 면접 종류 만큼 반복
-			for (int i = 0; i < groupDetailList.size(); i++) {
+		// 그룹별 면접 종류 만큼 반복
+		for (int i = 0; i < groupDetailList.size(); i++) {
 
-				GroupDetail nowGroupDetail = groupDetailList.get(i);
+			GroupDetail nowGroupDetail = groupDetailList.get(i);
 
-				// 5.면접관 InterviewerDivide 수 만큼 배정하기
-				int applicantCnt = 0;
-				for (int j = 0; j < applicantList.size(); j++) {
-					Applicant nowApplicant = applicantList.get(j);
+			// 5.면접관 InterviewerDivide 수 만큼 배정하기
+			int applicantCnt = 0;
+			for (int j = 0; j < applicantList.size(); j++) {
+				Applicant nowApplicant = applicantList.get(j);
 
-					// 면접 당 면접관 수 만큼 반복
-					if (applicantCnt == nowGroupDetail.getDetailDivide()) {
-						break;
-					}
-					
-					if(nowApplicant.getApplyAssigned()==1) {
-						//이미 배정받은 지원자이면 continue
-						continue;
-					}
-					
-					// applicantGroup 설정
-					ApplicantGroup applicantGroup = new ApplicantGroup();
-					applicantGroup.setApplicantApplySeq(nowApplicant.getApplySeq());
-					applicantGroup.setApplicantCareerCaSeq(caSeq);
-					applicantGroup.setApplicantRecruitReSeq(reSeq);
-					applicantGroup.setGroupDetailDetailSeq(nowGroupDetail.getDetailSeq());
-					applicantGroup.setGroupDetailGroupGroupSeq(nowGroupDetail.getGroupGroupSeq());
-
-					// applicant applyAsssigned에 면접 배치했다고 update
-					Optional<Applicant> applicant = applicantDao.findOptionalApplicantByApplySeq(nowApplicant.getApplySeq());
-
-					// UPDATE(U) -> SELECT(R) + INSERT(C)
-					applicant.ifPresent(selectApplicant -> {
-						selectApplicant.setApplyAssigned(1);
-						// INSERT!
-						applicantDao.save(selectApplicant);
-					});
-
-					//지원자 insert
-					applicantGroupDao.save(applicantGroup);
-					applicantCnt++;
-
+				// 면접 당 면접관 수 만큼 반복
+				if (applicantCnt == nowGroupDetail.getDetailDivide()) {
+					break;
 				}
 
+				if (nowApplicant.getApplyAssigned() == 1) {
+					// 이미 배정받은 지원자이면 continue
+					continue;
+				}
+
+				// applicantGroup 설정
+				ApplicantGroup applicantGroup = new ApplicantGroup();
+				applicantGroup.setApplicantApplySeq(nowApplicant.getApplySeq());
+				applicantGroup.setApplicantCareerCaSeq(caSeq);
+				applicantGroup.setApplicantRecruitReSeq(reSeq);
+				applicantGroup.setGroupDetailDetailSeq(nowGroupDetail.getDetailSeq());
+				applicantGroup.setGroupDetailGroupGroupSeq(nowGroupDetail.getGroupGroupSeq());
+
+				// applicant applyAsssigned에 면접 배치했다고 update
+				Optional<Applicant> applicant = applicantDao
+						.findOptionalApplicantByApplySeq(nowApplicant.getApplySeq());
+
+				// UPDATE(U) -> SELECT(R) + INSERT(C)
+				applicant.ifPresent(selectApplicant -> {
+					selectApplicant.setApplyAssigned(1);
+					// INSERT!
+					applicantDao.save(selectApplicant);
+				});
+
+				// 지원자 insert
+				applicantGroupDao.save(applicantGroup);
+				applicantCnt++;
+
 			}
+
+		}
 //			status = HttpStatus.OK;
 //		} catch (RuntimeException e) {
 //			logger.error("지원자 자동 배정 실패", e);
@@ -273,18 +275,19 @@ public class ApplicantController {
 
 	};
 
-	
 	@PostMapping("/register/{reSeq}")
 	@ApiOperation(value = "지원자등록")
-	public List<Applicant> applicantRegister( @PathVariable("reSeq") int reSeq,MultipartFile files)
+	public ResponseEntity<List<Applicant>> applicantRegister(@PathVariable("reSeq") int reSeq, MultipartFile files)
 			throws EncryptedDocumentException, IOException, ParseException {
-		// 웹상에서 업로드 되어 MultipartFile인 경우 바로 InputStream으로 변경하여 사용.
-		 InputStream inputStream = new ByteArrayInputStream(files.getBytes());
+		HttpStatus status = HttpStatus.ACCEPTED;
 
-		//String filePath = "C:\\example.xlsx"; // xlsx 형식
+		// 웹상에서 업로드 되어 MultipartFile인 경우 바로 InputStream으로 변경하여 사용.
+		InputStream inputStream = new ByteArrayInputStream(files.getBytes());
+
+		// String filePath = "C:\\example.xlsx"; // xlsx 형식
 		// String filePath = "D:\\applicant.xls"; // xls 형식
 
-		//InputStream inputStream = new FileInputStream(filePath);
+		// InputStream inputStream = new FileInputStream(filePath);
 
 		// 엑셀 로드
 		Workbook workbook = WorkbookFactory.create(inputStream);
@@ -295,107 +298,136 @@ public class ApplicantController {
 		Sheet sheet = workbook.getSheetAt(0);
 		Iterator<Row> rowItr = sheet.iterator();
 
-		// 행만큼 반복
-		while (rowItr.hasNext()) {
-			Applicant applicant = new Applicant();
-			Row row = rowItr.next();
-			String partName = "";
-			String careerName = "";
+		try {
+			// 행만큼 반복
+			
+			Loop1:while (rowItr.hasNext()) {
+				Applicant applicant = new Applicant();
+				Row row = rowItr.next();
+				String partName = "";
+				String careerName = "";
 
-			// 첫번재 행이 해더인 경우 스킵, 2번째 행부터 data 로드
-			if (row.getRowNum() == 0) {
-				continue;
-			}
-
-			Iterator<Cell> cellItr = row.cellIterator();
-
-			// 한행이 한열씩 읽기 (셀 읽기)
-			while (cellItr.hasNext()) {
-				Cell cell = cellItr.next();
-				int index = cell.getColumnIndex();
-
-				switch (index) {
-				case 0:
-					// 인덱스
-					applicant.setApplySeq(((Double) getValueFromCell(cell)).intValue());
-					// 셀이 숫자형인 경우 Double형으로 변환 후 int형으로 변환
-					break;
-				case 1:
-					// 성명
-					applicant.setApplyName((String) getValueFromCell(cell));
-					break;
-				case 2:
-					// 이메일
-					applicant.setApplyEmail((String) getValueFromCell(cell));
-					break;
-				case 3:
-					// 부서
-					partName = (String) getValueFromCell(cell);
-					break;
-				case 4:
-					// 직군
-					careerName = (String) getValueFromCell(cell);
-					break;
-				case 5:
-					// 생년월일
-					Date birth = (Date) getValueFromCell(cell);
-					//SimpleDateFormat trans = new SimpleDateFormat("yyyy-MM-dd");
-					applicant.setApplyBirth(birth);
-					break;
-				case 6:
-					// 핸드폰
-					applicant.setApplyPhone((String) getValueFromCell(cell));
-					break;
-				case 7:
-					// 대학교
-					applicant.setApplyUniversity((String) getValueFromCell(cell));
-					break;
-				case 8:
-					// 전공
-					applicant.setApplyMajor((String) getValueFromCell(cell));
-					break;
-				case 9:
-					// 학점
-					applicant.setApplyGrade((Double) getValueFromCell(cell));
-					break;
-				case 10:
-					// 자소서
-					applicant.setApplyResume1((String) getValueFromCell(cell));
-					break;
-				case 11:
-					applicant.setApplyResume2((String) getValueFromCell(cell));
-					break;
-				case 12:
-					applicant.setApplyResume3((String) getValueFromCell(cell));
-					break;
-				case 13:
-					applicant.setApplyResume4((String) getValueFromCell(cell));
-					break;
+				// 첫번재 행이 해더인 경우 스킵, 2번째 행부터 data 로드
+				if (row.getRowNum() == 0) {
+					continue;
 				}
+
+				Iterator<Cell> cellItr = row.cellIterator();
+
+				// 한행이 한열씩 읽기 (셀 읽기)
+				while (cellItr.hasNext()) {
+					Cell cell = cellItr.next();
+					int index = cell.getColumnIndex();
+
+					switch (index) {
+					case 0:
+						// 인덱스
+						// applicant.setApplySeq(((Double) getValueFromCell(cell)).intValue());
+						// 셀이 숫자형인 경우 Double형으로 변환 후 int형으로 변환
+						break;
+					case 1:
+						// 성명
+						applicant.setApplyName((String) getValueFromCell(cell));
+						break;
+					case 2:
+						// 이메일
+						String email = (String) getValueFromCell(cell);
+						Optional<Applicant> applicantEmailOpt = applicantDao.findOptionalApplicantByApplyEmail(email);
+						if (applicantEmailOpt.isPresent()) {
+							System.out.println("이메일 중복 되었음");
+							continue Loop1;
+						}
+						else {
+						applicant.setApplyEmail((String) getValueFromCell(cell));
+						}
+						break;
+					case 3:
+						// 부서
+						partName = (String) getValueFromCell(cell);
+						break;
+					case 4:
+						// 직군
+						careerName = (String) getValueFromCell(cell);
+						break;
+					case 5:
+						// 생년월일
+						if (cell.getCellType() == CellType.NUMERIC) {
+							DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+							Date date = cell.getDateCellValue();
+							String tmp = dateFormat.format(date);
+							applicant.setApplyBirth(tmp);
+						} else {
+							applicant.setApplyBirth((String) getValueFromCell(cell));
+						}
+
+						break;
+					case 6:
+						// 핸드폰
+						applicant.setApplyPhone((String) getValueFromCell(cell));
+						break;
+					case 7:
+						// 대학교
+						applicant.setApplyUniversity((String) getValueFromCell(cell));
+						break;
+					case 8:
+						// 전공
+						applicant.setApplyMajor((String) getValueFromCell(cell));
+						break;
+					case 9:
+						// 학점
+						applicant.setApplyGrade((Double) getValueFromCell(cell));
+						break;
+					case 10:
+						// 자소서
+						applicant.setApplyResume1((String) getValueFromCell(cell));
+						break;
+					case 11:
+						applicant.setApplyResume2((String) getValueFromCell(cell));
+						break;
+					case 12:
+						applicant.setApplyResume3((String) getValueFromCell(cell));
+						break;
+					case 13:
+						applicant.setApplyResume4((String) getValueFromCell(cell));
+						break;
+					}
+				}
+
+				// 랜덤아이디부여
+				applicant.setApplyId(getUUID());
+
+				Recruit recruit = recruitDao.findRecruitByReSeq(reSeq);
+
+				int comSeq = recruit.getCompanyComSeq();
+				Part part = partDao.findPartByCompanyComSeqAndPartName(comSeq, partName);
+
+				int partSeq = part.getPartSeq();
+				Career career = careerDao.findCareerByCaNameAndPartPartSeq(careerName, partSeq);
+				applicant.setCareerCaSeq(career.getCaSeq());
+				applicant.setRecruitReSeq(recruit.getReSeq());
+
+				// 아직 면접 일정 배정 안함
+				applicant.setApplyAssigned(0);
+
+				// insert문
+				//applicantDao.save(applicant);
+
+				applicantList.add(applicant);
 			}
-
-			// 랜덤아이디부여
-			applicant.setApplyId(getUUID());
-			
-			Recruit recruit=recruitDao.findRecruitByReSeq(reSeq);
-			
-			int comSeq = recruit.getCompanyComSeq();
-			Part part = partDao.findPartByCompanyComSeqAndPartName(comSeq, partName);
-
-			int partSeq = part.getPartSeq();
-			Career career = careerDao.findCareerByCaNameAndPartPartSeq(careerName, partSeq);
-			applicant.setCareerCaSeq(career.getCaSeq());
-			applicant.setRecruitReSeq(recruit.getReSeq());
-
-			// 아직 면접 일정 배정 안함
-			applicant.setApplyAssigned(0);
-
-			// insert문
-			applicantDao.save(applicant);
-
-			applicantList.add(applicant);
+		
+		for (int i = 0; i < applicantList.size(); i++) {
+			applicantDao.save(applicantList.get(i));
 		}
-		return applicantList;
+		
+		status = HttpStatus.OK;
+
+		} catch (Exception e) {
+			logger.error("지원자 등록 실패 : {}", e);
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			applicantList=null;
+		}
+
+		return new ResponseEntity<List<Applicant>>(applicantList,status);
 	}
 
 	// 셀서식에 맞게 값 읽기

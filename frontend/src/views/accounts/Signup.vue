@@ -17,6 +17,7 @@
               </td>
               <v-btn v-if="index === 0" @click="send">인증 메일 발송 </v-btn>
               <v-btn v-if="index === 1" @click="certified">인증 확인 </v-btn>
+              <v-btn v-if="index === 3" @click="password_certified">비밀번호 확인</v-btn>
             </tr>
           </tbody>
         </v-simple-table>
@@ -184,10 +185,18 @@ export default {
     },
     certifiedNum: "",
     isCertified: false,
+    isPasswordCertified:false,
   }),
   methods: {
     // 메일 발송
     send: function() {
+      
+      let regexp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i
+      if (!regexp.test(this.credentials.hrEmail)) {
+        alert("이메일은 이메일 형식으로 입력해주세요.")
+        return
+      }
+
       if (this.credentials.hrEmail) {
         axios
           .post(`${SERVER_URL}/email/send`, this.credentials)
@@ -215,24 +224,58 @@ export default {
       }
     },
 
-    signup: function() {
+    //비밀번호 같은지 다른지 확인
+    password_certified: function() {
+      
+      let patternEngAtListOne = new RegExp(/[a-zA-Z]+/); // + for at least one
+      let patternSpeAtListOne = new RegExp(/[~!@#$%^&*()_+|<>?:{}]+/); // + for at least one
+      let patternNumAtListOne = new RegExp(/[0-9]+/); // + for at least one
       if (
-        this.credentials.hrPassword != this.credentials.hrPasswordConfirmation
+        !patternEngAtListOne.test(this.credentials.hrPassword) ||
+        !patternSpeAtListOne.test(this.credentials.hrPassword) ||
+        !patternNumAtListOne.test(this.credentials.hrPassword) ||
+        this.credentials.hrPassword.length < 8
       ) {
+        alert(
+          "비밀번호는 1개 이상의 특수문자, 대소문자 및 숫자를 포함하고 8자리 이상이여야 합니다."
+        );
+        this.isPasswordCertified = false
+        return;
+      }
+
+   if(!this.credentials.hrPasswordConfirmation){
+        alert("비밀번호 확인을 입력해주세요")
+      }
+      else if (this.credentials.hrPassword == this.credentials.hrPasswordConfirmation) {
+        alert("확인되었습니다.")
+        this.isPasswordCertified=true
+      }
+      else{
         alert("비밀번호가 다릅니다.")
-        return
+        this.isPasswordCertified = false
       }
+    },
 
-      let regexp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i
-      if (!regexp.test(this.credentials.hrEmail)) {
-        alert("이메일은 이메일 형식으로 입력해주세요.")
-        return
-      }
-
+    signup: function() {
+      
       if (this.isCertified == false) {
         alert("메일 인증을 진행하세요.")
         return
       }
+
+      if(this.isPasswordCertified==false){
+        alert("비밀번호 확인을 진행하세요.")
+        return
+      }
+
+
+      if(!this.credentials.hrEmail||!this.credentials.hrName||!this.credentials.hrPassword||!this.credentials.hrPasswordConfirmation||
+      !this.credentials.hrPhone||!this.credentials.comName){
+        alert("정보를 모두 입력해주세요.")
+        return
+      }
+
+
 
       if (this.credentials.agreed) {
         axios

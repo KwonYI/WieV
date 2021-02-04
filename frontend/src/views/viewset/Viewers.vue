@@ -14,7 +14,6 @@
     
       <v-btn class="m-3" @click="exportExcel">엑셀 양식 다운로드</v-btn>
     
-      <!-- <v-btn class="m-3" @click="createVieweeDB"> DB업데이트 </v-btn> -->
     </v-toolbar>
     <v-simple-table fixed-header  height="500px" class="mt-5">
       <thead>
@@ -101,10 +100,13 @@ import XLSX from 'xlsx'
               }
             }
           ).then(function () {
-            console.log('SUCCESS!!');
+            console.log('면접관 엑셀 업로드 성공')
+            alert("면접관 등록 성공")
           })
-          .catch(function () {
-            console.log('FAILURE!!');
+          .catch(function (err) {
+            console.log(err)
+            alert("면접관 등록 실패")
+            console.log('면접관 엑셀 업로드 실패')
           });
 
       },

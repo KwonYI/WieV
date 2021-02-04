@@ -29,7 +29,7 @@ public class Applicant {
 	private String applyId;
 	private String applyName;
 	private String applyEmail;
-	private Date applyBirth;
+	private String applyBirth;
 	private String applyPhone;
 	private String applyUniversity;
 	private String applyMajor;
