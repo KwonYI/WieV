@@ -4,9 +4,9 @@
       <v-col cols="8" class="main-box text-center">
         <div class="d-flex flex-column justify-center align-center text-white">
           <v-col class="wiev-box">
-            <v-col class="text-h5 mb-3">View Everywhere</v-col>
-            <v-col>비대면 화상면접 플랫폼</v-col>
-            <span class="text-h3">WieV</span>
+            <v-col :class="[getAccessToken ? '' : 'text-h5']">View Everywhere</v-col>
+            <v-col v-if="!getAccessToken" class="mt-3">비대면 화상면접 플랫폼</v-col>
+            <span :class="[getAccessToken ? 'text-h4' : 'text-h3']">WieV</span>
           </v-col>
 
           <!-- 로그인 시, 면접스케줄 현황 -->
