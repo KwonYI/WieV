@@ -247,7 +247,7 @@ public class SessionController {
 		return new ResponseEntity<>(resultMap, status);
 	}
 
-	@GetMapping("/leave")
+	@GetMapping("/leaveSession")
 	@ApiOperation(value = "세션 나가기")
 	public Object removeUser(@RequestParam(name = "sessionName") String sessionName,
 			@RequestParam(name = "token") String token) {
