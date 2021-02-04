@@ -317,7 +317,15 @@ export default new Vuex.Store({
         axios.defaults.headers.common[
           "auth-token"
         ] = `${response.data["auth-token"]}`
-      })
+      }).then((res) => {
+        console.log(res)
+      }).catch((err) => 
+      console.log("로그인에러", err))
+      //
+      // .then((res) => {
+      //   console.log(res)
+      // }).catch((err) => 
+      // console.log("로그인에러", err))
     },
     LOGOUT(context) {
       context.commit("LOGOUT")
