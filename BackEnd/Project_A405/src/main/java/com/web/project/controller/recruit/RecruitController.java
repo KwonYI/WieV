@@ -1,7 +1,11 @@
 package com.web.project.controller.recruit;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -10,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +26,7 @@ import com.web.project.controller.hr.HrController;
 import com.web.project.dao.hr.CompanyDao;
 import com.web.project.dao.recruit.RecruitDao;
 import com.web.project.model.BasicResponse;
+import com.web.project.model.hr.Hr;
 import com.web.project.model.recruit.Recruit;
 import com.web.project.model.recruit.RegisterRequest;
 import io.swagger.annotations.ApiOperation;
@@ -66,6 +72,28 @@ public class RecruitController {//공고 등록
 		
 		return new ResponseEntity<List<Recruit>>(recruitList, status);
 	}
+	
+	// 공고 삭제
+	@DeleteMapping("/delete/{reSeq}")
+	@ApiOperation(value = "공고 삭제하기")
+	public void delete(@PathVariable("reSeq") int reSeq) {
+		
+		Map<String, Object> resultMap = new HashMap<>();
+		
+		try {
+            Optional<Recruit> recruitOpt=recruitDao.findOptionalRecruitByReSeq(reSeq);
+            // DELETE(D)
+            recruitOpt.ifPresent(selectRecruit -> {
+            	recruitDao.delete(selectRecruit);
+            });
+            
+        } catch (RuntimeException e) {
+            logger.error("정보 삭제 실패 : {}", e);
+            resultMap.put("message", e.getMessage());
+        }
+		
+	}
+	
 	
 	@PostMapping("/register/{comSeq}")
 	@ApiOperation(value = "공고등록")
