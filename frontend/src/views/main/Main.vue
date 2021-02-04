@@ -26,7 +26,9 @@
 import { mapGetters } from "vuex"
 import axios from "axios"
 
-const SERVER_URL = "https://localhost:8080/"
+// const SERVER_URL = "https://localhost:8080/"
+// const SERVER_URL = "https://i4a405.p.ssafy.io:8080"
+const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
 import ViewerRecruitItem from "@/components/main/ViewerRecruitItem"
 // import VieweeRecruitItem from "@/components/main/VieweeRecruitItem"
@@ -58,7 +60,7 @@ export default {
     this.user = this.getUser
     // 면접관 이메일 가려서 보내고싶은디
     axios
-      .get(`${SERVER_URL}interviewer/getMyInterview`, {
+      .get(`${SERVER_URL}/interviewer/getMyInterview`, {
         params: {
           userComName: this.user.userComName,
           interviewerEmail: this.user.userEmail,

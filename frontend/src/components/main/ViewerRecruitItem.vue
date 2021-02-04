@@ -165,7 +165,9 @@
 <script>
 import axios from "axios"
 
-const SERVER_URL = "https://localhost:8080/"
+// const SERVER_URL = "https://localhost:8080/"
+// const SERVER_URL = "https://i4a405.p.ssafy.io:8080"
+const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
 export default {
   name: "ViewerRecruitItem",
@@ -199,7 +201,7 @@ export default {
       console.log(this.user)
       console.log(this.interview)
       axios
-        .get(`${SERVER_URL}session/create`, {
+        .get(`${SERVER_URL}/session/create`, {
           params: {
             interviewerWait: this.user.userViewWait,
             interviewerName: this.user.userName,
