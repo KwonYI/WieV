@@ -5,9 +5,9 @@ import createPersistedState from "vuex-persistedstate"
 import _ from "lodash"
 
 Vue.use(Vuex)
- const SERVER_URL = "https://localhost:8080"
+//  const SERVER_URL = "https://localhost:8080"
 // const SERVER_URL = "https://i4a405.p.ssafy.io:8080"
-//const SERVER_URL = process.env.VUE_APP_SERVER_URL
+const SERVER_URL = process.env.VUE_APP_SERVER_URL
 // import axios from 'axios'
 
 
@@ -250,6 +250,7 @@ export default new Vuex.Store({
 
     //현재 공고의 지원자만 가져오는 로직
     getVieweeListCurrentRecruit: function (state) {
+      console.log("[mapgetters]getVieweeListCurrentRecruit")
       return state.comVieweeList.filter(re => re.recruitReSeq === state.selectedRecruitNo)
     },
 
@@ -299,6 +300,7 @@ export default new Vuex.Store({
       console.log("mutaions의 UPDATE_VIEWEE_LIST", res);
       state.recruitVieweeList = res;
       // console.log(state.recruitVieweeList);
+      state.comVieweeList.push(res)
     },
     GET_VIEWER_LIST(state, res) {
       console.log("mutaions의 GET면접관LIST", res);

@@ -16,40 +16,74 @@
             <span class="headline">[{{com_name}}] 신규 공고 등록</span>
           </v-card-title>
           <v-card-text>
-            <v-container>
-              <v-row>
-                <v-col cols="12" sm="6" md="4">
-                  <v-select :items="[2021, 2022,2023,2024,2025]" label="년도" required v-model="new_recruit.reYear"></v-select>
-                </v-col>
-                <v-col cols="12" sm="6" md="4">
-                  <v-select :items="['상반기', '하반기']" label="시즌" required v-model="new_recruit.reFlag"></v-select>
-                </v-col>
-                <v-col cols="12" sm="6" md="4">
-                  <v-select :items="['신입', '경력']" label="채용 형태" required v-model="new_recruit.reStatus"></v-select>
-                </v-col>
+            <v-form
+              ref="form"
+              v-model="recFormValid"
+              lazy-validation
+            >
+              <v-container>
+                <v-row>
+                  <v-col cols="12" sm="6" md="4">
+                    <v-autocomplete
+                      :items="[2021, 2022, 2023]"
+                      :rules="[v => !!v || '연도값은 필수입니다.']"
+                      label="Year"
+                      required
+                      v-model="new_recruit.reYear"
+                    >
+                    </v-autocomplete>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="4">
+                    <v-autocomplete
+                      :items="['상반기', '하반기']"
+                      :rules="[v => !!v || '시즌값은 필수입니다.']"
+                      label="Season"
+                      required
+                      v-model="new_recruit.reFlag"
+                    >
+                    </v-autocomplete>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="4">
+                    <v-autocomplete
+                    :items="['신입', '경력', '계약']"
+                    :rules="[v => !!v || '채용 형태 값은 필수입니다.']"
+                    label="Type"
+                    required
+                    v-model="new_recruit.reStatus"
+                  >
+                  </v-autocomplete>
+                  </v-col>
 
-                <v-col cols="12" sm="6">
-                  <v-text-field v-model="dateRangeText" label="공고 면접 기간" prepend-icon="mdi-calendar" readonly>
-                  </v-text-field>
-                  <div>면접 시작일 : {{ dates[0] }}</div>
-                  <div>면접 종료일 : {{ dates[1] }}</div>
-                </v-col>
-                <v-col cols="12" sm="6">
-                  <v-date-picker v-model="dates" range></v-date-picker>
-
-                </v-col>
-
-
-              </v-row>
-            </v-container>
-            <small>*indicates required field</small>
+                  <v-col cols="12" sm="6">
+                    <v-text-field
+                      v-model="dateRangeText"
+                      :rules="rangeRules"
+                      label="면접 기간" prepend-icon="mdi-calendar"
+                      readonly
+                      required
+                    >
+                    </v-text-field>
+                    <div>면접 시작일 : {{ dates[0] }}</div>
+                    <div>면접 종료일 : {{ dates[1] }}</div>
+                  </v-col>
+                  <v-col cols="12" sm="6">
+                    <v-date-picker v-model="dates" range>
+                    </v-date-picker>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-form>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="blue darken-1" text @click="dialog = false">
               Close
             </v-btn>
-            <v-btn color="blue darken-1" text @click="createRecruit">
+            <v-btn
+              color="blue darken-1"
+              text
+              @click="createRecruit"
+            >
               Save
             </v-btn>
           </v-card-actions>
@@ -107,11 +141,16 @@
     name: "Schedule",
     data: function () {
       return {
-        com_name: "버즈글로벌",
+        com_name: "WieV Inc.",
         dialog: false,
         myReno: '',
 
         dates: ['2021-01-01', '2021-01-01'],
+        
+        recFormValid: true,
+        rangeRules: [
+          () => this.dates[0] <= this.dates[1] || '면접 기간이 올바르지 않습니다.'
+        ],
         new_recruit: {
           reYear: '',
           reFlag: '',
@@ -124,23 +163,25 @@
 
     methods: {
       createRecruit: function () {
-        this.dialog = false
+        if (this.$refs.form.validate()) {
+          this.dialog = false
+          // this.dialog = false
+          // console.log("createRecruit 실행!")
+          // console.log("새로추가된공고정보들:",this.new_recruit)
 
-        // this.dialog = false
-        // console.log("createRecruit 실행!")
-        // console.log("새로추가된공고정보들:",this.new_recruit)
+          this.new_recruit.reStartDate = this.dates[0]
+          this.new_recruit.reEndDate = this.dates[1]
 
-        this.new_recruit.reStartDate = this.dates[0]
-        this.new_recruit.reEndDate = this.dates[1]
+          this.$store
+            .dispatch("INSERT_RECRUIT", this.new_recruit)
+            .then(() => console.log("insertRecruit"))
 
-        this.$store
-          .dispatch("INSERT_RECRUIT", this.new_recruit)
-          .then(() => console.log("insertRecruit"))
+          //여기에 axios.post 요청으로, DB에 새로운 공고를 저장할 수 있도록 합니다. 
+          // 새로 저장된 공고의 정보 (seq포함)를 가져오고, state 에 저장합니다. 
+          //this.$store.dispatch('addRecruit', 응답으로 받은 데이터 res.data)
 
-        //여기에 axios.post 요청으로, DB에 새로운 공고를 저장할 수 있도록 합니다. 
-        // 새로 저장된 공고의 정보 (seq포함)를 가져오고, state 에 저장합니다. 
-        //this.$store.dispatch('addRecruit', 응답으로 받은 데이터 res.data)
-
+          this.$refs.form.reset()
+        }
       },
       goToProgress: function (recruit) {
         this.myReno = recruit.reSeq
@@ -182,6 +223,9 @@
 }
 .rec-header {
   text-align: center !important;
-  background: transparent !important;
+  background: #304B61 !important;
+}
+table tbody tr:hover {
+  background: inherit !important;
 }
 </style>

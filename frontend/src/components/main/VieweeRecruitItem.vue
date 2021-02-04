@@ -94,13 +94,7 @@
           {type_name:"그룹면접",
           check_terminate:"면접 미완료"},
 
-
         ],
-
-        
-
-
-
       }
     },
     created: function () {},

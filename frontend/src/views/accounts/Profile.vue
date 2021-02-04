@@ -20,7 +20,7 @@
             <div class="">
               <h4>이메일 : {{ user.userEmail }}</h4>
               <h4>이름 : {{ user.userName }}</h4>
-              <h4>연락처 : {{ user.Phone }}</h4>
+              <h4>연락처 : {{ user.userPhone }}</h4>
               
             </div>
           </div>
