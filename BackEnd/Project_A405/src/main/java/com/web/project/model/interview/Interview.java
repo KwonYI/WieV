@@ -16,13 +16,15 @@ public class Interview {
 	String careerName;// 직군
 	String partName; // 부서
 	String interviewType; // 면접 종류
-	String sessionName;	// 세션이름
+	String waitSessionName;	// 대기방세션이름
+	String interviewSessionName; // 면접방세션이름
 
 	public Interview() {}
 
-	public Interview(String comName, String groupDate, String groupStartTime, int recruitYear,
-			String recruitStartDate, String recruitEndDate, String recruitFlag, String recruitStats, String careerName,
-			String partName, String interviewType, String sessionName) {
+	public Interview(String comName, String groupDate, String groupStartTime, int recruitYear, String recruitStartDate,
+			String recruitEndDate, String recruitFlag, String recruitStatus, String careerName, String partName,
+			String interviewType, String waitSessionName, String interviewSessionName) {
+		super();
 		this.comName = comName;
 		this.groupDate = groupDate;
 		this.groupStartTime = groupStartTime;
@@ -30,11 +32,12 @@ public class Interview {
 		this.recruitStartDate = recruitStartDate;
 		this.recruitEndDate = recruitEndDate;
 		this.recruitFlag = recruitFlag;
-		this.recruitStatus = recruitStats;
+		this.recruitStatus = recruitStatus;
 		this.careerName = careerName;
 		this.partName = partName;
 		this.interviewType = interviewType;
-		this.sessionName = sessionName;
+		this.waitSessionName = waitSessionName;
+		this.interviewSessionName = interviewSessionName;
 	}
 
 	public String getComName() {
@@ -125,20 +128,28 @@ public class Interview {
 		this.interviewType = interviewType;
 	}
 
-	public String getSessionName() {
-		return sessionName;
+	public String getWaitSessionName() {
+		return waitSessionName;
 	}
 
-	public void setSessionName(String sessionName) {
-		this.sessionName = sessionName;
+	public void setWaitSessionName(String waitSessionName) {
+		this.waitSessionName = waitSessionName;
+	}
+
+	public String getInterviewSessionName() {
+		return interviewSessionName;
+	}
+
+	public void setInterviewSessionName(String interviewSessionName) {
+		this.interviewSessionName = interviewSessionName;
 	}
 
 	@Override
 	public String toString() {
 		return "Interview [comName=" + comName + ", groupDate=" + groupDate + ", groupStartTime=" + groupStartTime
 				+ ", recruitYear=" + recruitYear + ", recruitStartDate=" + recruitStartDate + ", recruitEndDate="
-				+ recruitEndDate + ", recruitFlag=" + recruitFlag + ", recruitStats=" + recruitStatus + ", careerName="
-				+ careerName + ", partName=" + partName + ", interviewType=" + interviewType + ", sessionName="
-				+ sessionName + "]";
+				+ recruitEndDate + ", recruitFlag=" + recruitFlag + ", recruitStatus=" + recruitStatus + ", careerName="
+				+ careerName + ", partName=" + partName + ", interviewType=" + interviewType + ", waitSessionName="
+				+ waitSessionName + ", interviewSessionName=" + interviewSessionName + "]";
 	}
 }

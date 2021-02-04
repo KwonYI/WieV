@@ -18,11 +18,12 @@ public class GroupType {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int groupTypeSeq;
-	
+
 	private int interviewTypeTypeSeq;
 	private int groupGroupSeq;
-	
-	private String sessionName;
+
+	private String waitSessionName;
+	private String interviewSessionName;
 
 	public int getGroupTypeSeq() {
 		return groupTypeSeq;
@@ -48,13 +49,20 @@ public class GroupType {
 		this.groupGroupSeq = groupGroupSeq;
 	}
 
-	public String getSessionName() {
-		return sessionName;
+	public String getWaitSessionName() {
+		return waitSessionName;
 	}
 
-	public void setSessionName(String sessionName) {
-		this.sessionName = sessionName;
+	public void setWaitSessionName(String waitSessionName) {
+		this.waitSessionName = waitSessionName;
 	}
-	
-	
+
+	public String getInterviewSessionName() {
+		return interviewSessionName;
+	}
+
+	public void setInterviewSessionName(String interviewSessionName) {
+		this.interviewSessionName = interviewSessionName;
+	}
+
 }

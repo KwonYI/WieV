@@ -1,15 +1,14 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
-import createPersistedState from "vuex-persistedstate"
-import _ from "lodash"
+import createPersistedState from "vuex-persistedstate";
+import _ from "lodash";
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 //  const SERVER_URL = "https://localhost:8080"
 // const SERVER_URL = "https://i4a405.p.ssafy.io:8080"
-const SERVER_URL = process.env.VUE_APP_SERVER_URL
+const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 // import axios from 'axios'
-
 
 export default new Vuex.Store({
   state: {
@@ -40,11 +39,11 @@ export default new Vuex.Store({
     whoLogin: "viewer", //Manager, viewer, viewee
 
     comData: {
-      comSeq:'1',
-      comName:'WieV Inc.',
-      comLogo:'asdf',
-      comAddress:'서울특별시 강남구 테헤란로',
-      comHomepage:'https://www.naver.com',
+      comSeq: "1",
+      comName: "WieV Inc.",
+      comLogo: "asdf",
+      comAddress: "서울특별시 강남구 테헤란로",
+      comHomepage: "https://www.naver.com",
     },
 
     recruitList: [
@@ -223,16 +222,16 @@ export default new Vuex.Store({
 
   getters: {
     getUser(state) {
-      return state.user
+      return state.user;
     },
     getAccessToken(state) {
-      return state.accessToken
+      return state.accessToken;
     },
     getUserViewWait(state) {
-      return state.user.userViewWait
+      return state.user.userViewWait;
     },
     getUserComSeq(state) {
-      return state.user.userComSeq
+      return state.user.userComSeq;
     },
     // getParticipantsInInterview(state) {
     //   return (sessionName) =>
@@ -240,56 +239,69 @@ export default new Vuex.Store({
     //       return interview.sessionName === sessionName
     //     })
     // },
-    
-    //공고 최근순으로 정렬해서 가져오기
-    getRecruitListLately: function (state) {
-      // return _.sortBy(state.recruitList, 'reSeq').reverse()
-      return _.orderBy(state.recruitList, ['reSeq'], ['desc'])
 
+    //공고 최근순으로 정렬해서 가져오기
+    getRecruitListLately: function(state) {
+      // return _.sortBy(state.recruitList, 'reSeq').reverse()
+      return _.orderBy(state.recruitList, ["reSeq"], ["desc"]);
     },
 
     //현재 공고의 지원자만 가져오는 로직
+<<<<<<< HEAD
     getVieweeListCurrentRecruit: function (state) {
       console.log("[mapgetters]getVieweeListCurrentRecruit")
       return state.comVieweeList.filter(re => re.recruitReSeq === state.selectedRecruitNo)
+=======
+    getVieweeListCurrentRecruit: function(state) {
+      var list = state.comVieweeList.filter(
+        (re) => re.recruitReSeq === state.selectedRecruitNo
+      );
+      console.log("게터 getVieweeListCurrentRecruit");
+      console.log(list);
+      console.log(list.length);
+
+      return list;
+>>>>>>> F_면접방연결_프론트백연동
     },
 
     getComViewerList(state) {
-      return state.user.comViewerList
-    }
+      console.log("게터 getComViewerList");
+      console.log(state.user.comViewerList);
+      return state.user.comViewerList;
+    },
   },
   mutations: {
-    
-  
     LOGIN(state, res) {
-      state.accessToken = res["auth-token"]
-      state.user.userEmail = res["user-Email"]
-      state.user.userName = res["user-Name"]
-      state.user.userPhone = res["user-Phone"]
-      state.user.userViewWait = res["user-View-Wait"]
-      state.user.userComSeq = res["user-Company-Seq"]
-      state.user.userComName = res["user-Company-Name"]
-      state.user.userComLogo = res["user-Company-Logo"]
-      state.user.userComAddress = res["user-Company-Address"]
-      state.user.userComHomepage = res["user-Company-Homepage"]
+      state.accessToken = res["auth-token"];
+      state.user.userEmail = res["user-Email"];
+      state.user.userName = res["user-Name"];
+      state.user.userPhone = res["user-Phone"];
+      state.user.userViewWait = res["user-View-Wait"];
+      state.user.userComSeq = res["user-Company-Seq"];
+      state.user.userComName = res["user-Company-Name"];
+      state.user.userComLogo = res["user-Company-Logo"];
+      state.user.userComAddress = res["user-Company-Address"];
+      state.user.userComHomepage = res["user-Company-Homepage"];
     },
     LOGOUT(state) {
-      state.accessToken = null
-      state.user.userEmail = ""
-      state.user.userName = ""
-      state.user.userPhone = ""
-      state.user.userViewWait = 0
-      state.user.userComSeq = 0
-      state.user.userComName = ""
-      state.user.userComLogo = ""
-      state.user.userComAddress = ""
-      state.user.userComHomepage = ""
+      state.accessToken = null;
+      state.user.userEmail = "";
+      state.user.userName = "";
+      state.user.userPhone = "";
+      state.user.userViewWait = 0;
+      state.user.userComSeq = 0;
+      state.user.userComName = "";
+      state.user.userComLogo = "";
+      state.user.userComAddress = "";
+      state.user.userComHomepage = "";
     },
     GET_RECRUIT_LIST(state, res) {
-      state.recruitList = res
+      console.log("mutaions의 GET_RECRUIT_LIST", res);
+      state.recruitList = res;
     },
     INSERT_RECRUIT(state, res) {
-      state.recruitList.push(res)
+      console.log("mutaions의 INSERT_RECRUIT", res);
+      state.recruitList.push(res);
     },
     GET_VIEWEE_LIST(state, res) {
       console.log("mutaions의 GET_VIEWEE_LIST", res);
@@ -310,38 +322,40 @@ export default new Vuex.Store({
   },
 
   actions: {
-   
-
     // 로그인, 로그아웃
     LOGIN(context, user) {
-      axios.post(`${SERVER_URL}/hr/login`, user).then((response) => {
-        context.commit("LOGIN", response.data)
-        axios.defaults.headers.common[
-          "auth-token"
-        ] = `${response.data["auth-token"]}`
-      }).then((res) => {
-        console.log(res)
-      }).catch((err) => 
-      console.log("로그인에러", err))
+      axios
+        .post(`${SERVER_URL}/hr/login`, user)
+        .then((response) => {
+          context.commit("LOGIN", response.data);
+          axios.defaults.headers.common[
+            "auth-token"
+          ] = `${response.data["auth-token"]}`;
+        })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => console.log("로그인에러", err));
       //
       // .then((res) => {
       //   console.log(res)
-      // }).catch((err) => 
+      // }).catch((err) =>
       // console.log("로그인에러", err))
     },
     LOGOUT(context) {
-      context.commit("LOGOUT")
-      axios.defaults.headers.common["auth-token"] = undefined
+      context.commit("LOGOUT");
+      axios.defaults.headers.common["auth-token"] = undefined;
     },
 
     GET_RECRUIT_LIST(context) {
       axios
         .get(`${SERVER_URL}/recruit/getList/` + this.state.user.userComSeq)
         .then((response) => {
-          context.commit("GET_RECRUIT_LIST", response.data)
-          console.log(response.data)
-        })
-      context.commit("GET_RECRUIT_LIST")
+          context.commit("GET_RECRUIT_LIST", response.data);
+          console.log("겟 공고 실행");
+          console.log(response.data);
+        });
+      context.commit("GET_RECRUIT_LIST");
     },
 
     INSERT_RECRUIT(context, newRecruit) {
@@ -351,8 +365,10 @@ export default new Vuex.Store({
           newRecruit
         )
         .then((response) => {
-          context.commit("INSERT_RECRUIT", response.data)
-        })
+          context.commit("INSERT_RECRUIT", response.data);
+          console.log("인서트 공고 실행");
+          console.log(response.data);
+        });
     },
 
     //지원자를 엑셀로 저장
@@ -360,40 +376,41 @@ export default new Vuex.Store({
       axios
         .get(`${SERVER_URL}/applicant/getList/${recruitNo}`)
         .then((res) => {
-          context.commit("UPDATE_VIEWEE_LIST", res.data)
+          context.commit("UPDATE_VIEWEE_LIST", res.data);
+          console.log("업데이트 지원자 리스트 실행");
+          console.log(res.data);
         })
         .catch((err) => {
-          console.log(err)
-        })
+          console.log(err);
+        });
     },
-
 
     //지원자 리스트를 불러온다. //이거.. 공고별이 아니라, 회사 전체의 리스트를 불러올 수 있어야 함.
     GET_VIEWEE_LIST(context, comSeq) {
       axios
         .get(`${SERVER_URL}/applicant/getListByCompany/${comSeq}`)
         .then((res) => {
-          context.commit("GET_VIEWEE_LIST", res.data)
+          context.commit("GET_VIEWEE_LIST", res.data);
+          console.log("겟 지원자 리스트 실행");
+          console.log(res.data);
         })
         .catch((err) => {
-          console.log(err)
-        })
+          console.log(err);
+        });
     },
 
     GET_VIEWER_LIST(context, comSeq) {
       axios
-      .get(`${SERVER_URL}/interviewer/getList/${comSeq}`)
-      .then((res) => {
-        context.commit("GET_VIEWER_LIST", res.data)
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-
-    }
-
+        .get(`${SERVER_URL}/interviewer/getList/${comSeq}`)
+        .then((res) => {
+          context.commit("GET_VIEWER_LIST", res.data);
+          console.log("겟 인터뷰 리스트 실행");
+          console.log(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
   },
-  plugins: [
-    createPersistedState(),
-  ]
+  plugins: [createPersistedState()],
 });
