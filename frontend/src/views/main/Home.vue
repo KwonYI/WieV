@@ -2,7 +2,7 @@
   <div id="home" class="main-bg-navy">
     <v-row justify="center" class="pt-10" no-gutters>
       <v-col cols="8" class="main-box text-center">
-        <div class="d-flex flex-column justify-center text-white">
+        <div class="d-flex flex-column justify-center align-center text-white">
           <v-col class="wiev-box">
             <v-col class="text-h5 mb-3">View Everywhere</v-col>
             <v-col>비대면 화상면접 플랫폼</v-col>
@@ -10,10 +10,9 @@
           </v-col>
 
           <!-- 로그인 시, 면접스케줄 현황 -->
-          <div v-if="getAccessToken" class="mt-10">
+          <v-col v-if="getAccessToken" class="mt-10">
             <!-- 로그인 완료 -->
             <div v-if="getUserViewWait === -1">
-              <h1>인사담당자 페이지</h1>
               <Schedule />
             </div>
             <div v-else>
@@ -21,10 +20,10 @@
                   대기실 이동하기
               </router-link>
             </div>
-          </div>
+          </v-col>
 
           <!-- 미로그인 시 -->
-          <v-col v-else class="login-box mt-5">
+          <v-col v-else cols="5" class="login-box mt-5">
             <v-col class="login-input mb-4">
               <v-simple-table dark dense style="background-color: transparent">
                 <!-- <form>

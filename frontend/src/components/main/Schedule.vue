@@ -1,7 +1,7 @@
 <template>
   <div id="schedule">
     <!--스케줄 (공고 리스트) 컴포넌트 // 나중에 라우터로 변경 될 수 있다. -->
-    <h3>반갑습니다. {{com_name}}님</h3>
+    <div class="h4 mb-10">반갑습니다. {{com_name}}님</div>
 
     <div>
       <!--데이터 테이블 <v-data-table :headers="headers" :items="recruits" class="elevation-1">
@@ -14,7 +14,7 @@
 
       <v-dialog v-model="dialog" persistent max-width="600px">
         <template v-slot:activator="{ on, attrs }">
-          <v-btn color="primary" dark v-bind="attrs" v-on="on">
+          <v-btn dark v-bind="attrs" v-on="on">
             공고 추가하기
           </v-btn>
         </template>
@@ -63,18 +63,19 @@
         </v-card>
       </v-dialog>
 
+      <hr>
       <div>
         최근 등록된 순으로 보여집니다. 
       </div>
-      <v-simple-table fixed-header height="300px" class="mt-5">
+      <v-simple-table fixed-header dark height="300px" class="rec-list mt-5">
         <thead>
           <tr>
-            <th class="text-center">No</th>
-            <th class="text-center">시즌</th>
-            <th class="text-center">분류</th>
-            <th class="text-center">기간</th>
-            <th class="text-center">관리</th>
-            <th class="text-center">삭제</th>
+            <th class="rec-header">No</th>
+            <th class="rec-header">시즌</th>
+            <th class="rec-header">분류</th>
+            <th class="rec-header">기간</th>
+            <th class="rec-header">관리</th>
+            <th class="rec-header">삭제</th>
           </tr>
         </thead>
         <tbody>
@@ -174,5 +175,12 @@
   }
 </script>
 
-<style>
+<style scoped>
+.rec-list {
+  background: transparent !important;
+}
+.rec-header {
+  text-align: center !important;
+  background: transparent !important;
+}
 </style>

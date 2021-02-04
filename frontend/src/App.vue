@@ -17,7 +17,7 @@
         </v-toolbar-title>
 
         <!-- 왼쪽 상단 위치 -->
-        <v-toolbar-items v-if="currentRouteName !== 'WaitRoom' && currentRouteName !== 'ViewRoom'" class="srv-btn">
+        <v-toolbar-items v-if="isNotRoom" class="srv-btn">
           <v-btn plain style="font-size: 1rem">플랫폼 소개</v-btn>
           <v-btn plain style="font-size: 1rem">문의하기</v-btn>
         </v-toolbar-items>
@@ -25,44 +25,53 @@
         <!-- 왼쪽 상단 위치, 대기실/면접실 -->
         <v-toolbar-items v-else class="room-status">
           <v-row style="width: 500px" no-gutters>
-            <v-col class="d-flex justify-center align-center">현재 면접자 수</v-col>
-            <v-col class="d-flex justify-center align-center">현재 시각aaaaaaaaaaaaaaaaaaaaaaaaa</v-col>
+            <v-col class="d-flex justify-center align-center">현재 면접자 수 : 8명</v-col>
+            <v-col class="d-flex justify-center align-center">현재 시각 : 7/10(월) 오후 5:23</v-col>
           </v-row>
         </v-toolbar-items>
 
         <v-spacer></v-spacer>
 
-        <!-- 오른쪽 상단 위치, 로그인 후 -->
-        <span v-if="getAccessToken">
-          <div v-if="currentRouteName !== 'WaitRoom' && currentRouteName !== 'ViewRoom'">
-            <v-toolbar-items class="align-center">
-              <!-- 인사담당자일 경우 면접 스케줄 생성 버튼 -->
-              <span>
-                <router-link class="title" :to="{ name: 'Menu' }">
-                  WieV Inc.
-                </router-link>
-              </span>
+        <div v-if="getAccessToken" class="h-100">
+          <!-- 오른쪽 상단 위치, 로그인 후 -->
+          <v-toolbar-items v-if="isNotRoom" class="align-center">
+            <!-- 인사담당자일 경우 면접 스케줄 생성 버튼 -->
+            <v-menu open-on-hover offset-y>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  color="blue-grey darken-3"
+                  dark
+                  v-bind="attrs"
+                  v-on="on"
+                  style="height: 50% !important"
+                  rounded
+                >
+                  Profile
+                </v-btn>
+              </template>
+              <v-list>
+                <v-list-item
+                  v-for="(item, index) in menuBar"
+                  :key="index"
+                >
+                  <v-list-item-title>
+                    <router-link :to="{ name: item.link }">
+                      {{ item.title }}
+                    </router-link>
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
 
-              <span>
-                <router-link class="title" :to="{ name: 'Profile' }">
-                  내 정보
-                </router-link>
-              </span>
-
-              <v-btn plain style="font-size: 1rem" @click="logout">
-                로그아웃
-              </v-btn>
-            </v-toolbar-items>
-          </div>
-          <div v-else>
+            <v-btn plain style="font-size: 1rem" @click="logout">로그아웃</v-btn>
+          </v-toolbar-items>
+          <!-- 오른쪽 상단 위치, 대기실/면접실 -->
+          <v-toolbar-items v-else class="d-flex align-center body-1 mr-5">
             WieV Inc. 2021 하반기 신입 공채
-          </div>
-        </span>
+          </v-toolbar-items>
+        </div>
 
-        <!-- 오른쪽 상단 위치, 대기실/면접실 -->
         
-
-        <router-link :to="{ name: 'WaitRoom' }">Waitroom</router-link>
       </v-app-bar>
 
       <!-- Contents -->
@@ -104,12 +113,20 @@ export default {
   },
   data: () => ({
     Manager: "",
+    menuBar: [
+      { title: '기업 정보', link: 'Profile' }
+    ]
   }),
   computed: {
     ...mapState(["accessToken"]),
     ...mapGetters(["getAccessToken"]),
-    currentRouteName() {
-      return this.$route.name
+    isNotRoom() {
+      console.log(this.$route.name)
+      if (['WaitRoom', 'ViewRoom', 'Main'].includes(this.$route.name)) {
+        return false
+      } else {
+        return true
+      }
     }
   },
   methods: {
