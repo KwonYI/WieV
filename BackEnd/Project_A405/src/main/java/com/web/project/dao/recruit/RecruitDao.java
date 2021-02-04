@@ -13,6 +13,6 @@ import com.web.project.model.recruit.Recruit;
 public interface RecruitDao extends JpaRepository<Recruit, String> {
 
 	Recruit findRecruitByReSeq(int reSeq);
-	
+	Optional<Recruit> findOptionalRecruitByReSeq(int reSeq);
 	List<Recruit> findListRecruitByCompanyComSeq(int companyComSeq);
 }
