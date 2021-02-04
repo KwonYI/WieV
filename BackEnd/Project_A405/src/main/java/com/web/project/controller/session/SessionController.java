@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,13 +25,12 @@ import com.web.project.dao.recruit.ApplicantDao;
 import com.web.project.dao.recruit.ApplicantGroupDao;
 import com.web.project.model.BasicResponse;
 import com.web.project.model.group.GroupType;
-import com.web.project.model.interview.Interviewer;
-import com.web.project.model.recruit.Applicant;
-import com.web.project.model.recruit.ApplicantGroup;
 
 import io.openvidu.java.client.ConnectionProperties;
 import io.openvidu.java.client.ConnectionType;
 import io.openvidu.java.client.OpenVidu;
+import io.openvidu.java.client.OpenViduHttpException;
+import io.openvidu.java.client.OpenViduJavaClientException;
 import io.openvidu.java.client.OpenViduRole;
 import io.openvidu.java.client.Session;
 import io.swagger.annotations.ApiOperation;
@@ -61,17 +59,17 @@ public class SessionController {
 	TypeInterviewerDao typeInterviewerDao;
 
 	@Autowired
-	GroupTypeDao groupTypeDao;	
-	
+	GroupTypeDao groupTypeDao;
+
 	@Autowired
 	ApplicantDao applicantDao;
-	
+
 	@Autowired
 	ApplicantGroupDao applicantGroupDao;
-	
+
 	@Autowired
-	DetailOrderDao detailOrderDao; 
-	
+	DetailOrderDao detailOrderDao;
+
 	@Autowired
 	GroupDetailDao groupDetailDao;
 
@@ -80,27 +78,28 @@ public class SessionController {
 		this.OPENVIDU_URL = openviduUrl;
 		this.openVidu = new OpenVidu(OPENVIDU_URL, SECRET);
 	}
-	
+
 	@GetMapping("/create")
 	@ApiOperation(value = "면접관/대기관 세션 객체 생성 및 입장")
-	public Object createSession(@RequestParam int interviewerWait, @RequestParam String interviewerName, @RequestParam String sessionName) {
+	public Object createSession(@RequestParam int interviewerWait, @RequestParam String interviewerName,
+			@RequestParam String sessionName) {
 		final BasicResponse result = new BasicResponse();
 		Map<String, Object> resultMap = new HashMap<>();
 		HttpStatus status = null;
-		
+
 		Session session = null;
 		ConnectionProperties connectionProperties = null;
 		OpenViduRole role = OpenViduRole.MODERATOR; // 기본 세팅은 관리자
 		String type = "manager"; // 면접관, 대기실 관리자, 면접자 구분
 		String token = null;
-		
+
 		if (this.sessions.get(sessionName) != null) { // 존재한다
 			try {
 				if (interviewerWait == 1) { // 1이면 면접관
 					type = "interviewer";
 					role = OpenViduRole.PUBLISHER;
 				}
-				
+
 				connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC).role(role)
 						.data(interviewerName).build();
 
@@ -119,19 +118,25 @@ public class SessionController {
 					result.object = resultMap;
 
 					status = HttpStatus.OK;
-				} catch (Exception e) {
-					logger.error("방 입장 실패", e);
+				} catch (OpenViduJavaClientException e) {
+					logger.error("서버 오류", e.getMessage());
 					resultMap.put("message", e.getMessage());
 					status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+				} catch (OpenViduHttpException e) {
+					logger.error("방 입장 실패", e.getMessage());
+					resultMap.put("message", e.getMessage());
+					status = HttpStatus.INTERNAL_SERVER_ERROR;
+
 				}
-				
-			}catch (Exception e) {
+
+			} catch (Exception e) {
 				logger.error("면접관 정보가 잘못되었습니다.", e);
 				resultMap.put("message", e.getMessage());
 				status = HttpStatus.INTERNAL_SERVER_ERROR;
 			}
-		}else { // 없다
-			try {				
+		} else { // 없다
+			try {
 				if (interviewerWait == 0) { // 대기관리자
 					try {
 						session = this.openVidu.createSession();
@@ -154,24 +159,30 @@ public class SessionController {
 						result.object = resultMap;
 
 						status = HttpStatus.OK;
-					} catch (Exception e) {
-						logger.error("방 입장 실패", e);
+					} catch (OpenViduJavaClientException e) {
+						logger.error("서버 오류", e.getMessage());
 						resultMap.put("message", e.getMessage());
 						status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+					} catch (OpenViduHttpException e) {
+						logger.error("방 입장 실패", e.getMessage());
+						resultMap.put("message", e.getMessage());
+						status = HttpStatus.INTERNAL_SERVER_ERROR;
+
 					}
 				} else { // 면접관
 					logger.error("방이 아직 존재하지않습니다.");
 					resultMap.put("message", "방이 아직 존재하지않습니다");
 					status = HttpStatus.INTERNAL_SERVER_ERROR;
 				}
-				
-			}catch (Exception e) {
+
+			} catch (Exception e) {
 				logger.error("면접관 정보가 잘못되었습니다.", e);
 				resultMap.put("message", e.getMessage());
 				status = HttpStatus.INTERNAL_SERVER_ERROR;
 			}
 		}
-		
+
 		printMap(); // 방 정보 출력
 		return new ResponseEntity<>(resultMap, status);
 	}
@@ -181,7 +192,7 @@ public class SessionController {
 	// 해당 지원자의 이름과 속한 세부그룹의 면접방seq가 필요
 	public Object enterSession(@RequestParam(name = "group_type_group_type_seq") int groupTypeGroupTypeSeq,
 			@RequestParam(name = "applicant_name") String applicantName) {
-		
+
 		final BasicResponse result = new BasicResponse();
 		Map<String, Object> resultMap = new HashMap<>();
 		HttpStatus status = null;
@@ -189,22 +200,22 @@ public class SessionController {
 		Session session = null;
 		ConnectionProperties connectionProperties = null;
 		String token = null;
-		
+
 		try {
 //			Applicant applicant = applicantDao.findApplicantByapplyId(applyId);
 //			int applySeq = applicant.getApplySeq(); 
 //		
 //			ApplicantGroup applicantGroup = applicantGroupDao.findApplicantGroupByApplicantApplySeq(applySeq);
 //			int groupDetailDetailSeq = applicantGroup.getGroupDetailDetailSeq();
-			
+
 			GroupType groupType = groupTypeDao.findGroupTypeByGroupTypeSeq(groupTypeGroupTypeSeq);
 			String sessionName = groupType.getSessionName();
-			
-			if(this.sessions.get(sessionName) != null) {
+
+			if (this.sessions.get(sessionName) != null) {
 				session = this.sessions.get(sessionName);
-				connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC).role(OpenViduRole.PUBLISHER)
-						.data(applicantName).build();
-				
+				connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC)
+						.role(OpenViduRole.PUBLISHER).data(applicantName).build();
+
 				token = session.createConnection(connectionProperties).getToken();
 				this.tokensInSession.get(sessionName).put(token, OpenViduRole.PUBLISHER);
 
@@ -218,11 +229,11 @@ public class SessionController {
 				result.object = resultMap;
 
 				status = HttpStatus.OK;
-				
-			}else {
+
+			} else {
 				logger.error("방이 존재하지않습니다.");
 				status = HttpStatus.INTERNAL_SERVER_ERROR;
-			}			
+			}
 		} catch (Exception e) {
 //			logger.error("지원자 정보가 잘못되었습니다.", e);
 //			status = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -230,9 +241,9 @@ public class SessionController {
 			resultMap.put("message", e.getMessage());
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 		}
-		
+
 		printMap();
-		
+
 		return new ResponseEntity<>(resultMap, status);
 	}
 
@@ -243,53 +254,55 @@ public class SessionController {
 
 		String msg = null;
 		HttpStatus status = null;
-		
-		if( this.sessions.get(sessionName) != null && this.tokensInSession.get(sessionName) != null) { // 방이 존재하는지
-			
+
+		if (this.sessions.get(sessionName) != null && this.tokensInSession.get(sessionName) != null) { // 방이 존재하는지
+
 			if (this.tokensInSession.get(sessionName).remove(token) != null) { // 입력으로 들어온 토큰 제거
 				msg = "토큰 제거";
 				status = HttpStatus.OK;
 
-				if(this.tokensInSession.get(sessionName).isEmpty()) { // 제거 후 방이 빈다면
-					
-					if(this.sessions.remove(sessionName) != null && this.tokensInSession.remove(sessionName) != null) {
+				if (this.tokensInSession.get(sessionName).isEmpty()) { // 제거 후 방이 빈다면
+
+					if (this.sessions.remove(sessionName) != null && this.tokensInSession.remove(sessionName) != null) {
 						logger.trace(sessionName + " 방에 아무도 존재하지않아 제거하였습니다.");
-					}else {
+					} else {
 						logger.error("존재하지 않는 방입니다.");
 						msg = "방이 비었지만 유효하지 않은 방입니다.";
 						status = HttpStatus.INTERNAL_SERVER_ERROR;
 					}
-				}else {
-					if(!checkRemainAdmin(sessionName)) { // 비지않았지만 관리자가 없다면 방 제거
-						
-						if( this.tokensInSession.remove(sessionName) != null && this.sessions.remove(sessionName) != null) {
+				} else {
+					if (!checkRemainAdmin(sessionName)) { // 비지않았지만 관리자가 없다면 방 제거
+
+						if (this.tokensInSession.remove(sessionName) != null
+								&& this.sessions.remove(sessionName) != null) {
 							msg = "관리자 토큰 전부 제거"; // 이때 클라이언트에서 처리 필요
 							logger.trace("관리자가 나와 방을 제거하였습니다.");
-						}else {
+						} else {
 							logger.error("에러가 발생했습니다.");
 							status = HttpStatus.INTERNAL_SERVER_ERROR;
 						}
 					}
 				}
-			}else { // 유효하지않은 토큰
+			} else { // 유효하지않은 토큰
 				logger.error("존재하지 않는 토큰입니다.");
 				msg = "존재하지 않는 토큰입니다.";
 				status = HttpStatus.INTERNAL_SERVER_ERROR;
 			}
-		}else {
+		} else {
 			logger.error("세션 검색 실패.");
 			msg = "존재하지 않는 방입니다.";
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 		}
-		
+
 		printMap();
 
 		return new ResponseEntity<>(msg, status);
 	}
-	
+
 	public boolean checkRemainAdmin(String sessionName) { // 방에 관리자가 남아있는지 확인, 남은 관리자가 있다면 true
 		for (OpenViduRole role : this.tokensInSession.get(sessionName).values()) {
-			if(role == OpenViduRole.MODERATOR) return true;
+			if (role == OpenViduRole.MODERATOR)
+				return true;
 		}
 		return false;
 	}
@@ -300,8 +313,9 @@ public class SessionController {
 			System.out.println("세션에 있는 사람 수 : " + tokensInSession.get(sessionName).size());
 			System.out.println("세션에 있는 사람들 : ");
 			tokensInSession.get(sessionName).forEach((name, role) -> {
-				if(role == OpenViduRole.MODERATOR) System.out.print("대기관 : ");
-				
+				if (role == OpenViduRole.MODERATOR)
+					System.out.print("대기관 : ");
+
 				System.out.println(name);
 			});
 			System.out.println();

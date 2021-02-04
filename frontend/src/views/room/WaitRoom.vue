@@ -12,7 +12,10 @@
 
         <div class="float-right">
           <v-toolbar-title class="mx-3">
-            {{ com_name }} {{ re_year }}{{ re_flag }} {{ re_status }}
+            {{ com_name }}
+            {{ re_year }}
+            {{ re_flag }}
+            {{ re_status }}
           </v-toolbar-title>
         </div>
       </v-app-bar>
@@ -25,15 +28,30 @@
 
       <!-- row2 : 관리자, 지원자, FAQ 잡동사니 row-->
       <v-row>
+        <div id="main-video" class="col-md-6">
+          <user-video :stream-manager="mainStreamManager" />
+        </div>
+        <div id="video-container" class="col-md-6">
+          <user-video
+            :stream-manager="publisher"
+            @click.native="updateMainVideoStreamManager(publisher)"
+          />
+          <user-video
+            v-for="sub in subscribers"
+            :key="sub.stream.connection.connectionId"
+            :stream-manager="sub"
+            @click.native="updateMainVideoStreamManager(sub)"
+          />
+        </div>
         <!-- row2[왼쪽] : 관리자 리스트-->
-        <v-col cols="3">
-          <!-- <ManagerList /> -->
-        </v-col>
+        <!-- <v-col cols="3"> -->
+        <!-- <ManagerList /> -->
+        <!-- </v-col> -->
 
         <!-- row2[가운데] : 지원자 리스트-->
-        <v-col cols="6">
-          <!-- <VieweeList /> -->
-        </v-col>
+        <!-- <v-col cols="6"> -->
+        <!-- <VieweeList /> -->
+        <!-- </v-col> -->
         <!-- row2[오른쪽] : 우측에 FAQ 채팅창 잡동사니 -->
         <v-col cols="3"></v-col>
       </v-row>
@@ -43,36 +61,23 @@
 
 <script>
 //import axios from "axios"
-import { OpenVidu } from "openvidu-browser"
+import { OpenVidu } from "openvidu-browser";
+import UserVideo from "@/components/room/UserVideo";
 
-import { mapState } from "vuex"
+// import { mapState } from "vuex";
 
 // import ManagerList from "@/components/room/ManagerList.vue"
 // import VieweeList from "@/components/room/VieweeList.vue"
-// import UserVideo from "@/components/room/UserVideo"
 
 export default {
   name: "WaitRoom",
   components: {
-    // UserVideo,
+    UserVideo,
     // ManagerList,
     // VieweeList,
   },
   data: function() {
     return {
-      participants: {
-        김면접1: "manager",
-        김지원1: "interviewer",
-        박면접2: "manager",
-        박지원2: "interviewer",
-        송지원3: "interviewer",
-      },
-
-      com_name: "버즈글로벌",
-      re_year: 2021,
-      re_flag: "상반기",
-      re_status: "신입",
-
       OV: undefined,
       session: undefined,
       mainStreamManager: undefined, // 메인 비디오
@@ -84,27 +89,50 @@ export default {
       token: undefined,
       userName: undefined,
       type: undefined, // 대기실 관리자(manager) / 면접관(interviewer) / 면접자(interviewee)
-    }
+
+      // From Main.vue
+      com_name: undefined,
+      re_year: undefined,
+      re_flag: undefined,
+      re_status: undefined,
+    };
   },
   mounted() {
-    this.OV = new OpenVidu()
-    this.session = this.OV.initSession()
+    console.log(this.$route.params.interview);
+    console.log(this.$route.params.interviewer);
+
+    this.com_name = this.$route.params.interview.comName;
+    this.re_year = this.$route.params.interview.recruitYear;
+    this.re_flag = this.$route.params.interview.recruitFlag;
+    this.re_status = this.$route.params.interview.recruitStatus;
+    this.sessionName = this.$route.params.interviewer.sessionName;
+    this.token = this.$route.params.interviewer.token;
+    this.userName = this.$route.params.interviewer.interviewerName;
+    this.type = this.$route.params.interviewer.type;
+
+    this.OV = new OpenVidu();
+    this.session = this.OV.initSession();
+
+    console.log("세션인잇");
 
     this.session.on("streamCreated", ({ stream }) => {
-      const subscriber = this.session.subscribe(stream)
-      this.subscribers.push(subscriber)
-    })
+      console.log("streamCreated");
+      const subscriber = this.session.subscribe(stream);
+      this.subscribers.push(subscriber);
+    });
 
     this.session.on("streamDestroyed", ({ stream }) => {
-      const index = this.subscribers.indexOf(stream.streamManager, 0)
+      console.log("streamDestroyed");
+      const index = this.subscribers.indexOf(stream.streamManager, 0);
       if (index >= 0) {
-        this.subscribers.splice(index, 1)
+        this.subscribers.splice(index, 1);
       }
-    })
+    });
 
     this.session
       .connect(this.token, { clienData: this.userName })
       .then(() => {
+        console.log("connect중");
         let publisher = this.OV.initPublisher(undefined, {
           audioSource: undefined, // The source of audio. If undefined default microphone
           videoSource: undefined, // The source of video. If undefined default webcam
@@ -114,44 +142,42 @@ export default {
           frameRate: 30, // The frame rate of your video
           insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
           mirror: false, // Whether to mirror your local video or not
-        })
+        });
 
-        this.mainStreamManager = publisher
-        this.publisher = publisher
+        this.mainStreamManager = publisher;
+        this.publisher = publisher;
 
-        this.session.publish(this.publisher)
-
-        // if(type === "interviewee")
-        // else
+        this.session.publish(this.publisher);
+        console.log("connect완");
       })
       .catch((error) => {
         console.warn(
           "There was an error connecting to the session:",
           error.code,
           error.message
-        )
-      })
+        );
+      });
 
-    window.addEventListener("beforeunload", this.leaveSession)
+    window.addEventListener("beforeunload", this.leaveSession);
   },
 
   methods: {
     leaveSession() {
-      if (this.session) this.session.disconnect()
+      if (this.session) this.session.disconnect();
 
-      this.session = undefined
-      this.mainStreamManager = undefined
-      this.publisher = undefined
-      this.subscribers = []
-      this.OV = undefined
+      this.session = undefined;
+      this.mainStreamManager = undefined;
+      this.publisher = undefined;
+      this.subscribers = [];
+      this.OV = undefined;
 
-      window.removeEventListener("beforeunload", this.leaveSession)
+      window.removeEventListener("beforeunload", this.leaveSession);
     },
 
     updateMainVideoStreamManager(stream) {
       // 클릭시 객체 정보 반환
-      if (this.mainStreamManager === stream) return
-      this.mainStreamManager = stream
+      if (this.mainStreamManager === stream) return;
+      this.mainStreamManager = stream;
     },
   },
 
@@ -162,9 +188,9 @@ export default {
   },
 
   computed: {
-    ...mapState(["whoLogin"]),
+    // ...mapState(["whoLogin"]),
   },
-}
+};
 </script>
 
 <style scoped>
