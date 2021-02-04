@@ -19,7 +19,7 @@
             <v-container>
               <v-row>
                 <v-col cols="12" sm="6" md="4">
-                  <v-select :items="[2021]" label="년도" required v-model="new_recruit.reYear"></v-select>
+                  <v-select :items="[2021, 2022,2023,2024,2025]" label="년도" required v-model="new_recruit.reYear"></v-select>
                 </v-col>
                 <v-col cols="12" sm="6" md="4">
                   <v-select :items="['상반기', '하반기']" label="시즌" required v-model="new_recruit.reFlag"></v-select>
