@@ -23,11 +23,7 @@
 
     <!-- 바 밑에 내용물들.  -->
     <v-container>
-      <!--row1. : 공지사항 배너, 면접실 만들기 버튼-->
-      <v-row> </v-row>
-
-      <!-- row2 : 관리자, 지원자, FAQ 잡동사니 row-->
-      <v-row>
+      <div id="session">
         <div id="main-video" class="col-md-6">
           <user-video :stream-manager="mainStreamManager" />
         </div>
@@ -43,6 +39,13 @@
             @click.native="updateMainVideoStreamManager(sub)"
           />
         </div>
+      </div>
+
+      <!--row1. : 공지사항 배너, 면접실 만들기 버튼-->
+      <v-row> </v-row>
+
+      <!-- row2 : 관리자, 지원자, FAQ 잡동사니 row-->
+      <v-row>
         <!-- row2[왼쪽] : 관리자 리스트-->
         <!-- <v-col cols="3"> -->
         <!-- <ManagerList /> -->
@@ -87,7 +90,7 @@ export default {
       // From SessionController
       sessionName: undefined,
       token: undefined,
-      userName: undefined,
+      userName: "",
       type: undefined, // 대기실 관리자(manager) / 면접관(interviewer) / 면접자(interviewee)
 
       // From Main.vue
@@ -98,9 +101,6 @@ export default {
     };
   },
   mounted() {
-    console.log(this.$route.params.interview);
-    console.log(this.$route.params.interviewer);
-
     this.com_name = this.$route.params.interview.comName;
     this.re_year = this.$route.params.interview.recruitYear;
     this.re_flag = this.$route.params.interview.recruitFlag;
@@ -113,16 +113,12 @@ export default {
     this.OV = new OpenVidu();
     this.session = this.OV.initSession();
 
-    console.log("세션인잇");
-
     this.session.on("streamCreated", ({ stream }) => {
-      console.log("streamCreated");
       const subscriber = this.session.subscribe(stream);
       this.subscribers.push(subscriber);
     });
 
     this.session.on("streamDestroyed", ({ stream }) => {
-      console.log("streamDestroyed");
       const index = this.subscribers.indexOf(stream.streamManager, 0);
       if (index >= 0) {
         this.subscribers.splice(index, 1);
@@ -130,9 +126,8 @@ export default {
     });
 
     this.session
-      .connect(this.token, { clienData: this.userName })
+      .connect(this.token, { clientData: this.userName })
       .then(() => {
-        console.log("connect중");
         let publisher = this.OV.initPublisher(undefined, {
           audioSource: undefined, // The source of audio. If undefined default microphone
           videoSource: undefined, // The source of video. If undefined default webcam
@@ -147,11 +142,13 @@ export default {
         this.mainStreamManager = publisher;
         this.publisher = publisher;
 
+        console.log(this.userName);
+        console.log(this.token);
+
         this.session.publish(this.publisher);
-        console.log("connect완");
       })
       .catch((error) => {
-        console.warn(
+        console.log(
           "There was an error connecting to the session:",
           error.code,
           error.message

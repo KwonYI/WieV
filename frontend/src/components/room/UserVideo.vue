@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import OvVideo from "./OvVideo"
+import OvVideo from "./OvVideo";
 
 export default {
   name: "UserVideo",
@@ -23,16 +23,16 @@ export default {
 
   computed: {
     clientData() {
-      const { clientData } = this.getConnectionData()
-      return clientData
+      const { clientData } = this.getConnectionData();
+      return clientData;
     },
   },
 
   methods: {
     getConnectionData() {
-      const { connection } = this.streamManager.stream
-      return JSON.parse(connection.data)
+      const { connection } = this.streamManager.stream;
+      return JSON.parse(connection.data.split("%/%")[0]);
     },
   },
-}
+};
 </script>
