@@ -97,30 +97,30 @@
           item-key="schGroupNo"
           @click:row="(item, slot) => slot.expand(!slot.isExpanded)"
         >
-          <!-- <tbody>
-            <template v-slot:body="{ items }">
-            <tr v-for="item in items" :key="item.schGroupNo" @click="props.expanded = !props.expanded">
-              <td>{{ props.item.schGroupNo }}</td>
-              <td>{{ props.item.schGroupDate }}</td>
-              <td>{{ props.item.schGroupTime }}</td>
-              <td>{{ props.item.schGroupCareer }}</td>
-              <td>{{ props.item.schGroupInterview }}</td>
-              <td>{{ props.item.schGroupViewee }}</td>
-              <td>{{ props.item.schGroupGuide }}</td>
-              <td>{{ props.item.schGroupViewer }}</td>
-            </tr>
-          </template>
-          </tbody> -->
-          <template v-slot:expanded-item="{ headers, item }">
+          <template v-slot:expanded-item="{ headers, item: groupItem }">
             <td :colspan="headers.length">
-              {{ item }}
+              {{ groupItem.schSmallGroups }}
+              <!-- <v-data-table
+                :items="[group]"
+                hide-default-footer
+              >
+              </v-data-table> -->
+
+              <!-- <tbody>
+              <tr v-for="smallItem in item.schSmallGroups" :key="smallItem">
+                <td>{{ smallItem.schSmallGroupNo }}</td>
+                <td>{{ item.schGroupDate }}</td>
+                <td>{{ item.schGroupTime }}</td>
+                <td>{{ item.schGroupCareer }}</td>
+                <td>{{ smallItem.schSmallGroupInterview }}</td>
+                <td>{{ smallItem.schSmallGroupViewee }}</td>
+                <td>{{ item.schGroupGuide }}</td>
+                <td>{{ item.schGroupViewer }}</td>
+              </tr>
+              </tbody> -->
+
             </td>
           </template>
-          <!-- <template v-slot:expanded-item="{ headers, item }">
-            <td :colspan="headers.length">
-              {{ item }}
-            </td>
-          </template> -->
         </v-data-table>
       </v-col>
     </v-row>
@@ -311,13 +311,11 @@ export default {
             // 면접 그룹 면접 종류
             schGroupInterview: ['직무', 'PT', '그룹'],
             // 면접 그룹 지원자(면접자)
-            schGroupViewee: ['김일번', '박이번', '김삼번', '박사번'],
+            schGroupViewee: ['김일번', '박이번', '유삼번', '이사번', '권오번', '천육번', '강칠번', '하팔번'],
             // 면접 그룹 대기관
-            schGroupGuide: [],
+            schGroupGuide: ['강안내'],
             // 면접 그룹 면접관
-            schGroupViewer: [{
-              name: '김면접',
-            }],
+            schGroupViewer: ['김면접', '이채용', '신평가'],
             // 면접 세부 그룹
             schSmallGroups: [
               {
@@ -325,48 +323,46 @@ export default {
                 // 세부그룹 면접 순서
                 schSmallGroupInterview: ['직무', 'PT', '그룹'],
                 // 세부 그룹의 지원자(면잡자)
-                schSmallGroupViewee: ['김일번', '박사번'],
+                schSmallGroupViewee: ['김일번', '유삼번', '천육번', '강칠번'],
               },
               {
                 schSmallGroupNo: 2,
                 schSmallGroupInterview: ['그룹', '직무', 'PT'],
-                schSmallGroupViewee: ['박이번', '김삼번'],
+                schSmallGroupViewee: ['박이번', '이사번', '권오번', '하팔번'],
               },
             ]
           },
           {
-            schGroupsNo: 2,
-            schGroupsDate: '7/10',
-            schGroupsTime: '16:00',
-            schGroupsCareer: '마케팅',
-            schGroupsInterview: ['직무, PT, 그룹'],
-            schGroupsViewee: [],
-            schGroupsGuide: [],
-            schGroupsViewer: [],
-            schGroup: [
+            schGroupNo: 2,
+            schGroupDate: '7/10',
+            schGroupTime: '16:00',
+            schGroupCareer: '마케팅',
+            schGroupInterview: ['직무, PT, 그룹'],
+            schGroupViewee: [],
+            schGroupGuide: [],
+            schGroupViewer: [],
+            schSmallGroups: [
               {
-                schGroupNo: 1,
-                schGroupsCareer: '마케팅',
-                schGroupsInterview: ['직무', 'PT', '그룹'],
-                schGroupsViewee: '',
+                schSmallGroupNo: 1,
+                schSmallGroupsInterview: ['직무', 'PT', '그룹'],
+                schSmallGroupsViewee: '',
               }
             ]
           },
           {
-            schGroupsNo: 3,
-            schGroupsDate: '7/10',
-            schGroupsTime: '17:00',
-            schGroupsCareer: 'SW개발',
-            schGroupsInterview: ['인성', '직무', 'PT'], 
-            schGroupsViewee: [],
-            schGroupsGuide: [],
-            schGroupsViewer: [],
-            schGroup: [
+            schGroupNo: 3,
+            schGroupDate: '7/10',
+            schGroupTime: '17:00',
+            schGroupCareer: 'SW개발',
+            schGroupInterview: ['인성', '직무', 'PT'], 
+            schGroupViewee: [],
+            schGroupGuide: [],
+            schGroupViewer: [],
+            schSmallGroups: [
               {
-                schGroupNo: 1,
-                schGroupsCareer: 'SW개발',
-                schGroupsInterview: ['PT', '직무', '인성'],
-                schGroupsViewee: '',
+                schSmallGroupNo: 1,
+                schSmallGroupsInterview: ['PT', '직무', '인성'],
+                schSmallGroupsViewee: '',
               }
             ]
           },

@@ -3,31 +3,21 @@
     <!-- 대기실 페이지. 신분에 따라 보여지는 컴포넌트가 다르다.  -->
 
     <!--상단 바-->
-    <div>
-      <v-app-bar color="deep-purple accent-4" dense dark>
-        <div class="d-flex">
-          <v-toolbar-title class="mx-3">현재 면접자 수 : __ 명</v-toolbar-title>
-          <v-toolbar-title class="mx-3">현재 시간 : </v-toolbar-title>
-        </div>
-
-        <div class="float-right">
-          <v-toolbar-title class="mx-3">
-            {{ com_name }}
-            {{ re_year }}
-            {{ re_flag }}
-            {{ re_status }}
-            <!-- 오른쪽에 붙이고 싶어요 -->
-            <input
-              class="btn"
-              type="button"
-              @click="leaveSession"
-              value="                                                                                                                                                                                                                                              
-              방 나가기"
-            />
-          </v-toolbar-title>
-        </div>
-      </v-app-bar>
-    </div>
+    <v-app-bar class="d-flex justify-end" dense dark>
+      <v-toolbar-title class="">
+        {{ com_name }}
+        {{ re_year }}
+        {{ re_flag }}
+        {{ re_status }}
+        <!-- 오른쪽에 붙이고 싶어요 -->
+        <input
+          class="btn"
+          type="button"
+          @click="leaveSession"
+          value="방 나가기"
+        />
+      </v-toolbar-title>
+    </v-app-bar>
 
     <!-- 바 밑에 내용물들.  -->
     <v-container>
