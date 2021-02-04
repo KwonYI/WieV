@@ -13,7 +13,7 @@
         </template>
         <v-card>
           <v-card-title>
-            <span class="headline">[{{com_name}}] 신규 공고 등록</span>
+            <span class="headline">[{{ user.userComName }}] 신규 공고 등록</span>
           </v-card-title>
           <v-card-text>
             <v-container>
@@ -83,8 +83,8 @@
               <!-- <v-btn :to="{ name: 'Progress', params: { recruitNo: recruit.reSeq } }" >관리하기</v-btn> -->
               <v-btn @click="goToProgress(recruit)">관리하기</v-btn>
             </td>
-            <td>
-              <v-btn @click="goToProgress(recruit.reSeq)">삭제</v-btn>
+            <td v-if="recruit.reSeq !== 3">
+              <v-btn @click="deleteRecruit(recruit.reSeq)">삭제</v-btn>
             </td>
 
           </tr>
@@ -107,7 +107,7 @@
     name: "Schedule",
     data: function () {
       return {
-        com_name: "버즈글로벌",
+        // com_name: "버즈글로벌",
         dialog: false,
         myReno: '',
 
@@ -126,12 +126,42 @@
       createRecruit: function () {
         this.dialog = false
 
-        // this.dialog = false
-        // console.log("createRecruit 실행!")
-        // console.log("새로추가된공고정보들:",this.new_recruit)
-
         this.new_recruit.reStartDate = this.dates[0]
         this.new_recruit.reEndDate = this.dates[1]
+
+        if(this.new_recruit.reYear == ''){
+          alert("등록하는 공고의 연도를 선택해주세요.");
+          return;
+        }else if(this.new_recruit.reFlag == ''){
+          alert("등록하는 공고의 반기를 선택해주세요.");
+          return;
+        }else if(this.new_recruit.reStatus == ''){
+          alert("등록하는 공고의 채용 형태를 선택해주세요.");
+          return;
+        }else if(this.new_recruit.reStartDate == this.new_recruit.reEndDate){
+          alert("등록하는 공고의 시작 날짜와 끝 날짜가 같습니다. 다시 선택해 주세요.");
+          return;
+        }
+
+        // 시작 날짜가 더 늦을 경우 처리    
+
+        var startDateArray = this.new_recruit.reStartDate.split("-");
+        var endDateArray = this.new_recruit.reEndDate.split("-");
+
+        if(startDateArray[0] > endDateArray[0]){ // 시작 연도가 빠를 경우
+          alert("공고의 기간 중 연도 설정을 다시 확인해 보세요.");
+          return;
+        }else{
+          if(startDateArray[1] > endDateArray[1]){ // 시작 월이 빠른 경우
+            alert("공고의 기간 중 월 설정을 다시 확인해 보세요.");
+            return;
+          }else if(startDateArray[1] == endDateArray[1]){
+            if(startDateArray[2] >= endDateArray[2]){
+              alert("공고의 기간 중 일 설정을 다시 확인해 보세요.");
+              return;
+            }
+          }
+        }
 
         this.$store
           .dispatch("INSERT_RECRUIT", this.new_recruit)
@@ -142,6 +172,15 @@
         //this.$store.dispatch('addRecruit', 응답으로 받은 데이터 res.data)
 
       },
+
+      deleteRecruit: function (reSeq) {
+        this.$store
+          .dispatch("DELETE_RECRUIT", reSeq)
+          .then(() => {console.log("deleteRecruit")
+            this.$router.go(this.$router.currentRoute)}
+          )
+      },
+
       goToProgress: function (recruit) {
         this.myReno = recruit.reSeq
         this.$store.state.selectedRecruitNo = recruit.reSeq
@@ -154,6 +193,7 @@
           }
         })
       },
+      
 
 
     },

@@ -101,13 +101,8 @@
         .then(() => {this.$router.replace(this.$router.currentRoute) 
         this.credentials.userEmail = ""
         this.credentials.userPassword = ""
-        
-        
         })
-        .catch(({ message }) => (this.msg = message))
-        
       },
-      
     },
   }
 </script>

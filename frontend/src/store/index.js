@@ -319,14 +319,9 @@ export default new Vuex.Store({
         ] = `${response.data["auth-token"]}`
       }).then((res) => {
         console.log(res)
-      }).catch((err) => 
-      console.log("로그인에러", err))
-      //
-      // .then((res) => {
-      //   console.log(res)
-      // }).catch((err) => 
-      // console.log("로그인에러", err))
-    },
+      }).catch(() => 
+      alert("이메일과 비밀번호를 확인해주십시오.")
+    )},
     LOGOUT(context) {
       context.commit("LOGOUT")
       axios.defaults.headers.common["auth-token"] = undefined
@@ -351,6 +346,13 @@ export default new Vuex.Store({
         .then((response) => {
           context.commit("INSERT_RECRUIT", response.data)
         })
+    },
+
+    DELETE_RECRUIT(context, reSeq){
+      axios.delete(`${SERVER_URL}/recruit/delete/` + reSeq)
+      .then(
+        alert("삭제되었습니다!")
+      );
     },
 
     //지원자를 엑셀로 저장
