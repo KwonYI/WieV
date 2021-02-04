@@ -24,9 +24,7 @@
           </v-col>
         </v-row>
         <v-row>
-          <!-- <v-divider></v-divider>  -->
           <v-expand-transition>
-            <!-- <div v-show="show"> -->
             <div class="blue-grey darken-1 pb-5 rounded-b-lg">
 
               <v-card class="mx-auto m-3" max-width="1000" v-for="(group, index) in group_data" :key="index">

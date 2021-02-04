@@ -221,6 +221,7 @@ public class InterviewerController {
 	@ApiOperation(value = "면접관등록")
 	public List<Interviewer> interviewerRegister(@PathVariable("reSeq") int reSeq,MultipartFile files)
 			throws EncryptedDocumentException, IOException {
+		System.out.println("면접관등록시작");
 		// 웹상에서 업로드 되어 MultipartFile인 경우 바로 InputStream으로 변경하여 사용.
 		 InputStream inputStream = new ByteArrayInputStream(files.getBytes());
 
@@ -235,7 +236,7 @@ public class InterviewerController {
 		List<Interviewer> interviewerList = new ArrayList<Interviewer>();
 
 		// 시트 로드 1, 두번째 시트 로드
-		Sheet sheet = workbook.getSheetAt(1);
+		Sheet sheet = workbook.getSheetAt(0);
 		Iterator<Row> rowItr = sheet.iterator();
 
 		// 행만큼 반복
@@ -312,7 +313,7 @@ public class InterviewerController {
 			interviewer.setViewWait(1);
 			// insert문
 			interviewerDao.save(interviewer);
-
+			System.out.println("면접관등록!!");
 			interviewerList.add(interviewer);
 		}
 		return interviewerList;

@@ -131,6 +131,8 @@
 import axios from 'axios'
 import _ from "lodash"
 
+const SERVER_URL = process.env.VUE_APP_SERVER_URL
+
 export default {
   name: "CreateSet",
   props: {
@@ -375,7 +377,8 @@ export default {
   methods: {
     // 면접 스케줄 추가
     addSchedule: function () {
-      axios.post(`https://localhost:8080/groupAll/divide` + this.recruitNo, this.formData)
+      // axios.post(`https://localhost:8080/groupAll/divide` + this.recruitNo, this.formData)
+      axios.post(`${SERVER_URL}/groupAll/divide/` + this.recruitNo, this.formData)
         .then(res => {
           console.log(res)
           axios.get('면접스케줄 받기')
