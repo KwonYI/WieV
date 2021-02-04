@@ -247,11 +247,6 @@ export default new Vuex.Store({
     },
 
     //현재 공고의 지원자만 가져오는 로직
-<<<<<<< HEAD
-    getVieweeListCurrentRecruit: function (state) {
-      console.log("[mapgetters]getVieweeListCurrentRecruit")
-      return state.comVieweeList.filter(re => re.recruitReSeq === state.selectedRecruitNo)
-=======
     getVieweeListCurrentRecruit: function(state) {
       var list = state.comVieweeList.filter(
         (re) => re.recruitReSeq === state.selectedRecruitNo
@@ -261,7 +256,6 @@ export default new Vuex.Store({
       console.log(list.length);
 
       return list;
->>>>>>> F_면접방연결_프론트백연동
     },
 
     getComViewerList(state) {
@@ -312,7 +306,7 @@ export default new Vuex.Store({
       console.log("mutaions의 UPDATE_VIEWEE_LIST", res);
       state.recruitVieweeList = res;
       // console.log(state.recruitVieweeList);
-      state.comVieweeList.push(res)
+      state.comVieweeList.push(res);
     },
     GET_VIEWER_LIST(state, res) {
       console.log("mutaions의 GET면접관LIST", res);

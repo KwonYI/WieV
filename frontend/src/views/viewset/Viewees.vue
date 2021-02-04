@@ -34,7 +34,7 @@
       <!-- <v-file-input v-model="files" show-size label="File input"></v-file-input>
       <v-btn @click="upload" color="primary">Upload</v-btn>
       <p>File Name : {{ files.name }}</p> -->
-      <v-btn class="m-3" @click="updateVieweeDB"> DB업데이트 </v-btn>
+      <v-btn class="m-3" @click="createVieweeDB"> DB업데이트 </v-btn>
     </v-toolbar>
     <v-simple-table fixed-header height="500px" class="mt-5">
       <thead>
@@ -168,12 +168,12 @@ export default {
 
     //axios.post(보낼url, reno)
 
-    updateVieweeDB: function() {
-      this.$store.dispatch("UPDATE_VIEWEE_LIST", this.reno);
-      // this.$router.go(this.$router.currentRoute, { recruitNo: this.givenreno})
-      // this.pageGetVieweeListCurrentRecruit = this.filterdVieweeList()
-      // this.$router.push({name: 'Viewees', params: { recruitNo : this.reno }});
-    },
+    // updateVieweeDB: function () {
+    //   this.$store.dispatch("UPDATE_VIEWEE_LIST", this.reno);
+    // this.$router.go(this.$router.currentRoute, { recruitNo: this.givenreno})
+    // this.pageGetVieweeListCurrentRecruit = this.filterdVieweeList()
+    // this.$router.push({name: 'Viewees', params: { recruitNo : this.reno }});
+    // },
 
     // watch: {
     //   getVieweeListCurrentRecruit: function () {
