@@ -1,5 +1,5 @@
 <template>
-  <div id="viewers">
+  <div id="viewers" v-if="givnereno">
     <v-simple-table fixed-header  height="500px" class="mt-5">
       <thead>
         <tr>
@@ -36,13 +36,14 @@
     data: function () {
       return {
         reno: "",
+        givnereno:"",
 
       }
     },
     created: function () {
-      // this.reno = this.$route.params.recruitNo
-      this.reno = this.$store.state.selectedRecruitNo
-      console.log("reno:", this.reno)
+      this.givnereno = this.$route.params.recruitNo;
+      this.reno = this.$store.state.selectedRecruitNo;
+      console.log("reno:", this.reno);
     },
 
     computed: {

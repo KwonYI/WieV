@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '@/views/main/Home.vue'
+import NotFound from '@/views/main/NotFound.vue'
 import Profile from '@/views/accounts/Profile'
 import Signup from '@/views/accounts/Signup'
 import Menu from '@/views/viewset/Menu'
@@ -16,11 +17,20 @@ import ViewRoom from '@/views/room/ViewRoom'
 
 Vue.use(VueRouter)
 
-const routes = [
-  {
+
+const routes = [{
     path: '/main',
     name: 'Main',
     component: Main,
+  },
+  {
+    path: '/404',
+    name: 'notFound',
+    component: NotFound
+  },
+  {
+    path: "*",
+    redirect:"/404"
   },
   {
     path: '/waitroom',
@@ -52,17 +62,17 @@ const routes = [
       //   name: 'Recruit',
       //   component: Recruit,
       // },
-      // {
-      //   path: '',
-      //   redirect: 'progress',
-      // },
+      {
+        path: '',
+        redirect: 'progress',
+      },
       {
         path: 'progress',
         name: 'Progress',
         component: Progress,
       },
-      
-      
+
+
       {
         path: 'viewees',
         name: 'Viewees',
@@ -73,7 +83,7 @@ const routes = [
         name: 'Viewers',
         component: Viewers,
       },
-      
+
     ]
   },
   {
@@ -92,6 +102,9 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
+  // routes :[
+  //   { path: '/menu/:recruitno', component : Progress}
+  // ]
 })
 
 
