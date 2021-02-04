@@ -28,7 +28,8 @@
 
         <v-col cols="9">
 
-          <Recruit :recruitNo="recruitno" />
+          <Recruit v-if="recruitno" :recruitNo="recruitno" />
+          <RecruitWarning v-else/>
         </v-col>
 
         <!-- <router-view /> -->
@@ -39,6 +40,7 @@
 
 <script>
   import Recruit from "../../components/viewset/Recruit.vue";
+  import RecruitWarning from "../../components/viewset/RecruitWarning.vue";
 
   import {
     mapState,
@@ -49,6 +51,7 @@
     name: "Menu",
     components: {
       Recruit,
+      RecruitWarning,
     },
     data: function () {
       return {
