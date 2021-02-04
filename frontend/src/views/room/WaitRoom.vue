@@ -16,6 +16,14 @@
             {{ re_year }}
             {{ re_flag }}
             {{ re_status }}
+            <!-- 오른쪽에 붙이고 싶어요 -->
+            <input
+              class="btn"
+              type="button"
+              @click="leaveSession"
+              value="                                                                                                                                                                                                                                              
+              방 나가기"
+            />
           </v-toolbar-title>
         </div>
       </v-app-bar>
@@ -23,11 +31,18 @@
 
     <!-- 바 밑에 내용물들.  -->
     <v-container>
-      <div id="session">
-        <div id="main-video" class="col-md-6">
+      <!--row1. : 공지사항 배너, 면접실 만들기 버튼-->
+      <v-row> </v-row>
+
+      <!-- row2 : 관리자, 지원자, FAQ 잡동사니 row-->
+      <v-row>
+        <!-- row2[왼쪽] : 관리자 리스트-->
+        <v-col cols="3">
           <user-video :stream-manager="mainStreamManager" />
-        </div>
-        <div id="video-container" class="col-md-6">
+          <!-- <ManagerList /> -->
+        </v-col>
+        <!-- row2[가운데] : 지원자 리스트-->
+        <v-col cols="6">
           <user-video
             :stream-manager="publisher"
             @click.native="updateMainVideoStreamManager(publisher)"
@@ -38,23 +53,8 @@
             :stream-manager="sub"
             @click.native="updateMainVideoStreamManager(sub)"
           />
-        </div>
-      </div>
-
-      <!--row1. : 공지사항 배너, 면접실 만들기 버튼-->
-      <v-row> </v-row>
-
-      <!-- row2 : 관리자, 지원자, FAQ 잡동사니 row-->
-      <v-row>
-        <!-- row2[왼쪽] : 관리자 리스트-->
-        <!-- <v-col cols="3"> -->
-        <!-- <ManagerList /> -->
-        <!-- </v-col> -->
-
-        <!-- row2[가운데] : 지원자 리스트-->
-        <!-- <v-col cols="6"> -->
-        <!-- <VieweeList /> -->
-        <!-- </v-col> -->
+          <!-- <VieweeList /> -->
+        </v-col>
         <!-- row2[오른쪽] : 우측에 FAQ 채팅창 잡동사니 -->
         <v-col cols="3"></v-col>
       </v-row>
@@ -63,9 +63,11 @@
 </template>
 
 <script>
-//import axios from "axios"
 import { OpenVidu } from "openvidu-browser";
 import UserVideo from "@/components/room/UserVideo";
+import axios from "axios";
+
+const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 
 // import { mapState } from "vuex";
 
@@ -133,7 +135,7 @@ export default {
           videoSource: undefined, // The source of video. If undefined default webcam
           publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
           publishVideo: true, // Whether you want to start publishing with your video enabled or not
-          resolution: "640x480", // The resolution of your video
+          resolution: "320x240", // The resolution of your video
           frameRate: 30, // The frame rate of your video
           insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
           mirror: false, // Whether to mirror your local video or not
@@ -155,7 +157,7 @@ export default {
         );
       });
 
-    window.addEventListener("beforeunload", this.leaveSession);
+    // window.addEventListener("beforeunload", this.leaveSession);
   },
 
   methods: {
@@ -168,7 +170,24 @@ export default {
       this.subscribers = [];
       this.OV = undefined;
 
-      window.removeEventListener("beforeunload", this.leaveSession);
+      axios
+        .get(`${SERVER_URL}/session/leaveSession`, {
+          params: {
+            sessionName: this.sessionName,
+            token: this.token,
+          },
+        })
+        .then((res) => {
+          console.log(res);
+          this.$router.push({
+            name: "Main",
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          console.log("방 나가기 실패!");
+        });
+      // window.removeEventListener("beforeunload", this.leaveSession);
     },
 
     updateMainVideoStreamManager(stream) {

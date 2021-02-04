@@ -165,9 +165,7 @@
 <script>
 import axios from "axios";
 
-// const SERVER_URL = "https://localhost:8080/"
-// const SERVER_URL = "https://i4a405.p.ssafy.io:8080"
-const SERVER_URL = process.env.VUE_APP_SERVER_URL;
+const SERVER_URL = process.env.VUE_APP_TEST_SERVER_URL;
 
 export default {
   name: "ViewerRecruitItem",
@@ -207,13 +205,18 @@ export default {
           },
         })
         .then((res) => {
+          console.log(res);
           this.$router.push({
             name: "WaitRoom",
             params: { interview: this.interview, interviewer: res.data },
           });
         })
         .catch((err) => {
-          console.log(err);
+          if (this.user.userViewWait == 0) {
+            console.log(err);
+          } else {
+            alert("방이 아직 개설되지 않았습니다.");
+          }
         });
     },
   },

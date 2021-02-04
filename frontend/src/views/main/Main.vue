@@ -23,14 +23,12 @@
 
 <script>
 // import { mapState} from "vuex"
-import { mapGetters } from "vuex"
-import axios from "axios"
+import { mapGetters } from "vuex";
+import axios from "axios";
 
-// const SERVER_URL = "https://localhost:8080/"
-// const SERVER_URL = "https://i4a405.p.ssafy.io:8080"
-const SERVER_URL = process.env.VUE_APP_SERVER_URL
+const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 
-import ViewerRecruitItem from "@/components/main/ViewerRecruitItem"
+import ViewerRecruitItem from "@/components/main/ViewerRecruitItem";
 // import VieweeRecruitItem from "@/components/main/VieweeRecruitItem"
 // import Schedule from '@/components/main/Schedule'
 
@@ -45,20 +43,16 @@ export default {
     return {
       user: {},
       interview: {},
-
-      // temp_list: [1, 2],
-
       com_logo:
         "https://r1.community.samsung.com/t5/image/serverpage/image-id/616190iB4F850C825C2D0CD/image-size/large?v=1.0&px=999",
-    }
+    };
   },
   methods: {},
   created: function() {
     // if (this.viewerLogin) {
     //   this.$router.push({ name: "ViewerRecruitItem" })
     // }
-    this.user = this.getUser
-    // 면접관 이메일 가려서 보내고싶은디
+    this.user = this.getUser;
     axios
       .get(`${SERVER_URL}/interviewer/getMyInterview`, {
         params: {
@@ -67,17 +61,17 @@ export default {
         },
       })
       .then((res) => {
-        this.interview = res.data.interview
+        this.interview = res.data.interview;
       })
       .catch((err) => {
-        console.log(err)
-      })
+        console.log(err);
+      });
   },
   mounted() {},
   computed: {
     ...mapGetters(["getUser"]),
   },
-}
+};
 </script>
 
 <style></style>
