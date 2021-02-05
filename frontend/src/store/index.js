@@ -310,8 +310,6 @@ export default new Vuex.Store({
   },
 
   actions: {
-   
-
     // 로그인, 로그아웃
     LOGIN(context, user) {
       axios.post(`${SERVER_URL}/hr/login`, user).then((response) => {
