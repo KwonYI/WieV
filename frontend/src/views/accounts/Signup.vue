@@ -121,7 +121,10 @@ export default {
     certified: function() {
       console.log("입력:" + this.credentials.hrEmailCode)
       console.log("인증번호:" + this.certifiedNum)
-      if (this.credentials.hrEmailCode == this.certifiedNum) {
+      if(!this.credentials.hrEmailCode){
+        alert("인증번호를 입력해주세요")
+      }
+      else if (this.credentials.hrEmailCode == this.certifiedNum) {
         this.isCertified = true
         alert("인증 완료")
       } else {
