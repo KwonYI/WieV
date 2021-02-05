@@ -16,7 +16,7 @@
 	<description>SSAFY Project A405</description>
 
 	<properties>
-		<java.version>13.0.1</java.version>
+		<java.version>13</java.version>
 		<!-- In OpenVidu -->
 		<docker.image.prefix>openvidu</docker.image.prefix>
 		

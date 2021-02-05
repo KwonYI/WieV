@@ -75,9 +75,9 @@
 <script>
 import axios from "axios";
 import XLSX from "xlsx";
-const SERVER_URL = "https://localhost:8080/";
+// const SERVER_URL = "https://localhost:8080/";
 // const SERVER_URL = "https://i4a405.p.ssafy.io:8080"
-// const SERVER_URL = process.env.VUE_APP_SERVER_URL
+const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
 import { mapState, mapGetters } from "vuex";
 
@@ -144,7 +144,7 @@ export default {
       formData.append("files", this.files[0]);
       console.log(this.reno);
       axios
-        .post(`${SERVER_URL}applicant/register/` + this.reno, formData, {
+        .post(`${SERVER_URL}/applicant/register/` + this.reno, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
