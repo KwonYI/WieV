@@ -25,9 +25,9 @@
                 <v-row>
                   <v-col cols="12" sm="6" md="4">
                     <v-autocomplete
-                      v-model="new_recruit.reYear"
-                      :items="[2021, 2022, 2023]"
-                      :rules="[v => !!v || '연도값은 필수입니다.']"
+                      v-model="reYear"
+                      :items="formData.reYear"
+                      :rules="[v => !!v || '연도는 필수 항목입니다.']"
                       label="Year"
                       required
                     >
@@ -35,9 +35,9 @@
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-autocomplete
-                      v-model="new_recruit.reFlag"
-                      :items="['상반기', '하반기']"
-                      :rules="[v => !!v || '시즌값은 필수입니다.']"
+                      v-model="reFlag"
+                      :items="formData.reFlag"
+                      :rules="[v => !!v || '시즌은 필수 항목입니다.']"
                       label="Season"
                       required
                     >
@@ -45,9 +45,9 @@
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-autocomplete
-                      v-model="new_recruit.reStatus"
-                      :items="['신입', '경력', '계약']"
-                      :rules="[v => !!v || '채용 형태 값은 필수입니다.']"
+                      v-model="reStatus"
+                      :items="formData.reStatus"
+                      :rules="[v => !!v || '채용 형태는 필수 항목입니다.']"
                       label="Type"
                       required
                     >
@@ -63,11 +63,11 @@
                       required
                     >
                     </v-text-field>
-                    <div>면접 시작일 : {{ dates[0] }}</div>
-                    <div>면접 종료일 : {{ dates[1] }}</div>
+                    <div>면접 시작일 : {{ formData.reDates[0] }}</div>
+                    <div>면접 종료일 : {{ formData.reDates[1] }}</div>
                   </v-col>
                   <v-col cols="12" sm="6">
-                    <v-date-picker v-model="dates" range>
+                    <v-date-picker v-model="formData.reDates" range>
                     </v-date-picker>
                   </v-col>
                 </v-row>
@@ -145,46 +145,40 @@
         myReno: '',
 
         formData: {
-          reYear: '',
-          reFlag: '',
-          reStatus: '',
+          reYear: [2021, 2022, 2023],
+          reFlag: ['상반기', '하반기'],
+          reStatus: ['신입', '경력', '인턴', '계약'],
           reDates: ['2021-01-01', '2021-01-01'],
         },
-
-        dates: ['2021-01-01', '2021-01-01'],
         
-
-
         recFormValid: true,
         rangeRules: [
-          () => this.dates[0] <= this.dates[1] || '면접 기간이 올바르지 않습니다.'
+          () => this.formData.reDates[0] <= this.formData.reDates[1] || '면접 기간이 올바르지 않습니다.'
         ],
-        new_recruit: {
-          reYear: '',
-          reFlag: '',
-          reStatus: '',
-          reStartDate: '',
-          reEndDate: '',
-        },
+
+        reYear: null,
+        reFlag: null,
+        reStatus: null,
       }
     },
 
     methods: {
       createRecruit: function () {
-        console.log(this.dates)
+        console.log(this.$refs.form.value)
         if (this.$refs.form.validate()) {
           this.dialog = false
-          // this.dialog = false
-          // console.log("createRecruit 실행!")
-          // console.log("새로추가된공고정보들:",this.new_recruit)
 
-          console.log(this.new_recruit)
-          // this.new_recruit.reStartDate = this.dates[0]
-          // this.new_recruit.reEndDate = this.dates[1]
+          let recruitForm = {
+            reYear: this.reYear,
+            reFlag: this.reFlag,
+            reStatus: this.reStatus,
+            reStartDate: this.formData.reDates[0],
+            reEndDate: this.formData.reDates[1],
+          }
+          console.log(recruitForm)
 
-          // this.$store
-          //   .dispatch("INSERT_RECRUIT", this.new_recruit)
-          //   .then(() => console.log("insertRecruit"))
+          this.$store.dispatch("INSERT_RECRUIT", recruitForm)
+            .then(() => console.log("insertRecruit"))
 
           //여기에 axios.post 요청으로, DB에 새로운 공고를 저장할 수 있도록 합니다. 
           // 새로 저장된 공고의 정보 (seq포함)를 가져오고, state 에 저장합니다. 
@@ -204,9 +198,7 @@
             recruitInfo: recruit
           }
         })
-      },
-
-
+      }
     },
 
     created: function () {
@@ -220,7 +212,7 @@
       ...mapGetters(["getRecruitListLately"]),
 
       dateRangeText() {
-        return this.dates.join(' ~ ')
+        return this.formData.reDates.join(' ~ ')
       },
 
     },
