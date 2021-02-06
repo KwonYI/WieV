@@ -3,49 +3,60 @@
     <div class="h4">회원가입</div>
     <!-- 정보입력 Form -->
     <v-row no-gutters>
-      <v-col cols="5" class="mt-5 ml-16">
-        <v-simple-table class="info-table" dark>
-          <tbody>
-            <tr v-for="(item, index) in userInfo" :key="index">
-              <td>{{ item.label }}</td>
-              <td>
-                <v-text-field
-                  :label="item.label"
-                  :type="item.type"
-                  v-model="credentials[item.value]"
-                ></v-text-field>
-              </td>
-              <v-btn v-if="index === 0" @click="send">인증 메일 발송 </v-btn>
-              <v-btn v-if="index === 1" @click="certified">인증 확인 </v-btn>
-              <v-btn v-if="index === 3" @click="password_certified">비밀번호 확인</v-btn>
-            </tr>
-          </tbody>
-        </v-simple-table>
-        <br />
-        <span>개인정보 및 서비스 이용약관</span>
-        <v-card elevation="2" outlined>
-          명령·규칙 또는 처분이 헌법이나 법률에 위반되는 여부가 재판의 전제가 된
-          경우에는 대법원은 이를 최종적으로 심사할 권한을 가진다. 재의의 요구가
-          있을 때에는 국회는 재의에 붙이고, 재적의원과반수의 출석과 출석의원
-          3분의 2 이상의 찬성으로 전과 같은 의결을 하면 그 법률안은 법률로서
-          확정된다. 대통령·국무총리·국무위원·행정각부의 장·헌법재판소
-          재판관·법관·중앙선거관리위원회 위원·감사원장·감사위원 기타 법률이 정한
-          공무원이 그 직무집행에 있어서 헌법이나 법률을 위배한 때에는 국회는
-          탄핵의 소추를 의결할 수 있다. 국무위원은 국무총리의 제청으로 대통령이
-          임명한다. 연소자의 근로는 특별한 보호를 받는다. 외국인은 국제법과
-          조약이 정하는 바에 의하여 그 지위가 보장된다. 국가는 여자의 복지와
-          권익의 향상을 위하여 노력하여야 한다. 탄핵결정은 공직으로부터 파면함에
-          그친다. 그러나, 이에 의하여 민사상이나 형사상의 책임이 면제되지는
-          아니한다. 모든 국민은 주거의 자유를 침해받지 아니한다. 주거에 대한
-          압수나 수색을 할 때에는 검사의 신청에 의하여 법관이 발부한 영장을
-          제시하여야 한다.
-        </v-card>
-        <v-checkbox
-          v-model="credentials.agreed"
-          label="위 약관에 동의합니다."
-          dark
-        ></v-checkbox>
-      </v-col>
+      <v-form
+        ref="form"
+        v-model="recFormValid"
+        lazy-validation
+      >
+        <v-col cols="5" class="mt-5 ml-16">
+          <v-simple-table class="info-table" dark>
+            <tbody>
+              <tr v-for="(item, index) in userInfo" :key="index">
+                <td>{{ item.label }}</td>
+                <td>
+                  <v-text-field
+                    :label="item.label"
+                    :type="item.type"
+                    :rules="item.label === '비밀번호 확인' ? passwordConfirmation : item.rule"
+                    :class="item.longmsg"
+                    v-model="credentials[item.value]"
+                    single-line
+                  ></v-text-field>
+                </td>
+                <td>
+                  <v-btn v-if="index === 0" @click="send">인증 메일 발송 </v-btn>
+                  <v-btn v-if="index === 1" @click="certified">인증 확인 </v-btn>
+                </td>
+              </tr>
+            </tbody>
+          </v-simple-table>
+          <br />
+          <span>개인정보 및 서비스 이용약관</span>
+          <v-card elevation="2" outlined>
+            명령·규칙 또는 처분이 헌법이나 법률에 위반되는 여부가 재판의 전제가 된
+            경우에는 대법원은 이를 최종적으로 심사할 권한을 가진다. 재의의 요구가
+            있을 때에는 국회는 재의에 붙이고, 재적의원과반수의 출석과 출석의원
+            3분의 2 이상의 찬성으로 전과 같은 의결을 하면 그 법률안은 법률로서
+            확정된다. 대통령·국무총리·국무위원·행정각부의 장·헌법재판소
+            재판관·법관·중앙선거관리위원회 위원·감사원장·감사위원 기타 법률이 정한
+            공무원이 그 직무집행에 있어서 헌법이나 법률을 위배한 때에는 국회는
+            탄핵의 소추를 의결할 수 있다. 국무위원은 국무총리의 제청으로 대통령이
+            임명한다. 연소자의 근로는 특별한 보호를 받는다. 외국인은 국제법과
+            조약이 정하는 바에 의하여 그 지위가 보장된다. 국가는 여자의 복지와
+            권익의 향상을 위하여 노력하여야 한다. 탄핵결정은 공직으로부터 파면함에
+            그친다. 그러나, 이에 의하여 민사상이나 형사상의 책임이 면제되지는
+            아니한다. 모든 국민은 주거의 자유를 침해받지 아니한다. 주거에 대한
+            압수나 수색을 할 때에는 검사의 신청에 의하여 법관이 발부한 영장을
+            제시하여야 한다.
+          </v-card>
+          <v-checkbox
+            v-model="credentials.agreed"
+            label="위 약관에 동의합니다."
+            :rules="[value => !!value || '약관동의는 필수 항목입니다.']"
+            dark
+          ></v-checkbox>
+        </v-col>
+      </v-form> 
       <v-col cols="12"></v-col>
       <span @click="signup" class="text-white text-right ma-8 pr-16">
         가입하기
@@ -56,27 +67,82 @@
 
 <script>
 import axios from "axios"
-
-// const SERVER_URL = "https://localhost:8080/"
-// const SERVER_URL = "https://i4a405.p.ssafy.io:8080"
 const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
 export default {
   name: "Signup",
   components: {},
+  computed: {
+    passwordConfirmation() {
+      return [
+        value => value === this.credentials.hrPassword || '비밀번호가 일치하지 않습니다.' 
+      ]
+    }
+  },
   data: () => ({
     userInfo: [
-      { label: "이메일", type: "text", value: "hrEmail" },
-      { label: "이메일 인증번호", type: "text", value: "hrEmailCode" },
-      { label: "이름", type: "text", value: "hrName" },
-      { label: "비밀번호", type: "password", value: "hrPassword" },
       {
-        label: "비밀번호 확인",
+        label: "이메일",
+        type: "text",
+        value: "hrEmail",
+        rule: [
+          value => !!value || '이메일은 필수 항목입니다.',
+          value => /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/.test(value) || '이메일 형식이 유효하지 않습니다.',
+        ],
+        longmsg: ''
+      },
+      {
+        label: "이메일 인증번호",
+        type: "text",
+        value: "hrEmailCode",
+        rule: [],
+        longmsg: ''
+      },
+      {
+        label: "이름",
+        type: "text",
+        value: "hrName",
+        rule: [
+          value => !!value || '이름은 필수 항목입니다.',
+        ],
+        longmsg: ''
+      },
+      {
+        label: "비밀번호",
+        type: "password",
+        value: "hrPassword",
+        rule: [
+          value => !!value || '비밀번호는 필수 항목입니다.',
+          value => /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/.test(value) || '비밀번호는 반드시 1개 이상의 문자, 숫자, 특수문자를 포함해야 합니다.'
+        ],
+        longmsg: 'longmsg'
+      },
+      {
+        label: "비밀번호 확인", 
         type: "password",
         value: "hrPasswordConfirmation",
+        rule: [],
+        longmsg: ''
       },
-      { label: "연락처", type: "text", value: "hrPhone" },
-      { label: "기업명", type: "text", value: "comName" },
+      {
+        label: "연락처",
+        type: "text",
+        value: "hrPhone",
+        rule: [
+          value => !!value || '연락처는 필수 항목입니다.',
+          value => /^\d{3}-\d{3,4}-\d{4}$/.test(value) || '연락처 형식이 유효하지 않습니다.'
+        ],
+        longmsg: ''
+      },
+      {
+        label: "기업명",
+        type: "text",
+        value: "comName",
+        rule: [
+          value => !!value || '기업명은 필수 항목입니다.',
+        ],
+        longmsg: ''
+      },
     ],
     credentials: {
       hrEmail: "",
@@ -133,76 +199,66 @@ export default {
       }
     },
 
-    //비밀번호 같은지 다른지 확인
-    password_certified: function() {
-      
-      let patternEngAtListOne = new RegExp(/[a-zA-Z]+/); // + for at least one
-      let patternSpeAtListOne = new RegExp(/[~!@#$%^&*()_+|<>?:{}]+/); // + for at least one
-      let patternNumAtListOne = new RegExp(/[0-9]+/); // + for at least one
-      if (
-        !patternEngAtListOne.test(this.credentials.hrPassword) ||
-        !patternSpeAtListOne.test(this.credentials.hrPassword) ||
-        !patternNumAtListOne.test(this.credentials.hrPassword) ||
-        this.credentials.hrPassword.length < 8
-      ) {
-        alert(
-          "비밀번호는 1개 이상의 특수문자, 대소문자 및 숫자를 포함하고 8자리 이상이여야 합니다."
-        );
-        this.isPasswordCertified = false
-        return;
-      }
-
-   if(!this.credentials.hrPasswordConfirmation){
-        alert("비밀번호 확인을 입력해주세요")
-      }
-      else if (this.credentials.hrPassword == this.credentials.hrPasswordConfirmation) {
-        alert("확인되었습니다.")
-        this.isPasswordCertified=true
-      }
-      else{
-        alert("비밀번호가 다릅니다.")
-        this.isPasswordCertified = false
-      }
-    },
-
     signup: function() {
-      
-      if (this.isCertified == false) {
-        alert("메일 인증을 진행하세요.")
-        return
+      if (this.$refs.form.validate()) {
+        if (this.isCertified == false) {
+          alert("메일 인증을 진행하세요.")
+        } else {
+          let signupForm = {
+            hrEmail: this.credentials.hrEmail,
+            hrName: this.credentials.hrName,
+            hrPassword: this.credentials.hrPassword,
+            hrPhone: this.credentials.hrPhone,
+            comName: this.credentials.comName
+          }
+          console.log(signupForm)
+
+          axios.post(`${SERVER_URL}/hr/signup`, signupForm)
+            .then(res => {
+              console.log(res)
+              alert("회원가입 성공")
+              this.$router.push({ name: "Home" })
+            })
+            .catch((err) => {
+              console.log(err)
+              alert("회원가입 정보가 올바르지 않습니다.")
+            })
+        }
       }
 
-      if(this.isPasswordCertified==false){
-        alert("비밀번호 확인을 진행하세요.")
-        return
-      }
+    //   if (
+    //     this.credentials.hrPassword != this.credentials.hrPasswordConfirmation
+    //   ) {
+    //     alert("비밀번호가 다릅니다.")
+    //     return
+    //   }
 
 
-      if(!this.credentials.hrEmail||!this.credentials.hrName||!this.credentials.hrPassword||!this.credentials.hrPasswordConfirmation||
-      !this.credentials.hrPhone||!this.credentials.comName){
-        alert("정보를 모두 입력해주세요.")
-        return
-      }
+    //   let regexp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i
+    //   if (!regexp.test(this.credentials.hrEmail)) {
+    //     alert("이메일은 이메일 형식으로 입력해주세요.")
+    //     return
+    //   }
 
+    //   
 
-
-      if (this.credentials.agreed) {
-        axios
-          .post(`${SERVER_URL}/hr/signup`, this.credentials)
-          .then((res) => {
-            console.log(res)
-            alert("회원가입 성공")
-            this.$router.push({ name: "Home" })
-          })
-          .catch((err) => {
-            console.log(err)
-            alert("회원가입 정보가 올바르지 않습니다.")
-          })
-      } else {
-        alert("개인정보 이용 약관에 동의해야 합니다.")
-      }
-    },
-  },
+    //   if (this.credentials.agreed) {
+    //     axios
+    //       .post(`${SERVER_URL}/hr/signup`, this.credentials)
+    //       .then((res) => {
+    //         console.log(res)
+    //         alert("회원가입 성공")
+    //         this.$router.push({ name: "Home" })
+    //       })
+    //       .catch((err) => {
+    //         console.log(err)
+    //         alert("회원가입 정보가 올바르지 않습니다.")
+    //       })
+    //   } else {
+    //     alert("개인정보 이용 약관에 동의해야 합니다.")
+    //   }
+    }
+  }
 }
 </script>
 
@@ -218,4 +274,9 @@ table tbody tr:hover {
 td {
   border: none !important;
 }
+
+::v-deep .longmsg > .v-input__control {
+  width: min-content;
+}
+
 </style>
