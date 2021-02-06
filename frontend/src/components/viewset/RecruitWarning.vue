@@ -20,16 +20,7 @@
     data: function () {
       return {
         selectedItem: 1,
-        tabs: [{
-            text: "면접 일정",
-          },
-          {
-            text: "면접관 관리",
-          },
-          {
-            text: "지원자 관리",
-          },
-        ],
+        
       };
     },
     

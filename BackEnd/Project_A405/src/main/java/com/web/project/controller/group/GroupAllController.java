@@ -371,7 +371,8 @@ public class GroupAllController {
 //						System.out.println(groupAllRequest.getInterviewTypeList().get(j));
 
 						groupType.setInterviewTypeTypeSeq(groupAllRequest.getInterviewTypeList().get(j).getTypeSeq());
-						groupType.setSessionName(getUUID());
+						groupType.setWaitSessionName(getUUID());
+						groupType.setInterviewSessionName(getUUID());
 
 						groupTypeDao.save(groupType);
 					}

@@ -1,20 +1,21 @@
 <template>
   <div id="viewers" v-if="givnereno">
     <v-toolbar dark color="teal">
-      <v-toolbar-title>면접관 찾기</v-toolbar-title>
+      <v-toolbar-title></v-toolbar-title>
+      <!-- <v-toolbar-title>면접관 찾기</v-toolbar-title>
       <v-autocomplete v-model="select" :loading="loading" :items="items" :search-input.sync="search" cache-items
         class="mx-4" flat hide-no-data hide-details label="지원자 이름 검색" solo-inverted></v-autocomplete>
-      <v-btn class="m-3"> 검색 </v-btn>
+      <v-btn class="m-3"> 검색 </v-btn> -->
 
-        <label>File
-          <input v-model="title">
+        <!-- <label>File
+          <input v-model="title"> -->
+          <v-text class="m-2">File:</v-text>
           <input type="file" id="files" ref="files" v-on:change="handleFileUpload()" multiple />
-        </label>
+        <!-- </label> -->
         <v-btn class="m-3" v-on:click="submitFile()">엑셀 업로드</v-btn>
     
       <v-btn class="m-3" @click="exportExcel">엑셀 양식 다운로드</v-btn>
     
-      <!-- <v-btn class="m-3" @click="createVieweeDB"> DB업데이트 </v-btn> -->
     </v-toolbar>
     <v-simple-table fixed-header  height="500px" class="mt-5">
       <thead>
@@ -102,10 +103,13 @@ import XLSX from 'xlsx'
               }
             }
           ).then(function () {
-            console.log('SUCCESS!!');
+            console.log('면접관 엑셀 업로드 성공')
+            alert("면접관 등록 성공")
           })
-          .catch(function () {
-            console.log('FAILURE!!');
+          .catch(function (err) {
+            console.log(err)
+            alert("면접관 등록 실패")
+            console.log('면접관 엑셀 업로드 실패')
           });
 
       },

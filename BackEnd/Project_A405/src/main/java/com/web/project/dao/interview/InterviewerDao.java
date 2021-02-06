@@ -16,6 +16,7 @@ public interface InterviewerDao extends JpaRepository<Interviewer,String> {
 
 	
 	Optional<Interviewer> findOptionalInterviewerByViewSeq(int viewSeq);
+	Optional<Interviewer> findOptionalInterviewerByViewEmail(String viewEmail);
 
 	List<Interviewer> findAllInterviewerByCompanyComSeqAndCareerCaSeqAndCareerPartPartSeqAndViewAssigned(int companyComSeq,int careerCaSeq,int careerPartPartSeq,int viewAssigned);
 	

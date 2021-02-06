@@ -45,9 +45,17 @@
                   <v-btn
                     color="blue lighten-3 yellow--text"
                     dark
-                    @click="goSession"
+                    @click="goWaitSession"
                   >
                     대기실 입장
+                  </v-btn>
+
+                  <v-btn
+                    color="blue lighten-3 yellow--text"
+                    dark
+                    @click="goInterviewSession"
+                  >
+                    면접실 입장
                   </v-btn>
                   <!--
                   <div>
@@ -195,13 +203,39 @@ export default {
     };
   },
   methods: {
-    goSession() {
+    goWaitSession() {
       axios
         .get(`${SERVER_URL}/session/create`, {
           params: {
             interviewerWait: this.user.userViewWait,
             interviewerName: this.user.userName,
-            sessionName: this.interview.sessionName,
+            sessionName: this.interview.waitSessionName,
+          },
+        })
+        .then((res) => {
+          console.log(res);
+          this.$router.push({
+            name: "WaitRoom",
+            params: { interview: this.interview, interviewer: res.data },
+          });
+        })
+        .catch((err) => {
+          if (this.user.userViewWait == 0) {
+            console.log(err);
+          } else {
+            alert("방이 아직 개설되지 않았습니다.");
+          }
+        });
+    },
+
+    // 라우터 이름 변경 필요
+    goInterviewSession() {
+      axios
+        .get(`${SERVER_URL}/session/create`, {
+          params: {
+            interviewerWait: this.user.userViewWait,
+            interviewerName: this.user.userName,
+            sessionName: this.interview.interviewSessionName,
           },
         })
         .then((res) => {

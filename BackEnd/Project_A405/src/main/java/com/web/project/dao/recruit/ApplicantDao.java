@@ -19,6 +19,7 @@ public interface ApplicantDao extends JpaRepository<Applicant, String> {
 	
 	
 	Optional<Applicant> findOptionalApplicantByApplySeq(int applySeq);
+	Optional<Applicant> findOptionalApplicantByApplyEmail(String applyEmail);
 
 	
 	List<Applicant> findApplicantByRecruitReSeqAndCareerCaSeqAndApplyAssigned(int recruitReSeq, int careerCaSeq,int applyAssigned);

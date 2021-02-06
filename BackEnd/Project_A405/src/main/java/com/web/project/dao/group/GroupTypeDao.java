@@ -9,7 +9,8 @@ import com.web.project.model.group.GroupType;
 
 @Repository
 public interface GroupTypeDao extends JpaRepository<GroupType, String>{
-	GroupType findGroupTypeBySessionName(String sessionName);
+	GroupType findGroupTypeByWaitSessionName(String waitSessionName);
+	GroupType findGroupTypeByInterviewSessionName(String interviewSessionName);
 	
 	List<GroupType> findListGroupTypeByGroupGroupSeq(int groupGroupSeq);
 	

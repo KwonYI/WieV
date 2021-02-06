@@ -13,7 +13,7 @@
         </template>
         <v-card>
           <v-card-title>
-            <span class="headline">[{{com_name}}] 신규 공고 등록</span>
+            <span class="headline">[{{ user.userComName }}] 신규 공고 등록</span>
           </v-card-title>
           <v-card-text>
             <v-form
@@ -31,7 +31,7 @@
                       label="Year"
                       required
                     >
-                    </v-autocomplete>
+                    </v-select>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-autocomplete
@@ -41,7 +41,7 @@
                       label="Season"
                       required
                     >
-                    </v-autocomplete>
+                    </v-select>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-autocomplete
@@ -116,8 +116,8 @@
               <!-- <v-btn :to="{ name: 'Progress', params: { recruitNo: recruit.reSeq } }" >관리하기</v-btn> -->
               <v-btn @click="goToProgress(recruit)">관리하기</v-btn>
             </td>
-            <td>
-              <v-btn @click="goToProgress(recruit.reSeq)">삭제</v-btn>
+            <td v-if="recruit.reSeq !== 3">
+              <v-btn @click="deleteRecruit(recruit.reSeq)">삭제</v-btn>
             </td>
 
           </tr>
@@ -140,7 +140,7 @@
     name: "Schedule",
     data: function () {
       return {
-        com_name: "WieV Inc.",
+        // com_name: "버즈글로벌",
         dialog: false,
         myReno: '',
 
@@ -160,12 +160,13 @@
           () => this.dates[0] <= this.dates[1] || '면접 기간이 올바르지 않습니다.'
         ],
         new_recruit: {
-          reYear: '',
-          reFlag: '',
-          reStatus: '',
+          reYear: [],
+          reFlag: [],
+          reStatus: [],
           reStartDate: '',
           reEndDate: '',
         },
+        reYear: ''
       }
     },
 
@@ -186,13 +187,48 @@
           //   .dispatch("INSERT_RECRUIT", this.new_recruit)
           //   .then(() => console.log("insertRecruit"))
 
-          //여기에 axios.post 요청으로, DB에 새로운 공고를 저장할 수 있도록 합니다. 
-          // 새로 저장된 공고의 정보 (seq포함)를 가져오고, state 에 저장합니다. 
-          //this.$store.dispatch('addRecruit', 응답으로 받은 데이터 res.data)
+        var startDateArray = this.new_recruit.reStartDate.split("-");
+        var endDateArray = this.new_recruit.reEndDate.split("-");
 
-          this.$refs.form.reset()
+        if(startDateArray[0] > endDateArray[0]){ // 시작 연도가 빠를 경우
+          alert("공고의 기간 중 연도 설정을 다시 확인해 보세요.");
+          return;
+        }else{
+          if(startDateArray[1] > endDateArray[1]){ // 시작 월이 빠른 경우
+            alert("공고의 기간 중 월 설정을 다시 확인해 보세요.");
+            return;
+          }else if(startDateArray[1] == endDateArray[1]){
+            if(startDateArray[2] >= endDateArray[2]){
+              alert("공고의 기간 중 일 설정을 다시 확인해 보세요.");
+              return;
+            }
+          }
         }
+        
+        console.log("recruit")
+        console.log(this.reYear)
+        console.log(this.new_recruit)
+
+        this.$store
+          .dispatch("INSERT_RECRUIT", this.new_recruit)
+          .then(() => console.log("insertRecruit"))
+
+        //여기에 axios.post 요청으로, DB에 새로운 공고를 저장할 수 있도록 합니다. 
+        // 새로 저장된 공고의 정보 (seq포함)를 가져오고, state 에 저장합니다. 
+        //this.$store.dispatch('addRecruit', 응답으로 받은 데이터 res.data)
+
+          // this.$refs.form.reset()
+        // }
       },
+
+      deleteRecruit: function (reSeq) {
+        this.$store
+          .dispatch("DELETE_RECRUIT", reSeq)
+          .then(() => {console.log("deleteRecruit")
+            this.$router.go(this.$router.currentRoute)}
+          )
+      },
+
       goToProgress: function (recruit) {
         this.myReno = recruit.reSeq
         this.$store.state.selectedRecruitNo = recruit.reSeq
@@ -205,6 +241,7 @@
           }
         })
       },
+      
 
 
     },
