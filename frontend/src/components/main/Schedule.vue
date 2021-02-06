@@ -202,7 +202,8 @@
         this.$store.state.selectedRecruitNo = recruit.reSeq
         console.log("goToProgres!!", this.$store.state.selectedRecruitNo)
         this.$router.push({
-          name: 'Progress',
+          // name: 'Progress',
+          name: 'Menu',
           params: {
             recruitNo: recruit.reSeq,
             recruitInfo: recruit

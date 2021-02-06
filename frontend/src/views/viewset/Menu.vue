@@ -14,20 +14,22 @@
               채용공고 리스트
             </v-subheader>
             <v-list-item-group v-model="selectedItem" color="primary">
-              <v-list-item v-for="(item, i) in getRecruitListLately" :key="i">
+              <v-list-item
+                v-for="(item, i) in getRecruitListLately"
+                :key="i"
+                @click="selectRecruit(item.reSeq)"
+              >
                 <v-list-item-content>
-                  <v-list-item-title v-text="`${item.reYear} ${item.reFlag} ${item.reStatus}`" @click="selectRecruit(item)">
+                  <v-list-item-title>
+                    {{item.reYear}} {{item.reFlag}} {{item.reStatus}} {{item.reSeq}}
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
-
-
             </v-list-item-group>
           </v-list>
         </v-col>
 
         <v-col cols="9">
-
           <Recruit v-if="recruitno" :recruitNo="recruitno" />
           <RecruitWarning v-else/>
         </v-col>
@@ -42,7 +44,7 @@
   import Recruit from "../../components/viewset/Recruit.vue"
   import RecruitWarning from "../../components/viewset/RecruitWarning.vue"
 
-  import { mapState, mapGetters} from "vuex"
+  import { mapState, mapGetters } from "vuex"
 
   export default {
     name: "Menu",
@@ -50,34 +52,37 @@
       Recruit,
       RecruitWarning,
     },
+    
     data: function () {
       return {
-        recruitno: this.$route.params.recruitNo,
+        recruitno: -1,
         selectedItem: -1,
-
       }
     },
 
- 
     methods: {
-      selectRecruit: function (selectedreno) {
-        console.log("selectRecruit클릭!", selectedreno.reSeq)
-        this.$store.state.selectedRecruitNo = selectedreno.reSeq
-        this.recruitno = selectedreno.reSeq
-        this.$router.push({
-          name: 'Progress',
-          params: {
-            recruitNo: this.recruitno,
-            recruitInfo: selectedreno
-          }
-        })
+      // 선택한 공고 정보
+      selectRecruit: function (reNo) {
+        console.log("selectRecruit클릭!", reNo)
+        this.$store.state.selectedRecruitNo = reNo
+        this.recruitno = reNo
+        console.log("recruitno", this.recruitno)
+        // this.$router.push({
+        //   name: 'Progress',
+        //   params: {
+        //     recruitNo: this.recruitno,
+        //     recruitInfo: reNo
+        //   }
+        // })
       },
       goToProfile: function () {
         this.recruitno = ''
       },
-
     },
+
     created: function () {
+      this.recruitno = this.$route.params.recruitNo
+
       console.log("Menu의 createD의 reno", this.recruitno)
       console.log("Menu의 회사 seq", this.getUserComSeq)
       this.$store.dispatch("GET_VIEWER_LIST", this.getUserComSeq)
@@ -85,8 +90,8 @@
     },
 
     computed: {
-      ...mapState(["selectedRecruitNo", "recruitList", "user"]),
-      ...mapGetters(["getUserComSeq", "getRecruitListLately", "getUserComSeq"])
+      ...mapState(["user", "selectedRecruitNo"]),
+      ...mapGetters(["getUserComSeq", "getRecruitListLately"])
     },
 
   }

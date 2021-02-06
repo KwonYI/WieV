@@ -1,5 +1,6 @@
 <template>
-  <div id="viewees" v-if="givenreno">
+  <div id="viewees">
+    {{ recruitNo }}
     <v-toolbar dark color="teal">
       <v-toolbar-title></v-toolbar-title>
       <!-- <v-toolbar-title>지원자 찾기</v-toolbar-title> -->
@@ -83,6 +84,9 @@ import { mapState, mapGetters } from "vuex";
 
 export default {
   name: "Viewees",
+  props: {
+    recruitNo: [Object, String, Number]
+  },
   data: function() {
     return {
       arr: [],
@@ -111,7 +115,7 @@ export default {
       select: null,
       items: [],
       reno: "",
-      givenreno: "",
+      // recruitNo: "",
     };
     //   XLSX.writeFile(wb, "지원자등록_양식.xlsx"); // 엑셀 다운로드
   },
@@ -119,7 +123,7 @@ export default {
   created: function() {
     this.arr = this.getVieweeListCurrentRecruit;
     this.reno = this.$store.state.selectedRecruitNo;
-    this.givenreno = this.$route.params.recruitNo;
+    // this.recruitNo = this.$route.params.recruitNo;
     // this.pageGetVieweeListCurrentRecruit = this.filterdVieweeList()
     console.log("reno:", this.reno);
     console.log("회사모든지원자들어있나 created때?", this.comVieweeList);
@@ -169,7 +173,7 @@ export default {
 
     // updateVieweeDB: function () {
     //   this.$store.dispatch("UPDATE_VIEWEE_LIST", this.reno);
-    // this.$router.go(this.$router.currentRoute, { recruitNo: this.givenreno})
+    // this.$router.go(this.$router.currentRoute, { recruitNo: this.recruitNo})
     // this.pageGetVieweeListCurrentRecruit = this.filterdVieweeList()
     // this.$router.push({name: 'Viewees', params: { recruitNo : this.reno }});
     // },

@@ -141,8 +141,10 @@ export default {
   data() {
     return {
       dialog: false,
+
       // 시즌 데이터
       seasonForm: [
+        
         {
           name: "시즌",
           data: ["2020 하반기", "2021 상반기", "2021 하반기"],
@@ -329,43 +331,9 @@ export default {
                 schSmallGroupNo: 2,
                 schSmallGroupInterview: ['그룹', '직무', 'PT'],
                 schSmallGroupViewee: ['박이번', '이사번', '권오번', '하팔번'],
-              },
-            ]
-          },
-          {
-            schGroupNo: 2,
-            schGroupDate: '7/10',
-            schGroupTime: '16:00',
-            schGroupCareer: '마케팅',
-            schGroupInterview: ['직무, PT, 그룹'],
-            schGroupViewee: [],
-            schGroupGuide: [],
-            schGroupViewer: [],
-            schSmallGroups: [
-              {
-                schSmallGroupNo: 1,
-                schSmallGroupsInterview: ['직무', 'PT', '그룹'],
-                schSmallGroupsViewee: '',
               }
             ]
-          },
-          {
-            schGroupNo: 3,
-            schGroupDate: '7/10',
-            schGroupTime: '17:00',
-            schGroupCareer: 'SW개발',
-            schGroupInterview: ['인성', '직무', 'PT'], 
-            schGroupViewee: [],
-            schGroupGuide: [],
-            schGroupViewer: [],
-            schSmallGroups: [
-              {
-                schSmallGroupNo: 1,
-                schSmallGroupsInterview: ['PT', '직무', '인성'],
-                schSmallGroupsViewee: '',
-              }
-            ]
-          },
+          }
         ]
       },
       
@@ -381,18 +349,6 @@ export default {
       axios.post(`${SERVER_URL}/groupAll/divide/` + this.recruitNo, this.formData)
         .then(res => {
           console.log(res)
-          axios.get('면접스케줄 받기')
-            .then(res => console.log(res))
-            .catch(err => console.log(err))
-          axios.get('지원자 정보 받기')
-            .then(res => console.log(res))
-            .catch(err => console.log(err))
-          axios.get('면접관 정보 받기')
-            .then(res => console.log(res))
-            .catch(err => console.log(err))
-          axios.get('면접 유형 받기')
-            .then(res => console.log(res))
-            .catch(err => console.log(err))
         })
         .catch(err => console.log(err))
     },

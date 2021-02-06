@@ -1,6 +1,7 @@
 <template>
-  <div id="progress"  v-if="givenreno">
-    <v-simple-table fixed-header height="1000px" class="mt-5" >
+  <div id="progress">
+    {{ recruitNo }}
+    <v-simple-table fixed-header class="mt-5" >
       <thead>
         <tr>
           <th class="text-center">날짜</th>
@@ -36,38 +37,27 @@
 </template>
 
 <script>
-  import {
-    mapState
-  } from "vuex";
+  import { mapState } from "vuex"
 
 
   export default {
     name: "Progress",
+    props: {
+      recruitNo: [Object, String, Number],
+    },
     data: function () {
       return {
-        reno: "",
-        givnereno: "",
-      };
+      }
     },
     created: function () {
-      this.givnereno = this.$route.params.recruitNo;
-      this.reno = this.$store.state.selectedRecruitNo;
-      console.log("프로그레스 created의 reno:", this.reno);
     },
-   
-
     computed: {
-
       ...mapState(["recruitList", "recruitProgressList"]),
-
       filterdProgressList: function () {
-        return this.recruitProgressList.filter(re => re.reSeq === this.reno)
-
+        return this.recruitProgressList.filter(re => re.reSeq === this.recruitNo)
       }
-
     },
-
-  };
+  }
 </script>
 
 <style>

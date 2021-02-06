@@ -6,9 +6,9 @@ import Profile from '@/views/accounts/Profile'
 import Signup from '@/views/accounts/Signup'
 import Menu from '@/views/viewset/Menu'
 import CreateSet from '@/views/viewset/CreateSet'
-import Viewees from '@/views/viewset/Viewees'
-import Viewers from '@/views/viewset/Viewers'
-import Progress from '@/views/viewset/Progress'
+// import Viewees from '@/views/viewset/Viewees'
+// import Viewers from '@/views/viewset/Viewers'
+// import Progress from '@/views/viewset/Progress'
 import Main from '@/views/main/Main'
 import WaitRoom from '@/views/room/WaitRoom'
 import ViewRoom from '@/views/room/ViewRoom'
@@ -56,35 +56,30 @@ const routes = [{
     path: '/menu',
     name: 'Menu',
     component: Menu,
-    children: [
-      // {
-      //   path: 'recruit',
-      //   name: 'Recruit',
-      //   component: Recruit,
-      // },
-      {
-        path: '',
-        redirect: 'progress',
-      },
-      {
-        path: 'progress',
-        name: 'Progress',
-        component: Progress,
-      },
+    // children: [
+    //   {
+    //     path: '',
+    //     redirect: 'progress',
+    //   },
+    //   {
+    //     path: 'progress',
+    //     name: 'Progress',
+    //     component: Progress,
+    //   },
 
 
-      {
-        path: 'viewees',
-        name: 'Viewees',
-        component: Viewees,
-      },
-      {
-        path: 'viewers',
-        name: 'Viewers',
-        component: Viewers,
-      },
+    //   {
+    //     path: 'viewees',
+    //     name: 'Viewees',
+    //     component: Viewees,
+    //   },
+    //   {
+    //     path: 'viewers',
+    //     name: 'Viewers',
+    //     component: Viewers,
+    //   },
 
-    ]
+    // ]
   },
   {
     path: '/createset',
