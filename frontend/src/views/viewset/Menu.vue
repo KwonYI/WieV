@@ -4,20 +4,20 @@
       <v-row>
         <div>
           <v-card class="mx-auto mt-10 mb-10 rounded-b-lg" max-width="1000">
-            <v-card-title> </v-card-title>
-                  <v-card-subtitle></v-card-subtitle>
+            <v-card-title></v-card-title>
+            <v-card-subtitle></v-card-subtitle>
           </v-card>
         </div>
         <v-col cols="3">
           <v-list shaped dark id="sidebarCol">
             <v-subheader>
-              공고 리스트
+              채용공고 리스트
             </v-subheader>
             <v-list-item-group v-model="selectedItem" color="primary">
               <v-list-item v-for="(item, i) in getRecruitListLately" :key="i">
                 <v-list-item-content>
-                  <v-list-item-title v-text="`${item.reYear}${item.reFlag} ${item.reStatus}`"
-                    @click="selectRecruit(item)"></v-list-item-title>
+                  <v-list-item-title v-text="`${item.reYear} ${item.reFlag} ${item.reStatus}`" @click="selectRecruit(item)">
+                  </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
 
@@ -39,13 +39,10 @@
 </template>
 
 <script>
-  import Recruit from "../../components/viewset/Recruit.vue";
-  import RecruitWarning from "../../components/viewset/RecruitWarning.vue";
+  import Recruit from "../../components/viewset/Recruit.vue"
+  import RecruitWarning from "../../components/viewset/RecruitWarning.vue"
 
-  import {
-    mapState,
-    mapGetters
-  } from "vuex";
+  import { mapState, mapGetters} from "vuex"
 
   export default {
     name: "Menu",

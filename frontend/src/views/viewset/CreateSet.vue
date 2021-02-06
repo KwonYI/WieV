@@ -181,7 +181,7 @@ export default {
         },
         {
           name: "날짜",
-          data: [],
+          data: ['7/22'],
           col: 2,
           multiple: false,
           value: 'startDate'
@@ -217,21 +217,21 @@ export default {
         },
         {
           name: "면접관 수",
-          data: [2, 3],
+          data: [2, 3, 4],
           col: 3,
           multiple: false,
           value: 'viewerNum'
         },
         {
           name: "지원자 수",
-          data: [8, 10],
+          data: [8, 9, 10, 11, 12],
           col: 3,
           multiple: false,
           value: 'vieweeNum'
         },
         {
           name: "소요 시간",
-          data: [1, 2],
+          data: [1, 2, 3, 4],
           col: 3,
           multiple: false,
           value: 'duration'
@@ -242,7 +242,7 @@ export default {
         },
         {
           name: "지원자 수",
-          data: [1, 2, 3, 4],
+          data: [1, 2, 3, 45, 6],
           col: 3,
           mutiple: false,
           value: 'vieweePerGroup'
@@ -424,6 +424,7 @@ export default {
     },
   },
   created () {
+    console.log(this.$route.params.recruitNo)
   }
 }
 </script>
