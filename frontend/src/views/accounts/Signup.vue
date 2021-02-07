@@ -1,5 +1,5 @@
 <template>
-  <div id="signup" class="mt-12 ml-16 text-white">
+  <div id="signup" class="mt-12 ml-16 text-white" @keyup.enter="signup">
     <div class="h4">회원가입</div>
     <!-- 정보입력 Form -->
     <v-row no-gutters>

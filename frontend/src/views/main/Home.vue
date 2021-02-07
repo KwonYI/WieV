@@ -23,7 +23,7 @@
           </v-col>
 
           <!-- 미로그인 시 -->
-          <v-col v-else cols="5" class="login-box mt-5">
+          <v-col v-else cols="5" class="login-box mt-5" @keyup.enter="login">
             <v-col class="login-input mb-4">
               <v-simple-table dark style="background-color: transparent">
                 <!-- <form>
@@ -62,7 +62,7 @@
                 </tbody>
               </v-simple-table>
             </v-col>
-            <v-col class="subtitle-1"  @click="login">
+            <v-col class="subtitle-1"  @click="login" >
               로그인
             </v-col>
             
@@ -107,11 +107,6 @@
         this.credentials.userPassword = ""
         })
       },
-      // getCompanyList: function() {
-      //   this.$store
-      //     .dispatch("GET_COMPANY_LIST")
-      //     .then(() => console.log("회사 리스트 가져오기 완료"))
-      // },
     },
   }
 </script>
