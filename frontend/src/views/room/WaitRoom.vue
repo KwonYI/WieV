@@ -46,7 +46,23 @@
           <!-- <VieweeList /> -->
         </v-col>
         <!-- row2[오른쪽] : 우측에 FAQ 채팅창 잡동사니 -->
-        <v-col cols="3"></v-col>
+        <v-col cols="3">
+          <div>
+            <v-list v-auto-bottom="messages">
+              <div v-for="(msg, index) in messages" :key="index">
+                {{ msg.from }} : {{ msg.text }}
+              </div>
+            </v-list>
+          </div>
+
+          <div>
+            <v-text-field
+              label="보낼 메세지를 입력하세요."
+              v-model="text"
+              @keyup.13="sendMessage"
+            ></v-text-field>
+          </div>
+        </v-col>
       </v-row>
     </v-container>
   </div>
@@ -71,13 +87,17 @@ export default {
     // ManagerList,
     // VieweeList,
   },
-  data: function() {
+  data: function () {
     return {
       OV: undefined,
       session: undefined,
       mainStreamManager: undefined, // 메인 비디오
       publisher: undefined, // 연결 객체
       subscribers: [],
+
+      // 채팅
+      text: "",
+      messages: [],
 
       // From SessionController
       sessionName: undefined,
@@ -117,6 +137,14 @@ export default {
       }
     });
 
+    this.session.on("signal:my-chat", (event) => {
+      let message = { from: "", text: "" };
+      message.from = event.from.data.split('":"')[1].slice(0, -8);
+      message.text = event.data;
+
+      this.messages.push(message);
+    });
+
     this.session
       .connect(this.token, { clientData: this.userName })
       .then(() => {
@@ -134,9 +162,6 @@ export default {
         this.mainStreamManager = publisher;
         this.publisher = publisher;
 
-        console.log(this.userName);
-        console.log(this.token);
-
         this.session.publish(this.publisher);
       })
       .catch((error) => {
@@ -151,6 +176,23 @@ export default {
   },
 
   methods: {
+    sendMessage() {
+      if (this.text === "") return;
+
+      this.session
+        .signal({
+          data: this.text,
+          to: [],
+          type: "my-chat",
+        })
+        .then(() => {})
+        .catch((error) => {
+          console.error(error);
+        });
+
+      this.text = "";
+    },
+
     leaveSession() {
       if (this.session) this.session.disconnect();
 
@@ -187,7 +229,7 @@ export default {
     },
   },
 
-  created: function() {
+  created: function () {
     // if (this.viewerLogin) {
     //   this.$router.push({ name: "ViewerRecruitItem" })
     // }
@@ -204,5 +246,10 @@ export default {
   background-color: white;
   /* width: 100vw; */
   height: 100vh;
+}
+.v-list {
+  height: 500px;
+  width: 300px;
+  overflow-y: auto;
 }
 </style>
