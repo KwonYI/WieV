@@ -13,13 +13,13 @@
           class="btn"
           type="button"
           @click="audioOnOOff"
-          value="소리 끄기"
+          :value="audioMsg"
         />
         <input
           class="btn"
           type="button"
           @click="videoOnOOff"
-          value="화면 끄기"
+          :value="videoMsg"
         />
         <input
           class="btn"
@@ -30,6 +30,7 @@
       </v-toolbar-title>
     </v-app-bar>
 
+    <div id="screen"></div>
     <!-- 바 밑에 내용물들.  -->
     <v-container>
       <!--row1. : 공지사항 배너, 면접실 만들기 버튼-->
@@ -44,16 +45,19 @@
         </v-col>
         <!-- row2[가운데] : 지원자 리스트-->
         <v-col cols="6">
-          <user-video
-            :stream-manager="publisher"
-            @click.native="updateMainVideoStreamManager(publisher)"
-          />
-          <user-video
-            v-for="sub in subscribers"
-            :key="sub.stream.connection.connectionId"
-            :stream-manager="sub"
-            @click.native="updateMainVideoStreamManager(sub)"
-          />
+          <div id="video-container">
+            <!-- <user-video
+              :stream-manager="publisher"
+              @click.native="updateMainVideoStreamManager(publisher)"
+            /> -->
+            <user-video
+              v-for="sub in subscribers"
+              :key="sub.stream.connection.connectionId"
+              :stream-manager="sub"
+              @click.native="updateMainVideoStreamManager(sub)"
+            />
+          </div>
+
           <!-- <VieweeList /> -->
         </v-col>
         <!-- row2[오른쪽] : 우측에 FAQ 채팅창 잡동사니 -->
@@ -107,9 +111,13 @@ export default {
       text: "",
       messages: [],
 
-      // 화면, 소리 체크
+      // 화면, 소리, 화면 공유
       audioOn: true,
+      audioMsg: "소리 On",
       videoOn: true,
+      videoMsg: "화면 On",
+      // shareOn: false,
+      // shareMsg: "공유 Off",
 
       // From SessionController
       sessionName: undefined,
@@ -176,6 +184,7 @@ export default {
         this.publisher = publisher;
 
         this.session.publish(this.publisher);
+        this.subscribers.push(this.publisher);
       })
       .catch((error) => {
         console.log(
@@ -242,11 +251,17 @@ export default {
 
     audioOnOOff() {
       this.audioOn = !this.audioOn;
+      if (this.audioOn === true) this.audioMsg = "소리 Off";
+      else this.audioMsg = "소리 On";
+
       this.publisher.publishAudio(this.audioOn);
     },
 
     videoOnOOff() {
       this.videoOn = !this.videoOn;
+      if (this.videoOn === true) this.videoMsg = "화면 Off";
+      else this.videoMsg = "화면 On";
+
       this.publisher.publishVideo(this.videoOn);
     },
   },
