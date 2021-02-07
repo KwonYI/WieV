@@ -121,31 +121,122 @@ public class ApplicantController {
 
 	@GetMapping(value = "/getList/{reSeq}")
 	@ApiOperation(value = "공고에 따른 지원자 리스트 모두 가져오기")
-	public ResponseEntity<Map<String, Object>> getApplicationList(@PathVariable("reSeq") int reSeq) {
-		Map<String, Object> resultMap = new HashMap<String, Object>();
+	public ResponseEntity<List<Map<String, Object>>> getApplicationList(@PathVariable("reSeq") int reSeq) {
+		List<Map<String, Object>> applicantList = new ArrayList<Map<String,Object>>();
+		HttpStatus status = null;
 		
+		try {
+			List<Applicant> applicantTempList = applicantDao.findAllApplicantByRecruitReSeq(reSeq);
+			
+			for (int i = 0; i < applicantTempList.size(); i++) {
+				Applicant applicant = applicantTempList.get(i);
+				
+				Map<String, Object> resultMap = new HashMap<String, Object>();
+				
+				// 지원자 seq
+				resultMap.put("apply-Seq", applicant.getApplySeq());
+				// 지원자 session Id
+				resultMap.put("apply-Id", applicant.getApplyId());
+				// 지원자 이름
+				resultMap.put("apply-Name", applicant.getApplyName());
+				// 지원자 email
+				resultMap.put("apply-Email", applicant.getApplyEmail());
+				// 지원자 생년월일
+				resultMap.put("apply-Birth", applicant.getApplyBirth());
+				// 지원자 핸드폰 번호
+				resultMap.put("apply-Phone", applicant.getApplyPhone());
+				// 지원자 대학교
+				resultMap.put("apply-University", applicant.getApplyUniversity());
+				// 지원자 전공
+				resultMap.put("apply-Major", applicant.getApplyMajor());
+				// 지원자 학점
+				resultMap.put("apply-Grade", applicant.getApplyGrade());
+				// 지원자 자기소개서 항목 1
+				resultMap.put("apply-Resume1", applicant.getApplyResume1());
+				// 지원자 자기소개서 항목 2
+				resultMap.put("apply-Resume2", applicant.getApplyResume2());
+				// 지원자 자기소개서 항목 3
+				resultMap.put("apply-Resume3", applicant.getApplyResume3());
+				// 지원자 자기소개서 항목 4
+				resultMap.put("apply-Resume4", applicant.getApplyResume4());
+				// 지원자가 할당되었는지
+				resultMap.put("apply-Assigned", applicant.getApplyAssigned());
+				// 지원자 직무 이름
+				resultMap.put("apply-Career-Name", careerDao.findCareerByCaSeq(applicant.getCareerCaSeq()).getCaName());
+				// 지원자 공고 seq
+				resultMap.put("apply-Recruit-Seq", applicant.getRecruitReSeq());
+				
+				applicantList.add(resultMap);
+			}
+			status = HttpStatus.OK;
+		} catch (RuntimeException e) {
+			logger.error("공고의 지원자 리스트 가져오기 실패", e);
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
 		
-		List<Applicant> applicantList = applicantDao.findAllApplicantByRecruitReSeq(reSeq);
-		resultMap.put("applicant-List", applicantList);
-		return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+		return new ResponseEntity<List<Map<String, Object>>>(applicantList, status);
 	}
 
 	@GetMapping(value = "/getListByCompany/{comSeq}")
 	@ApiOperation(value = "회사에 따른 지원자 리스트 모두 가져오기")
-	public ResponseEntity<List<Applicant>> getApplicationListByCompany(@PathVariable("comSeq") int comSeq) {
-
-		List<Applicant> allApplicantList = applicantDao.findAll();
-		List<Applicant> resultApplicantList = new ArrayList<Applicant>();
-
-		for (int i = 0; i < allApplicantList.size(); i++) {
-			Applicant applicant = allApplicantList.get(i);
-			int recruitSeq = applicant.getRecruitReSeq();
-			Recruit recruit = recruitDao.findRecruitByReSeq(recruitSeq);
-			if (comSeq == recruit.getCompanyComSeq()) {
-				resultApplicantList.add(applicant);
+	public ResponseEntity<List<Map<String, Object>>> getApplicationListByCompany(@PathVariable("comSeq") int comSeq) {
+		HttpStatus status = null;
+		List<Map<String, Object>> applicantList = new ArrayList<Map<String,Object>>();
+		
+		try {
+			// 모든 지원자 목록
+			List<Applicant> allApplicantList = applicantDao.findAll();
+			
+			for (int i = 0; i < allApplicantList.size(); i++) {
+				Applicant applicant = allApplicantList.get(i);
+				
+				if (comSeq == recruitDao.findRecruitByReSeq(applicant.getRecruitReSeq()).getCompanyComSeq()) {
+					Map<String, Object> resultMap = new HashMap<String, Object>();
+					
+					// 지원자 seq
+					resultMap.put("apply-Seq", applicant.getApplySeq());
+					// 지원자 session Id
+					resultMap.put("apply-Id", applicant.getApplyId());
+					// 지원자 이름
+					resultMap.put("apply-Name", applicant.getApplyName());
+					// 지원자 email
+					resultMap.put("apply-Email", applicant.getApplyEmail());
+					// 지원자 생년월일
+					resultMap.put("apply-Birth", applicant.getApplyBirth());
+					// 지원자 핸드폰 번호
+					resultMap.put("apply-Phone", applicant.getApplyPhone());
+					// 지원자 대학교
+					resultMap.put("apply-University", applicant.getApplyUniversity());
+					// 지원자 전공
+					resultMap.put("apply-Major", applicant.getApplyMajor());
+					// 지원자 학점
+					resultMap.put("apply-Grade", applicant.getApplyGrade());
+					// 지원자 자기소개서 항목 1
+					resultMap.put("apply-Resume1", applicant.getApplyResume1());
+					// 지원자 자기소개서 항목 2
+					resultMap.put("apply-Resume2", applicant.getApplyResume2());
+					// 지원자 자기소개서 항목 3
+					resultMap.put("apply-Resume3", applicant.getApplyResume3());
+					// 지원자 자기소개서 항목 4
+					resultMap.put("apply-Resume4", applicant.getApplyResume4());
+					// 지원자가 할당되었는지
+					resultMap.put("apply-Assigned", applicant.getApplyAssigned());
+					// 지원자 직무 이름
+					resultMap.put("apply-Career-Name", careerDao.findCareerByCaSeq(applicant.getCareerCaSeq()).getCaName());
+					// 지원자 공고 seq
+					resultMap.put("apply-Recruit-Seq", applicant.getRecruitReSeq());
+					
+					applicantList.add(resultMap);
+				}
 			}
+			
+			status = HttpStatus.OK;
+		} catch (RuntimeException e) {
+			logger.error("공고리스트 가져오기 실패", e);
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
 		}
-		return new ResponseEntity<List<Applicant>>(resultApplicantList, HttpStatus.OK);
+		
+		return new ResponseEntity<List<Map<String, Object>>>(applicantList, status);
 	}
 
 //	@PostMapping("/assign/{groupSeq}")
