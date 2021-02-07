@@ -114,7 +114,7 @@
             <td>{{ recruit.reStartDate }} ~ {{ recruit.reEndDate }}</td>
             <td>
               <!-- <v-btn :to="{ name: 'Progress', params: { recruitNo: recruit.reSeq } }" >관리하기</v-btn> -->
-              <v-btn @click="goToProgress(recruit)">관리하기</v-btn>
+              <v-btn @click="goToProgress(recruit, index)">관리하기</v-btn>
             </td>
             <td v-if="recruit.reSeq !== 3">
               <v-btn @click="deleteRecruit(recruit.reSeq)">삭제</v-btn>
@@ -142,7 +142,6 @@
       return {
         // com_name: "버즈글로벌",
         dialog: false,
-        myReno: '',
 
         formData: {
           reYear: [2021, 2022, 2023],
@@ -197,16 +196,16 @@
           )
       },
 
-      goToProgress: function (recruit) {
-        this.myReno = recruit.reSeq
+      goToProgress: function (recruit, index) {
         this.$store.state.selectedRecruitNo = recruit.reSeq
         console.log("goToProgres!!", this.$store.state.selectedRecruitNo)
         this.$router.push({
           // name: 'Progress',
           name: 'Menu',
           params: {
+            recruitIndex: index,
             recruitNo: recruit.reSeq,
-            recruitInfo: recruit
+            recruitItem: recruit
           }
         })
       }

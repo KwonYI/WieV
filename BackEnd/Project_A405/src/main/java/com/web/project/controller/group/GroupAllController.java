@@ -284,6 +284,7 @@ public class GroupAllController {
 	@ApiOperation(value = "그룹 나누기")
 	public Object divide(@Valid @RequestBody GroupAllRequest groupAllRequest, @PathVariable("recruitSeq") int recruitSeq) {
 		HttpStatus status = null;
+		System.out.println(groupAllRequest);
 		GroupAll resultGroupAll = null;
 
 		Recruit recruit = recruitDao.findRecruitByReSeq(recruitSeq);

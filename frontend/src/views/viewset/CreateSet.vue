@@ -89,39 +89,46 @@
         
         
         <hr>
-        <!-- 스케줄 -->
+        <!-- 스케줄 테이블 -->
         <v-data-table
           :headers="schGroupTable.headers"
           :items="schGroupTable.schGroups"
-          single-expand
           :expanded.sync="schGroupTable.expanded"
+          single-expand
           item-key="schGroupNo"
+          :align="center"
           @click:row="(item, slot) => slot.expand(!slot.isExpanded)"
         >
+
+          <!-- 세부그룹 확장 패널 -->
           <template v-slot:expanded-item="{ headers, item: groupItem }">
-            <td :colspan="headers.length">
-              {{ groupItem.schSmallGroups }}
-              <!-- <v-data-table
-                :items="[group]"
+            <td :colspan="headers.length" class="pa-0">
+              <!-- 세부그룹 테이블 -->
+              <v-data-table
+                :headers="headers"
+                :items="groupItem.schSmallGroups"
+                item-key="schSmallGroupNo"
+                hide-default-header
                 hide-default-footer
               >
-              </v-data-table> -->
-
-              <!-- <tbody>
-              <tr v-for="smallItem in item.schSmallGroups" :key="smallItem">
-                <td>{{ smallItem.schSmallGroupNo }}</td>
-                <td>{{ item.schGroupDate }}</td>
-                <td>{{ item.schGroupTime }}</td>
-                <td>{{ item.schGroupCareer }}</td>
-                <td>{{ smallItem.schSmallGroupInterview }}</td>
-                <td>{{ smallItem.schSmallGroupViewee }}</td>
-                <td>{{ item.schGroupGuide }}</td>
-                <td>{{ item.schGroupViewer }}</td>
-              </tr>
-              </tbody> -->
-
+                <template v-slot:body="{ items }">
+                  <tbody>
+                    <tr v-for="(item, i) in items" :key="i">
+                      <td>{{ item.schSmallGroupNo }}</td>
+                      <td>{{ groupItem.schGroupDate }}</td>
+                      <td>{{ groupItem.schGroupTime }}</td>
+                      <td>{{ groupItem.schGroupCareer }}</td>
+                      <td>{{ item.schSmallGroupInterview }}</td>
+                      <td>{{ item.schSmallGroupViewee }}</td>
+                      <td>{{ groupItem.schGroupGuide }}</td>
+                      <td>{{ groupItem.schGroupViewer }}</td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-data-table>
             </td>
           </template>
+
         </v-data-table>
       </v-col>
     </v-row>
@@ -258,13 +265,13 @@ export default {
         // 직군
         career: '',
         // 면접 유형
-        viewTypes: [],
+        interviewTypeList: [],
         // 시작 날짜, 7/10
         startDate: '',
         // 시작 시간
         startTime: '',
         // 종료 날짜(안 써도 됨)
-        endDate: '',
+        // endDate: '',
         // 종료 시간
         endTime: '',
         // 면접 그룹당 면접관 수, int
@@ -286,17 +293,45 @@ export default {
         headers: [
           {
             text: 'No.',
-            align: 'start',
+            align: 'center',
             sortable: false,
             value: 'schGroupNo',
           },
-          { text: '날짜', value: 'schGroupDate' },
-          { text: '시간', value: 'schGroupTime' },
-          { text: '직무', value: 'schGroupCareer' },
-          { text: '면접 유형', value: 'schGroupInterview' },
-          { text: '지원자', value: 'schGroupViewee' },
-          { text: '대기실', value: 'schGroupGuide' },
-          { text: '면접실', value: 'schGroupViewer' },
+          {
+            text: '날짜',
+            align: 'center',
+            value: 'schGroupDate'
+          },
+          {
+            text: '시간',
+            align: 'center',
+            value: 'schGroupTime'
+          },
+          {
+            text: '직무',
+            align: 'center',
+            value: 'schGroupCareer'
+          },
+          {
+            text: '면접 유형',
+            align: 'center',
+            value: 'schGroupInterview'
+          },
+          {
+            text: '지원자',
+            align: 'center',
+            value: 'schGroupViewee'
+          },
+          {
+            text: '대기실',
+            align: 'center',
+            value: 'schGroupGuide'
+          },
+          {
+            text: '면접실',
+            align: 'center',
+            value: 'schGroupViewer'
+          },
         ],
         // 면접 그룹
         schGroups: [

@@ -13,7 +13,7 @@
             <v-subheader>
               채용공고 리스트
             </v-subheader>
-            <v-list-item-group color="primary">
+            <v-list-item-group v-model="recruitNo" color="#FFF1C3">
               <v-list-item
                 v-for="(item, i) in getRecruitListLately"
                 :key="i"
@@ -30,7 +30,7 @@
         </v-col>
 
         <v-col cols="9">
-          <Recruit v-if="recruitno" :recruitItem="recruitItem" />
+          <Recruit v-if="recruitNo > -1" :recruitItem="recruitItem" />
           <RecruitWarning v-else/>
         </v-col>
 
@@ -55,8 +55,8 @@
     
     data: function () {
       return {
-        recruitno: -1,
-        recruitItem: Object,
+        recruitNo: this.$route.params.recruitIndex,
+        recruitItem: this.$route.params.recruitItem,
       }
     },
 
@@ -65,26 +65,25 @@
       selectRecruit: function (selectedItem) {
         console.log("selectRecruit클릭!", selectedItem)
         // this.$store.state.selectedRecruitNo = reNo
-        this.recruitno = selectedItem.reSeq
+        this.recruitNo = selectedItem.reSeq
         this.recruitItem = selectedItem
         console.log(this.recruitItem)
         // this.$router.push({
         //   name: 'Progress',
         //   params: {
-        //     recruitNo: this.recruitno,
+        //     recruitNo: this.recruitNo,
         //     recruitInfo: reNo
         //   }
         // })
       },
       goToProfile: function () {
-        this.recruitno = ''
+        this.recruitNo = ''
       },
     },
 
     created: function () {
-      this.recruitno = this.$route.params.recruitNo
 
-      console.log("Menu의 createD의 reno", this.recruitno)
+      console.log("Menu의 createD의 reno", this.recruitNo)
       console.log("Menu의 회사 seq", this.getUserComSeq)
       this.$store.dispatch("GET_VIEWER_LIST", this.getUserComSeq)
       this.$store.dispatch("GET_VIEWEE_LIST", this.getUserComSeq)
