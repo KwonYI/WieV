@@ -9,7 +9,18 @@
         {{ re_year }}
         {{ re_flag }}
         {{ re_status }}
-        <!-- 오른쪽에 붙이고 싶어요 -->
+        <input
+          class="btn"
+          type="button"
+          @click="audioOnOOff"
+          value="소리 끄기"
+        />
+        <input
+          class="btn"
+          type="button"
+          @click="videoOnOOff"
+          value="화면 끄기"
+        />
         <input
           class="btn"
           type="button"
@@ -28,7 +39,7 @@
       <v-row>
         <!-- row2[왼쪽] : 관리자 리스트-->
         <v-col cols="3">
-          <user-video :stream-manager="mainStreamManager" />
+          <!-- <user-video :stream-manager="mainStreamManager" /> -->
           <!-- <ManagerList /> -->
         </v-col>
         <!-- row2[가운데] : 지원자 리스트-->
@@ -74,9 +85,6 @@ import UserVideo from "@/components/room/UserVideo";
 import axios from "axios";
 
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
-
-// import { mapState } from "vuex";
-
 // import ManagerList from "@/components/room/ManagerList.vue"
 // import VieweeList from "@/components/room/VieweeList.vue"
 
@@ -99,6 +107,10 @@ export default {
       text: "",
       messages: [],
 
+      // 화면, 소리 체크
+      audioOn: true,
+      videoOn: true,
+
       // From SessionController
       sessionName: undefined,
       token: undefined,
@@ -112,7 +124,7 @@ export default {
       re_status: undefined,
     };
   },
-  mounted() {
+  created: function () {
     this.com_name = this.$route.params.interview.comName;
     this.re_year = this.$route.params.interview.recruitYear;
     this.re_flag = this.$route.params.interview.recruitFlag;
@@ -121,7 +133,8 @@ export default {
     this.token = this.$route.params.interviewer.token;
     this.userName = this.$route.params.interviewer.interviewerName;
     this.type = this.$route.params.interviewer.type;
-
+  },
+  mounted() {
     this.OV = new OpenVidu();
     this.session = this.OV.initSession();
 
@@ -172,7 +185,7 @@ export default {
         );
       });
 
-    // window.addEventListener("beforeunload", this.leaveSession);
+    window.addEventListener("beforeunload", this.leaveSession);
   },
 
   methods: {
@@ -210,6 +223,7 @@ export default {
           },
         })
         .then((res) => {
+          window.removeEventListener("beforeunload", this.leaveSession);
           console.log(res);
           this.$router.push({
             name: "Main",
@@ -219,25 +233,25 @@ export default {
           console.log(err);
           console.log("방 나가기 실패!");
         });
-      // window.removeEventListener("beforeunload", this.leaveSession);
     },
 
     updateMainVideoStreamManager(stream) {
-      // 클릭시 객체 정보 반환
       if (this.mainStreamManager === stream) return;
       this.mainStreamManager = stream;
     },
+
+    audioOnOOff() {
+      this.audioOn = !this.audioOn;
+      this.publisher.publishAudio(this.audioOn);
+    },
+
+    videoOnOOff() {
+      this.videoOn = !this.videoOn;
+      this.publisher.publishVideo(this.videoOn);
+    },
   },
 
-  created: function () {
-    // if (this.viewerLogin) {
-    //   this.$router.push({ name: "ViewerRecruitItem" })
-    // }
-  },
-
-  computed: {
-    // ...mapState(["whoLogin"]),
-  },
+  computed: {},
 };
 </script>
 
