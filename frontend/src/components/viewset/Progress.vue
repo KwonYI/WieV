@@ -15,7 +15,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in filterdProgressList" :key="item.progress_no" class="text-center">
+        <tr v-for="item in this.recruitProgressList" :key="item.progress_no" class="text-center">
           <td>{{ item.group_date }}</td>
           <td>{{ item.group_start_time }}</td>
           <td>{{ item.ca }}</td>
@@ -37,7 +37,7 @@
 </template>
 
 <script>
-  import { mapState } from "vuex"
+  import { mapState, mapGetters } from "vuex"
 
 
   export default {
@@ -50,12 +50,15 @@
       }
     },
     created: function () {
+     
+      
     },
     computed: {
-      ...mapState(["recruitList", "recruitProgressList"]),
-      filterdProgressList: function () {
-        return this.recruitProgressList.filter(re => re.reSeq === this.recruitNo)
-      }
+      ...mapState(["recruitList", "recruitProgressList", "selectedRecruitNo"]),
+      ...mapGetters([]),
+      // filterdProgressList: function () {
+      //   return this.recruitProgressList.filter(re => re.reSeq === this.recruitNo)
+      // }
     },
   }
 </script>

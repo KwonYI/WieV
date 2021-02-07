@@ -69,152 +69,8 @@ export default new Vuex.Store({
       },
     ],
 
+    // 공고별 면접현황 리스트
     recruitProgressList: [
-      {
-        reSeq: 1003,
-        progress_no: 1,
-        group_date: "07/20",
-        group_start_time: "10:00",
-        ca: "SW개발",
-        types: "직무, PT, 토론",
-        applicants: "김지원 외 49",
-        view_wait: "김대기 외 5",
-        interviewers: "김면접 외 14",
-        infomail: "",
-      },
-      {
-        reSeq: 1003,
-        progress_no: 2,
-        group_date: "07/20",
-        group_start_time: "10:00",
-        ca: "마케팅",
-        types: "직무, PT, 토론",
-        applicants: "김지원 외 49",
-        view_wait: "김대기 외 5",
-        interviewers: "김면접 외 14",
-        infomail: "",
-      },
-      {
-        reSeq: 1003,
-        progress_no: 3,
-        group_date: "07/20",
-        group_start_time: "10:00",
-        ca: "회로개발",
-        types: "직무, PT, 토론",
-        applicants: "김지원 외 49",
-        view_wait: "김대기 외 5",
-        interviewers: "김면접 외 14",
-        infomail: "",
-      },
-      {
-        reSeq: 1003,
-        progress_no: 4,
-        group_date: "07/20",
-        group_start_time: "16:00",
-        ca: "SW개발",
-        types: "직무, PT, 토론",
-        applicants: "김지원 외 49",
-        view_wait: "김대기 외 5",
-        interviewers: "김면접 외 14",
-        infomail: "",
-      },
-      {
-        reSeq: 1002,
-        progress_no: 5,
-        group_date: "11/13",
-        group_start_time: "08:00",
-        ca: "SW개발",
-        types: "직무, PT, 토론",
-        applicants: "김지원 외 49",
-        view_wait: "김대기 외 5",
-        interviewers: "김면접 외 14",
-        infomail: "",
-      },
-      {
-        reSeq: 1002,
-        progress_no: 6,
-        group_date: "11/13",
-        group_start_time: "08:00",
-        ca: "총무",
-        types: "직무, PT, 토론",
-        applicants: "김지원 외 49",
-        view_wait: "김대기 외 5",
-        interviewers: "김면접 외 14",
-        infomail: "",
-      },
-      {
-        reSeq: 1002,
-        progress_no: 7,
-        group_date: "11/13",
-        group_start_time: "08:00",
-        ca: "회로개발",
-        types: "직무, PT, 토론",
-        applicants: "김지원 외 49",
-        view_wait: "김대기 외 5",
-        interviewers: "김면접 외 14",
-        infomail: "",
-      },
-      {
-        reSeq: 1002,
-        progress_no: 8,
-        group_date: "11/14",
-        group_start_time: "08:00",
-        ca: "SW개발",
-        types: "직무, PT, 토론",
-        applicants: "김지원 외 49",
-        view_wait: "김대기 외 5",
-        interviewers: "김면접 외 14",
-        infomail: "",
-      },
-
-      {
-        reSeq: 1001,
-        progress_no: 9,
-        group_date: "07/08",
-        group_start_time: "09:00",
-        ca: "리서치",
-        types: "직무, PT, 토론",
-        applicants: "김지원 외 49",
-        view_wait: "김대기 외 5",
-        interviewers: "김면접 외 14",
-        infomail: "",
-      },
-      {
-        reSeq: 1001,
-        progress_no: 10,
-        group_date: "07/08",
-        group_start_time: "09:00",
-        ca: "UI/UX",
-        types: "직무, PT, 토론",
-        applicants: "김지원 외 49",
-        view_wait: "김대기 외 5",
-        interviewers: "김면접 외 14",
-        infomail: "",
-      },
-      {
-        reSeq: 1001,
-        progress_no: 11,
-        group_date: "07/08",
-        group_start_time: "13:00",
-        ca: "리서치",
-        types: "직무, PT, 토론",
-        applicants: "김지원 외 49",
-        view_wait: "김대기 외 5",
-        interviewers: "김면접 외 14",
-        infomail: "",
-      },
-      {
-        reSeq: 1001,
-        progress_no: 12,
-        group_date: "07/08",
-        group_start_time: "13:00",
-        ca: "제품디자인",
-        types: "직무, PT, 토론",
-        applicants: "김지원 외 49",
-        view_wait: "김대기 외 5",
-        interviewers: "김면접 외 14",
-        infomail: "",
-      },
     ],
 
     // 얘는 공고별 저장인데 comVieweeList 쓸거같다.
@@ -264,7 +120,7 @@ export default new Vuex.Store({
 
     // 현재 공고의 지원자만 가져오기
     getVieweeListCurrentRecruit: function(state) {
-      let list = state.comVieweeList.filter(
+      let list = state.recruitProgressList.filter(
         (re) => re.recruitReSeq === state.selectedRecruitNo
       )
       console.log("현재 공고의 지원자 가져오기")
@@ -272,6 +128,17 @@ export default new Vuex.Store({
 
       return list
     },
+
+    // // 현재 공고의 면접현황만 가져오기 => 안써요
+    // getProgressListCurrentRecruit: function(state) {
+    //   let list = state.comVieweeList.filter(
+    //     (re) => re.recruitReSeq === state.selectedRecruitNo
+    //   )
+    //   console.log("현재 공고의 면접현황 가져오기")
+    //   console.log(list)
+
+    //   return list
+    // },
 
     // 회사 전체 면접관 리스트 가져오기
     getComViewerList(state) {
@@ -328,6 +195,14 @@ export default new Vuex.Store({
       console.log("mutaions의 GET면접관LIST", res)
       state.comViewerList = res
     },
+
+    // 공고 면접현황 리스트 state에 저장
+    GET_PROGRESS_LIST(state, res) {
+      console.log("뮤테이션 면접현황LIST 엄청많죠", res)
+      state.recruitProgressList = res
+    }
+
+   
   },
 
 
@@ -404,6 +279,21 @@ export default new Vuex.Store({
         })
         .catch(err => console.log(err))
     },
+
+    // 공고의 면접현황 리스트 가져오기
+    GET_PROGRESS_LIST(context, recruitSeq) {
+      axios.get(`${SERVER_URL}/groupInfo/totalList/${recruitSeq}`)
+      .then(res => {
+        console.log("rjdrjr", recruitSeq)
+        console.log("공고에 대한 프로그레스 받아왓ㅅ나연", res)
+        context.commit("GET_PROGRESS_LIST", res.data)
+      })
+      .catch(err => console.log(err))
+
+      }
+      
+
+   
 
    
 

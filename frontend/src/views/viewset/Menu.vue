@@ -86,11 +86,15 @@
     },
 
     created: function () {
+      console.log("여기서콘솔로찍어봐", this.selectedRecruitNo)
 
       console.log("Menu의 createD의 reno", this.recruitNo)
       console.log("Menu의 회사 seq", this.getUserComSeq)
       this.$store.dispatch("GET_VIEWER_LIST", this.getUserComSeq)
       this.$store.dispatch("GET_VIEWEE_LIST", this.getUserComSeq)
+      this.$store.dispatch("GET_PROGRESS_LIST", this.selectedRecruitNo)
+      
+      
     },
 
     computed: {

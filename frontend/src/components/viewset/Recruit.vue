@@ -47,7 +47,7 @@
   import Progress from '@/components/viewset/Progress'
   import Viewees from '@/components/viewset/Viewees'
   import Viewers from '@/components/viewset/Viewers'
-
+import {  mapState } from "vuex"
   export default {
     name: "Recruit",
     components: {
@@ -81,6 +81,7 @@
     },
     created: function () {
       console.log("reno:", this.recruitItem.reSeq)
+     
     },
     watch: {
       // recruitNo: function () {
@@ -106,6 +107,10 @@
         
        
       },
+    },
+    computed: {
+      ...mapState(["selectedRecruitNo", "recruitList", "comViewerList", "user"]),
+      
     },
   }
 </script>
