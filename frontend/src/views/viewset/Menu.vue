@@ -17,6 +17,7 @@
               <v-list-item
                 v-for="(item, i) in getRecruitListLately"
                 :key="i"
+                :disabled="item.reSeq == $store.state.selectedRecruitNo ? true:false"
                 @click="selectRecruit(item)"
               >
                 <v-list-item-content>
@@ -69,6 +70,7 @@
         this.recruitItem = selectedItem
         console.log(this.recruitItem)
         console.log("menu 왼쪽 리스트에서 선택한 번호:", this.recruitNo)
+        
         // this.$router.push({
         //   name: 'Progress',
         //   params: {
@@ -86,10 +88,10 @@
     },
 
     created: function () {
-      console.log("여기서콘솔로찍어봐", this.selectedRecruitNo)
+      // console.log("여기서콘솔로찍어봐", this.selectedRecruitNo)
 
-      console.log("Menu의 createD의 reno", this.recruitNo)
-      console.log("Menu의 회사 seq", this.getUserComSeq)
+      // console.log("Menu의 createD의 reno", this.recruitNo)
+      // console.log("Menu의 회사 seq", this.getUserComSeq)
       this.$store.dispatch("GET_VIEWER_LIST", this.getUserComSeq)
       this.$store.dispatch("GET_VIEWEE_LIST", this.getUserComSeq)
       this.$store.dispatch("GET_PROGRESS_LIST", this.selectedRecruitNo)

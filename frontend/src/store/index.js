@@ -120,7 +120,8 @@ export default new Vuex.Store({
 
     // 현재 공고의 지원자만 가져오기
     getVieweeListCurrentRecruit: function(state) {
-      let list = state.recruitProgressList.filter(
+      console.log("되어라")
+      let list = state.comVieweeList.filter(
         (re) => re.recruitReSeq === state.selectedRecruitNo
       )
       console.log("현재 공고의 지원자 가져오기")

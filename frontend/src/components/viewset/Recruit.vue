@@ -77,7 +77,7 @@ import {  mapState } from "vuex"
     },
     props: {
       recruitItem: [Object, String, Number],
-      selectRecruitTrigger: [Object, String, Number],
+      
     },
     created: function () {
       console.log("reno:", this.recruitItem.reSeq)

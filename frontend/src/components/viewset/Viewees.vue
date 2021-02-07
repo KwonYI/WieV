@@ -34,7 +34,7 @@
       </thead>
       <tbody>
         <tr
-          v-for="(viewee, index) in this.getVieweeListCurrentRecruit"
+          v-for="(viewee, index) in getVieweeListCurrentRecruit"
           :key="viewee.index"
           class="text-center"
         >
@@ -105,8 +105,7 @@ export default {
   created: function() {
     // this.arr = this.getVieweeListCurrentRecruit;
     this.reno = this.$store.state.selectedRecruitNo;
-    // this.recruitNo = this.$route.params.recruitNo;
-    // this.pageGetVieweeListCurrentRecruit = this.filterdVieweeList()
+    
     console.log("reno:", this.reno);
     console.log("회사모든지원자들어있나 created때?", this.comVieweeList);
   },

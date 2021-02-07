@@ -15,7 +15,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in this.recruitProgressList" :key="item.progress_no" class="text-center">
+        <tr v-for="item in recruitProgressList" :key="item.progress_no" class="text-center">
           <td>{{ item.group_date }}</td>
           <td>{{ item.group_start_time }}</td>
           <td>{{ item.ca }}</td>
