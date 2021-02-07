@@ -48,7 +48,7 @@
               cols="3"
               v-if="
                 info.connectionId === sub.stream.connection.connectionId &&
-                info.type === 'manager'
+                info.type !== 'interviewer'
               "
             >
               <user-video
