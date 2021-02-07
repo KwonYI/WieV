@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '@/views/main/Home.vue'
 import NotFound from '@/views/main/NotFound.vue'
 import Profile from '@/views/accounts/Profile'
+import ProfileUpdate from '@/views/accounts/ProfileUpdateForm'
 import Signup from '@/views/accounts/Signup'
 import Menu from '@/views/viewset/Menu'
 import CreateSet from '@/views/viewset/CreateSet'
@@ -51,6 +52,11 @@ const routes = [{
     path: 'profile',
     name: 'Profile',
     component: Profile,
+  },
+  {
+    path: 'profileUpdateForm',
+    name: 'ProfileUpdateForm',
+    component: ProfileUpdate,
   },
   {
     path: '/menu',

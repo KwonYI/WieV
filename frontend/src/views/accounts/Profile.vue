@@ -31,7 +31,11 @@
         </v-col>
       </v-row>
       <v-row v-if="user.userViewWait === -1">
-        <div>수정하기</div>
+        <div>
+          <router-link :to="{ name: 'ProfileUpdateForm' }">
+          수정하기
+          </router-link>
+        </div>
         <div @click="userDelete">탈퇴하기</div>
       </v-row>
     </v-container>

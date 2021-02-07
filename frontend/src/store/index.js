@@ -301,6 +301,10 @@ export default new Vuex.Store({
       state.user.userComAddress = "";
       state.user.userComHomepage = "";
     },
+    USER_UPDATE(state, res) {
+      state.user.userName = res["user-Name"];
+      state.user.userPhone = res["user-Phone"];
+    },
     GET_COMPANY_NAME_LIST(state, res) {
       console.log(typeof(res));
       console.log("mutaions의 GET_COMPANY_NAME_LIST", res);
@@ -352,6 +356,14 @@ export default new Vuex.Store({
     LOGOUT(context) {
       context.commit("LOGOUT");
       axios.defaults.headers.common["auth-token"] = undefined;
+    },
+    USER_UPDATE(context, userUpdateRequest){
+      axios
+        .put(`${SERVER_URL}/hr/update/` + this.state.user.userSeq, userUpdateRequest)
+        .then((res) => {
+          context.commit("USER_UPDATE", res.data)
+          alert("회원정보 수정이 완료되었습니다.")
+        });
     },
     USER_DELETE(context) {
       axios

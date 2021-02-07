@@ -13,6 +13,7 @@ import com.web.project.dao.hr.HrDao;
 import com.web.project.dao.interview.InterviewerDao;
 import com.web.project.model.BasicResponse;
 import com.web.project.model.hr.SignupRequest;
+import com.web.project.model.hr.UpdateRequest;
 import com.web.project.model.interview.Interviewer;
 import com.web.project.model.hr.Company;
 import com.web.project.model.hr.Hr;
@@ -232,60 +233,53 @@ public class HrController {
     }
 
 	// 인사팀 정보 수정
-	@PutMapping("/update")
+	@PutMapping("/update/{userSeq}")
 	@ApiOperation(value = "정보 수정하기")
-	public Object update(@RequestBody Hr hr, HttpServletRequest req) {
-		
-		ResponseEntity response = null;
+	public ResponseEntity<Map<String, Object>> update(@RequestBody UpdateRequest updateRequest, @PathVariable("userSeq") int userSeq) {
 		// 토큰에 저장되어 있는 정보를 가져올 map
 		Map<String, Object> resultMap = new HashMap<>();
-		HttpStatus status = HttpStatus.ACCEPTED;
-		
-		// 하나의 요청에서 HttpServletRequest 객체가 소멸하기 까지 상태정보를 유지하고자 할 때, 
-		// 한번의 요청으로 실행된 페이지끼리 정보를 공유하고자 할 때 사용되며, 
-		// 디스패처에 의한 요청재지정을 하기 전 HttpServletRequest 객체의 setAttribute( ) 메소드로 데이터를 등록하고 
-		// 요청 재지정으로 HttpServletRequest 객체가 전달된 페이지에서 getAttribute( ) 메소드로 추출할 수 있다.
+		HttpStatus status = null;
 		
 		try {
-        	// 토큰에 저장되어 있는 정보를 가져올 map
-            resultMap.putAll(jwtService.get(req.getHeader("auth-token")));
-            
-            Optional<Hr> hrEmailOpt = hrDao.findHrByHrEmail(resultMap.get("hr-Email").toString());
+			Optional<Hr> hrOpt = hrDao.findHrByHrSeq(userSeq);
             
             // UPDATE(U) -> SELECT(R) + INSERT(C)
             // 이름, 비밀번호, 핸드폰 번호 변경만 가능하도록 구현
-            hrEmailOpt.ifPresent(selectHr -> {
-            	selectHr.setHrName(hr.getHrName());
-            	selectHr.setHrPassword(hr.getHrPassword());
-            	selectHr.setHrPhone(hr.getHrPhone());
+            hrOpt.ifPresent(selectHr -> {
+            	selectHr.setHrName(updateRequest.getHrName());
+            	// 이름
+				resultMap.put("user-Name", updateRequest.getHrName());
+            	selectHr.setHrPassword(updateRequest.getHrPassword());
+            	selectHr.setHrPhone(updateRequest.getHrPhone());
+            	// 핸드폰 번호
+				resultMap.put("user-Phone", updateRequest.getHrPhone());
             	
             	hrDao.save(selectHr);
             });
             
             status = HttpStatus.OK;
         } catch (RuntimeException e) {
-            logger.error("정보조회 실패 : {}", e);
+            logger.error("정보 수정 실패 : {}", e);
             resultMap.put("message", e.getMessage());
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
 		
-		response = new ResponseEntity<>("수정 완료", status);
-		return response;
+		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 		
 	}
 	
 	// 인사팀 정보 삭제(탈퇴)
 	@DeleteMapping("/delete/{userSeq}")
 	@ApiOperation(value = "정보 삭제하기")
-	public void delete( @PathVariable("userSeq") int userSeq) {
+	public void delete(@PathVariable("userSeq") int userSeq) {
 		
 		Map<String, Object> resultMap = new HashMap<>();
 		
 		try {
-            Optional<Hr> hrEmailOpt = hrDao.findHrByHrSeq(userSeq);
-            
+            Optional<Hr> hrOpt = hrDao.findHrByHrSeq(userSeq);
+          
             // DELETE(D)
-            hrEmailOpt.ifPresent(selectHr -> {
+            hrOpt.ifPresent(selectHr -> {
             	hrDao.delete(selectHr);
             });
             
