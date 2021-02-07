@@ -43,9 +43,10 @@
                 ></v-autocomplete>
               </v-col>
             </v-col>
+
+            <!--
             <v-col class="d-flex justify-center align-center" cols="4">
               <v-dialog v-model="dialog" max-width="500px">
-                <!-- 그룹 설정 버튼 -->
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn
                     color="secondary"
@@ -55,7 +56,6 @@
                     그룹 설정
                   </v-btn>
                 </template>
-                <!-- 그룹 설정 Modal -->
                 <v-card>
                   <v-card-title>
                     그룹 설정
@@ -73,6 +73,8 @@
                 </v-card>
               </v-dialog>
             </v-col>
+            -->
+
             <v-col cols="3" class="d-flex justify-center align-center">
               <v-btn
                 class="ma-2"
@@ -96,21 +98,47 @@
           :expanded.sync="schGroupTable.expanded"
           single-expand
           item-key="schGroupNo"
-          :align="center"
           @click:row="(item, slot) => slot.expand(!slot.isExpanded)"
         >
+          <!-- 스케줄 row -->
+          <template v-slot:item="{ item, expand, isExpanded }">
+            <tr @click="expand(!isExpanded)">
+              <td>{{ item.schGroupNo }}</td>
+              <td>{{ item.schGroupDate }}</td>
+              <td>{{ item.schGroupTime }}</td>
+              <td>{{ item.schGroupCareer }}</td>
+              <td>
+                <span v-for="(view, i) in item.schGroupInterview" :key="i">{{ view }} </span>
+              </td>
+              <td>
+                <span v-for="(viewee, i) in slicedViewee(item.schGroupViewee)" :key="i">{{ viewee }} </span>
+              </td>
+              <td>
+                <span v-for="(guide, i) in slicedGuide(item.schGroupGuide)" :key="i">{{ guide }} </span>
+              </td>
+              <td>
+                <span v-for="(viewer, i) in slicedViewer(item.schGroupViewer)" :key="i">{{ viewer }} </span>
+              </td>
+            </tr>
+          </template>
 
           <!-- 세부그룹 확장 패널 -->
           <template v-slot:expanded-item="{ headers, item: groupItem }">
             <td :colspan="headers.length" class="pa-0">
               <!-- 세부그룹 테이블 -->
               <v-data-table
-                :headers="headers"
+                :headers="schGroupTable.headers"
                 :items="groupItem.schSmallGroups"
                 item-key="schSmallGroupNo"
-                hide-default-header
                 hide-default-footer
               >
+                <!-- <template v-slot:header="{ headers }">
+                  <thead>
+                    <tr :colspan="headers.length">
+                    </tr>
+                  </thead>
+                </template> -->
+
                 <template v-slot:body="{ items }">
                   <tbody>
                     <tr v-for="(item, i) in items" :key="i">
@@ -118,10 +146,18 @@
                       <td>{{ groupItem.schGroupDate }}</td>
                       <td>{{ groupItem.schGroupTime }}</td>
                       <td>{{ groupItem.schGroupCareer }}</td>
-                      <td>{{ item.schSmallGroupInterview }}</td>
-                      <td>{{ item.schSmallGroupViewee }}</td>
-                      <td>{{ groupItem.schGroupGuide }}</td>
-                      <td>{{ groupItem.schGroupViewer }}</td>
+                      <td>
+                        <span v-for="(view, i) in item.schSmallGroupInterview" :key="i">{{ view }} </span>
+                      </td>
+                      <td>
+                        <span v-for="(viewee, i) in slicedViewee(item.schSmallGroupViewee)" :key="i">{{ viewee }} </span>
+                      </td>
+                      <td>
+                        <span v-for="(guide, i) in slicedGuide(groupItem.schGroupGuide)" :key="i">{{ guide }} </span>
+                      </td>
+                      <td>
+                        <span v-for="(viewer, i) in slicedViewer(groupItem.schGroupViewer)" :key="i">{{ viewer }} </span>
+                      </td>
                     </tr>
                   </tbody>
                 </template>
@@ -276,16 +312,20 @@ export default {
         endTime: '',
         // 면접 그룹당 면접관 수, int
         viewerNum: 0.1,
+        // divideInterviewer: 0.1,
         // 면접 그룹당 지원자 수, int
         vieweeNum: 0.1,
+        // divideInterviewee: 0.1,
         // 면접 그룹당 소요 시간, int
         duration: '',
+        // divideTime: '',
         // 블라인드 여부
-        blindView: false,
+        // blindView: false,
         // 면접 세부그룹 당 지원자 수, int
         vieweePerGroup: 0.1,
+        // divideDetailNum: 0.1,
         // 면접 그룹당 세부 그룹 수(자동 계산)
-        groupNum: 0
+        // groupNum: 0
       },
       // 일정 데이터
       schGroupTable: {
@@ -296,41 +336,49 @@ export default {
             align: 'center',
             sortable: false,
             value: 'schGroupNo',
+            width: '1%'
           },
           {
             text: '날짜',
             align: 'center',
-            value: 'schGroupDate'
+            value: 'schGroupDate',
+            width: '5%'
           },
           {
             text: '시간',
             align: 'center',
-            value: 'schGroupTime'
+            value: 'schGroupTime',
+            width: '5%'
           },
           {
             text: '직무',
             align: 'center',
-            value: 'schGroupCareer'
+            value: 'schGroupCareer',
+            width: '5%'
           },
           {
             text: '면접 유형',
             align: 'center',
-            value: 'schGroupInterview'
+            value: 'schGroupInterview',
+            width: '10%'
           },
           {
             text: '지원자',
             align: 'center',
-            value: 'schGroupViewee'
+            value: 'schGroupViewee',
+            width: '20%'
           },
           {
             text: '대기실',
             align: 'center',
-            value: 'schGroupGuide'
+            value: 'schGroupGuide',
+            width: '10%'
           },
           {
             text: '면접실',
             align: 'center',
-            value: 'schGroupViewer'
+            value: 'schGroupViewer',
+            width: '15%'
           },
         ],
         // 면접 그룹
@@ -388,6 +436,9 @@ export default {
     },
     clicked: function (value) {
       this.schGroupTable.expanded.push(value)
+    },
+    test: function () {
+      console.log('expanded')
     }
   },
   watch: {
@@ -412,6 +463,15 @@ export default {
     viewTypesNum() {
       return _.findLastIndex(this.formData.viewTypes) + 1
     },
+    slicedViewee() {
+      return (Viewee) => { return _.slice(Viewee, 0, 5) }
+    },
+    slicedGuide() {
+      return (Guide) => { return _.slice(Guide, 0, 2) }
+    },
+    slicedViewer() {
+      return (Viewer) => { return _.slice(Viewer, 0, 3) }
+    }
   },
   created () {
     
@@ -429,6 +489,11 @@ export default {
     top: 0;
     color: black;
   } */
+
+td {
+  text-align: center;
+}
+
 table.table {
   margin:0 auto;
   width: 98%;
