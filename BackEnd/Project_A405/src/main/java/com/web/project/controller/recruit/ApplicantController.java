@@ -120,7 +120,7 @@ public class ApplicantController {
 	@GetMapping(value = "/getList/{reSeq}")
 	@ApiOperation(value = "공고에 따른 지원자 리스트 모두 가져오기")
 	public ResponseEntity<List<Applicant>> getApplicationList(@PathVariable("reSeq") int reSeq) {
-		System.out.println(reSeq);
+//		System.out.println(reSeq);
 		List<Applicant> applicantList = applicantDao.findAllApplicantByRecruitReSeq(reSeq);
 		return new ResponseEntity<List<Applicant>>(applicantList, HttpStatus.OK);
 	}

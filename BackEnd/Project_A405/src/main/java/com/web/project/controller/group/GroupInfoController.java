@@ -83,11 +83,14 @@ public class GroupInfoController {
 
 	@Autowired
 	DetailOrderDao detailOrderDao;
+	
+	@Autowired
+	CareerDao careerDao;
 
 	public static final Logger logger = LoggerFactory.getLogger(HrController.class);
 
 	@GetMapping("/totalList/{recruitSeq}")
-	@ApiOperation(value = "직무 모두 가져오기")
+	@ApiOperation(value = "공고 그룹 모두 가져오기")
 	public ResponseEntity<JSONArray> totalList(@PathVariable("recruitSeq") int recruitSeq) {
 		HttpStatus status = null;
 		JSONArray jsonArray = new JSONArray();
@@ -232,9 +235,13 @@ public class GroupInfoController {
 				}
 				jsonObject.put("groupApplicantList", groupApplicantList);
 				jsonObject.put("groupDetailList", groupDetailList);
+				
+				// 10. 해당 그룹이 어떤 직무인지 저장
+				jsonObject.put("groupCareerName", careerDao.findCareerByCaSeq(groupAll.getCareerCaSeq()).getCaName());
 
-				// 10. JSON Array에 넣는다.
+				// 11. JSON Array에 넣는다.
 				jsonArray.put(jsonObject);
+				System.out.println(jsonObject);
 			}
 			status = HttpStatus.OK;
 		} catch (RuntimeException e) {
