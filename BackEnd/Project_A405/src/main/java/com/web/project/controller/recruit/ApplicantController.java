@@ -12,8 +12,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -119,21 +121,24 @@ public class ApplicantController {
 
 	@GetMapping(value = "/getList/{reSeq}")
 	@ApiOperation(value = "공고에 따른 지원자 리스트 모두 가져오기")
-	public ResponseEntity<List<Applicant>> getApplicationList(@PathVariable("reSeq") int reSeq) {
-//		System.out.println(reSeq);
+	public ResponseEntity<Map<String, Object>> getApplicationList(@PathVariable("reSeq") int reSeq) {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		
+		
 		List<Applicant> applicantList = applicantDao.findAllApplicantByRecruitReSeq(reSeq);
-		return new ResponseEntity<List<Applicant>>(applicantList, HttpStatus.OK);
+		resultMap.put("applicant-List", applicantList);
+		return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
 	}
 
 	@GetMapping(value = "/getListByCompany/{comSeq}")
 	@ApiOperation(value = "회사에 따른 지원자 리스트 모두 가져오기")
 	public ResponseEntity<List<Applicant>> getApplicationListByCompany(@PathVariable("comSeq") int comSeq) {
 
-		List<Applicant> AllapplicantList = applicantDao.findAll();
+		List<Applicant> allApplicantList = applicantDao.findAll();
 		List<Applicant> resultApplicantList = new ArrayList<Applicant>();
 
-		for (int i = 0; i < AllapplicantList.size(); i++) {
-			Applicant applicant = AllapplicantList.get(i);
+		for (int i = 0; i < allApplicantList.size(); i++) {
+			Applicant applicant = allApplicantList.get(i);
 			int recruitSeq = applicant.getRecruitReSeq();
 			Recruit recruit = recruitDao.findRecruitByReSeq(recruitSeq);
 			if (comSeq == recruit.getCompanyComSeq()) {

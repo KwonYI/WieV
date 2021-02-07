@@ -241,7 +241,7 @@ public class GroupInfoController {
 
 				// 11. JSON Array에 넣는다.
 				jsonArray.put(jsonObject);
-				System.out.println(jsonObject);
+//				System.out.println(jsonObject);
 			}
 			status = HttpStatus.OK;
 		} catch (RuntimeException e) {

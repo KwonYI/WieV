@@ -370,7 +370,7 @@ public class GroupAllController {
 								groupAllDao.findGroupAllByGroupSeq(resultGroupAll.getGroupSeq()).getGroupSeq());
 //						System.out.println(groupAllRequest.getInterviewTypeList().get(j));
 
-						groupType.setInterviewTypeTypeSeq(groupAllRequest.getInterviewTypeList().get(j).getTypeSeq());
+						groupType.setInterviewTypeTypeSeq(interviewTypeDao.findInterviewTypeByTypeName(groupAllRequest.getInterviewTypeList().get(j)).getTypeSeq());
 						groupType.setWaitSessionName(getUUID());
 						groupType.setInterviewSessionName(getUUID());
 
