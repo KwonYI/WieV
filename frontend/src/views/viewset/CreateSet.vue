@@ -15,6 +15,7 @@
               <v-select :items="item.data" :label="item.name" solo hide-details disabled>
               </v-select>
             </v-col>
+            {{ recruitItem }}
           </v-row>
         </v-col>
         <!-- 스케줄 자동생성 입력 -->
@@ -135,16 +136,15 @@ const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
 export default {
   name: "CreateSet",
-  props: {
-    recruitNo: [Object, String, Number]
-  },
   data() {
     return {
       dialog: false,
 
+      recruitItem: this.$route.params.recruitItem,
+
       // 시즌 데이터
-      seasonForm: [
-        
+      seasonData: [
+
         {
           name: "시즌",
           data: ["2020 하반기", "2021 상반기", "2021 하반기"],
@@ -244,7 +244,7 @@ export default {
         },
         {
           name: "지원자 수",
-          data: [1, 2, 3, 45, 6],
+          data: [1, 2, 3, 4, 5, 6],
           col: 3,
           mutiple: false,
           value: 'vieweePerGroup'
@@ -252,7 +252,6 @@ export default {
 
       ],
       // 일정 생성 V-Model
-      seasonData: 1,
       formData: {
         // 부서
         part: '',
@@ -346,7 +345,7 @@ export default {
     // 면접 스케줄 추가
     addSchedule: function () {
       // axios.post(`https://localhost:8080/groupAll/divide` + this.recruitNo, this.formData)
-      axios.post(`${SERVER_URL}/groupAll/divide/` + this.recruitNo, this.formData)
+      axios.post(`${SERVER_URL}/groupAll/divide/` + this.recruitItem.reSeq, this.formData)
         .then(res => {
           console.log(res)
         })
@@ -380,7 +379,7 @@ export default {
     },
   },
   created () {
-    console.log(this.$route.params.recruitNo)
+    
   }
 }
 </script>

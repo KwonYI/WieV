@@ -1,6 +1,6 @@
 <template>
   <div id="viewers">
-    {{ recruitNo }}
+    현재 채용공고 번호 : {{ recruitItem.reSeq }}
     <v-toolbar dark color="teal">
       <v-toolbar-title></v-toolbar-title>
       <!-- <v-toolbar-title>면접관 찾기</v-toolbar-title>
@@ -10,7 +10,7 @@
 
         <!-- <label>File
           <input v-model="title"> -->
-          <v-text class="m-2">File:</v-text>
+          <span class="m-2">File:</span>
           <input type="file" id="files" ref="files" v-on:change="handleFileUpload()" multiple />
         <!-- </label> -->
         <v-btn class="m-3" v-on:click="submitFile()">엑셀 업로드</v-btn>
@@ -54,7 +54,7 @@ const SERVER_URL = process.env.VUE_APP_SERVER_URL
   export default {
     name: "Viewers",
     props: {
-      recruitNo: [Object, String, Number],
+      recruitItem: [Object, String, Number],
     },
     data: function () {
       return {
@@ -85,7 +85,7 @@ const SERVER_URL = process.env.VUE_APP_SERVER_URL
       },
 
       filterdVieweeList: function () { 
-        return this.comVieweeList.filter(re => re.recruitReSeq === this.recruitNo)
+        return this.comVieweeList.filter(re => re.recruitReSeq === this.recruitItem.reSeq)
       },
 
       submitFile() {
@@ -93,7 +93,7 @@ const SERVER_URL = process.env.VUE_APP_SERVER_URL
         formData.append('title', this.title)
         formData.append('files', this.files[0])
         
-        axios.post(`${SERVER_URL}/interviewer/register/` + this.recruitNo, formData, {
+        axios.post(`${SERVER_URL}/interviewer/register/` + this.recruitItem.reSeq, formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }

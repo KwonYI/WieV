@@ -1,6 +1,6 @@
 <template>
   <div id="viewees">
-    {{ recruitNo }}
+    현재 채용공고 번호 : {{ recruitItem.reSeq }}
     <v-toolbar dark color="teal">
       <v-toolbar-title></v-toolbar-title>
       <!-- <v-toolbar-title>지원자 찾기</v-toolbar-title> -->
@@ -19,7 +19,7 @@
       ></v-autocomplete>
       <v-btn class="m-3"> 검색 </v-btn> -->
 
-      <v-text class="m-2">File:</v-text>
+      <span class="m-2">File:</span>
         <!-- <input v-model="title" /> -->
         <input
           type="file"
@@ -85,7 +85,7 @@ import { mapState, mapGetters } from "vuex";
 export default {
   name: "Viewees",
   props: {
-    recruitNo: [Object, String, Number]
+    recruitItem: [Object, String, Number]
   },
   data: function() {
     return {

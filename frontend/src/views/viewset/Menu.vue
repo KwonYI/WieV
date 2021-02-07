@@ -13,11 +13,11 @@
             <v-subheader>
               채용공고 리스트
             </v-subheader>
-            <v-list-item-group v-model="selectedItem" color="primary">
+            <v-list-item-group color="primary">
               <v-list-item
                 v-for="(item, i) in getRecruitListLately"
                 :key="i"
-                @click="selectRecruit(item.reSeq)"
+                @click="selectRecruit(item)"
               >
                 <v-list-item-content>
                   <v-list-item-title>
@@ -30,7 +30,7 @@
         </v-col>
 
         <v-col cols="9">
-          <Recruit v-if="recruitno" :recruitNo="recruitno" />
+          <Recruit v-if="recruitno" :recruitItem="recruitItem" />
           <RecruitWarning v-else/>
         </v-col>
 
@@ -56,17 +56,18 @@
     data: function () {
       return {
         recruitno: -1,
-        selectedItem: -1,
+        recruitItem: Object,
       }
     },
 
     methods: {
       // 선택한 공고 정보
-      selectRecruit: function (reNo) {
-        console.log("selectRecruit클릭!", reNo)
-        this.$store.state.selectedRecruitNo = reNo
-        this.recruitno = reNo
-        console.log("recruitno", this.recruitno)
+      selectRecruit: function (selectedItem) {
+        console.log("selectRecruit클릭!", selectedItem)
+        // this.$store.state.selectedRecruitNo = reNo
+        this.recruitno = selectedItem.reSeq
+        this.recruitItem = selectedItem
+        console.log(this.recruitItem)
         // this.$router.push({
         //   name: 'Progress',
         //   params: {

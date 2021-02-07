@@ -14,38 +14,39 @@
             <v-tab :to="{ name: 'Viewers', params: { recruitNo: recruitNo } }">면접관 관리</v-tab>
             <v-tab :to="{ name: 'Viewees', params: { recruitNo: recruitNo } }">지원자 관리</v-tab>
           </v-tabs> -->
-
-          <template v-slot:extension>
-            <v-tabs v-model="recruitTab" align-with-title>
-              <v-tabs-slider></v-tabs-slider>
-              <v-tab v-for="(tab, i) in tabs" :key="i">
-                {{ tab.name }}
-              </v-tab>
-            </v-tabs>
-          </template>
-
-          <v-chip style="" outlined>
-            <router-link :to="{ name: 'CreateSet', params: { recruitNo: recruitNo }}">
-              면접스케줄 생성
-            </router-link>
-          </v-chip>
+          
+          <v-tabs v-model="recruitTab" align-with-title>
+            <v-tabs-slider></v-tabs-slider>
+            <v-tab v-for="(tab, i) in tabs" :key="i">
+              {{ tab.name }}
+            </v-tab>
+          </v-tabs>
+          
+          <div>
+            <v-chip style="" outlined>
+              <router-link :to="{ name: 'CreateSet', params: { recruitItem: recruitItem }}">
+                면접스케줄 생성
+              </router-link>
+            </v-chip>
+          </div>
         </v-app-bar>
         <v-tabs-items v-model="recruitTab" class="bg-transparent">
           <v-tab-item v-for="(tab, i) in tabs" :key="i">
-            <component :is="tab.content" :recruitNo="recruitNo"></component>
+            <component :is="tab.content" :recruitItem="recruitItem"></component>
           </v-tab-item>
         </v-tabs-items>
         <!-- </v-col> -->
       </v-row>
     </v-container>
-    <router-view />
+
+    <!-- <router-view /> -->
   </div>
 </template>
 
 <script>
-  import Progress from '@/views/viewset/Progress'
-  import Viewees from '@/views/viewset/Viewees'
-  import Viewers from '@/views/viewset/Viewers'
+  import Progress from '@/components/viewset/Progress'
+  import Viewees from '@/components/viewset/Viewees'
+  import Viewers from '@/components/viewset/Viewers'
 
   export default {
     name: "Recruit",
@@ -56,7 +57,6 @@
     },
     data: function () {
       return {
-        selectedItem: 1,
         // tabs: [{
         //     text: "면접 일정",
         //   },
@@ -76,11 +76,11 @@
       }
     },
     props: {
-      recruitNo: [Object, String, Number],
+      recruitItem: [Object, String, Number],
       selectRecruitTrigger: [Object, String, Number],
     },
     created: function () {
-      console.log("reno:", this.recruitNo)
+      console.log("reno:", this.recruitItem.reSeq)
     },
     watch: {
       // recruitNo: function () {

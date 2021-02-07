@@ -1,6 +1,6 @@
 <template>
   <div id="progress">
-    {{ recruitNo }}
+    현재 채용공고 번호 : {{ recruitItem.reSeq }}
     <v-simple-table fixed-header class="mt-5" >
       <thead>
         <tr>
@@ -43,7 +43,7 @@
   export default {
     name: "Progress",
     props: {
-      recruitNo: [Object, String, Number],
+      recruitItem: [Object, String, Number],
     },
     data: function () {
       return {
