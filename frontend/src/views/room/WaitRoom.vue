@@ -5,7 +5,7 @@
     <!--상단 바-->
     <v-app-bar class="d-flex justify-end" dense dark>
       <v-toolbar-title class="">
-        {{ com_name }}
+        {{ comName }}
         {{ re_year }}
         {{ re_flag }}
         {{ re_status }}
@@ -140,22 +140,39 @@ export default {
       type: undefined, // 대기실 관리자(manager) / 면접관(interviewer) / 면접자(interviewee)
 
       // From Main.vue
-      com_name: undefined,
+      comName: undefined,
       re_year: undefined,
       re_flag: undefined,
       re_status: undefined,
     };
   },
   created: function () {
-    this.com_name = this.$route.params.interview.comName;
-    this.re_year = this.$route.params.interview.recruitYear;
-    this.re_flag = this.$route.params.interview.recruitFlag;
-    this.re_status = this.$route.params.interview.recruitStatus;
-    this.sessionName = this.$route.params.interviewer.sessionName;
-    this.token = this.$route.params.interviewer.token;
-    this.userName = this.$route.params.interviewer.interviewerName;
-    this.type = this.$route.params.interviewer.type;
+    window.addEventListener("beforeunload", this.leaveSession);
+    window.addEventListener("backbutton", this.leaveSession);
+
+    // this.com_name = this.$route.params.interview.comName;
+    // this.re_year = this.$route.params.interview.recruitYear;
+    // this.re_flag = this.$route.params.interview.recruitFlag;
+    // this.re_status = this.$route.params.interview.recruitStatus;
+    // this.sessionName = this.$route.params.interviewer.sessionName;
+    // this.token = this.$route.params.interviewer.token;
+    // this.userName = this.$route.params.interviewer.interviewerName;
+    // this.type = this.$route.params.interviewer.type;
+
+    this.comName = this.$route.query.comName;
+    this.re_year = this.$route.query.re_year;
+    this.re_flag = this.$route.query.re_flag;
+    this.re_status = this.$route.query.re_status;
+    this.sessionName = this.$route.query.sessionName;
+    this.token = this.$route.query.token;
+    this.userName = this.$route.query.userName;
+    this.type = this.$route.query.type;
   },
+  beforeDestroy() {
+    window.removeEventListener("beforeunload", this.leaveSession);
+    window.removeEventListener("backbutton", this.leaveSession);
+  },
+
   mounted() {
     this.OV = new OpenVidu();
     this.session = this.OV.initSession();
@@ -223,7 +240,6 @@ export default {
           error.message
         );
       });
-
     window.addEventListener("beforeunload", this.leaveSession);
   },
 
@@ -269,11 +285,8 @@ export default {
           },
         })
         .then((res) => {
-          window.removeEventListener("beforeunload", this.leaveSession);
           console.log(res);
-          this.$router.push({
-            name: "Main",
-          });
+          window.close();
         })
         .catch((err) => {
           console.log(err);

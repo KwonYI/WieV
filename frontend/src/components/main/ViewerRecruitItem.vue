@@ -185,7 +185,7 @@ export default {
       type: Object,
     },
   },
-  data: function() {
+  data: function () {
     return {
       // re_data: [1, 2, 3],
       // show: false,
@@ -214,10 +214,24 @@ export default {
         })
         .then((res) => {
           console.log(res);
-          this.$router.push({
+          // this.$router.push({
+          //   name: "WaitRoom",
+          //   params: { interview: this.interview, interviewer: res.data },
+          // });
+          let routeData = this.$router.resolve({
             name: "WaitRoom",
-            params: { interview: this.interview, interviewer: res.data },
+            query: {
+              comName: this.interview.comName,
+              re_year: this.interview.recruitYear,
+              re_flag: this.interview.recruitFlag,
+              re_status: this.interview.recruitStatus,
+              sessionName: res.data.sessionName,
+              token: res.data.token,
+              userName: res.data.interviewerName,
+              type: res.data.type,
+            },
           });
+          window.open(routeData.href, "_blank");
         })
         .catch((err) => {
           if (this.user.userViewWait == 0) {
