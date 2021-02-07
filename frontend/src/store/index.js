@@ -216,7 +216,7 @@ export default new Vuex.Store({
       // viewSeq, viewWait
     ],
 
-    // participantsInInterviews: [],
+    participants: [],
   },
 
   getters: {
@@ -232,12 +232,6 @@ export default new Vuex.Store({
     getUserComSeq(state) {
       return state.user.userComSeq;
     },
-    // getParticipantsInInterview(state) {
-    //   return (sessionName) =>
-    //     state.participantsInInterviews.filter((interview) => {
-    //       return interview.sessionName === sessionName
-    //     })
-    // },
 
     //공고 최근순으로 정렬해서 가져오기
     getRecruitListLately: function(state) {
@@ -261,6 +255,12 @@ export default new Vuex.Store({
       console.log("게터 getComViewerList");
       console.log(state.user.comViewerList);
       return state.user.comViewerList;
+    },
+
+    getParticipants(state) {
+      console.log("게터 실행, 모든 연결 정보 수");
+      console.log(state.participants.length);
+      return state.participants;
     },
   },
   mutations: {
@@ -312,21 +312,43 @@ export default new Vuex.Store({
       state.comViewerList = res;
       // console.log(state.comViewerList);
     },
+    addParticipants(state, data) {
+      console.log("뮤테이션 실행 밑에 있는 데이터 넣을 예정");
+      console.log(data);
+      state.participants.push(data);
+    },
+    clearParticipants(state, data) {
+      console.log("클리어 실행, 실행 후 남은 정보");
+      state.participants = data;
+      console.log(state.participants.length);
+    },
+    deleteParticipants(state, data) {
+      const index = state.participants.indexOf(data, 0);
+      console.log("정보 삭제 시도");
+      console.log("변경전 : ", state.participants.length);
+      if (index >= 0) {
+        state.participants.splice(index, 1);
+      }
+      console.log("변경후 : ", state.participants.length);
+    },
   },
 
   actions: {
     // 로그인, 로그아웃
     LOGIN(context, user) {
-      axios.post(`${SERVER_URL}/hr/login`, user).then((response) => {
-        context.commit("LOGIN", response.data)
-        axios.defaults.headers.common[
-          "auth-token"
-        ] = `${response.data["auth-token"]}`
-      }).then((res) => {
-        console.log(res)
-      }).catch(() => 
-      alert("이메일과 비밀번호를 확인해주십시오.")
-    )},
+      axios
+        .post(`${SERVER_URL}/hr/login`, user)
+        .then((response) => {
+          context.commit("LOGIN", response.data);
+          axios.defaults.headers.common[
+            "auth-token"
+          ] = `${response.data["auth-token"]}`;
+        })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch(() => alert("이메일과 비밀번호를 확인해주십시오."));
+    },
     LOGOUT(context) {
       context.commit("LOGOUT");
       axios.defaults.headers.common["auth-token"] = undefined;
@@ -356,11 +378,10 @@ export default new Vuex.Store({
         });
     },
 
-    DELETE_RECRUIT(context, reSeq){
-      axios.delete(`${SERVER_URL}/recruit/delete/` + reSeq)
-      .then(
-        alert("삭제되었습니다!")
-      );
+    DELETE_RECRUIT(context, reSeq) {
+      axios
+        .delete(`${SERVER_URL}/recruit/delete/` + reSeq)
+        .then(alert("삭제되었습니다!"));
     },
 
     //지원자를 엑셀로 저장

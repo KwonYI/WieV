@@ -39,26 +39,34 @@
       <!-- row2 : 관리자, 지원자, FAQ 잡동사니 row-->
       <v-row>
         <!-- row2[왼쪽] : 관리자 리스트-->
+        <div
+          v-for="sub in subscribers"
+          :key="sub.stream.connection.connectionId"
+        >
+          <div v-for="(info, index) in participants" :key="index">
+            <v-col
+              cols="3"
+              v-if="
+                info.connectionId === sub.stream.connection.connectionId &&
+                info.type === 'manager'
+              "
+            >
+              <user-video
+                :stream-manager="sub"
+                @click.native="updateMainVideoStreamManager(sub)"
+              />
+            </v-col>
+            <v-col cols="6" v-else
+              ><user-video
+                :stream-manager="sub"
+                @click.native="updateMainVideoStreamManager(sub)"
+              />
+            </v-col>
+          </div>
+        </div>
         <v-col cols="3">
           <!-- <user-video :stream-manager="mainStreamManager" /> -->
           <!-- <ManagerList /> -->
-        </v-col>
-        <!-- row2[가운데] : 지원자 리스트-->
-        <v-col cols="6">
-          <div id="video-container">
-            <!-- <user-video
-              :stream-manager="publisher"
-              @click.native="updateMainVideoStreamManager(publisher)"
-            /> -->
-            <user-video
-              v-for="sub in subscribers"
-              :key="sub.stream.connection.connectionId"
-              :stream-manager="sub"
-              @click.native="updateMainVideoStreamManager(sub)"
-            />
-          </div>
-
-          <!-- <VieweeList /> -->
         </v-col>
         <!-- row2[오른쪽] : 우측에 FAQ 채팅창 잡동사니 -->
         <v-col cols="3">
@@ -88,6 +96,8 @@ import { OpenVidu } from "openvidu-browser";
 import UserVideo from "@/components/room/UserVideo";
 import axios from "axios";
 
+import { mapGetters, mapMutations } from "vuex";
+
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 // import ManagerList from "@/components/room/ManagerList.vue"
 // import VieweeList from "@/components/room/VieweeList.vue"
@@ -106,6 +116,7 @@ export default {
       mainStreamManager: undefined, // 메인 비디오
       publisher: undefined, // 연결 객체
       subscribers: [],
+      participants: [],
 
       // 채팅
       text: "",
@@ -118,6 +129,9 @@ export default {
       videoMsg: "화면 On",
       // shareOn: false,
       // shareMsg: "공유 Off",
+
+      // ConnectionId
+      info: { sessionName: "", type: "", connectionId: undefined },
 
       // From SessionController
       sessionName: undefined,
@@ -185,6 +199,22 @@ export default {
 
         this.session.publish(this.publisher);
         this.subscribers.push(this.publisher);
+
+        this.info.sessionName = this.sessionName;
+        this.info.type = this.type;
+        this.info.connectionId = this.publisher.stream.connection.connectionId;
+        this.addParticipants(this.info);
+
+        console.log("웨이트룸에서 길이 찍기");
+        console.log(this.getParticipants.length);
+
+        this.getParticipants.forEach((element) => {
+          if (element.sessionName == this.sessionName)
+            this.participants.push(element);
+        });
+
+        console.log(this.participants);
+        // this.clearParticipants([]);
       })
       .catch((error) => {
         console.log(
@@ -198,6 +228,11 @@ export default {
   },
 
   methods: {
+    ...mapMutations([
+      "addParticipants",
+      "clearParticipants",
+      "deleteParticipants",
+    ]),
     sendMessage() {
       if (this.text === "") return;
 
@@ -216,6 +251,8 @@ export default {
     },
 
     leaveSession() {
+      this.deleteParticipants(this.info);
+
       if (this.session) this.session.disconnect();
 
       this.session = undefined;
@@ -266,7 +303,9 @@ export default {
     },
   },
 
-  computed: {},
+  computed: {
+    ...mapGetters(["getParticipants"]),
+  },
 };
 </script>
 
