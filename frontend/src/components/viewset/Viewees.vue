@@ -17,7 +17,7 @@
 
       <v-btn class="m-2" @click="exportExcel">엑셀 양식 다운로드</v-btn>
 
-      <v-btn class="m-2" @click="createVieweeDB">목록 업데이트 </v-btn>
+      <v-btn class="m-2" @click="updateVieweeDB">목록 업데이트 </v-btn>
     </v-toolbar>
     <v-simple-table fixed-header height="500px" class="mt-5">
       <thead>
@@ -39,7 +39,7 @@
           class="text-center"
         >
           <td>{{ index + 1 }}</td>
-          <td>{{ viewee.careerCaSeq }}</td>
+          <td>{{ viewee.applyCareerName }}</td>
           <td>{{ viewee.applyName }}</td>
           <td>{{ viewee.applyPhone }}</td>
           <td>{{ viewee.applyBirth }}</td>
@@ -153,12 +153,10 @@ export default {
 
     //axios.post(보낼url, reno)
 
-    // updateVieweeDB: function () {
-    //   this.$store.dispatch("UPDATE_VIEWEE_LIST", this.reno);
-    // this.$router.go(this.$router.currentRoute, { recruitNo: this.recruitNo})
-    // this.pageGetVieweeListCurrentRecruit = this.filterdVieweeList()
-    // this.$router.push({name: 'Viewees', params: { recruitNo : this.reno }});
-    // },
+    updateVieweeDB: function () {
+      this.$store.dispatch("GET_VIEWEE_LIST",this.user.userComSeq );
+
+    },
 
     // watch: {
     //   getVieweeListCurrentRecruit: function () {
@@ -168,14 +166,14 @@ export default {
 
     // },
 
-    createVieweeDB: function() {
-      this.$store.dispatch("UPDATE_VIEWEE_LIST", this.reno);
-      this.filterdVieweeList();
-      this.arr = this.recruitVieweeList;
-    },
+    // updateVieweeDB: function() {
+    //   this.$store.dispatch("UPDATE_VIEWEE_LIST", this.reno);
+    //   this.filterdVieweeList();
+    //   this.arr = this.recruitVieweeList;
+    // },
   },
   computed: {
-    ...mapState(["recruitVieweeList", "comVieweeList"]),
+    ...mapState(["recruitVieweeList", "comVieweeList", "user"]),
     ...mapGetters(["getUserComSeq", "getVieweeListCurrentRecruit"]),
   },
 };

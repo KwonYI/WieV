@@ -16,7 +16,8 @@
         <v-btn class="m-3" v-on:click="submitFile()">엑셀 업로드</v-btn>
     
       <v-btn class="m-3" @click="exportExcel">엑셀 양식 다운로드</v-btn>
-    
+          <v-btn class="m-2" @click="updateViewerDB">목록 업데이트 </v-btn>
+
     </v-toolbar>
     <v-simple-table fixed-header  height="500px" class="mt-5">
       <thead>
@@ -49,8 +50,8 @@
 import { mapGetters, mapState } from "vuex"
 import XLSX from 'xlsx'
 import axios from 'axios'
-const SERVER_URL = process.env.VUE_APP_SERVER_URL
-
+// const SERVER_URL = process.env.VUE_APP_SERVER_URL
+const SERVER_URL = "https://localhost:8080"
   export default {
     name: "Viewers",
     props: {
@@ -112,10 +113,17 @@ const SERVER_URL = process.env.VUE_APP_SERVER_URL
       handleFileUpload() {
         this.files = this.$refs.files.files
         console.log(this.files)
+      },
+
+      updateViewerDB() {
+
+        this.$store.dispatch("GET_VIEWER_LIST",this.user.userComSeq );
+
+
       }
     },
     computed: {
-      ...mapState(["selectedRecruitNo", "recruitList", "comViewerList"]),
+      ...mapState(["selectedRecruitNo", "recruitList", "comViewerList", "user"]),
       ...mapGetters(["getComViewerList"])
     },
   }

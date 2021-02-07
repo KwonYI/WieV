@@ -316,13 +316,13 @@ export default new Vuex.Store({
       console.log("mutaions의 GET_VIEWEE_LIST", res)
       state.comVieweeList = res
     },
-    // 업데이트된 지원자 리스트 state에 저장
-    UPDATE_VIEWEE_LIST(state, res) {
-      console.log("mutaions의 UPDATE_VIEWEE_LIST", res)
-      // 얘는 뭐지?
-      state.recruitVieweeList = res
-      state.comVieweeList.push(res)
-    },
+    // // 업데이트된 지원자 리스트 state에 저장
+    // UPDATE_VIEWEE_LIST(state, res) {
+    //   console.log("mutaions의 UPDATE_VIEWEE_LIST", res)
+    //   // 얘는 뭐지?
+    //   state.recruitVieweeList = res
+    //   state.comVieweeList.push(res)
+    // },
     // 면접관 리스트 state에 저장
     GET_VIEWER_LIST(state, res) {
       console.log("mutaions의 GET면접관LIST", res)
@@ -403,7 +403,10 @@ export default new Vuex.Store({
           console.log("전체 면접관 리스트 가져오기")
         })
         .catch(err => console.log(err))
-    }
+    },
+
+   
+
   },
 
   plugins: [createPersistedState()],
