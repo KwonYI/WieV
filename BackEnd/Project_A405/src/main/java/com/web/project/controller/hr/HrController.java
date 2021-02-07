@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -84,6 +85,7 @@ public class HrController {
 				String token = jwtService.create(loginHr);
 				logger.trace("로그인 토큰 정보 : {}", token);
 				resultMap.put("auth-token", token);
+				resultMap.put("user-Seq", loginHr.getHrSeq());
 				// email
 				resultMap.put("user-Email", loginHr.getHrEmail());
 				// 이름
@@ -118,6 +120,7 @@ public class HrController {
 				String token = jwtService.create(loginInterviewer);
 				logger.trace("로그인 토큰 정보 : {}", token);
 				resultMap.put("auth-token", token);
+				resultMap.put("user-Seq", loginInterviewer.getViewSeq());
 				// email
 				resultMap.put("user-Email", loginInterviewer.getViewEmail());
 				// 이름
@@ -272,17 +275,14 @@ public class HrController {
 	}
 	
 	// 인사팀 정보 삭제(탈퇴)
-	@DeleteMapping("/delete")
+	@DeleteMapping("/delete/{userSeq}")
 	@ApiOperation(value = "정보 삭제하기")
-	public void delete(HttpServletRequest req) {
+	public void delete( @PathVariable("userSeq") int userSeq) {
 		
 		Map<String, Object> resultMap = new HashMap<>();
 		
 		try {
-        	// 토큰에 저장되어 있는 정보를 가져올 map
-            resultMap.putAll(jwtService.get(req.getHeader("auth-token")));
-            
-            Optional<Hr> hrEmailOpt = hrDao.findHrByHrEmail(resultMap.get("hr-Email").toString());
+            Optional<Hr> hrEmailOpt = hrDao.findHrByHrSeq(userSeq);
             
             // DELETE(D)
             hrEmailOpt.ifPresent(selectHr -> {

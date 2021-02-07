@@ -2,7 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
 import createPersistedState from "vuex-persistedstate";
-import _ from "lodash";
+import _ from "lodash"
 
 Vue.use(Vuex);
 //  const SERVER_URL = "https://localhost:8080"
@@ -19,6 +19,7 @@ export default new Vuex.Store({
     accessToken: null,
     // userViewWait => 인사담당자(-1), 대기관(0), 면접관(1) 구분자
     user: {
+      userSeq: 0,
       userEmail: "",
       userName: "",
       userPhone: "",
@@ -276,6 +277,7 @@ export default new Vuex.Store({
   mutations: {
     LOGIN(state, res) {
       state.accessToken = res["auth-token"];
+      state.user.userSeq = res["user-Seq"];
       state.user.userEmail = res["user-Email"];
       state.user.userName = res["user-Name"];
       state.user.userPhone = res["user-Phone"];
@@ -288,6 +290,7 @@ export default new Vuex.Store({
     },
     LOGOUT(state) {
       state.accessToken = null;
+      state.user.userSeq = 0;
       state.user.userEmail = "";
       state.user.userName = "";
       state.user.userPhone = "";
@@ -349,6 +352,14 @@ export default new Vuex.Store({
     LOGOUT(context) {
       context.commit("LOGOUT");
       axios.defaults.headers.common["auth-token"] = undefined;
+    },
+    USER_DELETE(context) {
+      axios
+        .delete(`${SERVER_URL}/hr/delete/` + this.state.user.userSeq)
+        .then(() => {
+          alert("회원 탈퇴가 완료되었습니다.")
+        });
+      context.commit("LOGOUT");
     },
 
     GET_COMPANY_NAME_LIST(context) {

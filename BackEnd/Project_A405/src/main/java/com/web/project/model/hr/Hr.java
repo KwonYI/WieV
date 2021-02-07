@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 public class Hr {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private String hrSeq;
+	private int hrSeq;
 
 	private String hrEmail;
 	

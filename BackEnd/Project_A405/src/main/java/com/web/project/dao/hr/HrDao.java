@@ -15,5 +15,5 @@ public interface HrDao extends JpaRepository<Hr, String> {
     Optional<Hr> findHrByHrEmailAndHrPassword(String hrEmail, String hrPassword);
     Optional<Hr> findHrByHrEmail(String hrEmail);
     Optional<Hr> findHrByHrCertified(String hrCertified);
-
+    Optional<Hr> findHrByHrSeq(int hrSeq);
 }
