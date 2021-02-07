@@ -107,6 +107,11 @@
         this.credentials.userPassword = ""
         })
       },
+      // getCompanyList: function() {
+      //   this.$store
+      //     .dispatch("GET_COMPANY_LIST")
+      //     .then(() => console.log("회사 리스트 가져오기 완료"))
+      // },
     },
   }
 </script>

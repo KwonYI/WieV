@@ -8,7 +8,23 @@
           <tbody>
             <tr v-for="(item, index) in userInfo" :key="index">
               <td>{{ item.label }}</td>
-              <td>
+              <td v-if="index === 6"> <!-- index 6번 select box -->
+                <!-- <v-select
+                      :items="getCompanyNameList"
+                      :label="item.label"
+                      required
+                      v-model="credentials[item.value]"
+                    >
+                </v-select> -->
+                <v-autocomplete
+                  v-model="credentials[item.value]"
+                  :items="companyNameList"
+                  :label="item.name"
+                  hide-details
+                  dense
+                ></v-autocomplete>
+              </td>
+              <td v-else>
                 <v-text-field
                   :label="item.label"
                   :type="item.type"
@@ -17,7 +33,8 @@
               </td>
               <v-btn v-if="index === 0" @click="send">인증 메일 발송 </v-btn>
               <v-btn v-if="index === 1" @click="certified">인증 확인 </v-btn>
-              <v-btn v-if="index === 3" @click="password_certified">비밀번호 확인</v-btn>
+              <v-btn v-if="index === 4" @click="password_certified">비밀번호 확인</v-btn>
+              
             </tr>
           </tbody>
         </v-simple-table>
@@ -56,6 +73,7 @@
 
 <script>
 import axios from "axios"
+ import { mapState } from "vuex";
 
 // const SERVER_URL = "https://localhost:8080/"
 // const SERVER_URL = "https://i4a405.p.ssafy.io:8080"
@@ -93,6 +111,14 @@ export default {
     isCertified: false,
     isPasswordCertified:false,
   }),
+  created: function () {
+    this.$store
+      .dispatch("GET_COMPANY_LIST")
+      .then(() => console.log("회사 리스트 가져오기 완료"))
+  },
+  computed: {
+      ...mapState(["companyNameList"]),
+  },
   methods: {
     // 메일 발송
     send: function() {
@@ -183,8 +209,6 @@ export default {
         alert("정보를 모두 입력해주세요.")
         return
       }
-
-
 
       if (this.credentials.agreed) {
         axios

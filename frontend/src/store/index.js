@@ -37,13 +37,17 @@ export default new Vuex.Store({
     //그냥 인담자, 면접관, 지원자 로그인 상황 한 변수로 통일하는 게 낫다.
     whoLogin: "viewer", //Manager, viewer, viewee
 
-    comData: {
-      comSeq: "1",
-      comName: "WieV Inc.",
-      comLogo: "asdf",
-      comAddress: "서울특별시 강남구 테헤란로",
-      comHomepage: "https://www.naver.com",
-    },
+    companyNameList: [],
+
+    companyList: [
+      {
+        comSeq: 0,
+        comName: "",
+        comLogo: "",
+        comAddress: "",
+        comHomepage: "",
+      },
+    ],
 
     recruitList: [
       {
@@ -232,6 +236,9 @@ export default new Vuex.Store({
     getUserComSeq(state) {
       return state.user.userComSeq;
     },
+    // getCompanyNameList(state){
+    //   return state.companyNameList;
+    // },
     // getParticipantsInInterview(state) {
     //   return (sessionName) =>
     //     state.participantsInInterviews.filter((interview) => {
@@ -243,6 +250,9 @@ export default new Vuex.Store({
     getRecruitListLately: function(state) {
       // return _.sortBy(state.recruitList, 'reSeq').reverse()
       return _.orderBy(state.recruitList, ["reSeq"], ["desc"]);
+    }, 
+    getRecruitListCount: function(state) {
+      return state.recruitList.length;
     },
 
     //현재 공고의 지원자만 가져오는 로직
@@ -288,6 +298,15 @@ export default new Vuex.Store({
       state.user.userComAddress = "";
       state.user.userComHomepage = "";
     },
+    GET_COMPANY_NAME_LIST(state, res) {
+      console.log(typeof(res));
+      console.log("mutaions의 GET_COMPANY_NAME_LIST", res);
+      state.companyNameList = res;
+    },
+    GET_COMPANY_LIST(state, res) {
+      console.log("mutaions의 GET_COMPANY_LIST", res);
+      state.companyList = res;
+    },
     GET_RECRUIT_LIST(state, res) {
       console.log("mutaions의 GET_RECRUIT_LIST", res);
       state.recruitList = res;
@@ -332,6 +351,25 @@ export default new Vuex.Store({
       axios.defaults.headers.common["auth-token"] = undefined;
     },
 
+    GET_COMPANY_NAME_LIST(context) {
+      axios
+        .get(`${SERVER_URL}/recruit/companyNameList`)
+        .then((res) => {
+          context.commit("GET_COMPANY_NAME_LIST", res.date);
+          console.log("회사 이름 리스트")
+          console.log(res.data);
+        });
+    },
+    GET_COMPANY_LIST(context) {
+      axios
+        .get(`${SERVER_URL}/recruit/companyList`)
+        .then((response) => {
+          context.commit("GET_COMPANY_LIST", response.date);
+          console.log("회사 리스트")
+          console.log(response.data);
+        });
+    },
+ 
     GET_RECRUIT_LIST(context) {
       axios
         .get(`${SERVER_URL}/recruit/getList/` + this.state.user.userComSeq)
@@ -340,7 +378,7 @@ export default new Vuex.Store({
           console.log("겟 공고 실행");
           console.log(response.data);
         });
-      context.commit("GET_RECRUIT_LIST");
+      // context.commit("GET_RECRUIT_LIST");
     },
 
     INSERT_RECRUIT(context, newRecruit) {
