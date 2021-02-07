@@ -355,7 +355,7 @@ export default new Vuex.Store({
       axios
         .get(`${SERVER_URL}/recruit/companyNameList`)
         .then((res) => {
-          context.commit("GET_COMPANY_NAME_LIST", res.date);
+          context.commit("GET_COMPANY_NAME_LIST", res.data);
           console.log("회사 이름 리스트")
           console.log(res.data);
         });
@@ -364,7 +364,7 @@ export default new Vuex.Store({
       axios
         .get(`${SERVER_URL}/recruit/companyList`)
         .then((response) => {
-          context.commit("GET_COMPANY_LIST", response.date);
+          context.commit("GET_COMPANY_LIST", response.data);
           console.log("회사 리스트")
           console.log(response.data);
         });

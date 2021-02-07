@@ -9,13 +9,6 @@
             <tr v-for="(item, index) in userInfo" :key="index">
               <td>{{ item.label }}</td>
               <td v-if="index === 6"> <!-- index 6번 select box -->
-                <!-- <v-select
-                      :items="getCompanyNameList"
-                      :label="item.label"
-                      required
-                      v-model="credentials[item.value]"
-                    >
-                </v-select> -->
                 <v-autocomplete
                   v-model="credentials[item.value]"
                   :items="companyNameList"
@@ -113,7 +106,7 @@ export default {
   }),
   created: function () {
     this.$store
-      .dispatch("GET_COMPANY_LIST")
+      .dispatch("GET_COMPANY_NAME_LIST")
       .then(() => console.log("회사 리스트 가져오기 완료"))
   },
   computed: {
