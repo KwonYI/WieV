@@ -64,10 +64,11 @@
       // 선택한 공고 정보
       selectRecruit: function (selectedItem) {
         console.log("selectRecruit클릭!", selectedItem)
-        // this.$store.state.selectedRecruitNo = reNo
+        this.$store.state.selectedRecruitNo = selectedItem.reSeq
         this.recruitNo = selectedItem.reSeq
         this.recruitItem = selectedItem
         console.log(this.recruitItem)
+        console.log("menu 왼쪽 리스트에서 선택한 번호:", this.recruitNo)
         // this.$router.push({
         //   name: 'Progress',
         //   params: {
@@ -75,6 +76,9 @@
         //     recruitInfo: reNo
         //   }
         // })
+        
+
+        
       },
       goToProfile: function () {
         this.recruitNo = ''
@@ -90,8 +94,8 @@
     },
 
     computed: {
-      ...mapState(["user", "selectedRecruitNo"]),
-      ...mapGetters(["getUserComSeq", "getRecruitListLately"])
+      ...mapState(["user", "selectedRecruitNo", "recruitVieweeList"]),
+      ...mapGetters(["getUserComSeq", "getRecruitListLately", "getVieweeListCurrentRecruit"])
     },
 
   }

@@ -3,21 +3,6 @@
     현재 채용공고 번호 : {{ recruitItem.reSeq }}
     <v-toolbar dark color="teal">
       <v-toolbar-title></v-toolbar-title>
-      <!-- <v-toolbar-title>지원자 찾기</v-toolbar-title> -->
-      <!-- <v-autocomplete
-        v-model="select"
-        :loading="loading"
-        :items="items"
-        :search-input.sync="search"
-        cache-items
-        class="mx-4"
-        flat
-        hide-no-data
-        hide-details
-        label="지원자 이름 검색"
-        solo-inverted
-      ></v-autocomplete>
-      <v-btn class="m-3"> 검색 </v-btn> -->
 
       <span class="m-2">File:</span>
         <!-- <input v-model="title" /> -->
@@ -31,9 +16,7 @@
       <v-btn class="m-2" v-on:click="submitFile()">엑셀 업로드</v-btn>
 
       <v-btn class="m-2" @click="exportExcel">엑셀 양식 다운로드</v-btn>
-      <!-- <v-file-input v-model="files" show-size label="File input"></v-file-input>
-      <v-btn @click="upload" color="primary">Upload</v-btn>
-      <p>File Name : {{ files.name }}</p> -->
+
       <v-btn class="m-2" @click="createVieweeDB">목록 업데이트 </v-btn>
     </v-toolbar>
     <v-simple-table fixed-header height="500px" class="mt-5">
@@ -51,7 +34,7 @@
       </thead>
       <tbody>
         <tr
-          v-for="(viewee, index) in this.arr"
+          v-for="(viewee, index) in this.getVieweeListCurrentRecruit"
           :key="viewee.index"
           class="text-center"
         >
@@ -76,9 +59,9 @@
 <script>
 import axios from "axios";
 import XLSX from "xlsx";
-// const SERVER_URL = "https://localhost:8080/";
+const SERVER_URL = "https://localhost:8080";
 // const SERVER_URL = "https://i4a405.p.ssafy.io:8080"
-const SERVER_URL = process.env.VUE_APP_SERVER_URL
+// const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
 import { mapState, mapGetters } from "vuex";
 
@@ -117,11 +100,10 @@ export default {
       reno: "",
       // recruitNo: "",
     };
-    //   XLSX.writeFile(wb, "지원자등록_양식.xlsx"); // 엑셀 다운로드
   },
 
   created: function() {
-    this.arr = this.getVieweeListCurrentRecruit;
+    // this.arr = this.getVieweeListCurrentRecruit;
     this.reno = this.$store.state.selectedRecruitNo;
     // this.recruitNo = this.$route.params.recruitNo;
     // this.pageGetVieweeListCurrentRecruit = this.filterdVieweeList()
