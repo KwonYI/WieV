@@ -25,8 +25,12 @@
         <!-- 왼쪽 상단 위치, 대기실/면접실 -->
         <v-toolbar-items v-else class="room-status">
           <v-row style="width: 500px" no-gutters>
-            <v-col class="d-flex justify-center align-center">현재 면접자 수 : 8명</v-col>
-            <v-col class="d-flex justify-center align-center">현재 시각 : 7/10(월) 오후 5:23</v-col>
+            <v-col class="d-flex justify-center align-center">
+              <div class="text-subtitle-1 px-5 py-1" style="border: 1px solid">현재 면접자 수 : 8명</div>
+            </v-col>
+            <v-col class="d-flex justify-center align-center">
+              <div class="text-subtitle-1 px-5 py-1" style="border: 1px solid">현재 시각 : 7/10(월) 오후 5:23</div>
+            </v-col>
           </v-row>
         </v-toolbar-items>
 
@@ -79,11 +83,12 @@
         id="scrolling-techniques-7"
         class="overflow-y-auto"
         max-height="100vh"
+        style="height: 100%"
       >
         <v-container
           class="p-0 m-0 pt-16"
           :class="[!accessToken || isHome ? 'main-bg-navy' : '']"
-          style="min-height: 100vh; max-width: initial"
+          style="min-height: 100vh; max-width: initial; height: 100%"
         >
           <router-view></router-view>
         </v-container>
@@ -152,6 +157,10 @@ export default {
   font-family: "NanumSquare", sans-serif;
 }
 
+body {
+  height: 100%;
+}
+
 .v-parallax__image-container img {
   /* max-width: 100%; */
 }
@@ -175,7 +184,7 @@ export default {
   margin-left: 1rem;
 }
 .room-status {
-  margin-left: 10rem;
+  margin-left: 7rem;
 }
 .router-active {
   text-decoration: none !important;

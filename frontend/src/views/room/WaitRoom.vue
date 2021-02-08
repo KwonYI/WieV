@@ -1,32 +1,15 @@
 <template>
-  <div id="waitRoom">
+  <div id="waitRoom" class="d-flex flex-column">
     <!-- 대기실 페이지. 신분에 따라 보여지는 컴포넌트가 다르다.  -->
 
     <!--상단 바-->
-    <v-app-bar class="d-flex justify-end" dense dark>
+    <v-app-bar class="d-none" dense dark>
       <v-toolbar-title class="">
         {{ comName }}
         {{ re_year }}
         {{ re_flag }}
         {{ re_status }}
-        <input
-          class="btn"
-          type="button"
-          @click="audioOnOOff"
-          :value="audioMsg"
-        />
-        <input
-          class="btn"
-          type="button"
-          @click="videoOnOOff"
-          :value="videoMsg"
-        />
-        <input
-          class="btn"
-          type="button"
-          @click="leaveSession"
-          value="방 나가기"
-        />
+        
       </v-toolbar-title>
     </v-app-bar>
     <!-- 
@@ -37,11 +20,108 @@
     <div class="brd" style="width: 960px; height: 540px"></div> -->
 
 
-    <v-container>
-      <v-row justify="space-between">
-        <v-col cols="5" class="brd">공지용 배너</v-col>
-        <v-col cols="2" class="brd">면접실 이동 대상자</v-col>
-        <v-col cols="4" class="brd">대기실-면접실 메신저</v-col>
+    <v-container style="max-width: 1320px; height: 100%">
+      <v-row style="margin: auto; height: 100%">
+        <v-col cols="9">
+          <!-- 메인 상단 - 배너, 면접실 이동 안내 -->
+          <v-row style="height: 17%">
+            <v-col cols="9">
+              <v-card elevation="2" style="height: 100%">
+                공지용 배너
+              </v-card>
+            </v-col>
+            <v-col cols="3">
+              <v-card color="#304B61" elevation="2" style="height: 100%" dark>
+                면접실 이동 안내
+              </v-card>
+            </v-col>
+          </v-row>
+          <!-- 메인 중앙 - 면접관, 지원자 화면 -->
+          <v-row style="height: 87%">
+            <!-- 면접관 -->
+            <v-col cols="4" class="d-flex flex-column justify-center align-center">
+              <!-- <v-col v-for="i in 3" :key="i" class="brd pa-0"> -->
+                <div v-for="i in 3" :key="i" class="brd screen-res">면접관 {{i}}</div>
+              <!-- </v-col> -->
+            </v-col>
+            <!-- 지원자 -->
+            <v-col cols="8" class="d-flex flex-wrap justify-center align-center">
+              <!-- <v-col v-for="i in 3" :key="i" cols="6" class="brd"> -->
+                <div v-for="i in 5" :key="i" class="brd screen-res">지원자 {{i}}</div>
+              <!-- </v-col> -->
+            </v-col>
+          </v-row>
+
+        </v-col>
+        <v-col cols="3">
+
+          <div class="brd" style="height: 10%">대기실-면접실 메신저</div>
+          <!-- 면접 안내 -->
+          <div style="height: 50%">
+            <v-sheet color="white" height="100%" elevation="3">
+              <div class="headline text-center">면접 안내</div>
+            </v-sheet>
+          </div>
+          <!-- FAQ -->
+          <div style="height: 10%">
+            <v-dialog
+              v-model="faq_dialog"
+              scrollable
+              max-width="500px"
+            > 
+              <!-- FAQ 버튼 -->
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  color="#757575"
+                  dark
+                  block
+                  tile
+                  v-bind="attrs"
+                  v-on="on"
+                  height="100%"
+                >
+                  FAQ
+                </v-btn>
+              </template>
+              <!-- FAQ Modal -->
+              <v-card>
+                <v-card-title class="justify-center">FAQ</v-card-title>
+                <v-divider class="mt-2 mb-3"></v-divider>
+                <v-card-text style="height: 300px">
+                  <v-expansion-panels accordion focusable>
+                    <v-expansion-panel
+                      v-for="(item, i) in questions"
+                      :key="i"
+                    >
+                      <v-expansion-panel-header>{{ item.title }}</v-expansion-panel-header>
+                      <v-expansion-panel-content>
+                        <div class="mt-5">{{ item.answer }}</div>
+                      </v-expansion-panel-content>
+                    </v-expansion-panel>
+                  </v-expansion-panels>
+                </v-card-text>
+              </v-card>
+            </v-dialog>
+          </div>
+          <!-- 채팅창 -->
+          <div class="brd" style="height: 30%">
+            <div>
+              <v-list v-auto-bottom="messages">
+                <div v-for="(msg, index) in messages" :key="index">
+                  {{ msg.from }} : {{ msg.text }}
+                </div>
+              </v-list>
+            </div>
+
+            <div>
+              <v-text-field
+                label="보낼 메세지를 입력하세요."
+                v-model="text"
+                @keyup.13="sendMessage"
+              ></v-text-field>
+            </div>
+          </div>
+        </v-col>
       </v-row>
     </v-container>
 
@@ -94,7 +174,7 @@
         <!-- row2[오른쪽] : 우측에 FAQ 채팅창 잡동사니 -->
         
         <!-- 채팅창 -->
-        <!-- <v-col cols="3">
+        <v-col cols="3">
           <div>
             <v-list v-auto-bottom="messages">
               <div v-for="(msg, index) in messages" :key="index">
@@ -110,10 +190,16 @@
               @keyup.13="sendMessage"
             ></v-text-field>
           </div>
-        </v-col> -->
+        </v-col>
         
       </v-row>
     </v-container>
+    
+    <v-bottom-navigation dark class="main-bg-navy">
+      <input class="btn" type="button" @click="audioOnOOff" :value="audioMsg" />
+      <input class="btn" type="button" @click="videoOnOOff" :value="videoMsg" />
+      <input class="btn" type="button" @click="leaveSession" value="방 나가기" />
+    </v-bottom-navigation>
   </div>
 </template>
 
@@ -182,6 +268,13 @@ export default {
       re_year: undefined,
       re_flag: undefined,
       re_status: undefined,
+
+      // FAQ
+      faq_dialog: false,
+      questions: [
+        { title: '면접 시간은 어떻게 되나요?', answer: '안 알랴줌' },
+        { title: '뭐야 내 면접 돌려줘요', answer: '안 돼 안 바꿔줘 바꿀 생각 없어 빨리 돌아가' },
+      ]
     }
   },
   created: function () {
@@ -363,10 +456,9 @@ export default {
 </script>
 
 <style scoped>
-#standbyRoom {
-  background-color: white;
-  /* width: 100vw; */
-  height: 100vh;
+#waitRoom {
+  height: 100%;
+  background-color: #ECEFF1;
 }
 .v-list {
   height: 500px;
@@ -375,5 +467,9 @@ export default {
 }
 .brd {
   border: 1px solid lightslategrey;
+}
+.screen-res {
+  width: 272px;
+  height: 153px;
 }
 </style>

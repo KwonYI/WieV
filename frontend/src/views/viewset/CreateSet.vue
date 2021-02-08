@@ -102,7 +102,7 @@
           item-key="schGroupNo"
           @click:row="(item, slot) => slot.expand(!slot.isExpanded)"
         >
-          <!-- 스케줄 row -->
+          <!-- 스케줄 메인 row -->
           <template v-slot:item="{ item, expand, isExpanded }">
             <tr @click="expand(!isExpanded)">
               <td>{{ item.schGroupNo }}</td>
@@ -303,7 +303,7 @@ export default {
         // 직군
         career: '',
         // 면접 유형
-        interviewTypeList: [],
+        viewTypes: [],
         // 시작 날짜, 7/10
         startDate: '',
         // 시작 시간
@@ -430,7 +430,20 @@ export default {
     // 면접 스케줄 추가
     addSchedule: function () {
       // axios.post(`https://localhost:8080/groupAll/divide` + this.recruitNo, this.formData)
-      axios.post(`${SERVER_URL}/groupAll/divide/` + this.recruitItem.reSeq, this.formData)
+      let groupData = {
+        part: this.formData.part,
+        career: this.formData.career,
+        interviewTypeList: this.formData.viewTypes,
+        startDate: this.formData.startDate,
+        startTime: this.formData.startTime,
+        endTime: this.formData.endTime,
+        divideInterviewer: this.formData.viewerNum,
+        divideInterviewee: this.formData.vieweeNum,
+        divideTime: this.formData.duration,
+        divideDetailNum: this.formData.vieweePerGroup
+      }
+
+      axios.post(`${SERVER_URL}/groupAll/divide/` + this.recruitItem.reSeq, groupData)
         .then(res => {
           console.log(res)
         })
