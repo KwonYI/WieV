@@ -5,9 +5,9 @@ import createPersistedState from "vuex-persistedstate"
 import _ from "lodash"
 
 Vue.use(Vuex)
-// const SERVER_URL = "https://localhost:8080"
+const SERVER_URL = "https://localhost:8080"
 // const SERVER_URL = "https://i4a405.p.ssafy.io:8080"
-const SERVER_URL = process.env.VUE_APP_SERVER_URL
+// const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
 let userInfo = {
   userEmail: 'user-Email',
@@ -355,18 +355,6 @@ export default new Vuex.Store({
     },
 
     // 지원자 리스트 state에 저장
-    //  GET_VIEWEE_LIST(state, res) {
-    //   for (var i = 0; i < res.length; i++) {
-    //     for (const key in vieweeInfo) {
-    //       state.comVieweeList[i][key] = res[i][vieweeInfo[key]]
-    //       // state.comVieweeList[key] = res[vieweeInfo[key]]
-    //       // var tempi[key] = res[i][vieweeInfo[key]]
-    //     }
-    //   }
-    //   // console.log("comvieeelisttype:", typeof(state.comVieweeList))
-    //   console.log("comvieweelist~~", state.comVieweeList)
-
-    // },
     GET_VIEWEE_LIST(state, res) {
       state.comVieweeList = []
       for (var i = 0; i < res.length; i++) {
