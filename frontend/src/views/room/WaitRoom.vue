@@ -39,30 +39,13 @@
       <!-- row2 : 관리자, 지원자, FAQ 잡동사니 row-->
       <v-row>
         <!-- row2[왼쪽] : 관리자 리스트-->
-        <div
-          v-for="sub in subscribers"
-          :key="sub.stream.connection.connectionId"
-        >
-          <div v-for="(info, index) in participants" :key="index">
-            <v-col
-              cols="3"
-              v-if="
-                info.connectionId === sub.stream.connection.connectionId &&
-                info.type !== 'interviewer'
-              "
-            >
-              <user-video
-                :stream-manager="sub"
-                @click.native="updateMainVideoStreamManager(sub)"
-              />
-            </v-col>
-            <v-col cols="6" v-else
-              ><user-video
-                :stream-manager="sub"
-                @click.native="updateMainVideoStreamManager(sub)"
-              />
-            </v-col>
-          </div>
+        <div v-for="(sub) in subscribers" :key="sub.stream.connection.connectionId">
+          <v-col cols="3" v-if="types[sub.stream.connection.connectionId] === 'manager'">
+            <user-video :stream-manager="sub" @click.native="updateMainVideoStreamManager(sub)"/>
+          </v-col>
+          <v-col cols="6" class="d-flex justify-end" v-else>
+            <user-video :stream-manager="sub" @click.native="updateMainVideoStreamManager(sub)"/>
+          </v-col>
         </div>
         <v-col cols="3">
           <!-- <user-video :stream-manager="mainStreamManager" /> -->
@@ -117,6 +100,7 @@ export default {
       publisher: undefined, // 연결 객체
       subscribers: [],
       participants: [],
+      types: {},
 
       // 채팅
       text: "",
@@ -167,6 +151,11 @@ export default {
     this.token = this.$route.query.token;
     this.userName = this.$route.query.userName;
     this.type = this.$route.query.type;
+
+    // this.session.on("streamCreated", ({ stream }) => {
+    //   const subscriber = this.session.subscribe(stream);
+    //   this.subscribers.push(subscriber);
+    // });
   },
   beforeDestroy() {
     window.removeEventListener("beforeunload", this.leaveSession);
@@ -180,6 +169,8 @@ export default {
     this.session.on("streamCreated", ({ stream }) => {
       const subscriber = this.session.subscribe(stream);
       this.subscribers.push(subscriber);
+      console.log("참여자 목록");
+      console.log(this.subscribers);
     });
 
     this.session.on("streamDestroyed", ({ stream }) => {
@@ -212,7 +203,10 @@ export default {
         });
 
         this.mainStreamManager = publisher;
+        console.log("mainStreamManager")
+        console.log(this.mainStreamManager)
         this.publisher = publisher;
+        console.log("publisher" + this.publisher)
 
         this.session.publish(this.publisher);
         this.subscribers.push(this.publisher);
@@ -225,12 +219,17 @@ export default {
         console.log("웨이트룸에서 길이 찍기");
         console.log(this.getParticipants.length);
 
+        // console.log(this.types)
+
         this.getParticipants.forEach((element) => {
           if (element.sessionName == this.sessionName)
             this.participants.push(element);
+            this.types[element.connectionId] = element.type;
         });
 
-        console.log(this.participants);
+        // console.log("마지막")
+        // console.log(this.participants);
+        // console.log(this.types)
         // this.clearParticipants([]);
       })
       .catch((error) => {
@@ -278,6 +277,7 @@ export default {
         })
         .then((res) => {
           console.log(res);
+          if(this.type === 'manager') this.clearParticipants([]);
           if (this.session) this.session.disconnect();
           this.deleteParticipants(this.info);
           this.session = undefined;
@@ -317,6 +317,7 @@ export default {
   },
 
   computed: {
+    
     ...mapGetters(["getParticipants", "getCheckIn"]),
   },
 };
