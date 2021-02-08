@@ -62,6 +62,11 @@
                 </tbody>
               </v-simple-table>
             </v-col>
+            <div>
+              <router-link :to="{ name: 'FindPassword' }">
+              비밀번호 찾기
+              </router-link>
+            </div>
             <v-col class="subtitle-1"  @click="login" >
               로그인
             </v-col>
