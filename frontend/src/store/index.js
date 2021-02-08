@@ -11,6 +11,7 @@ const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
 let userInfo = {
   userEmail: 'user-Email',
+  userSeq : "user-Seq",
   userName: 'user-Name',
   userPhone: 'user-Phone',
   userViewWait: 'user-View-Wait',
@@ -19,7 +20,6 @@ let userInfo = {
   userComLogo: 'user-Company-Logo',
   userComAddress: 'user-Company-Address',
   userComHomepage: 'user-Company-Homepage',
-  userSeq : "user-Seq",
 }
 
 export default new Vuex.Store({
@@ -114,7 +114,7 @@ export default new Vuex.Store({
       return state.user.userComSeq
     },
     // getCompanyNameList(state){
-    //   return state.companyNameList;
+    //   return state.companyNameList
     // },
     // getParticipantsInInterview(state) {
     //   return (sessionName) =>
@@ -129,7 +129,7 @@ export default new Vuex.Store({
       return _.orderBy(state.recruitList, ["reSeq"], ["desc"])
     },
     getRecruitListCount: function(state) {
-      return state.recruitList.length;
+      return state.recruitList.length
     },
 
     // 현재 공고의 지원자만 가져오기
@@ -161,15 +161,15 @@ export default new Vuex.Store({
     },
 
     getParticipants(state) {
-      console.log("게터 실행, 모든 연결 참가자 정보 수");
-      console.log(state.participants.length);
-      return state.participants;
+      console.log("게터 실행, 모든 연결 참가자 정보 수")
+      console.log(state.participants.length)
+      return state.participants
     },
 
     getCheckIn(state) {
-      console.log("게터 실행, 모든 연결 수");
-      console.log(state.checkIn.length);
-      return state.checkIn;
+      console.log("게터 실행, 모든 연결 수")
+      console.log(state.checkIn.length)
+      return state.checkIn
     },
   },
 
@@ -179,17 +179,17 @@ export default new Vuex.Store({
   mutations: {
     // 로그인 프로세스
     LOGIN(state, res) {
-      // state.accessToken = res["auth-token"];
-      // state.user.userSeq = res["user-Seq"];
-      // state.user.userEmail = res["user-Email"];
-      // state.user.userName = res["user-Name"];
-      // state.user.userPhone = res["user-Phone"];
-      // state.user.userViewWait = res["user-View-Wait"];
-      // state.user.userComSeq = res["user-Company-Seq"];
-      // state.user.userComName = res["user-Company-Name"];
-      // state.user.userComLogo = res["user-Company-Logo"];
-      // state.user.userComAddress = res["user-Company-Address"];
-      // state.user.userComHomepage = res["user-Company-Homepage"];
+      // state.accessToken = res["auth-token"]
+      // state.user.userSeq = res["user-Seq"]
+      // state.user.userEmail = res["user-Email"]
+      // state.user.userName = res["user-Name"]
+      // state.user.userPhone = res["user-Phone"]
+      // state.user.userViewWait = res["user-View-Wait"]
+      // state.user.userComSeq = res["user-Company-Seq"]
+      // state.user.userComName = res["user-Company-Name"]
+      // state.user.userComLogo = res["user-Company-Logo"]
+      // state.user.userComAddress = res["user-Company-Address"]
+      // state.user.userComHomepage = res["user-Company-Homepage"]
       state.accessToken = res["auth-token"]
       for (const key in userInfo) {
         state.user[key] = res[userInfo[key]]
@@ -197,17 +197,17 @@ export default new Vuex.Store({
     },
     // 로그아웃 프로세스
     LOGOUT(state) {
-      // state.accessToken = null;
-      // state.user.userSeq = 0;
-      // state.user.userEmail = "";
-      // state.user.userName = "";
-      // state.user.userPhone = "";
-      // state.user.userViewWait = 0;
-      // state.user.userComSeq = 0;
-      // state.user.userComName = "";
-      // state.user.userComLogo = "";
-      // state.user.userComAddress = "";
-      // state.user.userComHomepage = "";
+      // state.accessToken = null
+      // state.user.userSeq = 0
+      // state.user.userEmail = ""
+      // state.user.userName = ""
+      // state.user.userPhone = ""
+      // state.user.userViewWait = 0
+      // state.user.userComSeq = 0
+      // state.user.userComName = ""
+      // state.user.userComLogo = ""
+      // state.user.userComAddress = ""
+      // state.user.userComHomepage = ""
 
       state.accessToken = null
       for (const key in userInfo) {
@@ -219,17 +219,18 @@ export default new Vuex.Store({
     },
 
     USER_UPDATE(state, res) {
-      state.user.userName = res["user-Name"];
-      state.user.userPhone = res["user-Phone"];
+      state.user.userName = res["user-Name"]
+      state.user.userPhone = res["user-Phone"]
     },
+
     GET_COMPANY_NAME_LIST(state, res) {
-      console.log(typeof res);
-      console.log("mutaions의 GET_COMPANY_NAME_LIST", res);
-      state.companyNameList = res;
+      console.log(typeof res)
+      console.log("mutaions의 GET_COMPANY_NAME_LIST", res)
+      state.companyNameList = res
     },
     GET_COMPANY_LIST(state, res) {
-      console.log("mutaions의 GET_COMPANY_LIST", res);
-      state.companyList = res;
+      console.log("mutaions의 GET_COMPANY_LIST", res)
+      state.companyList = res
     },
       
     // 공고 리스트 state에 저장
@@ -259,42 +260,42 @@ export default new Vuex.Store({
       state.comViewerList = res
     },
     addParticipants(state, data) {
-      console.log("뮤테이션 실행 밑에 있는 데이터 넣을 예정");
-      console.log(data);
-      state.participants.push(data);
+      console.log("뮤테이션 실행 밑에 있는 데이터 넣을 예정")
+      console.log(data)
+      state.participants.push(data)
     },
     deleteParticipants(state, data) {
-      const index = state.participants.indexOf(data, 0);
-      console.log("정보 삭제 시도");
-      console.log("변경전 : ", state.participants.length);
+      const index = state.participants.indexOf(data, 0)
+      console.log("정보 삭제 시도")
+      console.log("변경전 : ", state.participants.length)
       if (index >= 0) {
-        state.participants.splice(index, 1);
+        state.participants.splice(index, 1)
       }
-      console.log("변경후 : ", state.participants.length);
+      console.log("변경후 : ", state.participants.length)
     },
     clearParticipants(state, data) {
-      console.log("클리어 실행, 실행 후 남은 정보");
-      state.participants = data;
-      console.log(state.participants.length);
+      console.log("클리어 실행, 실행 후 남은 정보")
+      state.participants = data
+      console.log(state.participants.length)
     },
     addCheckIn(state, data) {
-      console.log("뮤테이션 실행 밑에 있는 데이터 넣을 예정");
-      console.log(data);
-      state.checkIn.push(data);
+      console.log("뮤테이션 실행 밑에 있는 데이터 넣을 예정")
+      console.log(data)
+      state.checkIn.push(data)
     },
     deleteCheckIn(state, data) {
-      const index = state.checkIn.indexOf(data, 0);
-      console.log("정보 삭제 시도");
-      console.log("변경전 : ", state.checkIn.length);
+      const index = state.checkIn.indexOf(data, 0)
+      console.log("정보 삭제 시도")
+      console.log("변경전 : ", state.checkIn.length)
       if (index >= 0) {
-        state.checkIn.splice(index, 1);
+        state.checkIn.splice(index, 1)
       }
-      console.log("변경후 : ", state.checkIn.length);
+      console.log("변경후 : ", state.checkIn.length)
     },
     clearcheckIn(state, data) {
-      console.log("클리어 실행, 실행 후 남은 정보");
-      state.checkIn = data;
-      console.log(state.checkIn.length);
+      console.log("클리어 실행, 실행 후 남은 정보")
+      state.checkIn = data
+      console.log(state.checkIn.length)
     },
 
     // 공고 면접현황 리스트 state에 저장
@@ -326,49 +327,45 @@ export default new Vuex.Store({
       axios.defaults.headers.common["auth-token"] = undefined
     },
     USER_UPDATE(context, userUpdateRequest) {
-      axios
-        .put(
-          `${SERVER_URL}/hr/update/` + this.state.user.userSeq,
-          userUpdateRequest
-        )
-        .then((res) => {
-          context.commit("USER_UPDATE", res.data);
-          alert("회원정보 수정이 완료되었습니다.");
-        });
+      axios.put(`${SERVER_URL}/hr/update/` + this.state.user.userSeq,userUpdateRequest)
+        .then(res => {
+          context.commit("USER_UPDATE", res.data)
+          alert("회원정보 수정이 완료되었습니다.")
+        })
     },
     USER_DELETE(context) {
-      axios
-        .delete(`${SERVER_URL}/hr/delete/` + this.state.user.userSeq)
+      axios.delete(`${SERVER_URL}/hr/delete/` + this.state.user.userSeq)
         .then(() => {
-          alert("회원 탈퇴가 완료되었습니다.");
-        });
-      context.commit("LOGOUT");
+          alert("회원 탈퇴가 완료되었습니다.")
+        })
+      context.commit("LOGOUT")
     },
 
     GET_COMPANY_NAME_LIST(context) {
-      axios.get(`${SERVER_URL}/recruit/companyNameList`).then((res) => {
-        context.commit("GET_COMPANY_NAME_LIST", res.data);
-        console.log("회사 이름 리스트");
-        console.log(res.data);
-      });
+      axios.get(`${SERVER_URL}/recruit/companyNameList`)
+        .then(res => {
+          context.commit("GET_COMPANY_NAME_LIST", res.data)
+          console.log("회사 이름 리스트")
+          console.log(res.data)
+        })
     },
     GET_COMPANY_LIST(context) {
-      axios.get(`${SERVER_URL}/recruit/companyList`).then((response) => {
-        context.commit("GET_COMPANY_LIST", response.data);
-        console.log("회사 리스트");
-        console.log(response.data);
-      });
+      axios.get(`${SERVER_URL}/recruit/companyList`)
+        .then(res => {
+          context.commit("GET_COMPANY_LIST", res.data)
+          console.log("회사 리스트")
+          console.log(res.data)
+        })
     },
 
     GET_RECRUIT_LIST(context) {
-      axios
-        .get(`${SERVER_URL}/recruit/getList/` + this.state.user.userComSeq)
-        .then((response) => {
-          context.commit("GET_RECRUIT_LIST", response.data);
-          console.log("겟 공고 실행");
-          console.log(response.data);
-        });
-      // context.commit("GET_RECRUIT_LIST");
+      axios.get(`${SERVER_URL}/recruit/getList/` + this.state.user.userComSeq)
+        .then(res => {
+          context.commit("GET_RECRUIT_LIST", res.data)
+          console.log("겟 공고 실행")
+          console.log(res.data)
+        })
+      // context.commit("GET_RECRUIT_LIST")
     },
     // Action : 신규 공고 생성하기
     INSERT_RECRUIT(context, newRecruit) {
@@ -412,18 +409,14 @@ export default new Vuex.Store({
     // 공고의 면접현황 리스트 가져오기
     GET_PROGRESS_LIST(context, recruitSeq) {
       axios.get(`${SERVER_URL}/groupInfo/totalList/${recruitSeq}`)
-      .then(res => {
-        console.log("공고에 대한 프로그레스 받아왓ㅅ나연", res)
-        context.commit("GET_PROGRESS_LIST", res.data)
-      })
-      .catch(err => console.log(err))
+        .then(res => {
+          console.log("공고에 대한 프로그레스 받아왓ㅅ나연", res)
+          context.commit("GET_PROGRESS_LIST", res.data)
+        })
+        .catch(err => console.log(err))
 
       }
       
-
-   
-
-   
 
   },
 
