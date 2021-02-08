@@ -15,6 +15,7 @@
               <v-select :items="item.data" :label="item.name" solo hide-details disabled>
               </v-select>
             </v-col>
+            {{ recruitItem }}
           </v-row>
         </v-col>
         <!-- 스케줄 자동생성 입력 -->
@@ -88,39 +89,46 @@
         
         
         <hr>
-        <!-- 스케줄 -->
+        <!-- 스케줄 테이블 -->
         <v-data-table
           :headers="schGroupTable.headers"
           :items="schGroupTable.schGroups"
-          single-expand
           :expanded.sync="schGroupTable.expanded"
+          single-expand
           item-key="schGroupNo"
+          :align="center"
           @click:row="(item, slot) => slot.expand(!slot.isExpanded)"
         >
+
+          <!-- 세부그룹 확장 패널 -->
           <template v-slot:expanded-item="{ headers, item: groupItem }">
-            <td :colspan="headers.length">
-              {{ groupItem.schSmallGroups }}
-              <!-- <v-data-table
-                :items="[group]"
+            <td :colspan="headers.length" class="pa-0">
+              <!-- 세부그룹 테이블 -->
+              <v-data-table
+                :headers="headers"
+                :items="groupItem.schSmallGroups"
+                item-key="schSmallGroupNo"
+                hide-default-header
                 hide-default-footer
               >
-              </v-data-table> -->
-
-              <!-- <tbody>
-              <tr v-for="smallItem in item.schSmallGroups" :key="smallItem">
-                <td>{{ smallItem.schSmallGroupNo }}</td>
-                <td>{{ item.schGroupDate }}</td>
-                <td>{{ item.schGroupTime }}</td>
-                <td>{{ item.schGroupCareer }}</td>
-                <td>{{ smallItem.schSmallGroupInterview }}</td>
-                <td>{{ smallItem.schSmallGroupViewee }}</td>
-                <td>{{ item.schGroupGuide }}</td>
-                <td>{{ item.schGroupViewer }}</td>
-              </tr>
-              </tbody> -->
-
+                <template v-slot:body="{ items }">
+                  <tbody>
+                    <tr v-for="(item, i) in items" :key="i">
+                      <td>{{ item.schSmallGroupNo }}</td>
+                      <td>{{ groupItem.schGroupDate }}</td>
+                      <td>{{ groupItem.schGroupTime }}</td>
+                      <td>{{ groupItem.schGroupCareer }}</td>
+                      <td>{{ item.schSmallGroupInterview }}</td>
+                      <td>{{ item.schSmallGroupViewee }}</td>
+                      <td>{{ groupItem.schGroupGuide }}</td>
+                      <td>{{ groupItem.schGroupViewer }}</td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-data-table>
             </td>
           </template>
+
         </v-data-table>
       </v-col>
     </v-row>
@@ -135,14 +143,15 @@ const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
 export default {
   name: "CreateSet",
-  props: {
-    recruitNo: [Object, String, Number]
-  },
   data() {
     return {
       dialog: false,
+
+      recruitItem: this.$route.params.recruitItem,
+
       // 시즌 데이터
-      seasonForm: [
+      seasonData: [
+
         {
           name: "시즌",
           data: ["2020 하반기", "2021 상반기", "2021 하반기"],
@@ -181,7 +190,7 @@ export default {
         },
         {
           name: "날짜",
-          data: [],
+          data: ['7/22'],
           col: 2,
           multiple: false,
           value: 'startDate'
@@ -217,21 +226,21 @@ export default {
         },
         {
           name: "면접관 수",
-          data: [2, 3],
+          data: [2, 3, 4],
           col: 3,
           multiple: false,
           value: 'viewerNum'
         },
         {
           name: "지원자 수",
-          data: [8, 10],
+          data: [8, 9, 10, 11, 12],
           col: 3,
           multiple: false,
           value: 'vieweeNum'
         },
         {
           name: "소요 시간",
-          data: [1, 2],
+          data: [1, 2, 3, 4],
           col: 3,
           multiple: false,
           value: 'duration'
@@ -242,7 +251,7 @@ export default {
         },
         {
           name: "지원자 수",
-          data: [1, 2, 3, 4],
+          data: [1, 2, 3, 4, 5, 6],
           col: 3,
           mutiple: false,
           value: 'vieweePerGroup'
@@ -250,20 +259,19 @@ export default {
 
       ],
       // 일정 생성 V-Model
-      seasonData: 1,
       formData: {
         // 부서
         part: '',
         // 직군
         career: '',
         // 면접 유형
-        viewTypes: [],
+        interviewTypeList: [],
         // 시작 날짜, 7/10
         startDate: '',
         // 시작 시간
         startTime: '',
         // 종료 날짜(안 써도 됨)
-        endDate: '',
+        // endDate: '',
         // 종료 시간
         endTime: '',
         // 면접 그룹당 면접관 수, int
@@ -285,17 +293,45 @@ export default {
         headers: [
           {
             text: 'No.',
-            align: 'start',
+            align: 'center',
             sortable: false,
             value: 'schGroupNo',
           },
-          { text: '날짜', value: 'schGroupDate' },
-          { text: '시간', value: 'schGroupTime' },
-          { text: '직무', value: 'schGroupCareer' },
-          { text: '면접 유형', value: 'schGroupInterview' },
-          { text: '지원자', value: 'schGroupViewee' },
-          { text: '대기실', value: 'schGroupGuide' },
-          { text: '면접실', value: 'schGroupViewer' },
+          {
+            text: '날짜',
+            align: 'center',
+            value: 'schGroupDate'
+          },
+          {
+            text: '시간',
+            align: 'center',
+            value: 'schGroupTime'
+          },
+          {
+            text: '직무',
+            align: 'center',
+            value: 'schGroupCareer'
+          },
+          {
+            text: '면접 유형',
+            align: 'center',
+            value: 'schGroupInterview'
+          },
+          {
+            text: '지원자',
+            align: 'center',
+            value: 'schGroupViewee'
+          },
+          {
+            text: '대기실',
+            align: 'center',
+            value: 'schGroupGuide'
+          },
+          {
+            text: '면접실',
+            align: 'center',
+            value: 'schGroupViewer'
+          },
         ],
         // 면접 그룹
         schGroups: [
@@ -329,43 +365,9 @@ export default {
                 schSmallGroupNo: 2,
                 schSmallGroupInterview: ['그룹', '직무', 'PT'],
                 schSmallGroupViewee: ['박이번', '이사번', '권오번', '하팔번'],
-              },
-            ]
-          },
-          {
-            schGroupNo: 2,
-            schGroupDate: '7/10',
-            schGroupTime: '16:00',
-            schGroupCareer: '마케팅',
-            schGroupInterview: ['직무, PT, 그룹'],
-            schGroupViewee: [],
-            schGroupGuide: [],
-            schGroupViewer: [],
-            schSmallGroups: [
-              {
-                schSmallGroupNo: 1,
-                schSmallGroupsInterview: ['직무', 'PT', '그룹'],
-                schSmallGroupsViewee: '',
               }
             ]
-          },
-          {
-            schGroupNo: 3,
-            schGroupDate: '7/10',
-            schGroupTime: '17:00',
-            schGroupCareer: 'SW개발',
-            schGroupInterview: ['인성', '직무', 'PT'], 
-            schGroupViewee: [],
-            schGroupGuide: [],
-            schGroupViewer: [],
-            schSmallGroups: [
-              {
-                schSmallGroupNo: 1,
-                schSmallGroupsInterview: ['PT', '직무', '인성'],
-                schSmallGroupsViewee: '',
-              }
-            ]
-          },
+          }
         ]
       },
       
@@ -378,21 +380,9 @@ export default {
     // 면접 스케줄 추가
     addSchedule: function () {
       // axios.post(`https://localhost:8080/groupAll/divide` + this.recruitNo, this.formData)
-      axios.post(`${SERVER_URL}/groupAll/divide/` + this.recruitNo, this.formData)
+      axios.post(`${SERVER_URL}/groupAll/divide/` + this.recruitItem.reSeq, this.formData)
         .then(res => {
           console.log(res)
-          axios.get('면접스케줄 받기')
-            .then(res => console.log(res))
-            .catch(err => console.log(err))
-          axios.get('지원자 정보 받기')
-            .then(res => console.log(res))
-            .catch(err => console.log(err))
-          axios.get('면접관 정보 받기')
-            .then(res => console.log(res))
-            .catch(err => console.log(err))
-          axios.get('면접 유형 받기')
-            .then(res => console.log(res))
-            .catch(err => console.log(err))
         })
         .catch(err => console.log(err))
     },
@@ -424,6 +414,7 @@ export default {
     },
   },
   created () {
+    
   }
 }
 </script>

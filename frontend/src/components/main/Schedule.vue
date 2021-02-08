@@ -142,7 +142,6 @@
       return {
         // com_name: "버즈글로벌",
         dialog: false,
-        myReno: '',
 
         formData: {
           reYear: [2021, 2022, 2023],
@@ -197,15 +196,16 @@
           )
       },
 
-      goToProgress: function (recruit) {
-        this.myReno = recruit.reSeq
+      goToProgress: function (recruit, index) {
         this.$store.state.selectedRecruitNo = recruit.reSeq
         console.log("goToProgres!!", this.$store.state.selectedRecruitNo)
         this.$router.push({
-          name: 'Progress',
+          // name: 'Progress',
+          name: 'Menu',
           params: {
+            recruitIndex: index,
             recruitNo: recruit.reSeq,
-            recruitInfo: recruit
+            recruitItem: recruit
           }
         })
       }

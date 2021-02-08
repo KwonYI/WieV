@@ -1,24 +1,10 @@
 <template>
-  <div id="viewees" v-if="givenreno">
+  <div id="viewees">
+    현재 채용공고 번호 : {{ recruitItem.reSeq }}
     <v-toolbar dark color="teal">
       <v-toolbar-title></v-toolbar-title>
-      <!-- <v-toolbar-title>지원자 찾기</v-toolbar-title> -->
-      <!-- <v-autocomplete
-        v-model="select"
-        :loading="loading"
-        :items="items"
-        :search-input.sync="search"
-        cache-items
-        class="mx-4"
-        flat
-        hide-no-data
-        hide-details
-        label="지원자 이름 검색"
-        solo-inverted
-      ></v-autocomplete>
-      <v-btn class="m-3"> 검색 </v-btn> -->
 
-      <v-text class="m-2">File:</v-text>
+      <span class="m-2">File:</span>
         <!-- <input v-model="title" /> -->
         <input
           type="file"
@@ -30,10 +16,8 @@
       <v-btn class="m-2" v-on:click="submitFile()">엑셀 업로드</v-btn>
 
       <v-btn class="m-2" @click="exportExcel">엑셀 양식 다운로드</v-btn>
-      <!-- <v-file-input v-model="files" show-size label="File input"></v-file-input>
-      <v-btn @click="upload" color="primary">Upload</v-btn>
-      <p>File Name : {{ files.name }}</p> -->
-      <v-btn class="m-2" @click="createVieweeDB">목록 업데이트 </v-btn>
+
+      <v-btn class="m-2" @click="updateVieweeDB">목록 업데이트 </v-btn>
     </v-toolbar>
     <v-simple-table fixed-header height="500px" class="mt-5">
       <thead>
@@ -50,12 +34,12 @@
       </thead>
       <tbody>
         <tr
-          v-for="(viewee, index) in this.arr"
+          v-for="(viewee, index) in getVieweeListCurrentRecruit"
           :key="viewee.index"
           class="text-center"
         >
           <td>{{ index + 1 }}</td>
-          <td>{{ viewee.careerCaSeq }}</td>
+          <td>{{ viewee.applyCareerName }}</td>
           <td>{{ viewee.applyName }}</td>
           <td>{{ viewee.applyPhone }}</td>
           <td>{{ viewee.applyBirth }}</td>
@@ -75,7 +59,7 @@
 <script>
 import axios from "axios";
 import XLSX from "xlsx";
-// const SERVER_URL = "https://localhost:8080/";
+// const SERVER_URL = "https://localhost:8080";
 // const SERVER_URL = "https://i4a405.p.ssafy.io:8080"
 const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
@@ -83,6 +67,9 @@ import { mapState, mapGetters } from "vuex";
 
 export default {
   name: "Viewees",
+  props: {
+    recruitItem: [Object, String, Number]
+  },
   data: function() {
     return {
       arr: [],
@@ -111,16 +98,14 @@ export default {
       select: null,
       items: [],
       reno: "",
-      givenreno: "",
+      // recruitNo: "",
     };
-    //   XLSX.writeFile(wb, "지원자등록_양식.xlsx"); // 엑셀 다운로드
   },
 
   created: function() {
-    this.arr = this.getVieweeListCurrentRecruit;
+    // this.arr = this.getVieweeListCurrentRecruit;
     this.reno = this.$store.state.selectedRecruitNo;
-    this.givenreno = this.$route.params.recruitNo;
-    // this.pageGetVieweeListCurrentRecruit = this.filterdVieweeList()
+    
     console.log("reno:", this.reno);
     console.log("회사모든지원자들어있나 created때?", this.comVieweeList);
   },
@@ -167,12 +152,10 @@ export default {
 
     //axios.post(보낼url, reno)
 
-    // updateVieweeDB: function () {
-    //   this.$store.dispatch("UPDATE_VIEWEE_LIST", this.reno);
-    // this.$router.go(this.$router.currentRoute, { recruitNo: this.givenreno})
-    // this.pageGetVieweeListCurrentRecruit = this.filterdVieweeList()
-    // this.$router.push({name: 'Viewees', params: { recruitNo : this.reno }});
-    // },
+    updateVieweeDB: function () {
+      this.$store.dispatch("GET_VIEWEE_LIST",this.user.userComSeq );
+
+    },
 
     // watch: {
     //   getVieweeListCurrentRecruit: function () {
@@ -182,14 +165,14 @@ export default {
 
     // },
 
-    createVieweeDB: function() {
-      this.$store.dispatch("UPDATE_VIEWEE_LIST", this.reno);
-      this.filterdVieweeList();
-      this.arr = this.recruitVieweeList;
-    },
+    // updateVieweeDB: function() {
+    //   this.$store.dispatch("UPDATE_VIEWEE_LIST", this.reno);
+    //   this.filterdVieweeList();
+    //   this.arr = this.recruitVieweeList;
+    // },
   },
   computed: {
-    ...mapState(["recruitVieweeList", "comVieweeList"]),
+    ...mapState(["recruitVieweeList", "comVieweeList", "user"]),
     ...mapGetters(["getUserComSeq", "getVieweeListCurrentRecruit"]),
   },
 };
