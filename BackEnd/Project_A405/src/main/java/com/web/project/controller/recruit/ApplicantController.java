@@ -126,6 +126,7 @@ public class ApplicantController {
 
 	@Autowired
 	GroupTypeDao groupTypeDao;
+	
 	@Autowired
 	ApplicantGroupDao applicantGroupDao;
 	
@@ -134,9 +135,6 @@ public class ApplicantController {
 	
 	@Autowired
 	CertificateDao certificateDao;
-	
-	@Autowired
-	GroupTypeDao groupTypeDao;
 	
 	@Autowired
 	InterviewTypeDao interviewTypeDao;
