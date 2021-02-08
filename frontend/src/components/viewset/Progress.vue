@@ -11,7 +11,6 @@
           <th class="text-center">지원자</th>
           <th class="text-center">대기관</th>
           <th class="text-center">면접관</th>
-          <th class="text-center">안내메일</th>
         </tr>
       </thead>
       <tbody>
@@ -23,22 +22,21 @@
           <td>{{ item.applicants }}</td>
           <td>{{ item.view_wait }}</td>
           <td>{{ item.interviewers }}</td>
-          <td>
-            <v-checkbox color="indigo"></v-checkbox>
-          </td>
         </tr>
 
       </tbody>
     </v-simple-table>
     <div class="d-flex justify-end">
-      <v-btn>안내메일전송</v-btn>
+      <v-btn class="m-2" v-on:click="applicantSendMail()">지원자 안내메일 전송</v-btn>
+      <v-btn class="m-2" v-on:click="interviewerSendMail()">면접관 안내메일 전송</v-btn>
     </div>
   </div>
 </template>
 
 <script>
   import { mapState, mapGetters } from "vuex"
-
+  const SERVER_URL ="https://localhost:8080"
+  import axios from "axios"
 
   export default {
     name: "Progress",
@@ -52,6 +50,36 @@
     created: function () {
      
       
+    },
+    methods:{
+    applicantSendMail: function() {
+      console.log(this.recruitItem.reSeq)
+        axios.post(`${SERVER_URL}/applicant/send/`+this.recruitItem.reSeq)
+          .then(res => {
+            console.log(res)
+            alert("지원자 메일 전송 성공")
+            this.$router.push({ name: "Home" })
+          })
+          .catch((err) => {
+            console.log(err)
+            alert("지원자 메일 전송 실패")
+          })
+    },
+    interviewerSendMail: function() {
+      console.log(this.recruitItem.reSeq)
+        axios.post(`${SERVER_URL}/interviewer/send/`+this.recruitItem.reSeq)
+          .then(res => {
+            console.log(res)
+            alert("면접관 메일 전송 성공")
+            this.$router.push({ name: "Home" })
+          })
+          .catch((err) => {
+            console.log(err)
+            alert("면접관 메일 전송 실패")
+          })
+    },
+
+
     },
     computed: {
       ...mapState(["recruitList", "recruitProgressList", "selectedRecruitNo"]),

@@ -13,6 +13,7 @@ import CreateSet from '@/views/viewset/CreateSet'
 import Main from '@/views/main/Main'
 import WaitRoom from '@/views/room/WaitRoom'
 import ViewRoom from '@/views/room/ViewRoom'
+import FindPassword from '@/views/accounts/FindPassword'
 
 // import Recruit from '@/components/viewset/Recruit'
 
@@ -96,6 +97,11 @@ const routes = [{
     path: '/',
     name: 'Home',
     component: Home
+  },
+  {
+    path: '/findpassword',
+    name: 'FindPassword',
+    component: FindPassword
   },
 ]
 
