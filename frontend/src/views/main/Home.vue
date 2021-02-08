@@ -4,8 +4,12 @@
       <v-col cols="8" class="main-box text-center">
         <div class="d-flex flex-column justify-center align-center text-white">
           <v-col class="wiev-box">
-            <v-col :class="[getAccessToken ? '' : 'text-h5']">View Everywhere</v-col>
-            <v-col v-if="!getAccessToken" class="mt-3">비대면 화상면접 플랫폼</v-col>
+            <v-col :class="[getAccessToken ? '' : 'text-h5']"
+              >View Everywhere</v-col
+            >
+            <v-col v-if="!getAccessToken" class="mt-3"
+              >비대면 화상면접 플랫폼</v-col
+            >
             <span :class="[getAccessToken ? 'text-h4' : 'text-h3']">WieV</span>
           </v-col>
 
@@ -16,8 +20,8 @@
               <Schedule />
             </div>
             <div v-else>
-              <router-link :to="{ name: 'Main'}">
-                  대기실 이동하기
+              <router-link :to="{ name: 'Main' }">
+                대기실 이동하기
               </router-link>
             </div>
           </v-col>
@@ -42,7 +46,8 @@
                     <td>
                       <v-text-field
                         label="email"
-                        v-model="credentials.userEmail" hide-details
+                        v-model="credentials.userEmail"
+                        hide-details
                       >
                       </v-text-field>
                     </td>
@@ -62,14 +67,10 @@
                 </tbody>
               </v-simple-table>
             </v-col>
-            <v-col class="subtitle-1"  @click="login" >
-              로그인
-            </v-col>
-            
+            <v-col class="subtitle-1" @click="login"> 로그인 </v-col>
+
             <v-col>
-              <router-link :to="{ name: 'Signup' }">
-                회원가입
-              </router-link>
+              <router-link :to="{ name: 'Signup' }"> 회원가입 </router-link>
             </v-col>
           </v-col>
         </div>
@@ -79,36 +80,35 @@
 </template>
 
 <script>
-  import { mapGetters } from "vuex"
+import { mapGetters } from "vuex";
 
-  import Schedule from "@/components/main/Schedule"
+import Schedule from "@/components/main/Schedule";
 
-  export default {
-    name: "Home",
-    components: {
-      Schedule,
+export default {
+  name: "Home",
+  components: {
+    Schedule,
+  },
+  data: () => ({
+    credentials: {
+      userEmail: "",
+      userPassword: "",
     },
-    data: () => ({
-      credentials: {
-        userEmail: '',
-        userPassword: ''
-      },
-      message: ''
-    }),
-    computed: {
-      ...mapGetters(["getUser", "getAccessToken", "getUserViewWait"]),
+    message: "",
+  }),
+  computed: {
+    ...mapGetters(["getUser", "getAccessToken", "getUserViewWait"]),
+  },
+  methods: {
+    login: function () {
+      this.$store.dispatch("LOGIN", this.credentials).then(() => {
+        this.$router.replace(this.$router.currentRoute);
+        this.credentials.userEmail = "";
+        this.credentials.userPassword = "";
+      });
     },
-    methods: {
-      login: function () {
-        this.$store
-        .dispatch("LOGIN", this.credentials)
-        .then(() => {this.$router.replace(this.$router.currentRoute) 
-        this.credentials.userEmail = ""
-        this.credentials.userPassword = ""
-        })
-      },
-    },
-  }
+  },
+};
 </script>
 
 <style scoped>

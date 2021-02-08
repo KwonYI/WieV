@@ -1,66 +1,71 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import Home from '@/views/main/Home.vue'
-import NotFound from '@/views/main/NotFound.vue'
-import Profile from '@/views/accounts/Profile'
-import ProfileUpdate from '@/views/accounts/ProfileUpdateForm'
-import Signup from '@/views/accounts/Signup'
-import Menu from '@/views/viewset/Menu'
-import CreateSet from '@/views/viewset/CreateSet'
+import Vue from "vue";
+import VueRouter from "vue-router";
+import Home from "@/views/main/Home.vue";
+import NotFound from "@/views/main/NotFound.vue";
+import Profile from "@/views/accounts/Profile";
+import ProfileUpdate from "@/views/accounts/ProfileUpdateForm";
+import Signup from "@/views/accounts/Signup";
+import Menu from "@/views/viewset/Menu";
+import CreateSet from "@/views/viewset/CreateSet";
 // import Viewees from '@/views/viewset/Viewees'
 // import Viewers from '@/views/viewset/Viewers'
 // import Progress from '@/views/viewset/Progress'
-import Main from '@/views/main/Main'
-import WaitRoom from '@/views/room/WaitRoom'
-import ViewRoom from '@/views/room/ViewRoom'
+import Main from "@/views/main/Main";
+import WaitRoom from "@/views/room/WaitRoom";
+import ViewRoom from "@/views/room/ViewRoom";
 
 // import Recruit from '@/components/viewset/Recruit'
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
-
-const routes = [{
-    path: '/main',
-    name: 'Main',
+const routes = [
+  {
+    path: "/main", // 면접관
+    name: "Main",
     component: Main,
   },
   {
-    path: '/404',
-    name: 'notFound',
-    component: NotFound
+    path: "/main/:Id", // 지원자
+    name: "Main",
+    component: Main,
+  },
+  {
+    path: "/404",
+    name: "notFound",
+    component: NotFound,
   },
   {
     path: "*",
-    redirect:"/404"
+    redirect: "/404",
   },
   {
-    path: '/waitroom',
-    name: 'WaitRoom',
+    path: "/waitroom",
+    name: "WaitRoom",
     component: WaitRoom,
   },
   {
-    path: '/viewroom',
-    name: 'ViewRoom',
+    path: "/viewroom",
+    name: "ViewRoom",
     component: ViewRoom,
   },
   {
-    path: '/signup',
-    name: 'Signup',
+    path: "/signup",
+    name: "Signup",
     component: Signup,
   },
   {
-    path: 'profile',
-    name: 'Profile',
+    path: "profile",
+    name: "Profile",
     component: Profile,
   },
   {
-    path: 'profileUpdateForm',
-    name: 'ProfileUpdateForm',
+    path: "profileUpdateForm",
+    name: "ProfileUpdateForm",
     component: ProfileUpdate,
   },
   {
-    path: '/menu',
-    name: 'Menu',
+    path: "/menu",
+    name: "Menu",
     component: Menu,
     // children: [
     //   {
@@ -72,7 +77,6 @@ const routes = [{
     //     name: 'Progress',
     //     component: Progress,
     //   },
-
 
     //   {
     //     path: 'viewees',
@@ -88,25 +92,24 @@ const routes = [{
     // ]
   },
   {
-    path: '/createset',
-    name: 'CreateSet',
-    component: CreateSet
+    path: "/createset",
+    name: "CreateSet",
+    component: CreateSet,
   },
   {
-    path: '/',
-    name: 'Home',
-    component: Home
+    path: "/",
+    name: "Home",
+    component: Home,
   },
-]
+];
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: "history",
   base: process.env.BASE_URL,
-  routes
+  routes,
   // routes :[
   //   { path: '/menu/:recruitno', component : Progress}
   // ]
-})
+});
 
-
-export default router
+export default router;
