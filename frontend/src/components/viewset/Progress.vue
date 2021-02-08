@@ -14,14 +14,17 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in recruitProgressList" :key="item.progress_no" class="text-center">
-          <td>{{ item.group_date }}</td>
-          <td>{{ item.group_start_time }}</td>
-          <td>{{ item.ca }}</td>
-          <td>{{ item.types }}</td>
-          <td>{{ item.applicants }}</td>
-          <td>{{ item.view_wait }}</td>
-          <td>{{ item.interviewers }}</td>
+        <tr v-for="(group, index) in getProgressListCurrentRecruit" :key="index" class="text-center">
+          <td><p class="d-inline p-1">{{ group.groupDate }}</p></td>
+          <td><p class="d-inline p-1">{{ group.groupStartTime }}:00</p></td>
+          <td><p class="d-inline p-1">{{ group.groupCareerName }}</p></td>
+          <td><p v-for="item in group.interviewTypeList" :key="item" class="d-inline p-1" >{{ item }}</p></td>
+          <td><p v-for="item in group.groupApplicantList" :key="item" class="d-inline p-1">{{ item }}</p></td>
+          <td><p v-for="item in group.waitInterviewerList" :key="item" class="d-inline p-1">{{ item.interviewerName }}</p></td>
+          <td><p v-for="item in group.interviewerList" :key="item" class="d-inline p-1"> {{ item.interviewerName }}</p></td>
+          <td>
+            <v-checkbox color="indigo"></v-checkbox>
+          </td>
         </tr>
 
       </tbody>
@@ -45,10 +48,10 @@
     },
     data: function () {
       return {
+
       }
     },
     created: function () {
-     
       
     },
     methods:{
@@ -83,7 +86,7 @@
     },
     computed: {
       ...mapState(["recruitList", "recruitProgressList", "selectedRecruitNo"]),
-      ...mapGetters([]),
+      ...mapGetters(["getProgressListCurrentRecruit"]),
       // filterdProgressList: function () {
       //   return this.recruitProgressList.filter(re => re.reSeq === this.recruitNo)
       // }

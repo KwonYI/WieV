@@ -39,6 +39,7 @@ let vieweeInfo = {
   applyResume1: 'apply-Resume1',
   applyResume2: 'apply-Resume2',
   applyResume3: 'apply-Resume3',
+
 }
 
 export default new Vuex.Store({
@@ -91,6 +92,7 @@ export default new Vuex.Store({
 
     companyNameList: [],
     
+
     companyList: [{
       comSeq: 0,
       comName: "",
@@ -114,6 +116,14 @@ export default new Vuex.Store({
 
     // 얘는 공고별 저장인데 comVieweeList 쓸거같다.
     recruitVieweeList: [],
+
+    // 얘는 공고별 지원자 저장인데 comVieweeList 쓸거같다.
+    recruitVieweeList: [],
+
+
+    // 회사별 면접현황 리스트
+    comProgressList: [],
+
     // 회사 전체 지원자 리스트
     comVieweeList: [],
 
@@ -123,6 +133,7 @@ export default new Vuex.Store({
       //viewEamil, viewName, viewPassword, viewPhone,
       // viewSeq, viewWait
     ],
+
     participants: [],
 
     checkIn: [],
@@ -159,9 +170,9 @@ export default new Vuex.Store({
     getRecruitListCount: function (state) {
       return state.recruitList.length
     },
+
     // 현재 공고의 지원자만 가져오기
     getVieweeListCurrentRecruit: function (state) {
-      // console.log("되어라")
       let list = state.comVieweeList.filter(
         (re) => re.applyRecruitSeq === state.selectedRecruitNo
       )
@@ -181,23 +192,38 @@ export default new Vuex.Store({
     //   return list
     // },
 
+    // 현재공고의 면접현황만 가져오기
+    getProgressListCurrentRecruit: function (state) {
+      let list = state.comProgressList.filter(
+        (re) => re.recruitSeq === state.selectedRecruitNo
+      )
+      console.log("현재", state.selectedRecruitNo, "공고의 면접현황 가져오기", list[0].groupInfoList)
+      return list[0].groupInfoList
+
+    },
+
     // 회사 전체 면접관 리스트 가져오기
     getComViewerList(state) {
       return state.user.comViewerList
     },
     
+
     getParticipants(state) {
       // console.log("게터 실행, 모든 연결 참가자 정보 수")
       // console.log(state.participants.length)
       return state.participants
     },
+
     getCheckIn(state) {
       // console.log("게터 실행, 모든 연결 수")
       // console.log(state.checkIn.length)
       return state.checkIn
     },
+
   },
+
   mutations: {
+
     // 로그인 프로세스
     LOGIN(state, res) {
       // state.accessToken = res["auth-token"]
@@ -215,11 +241,22 @@ export default new Vuex.Store({
       for (const key in userInfo) {
         state.user[key] = res[userInfo[key]]
       }
-
-      // console.log("로긴",state.user )
+      console.log("로긴", state.user)
     },
     // 로그아웃 프로세스
     LOGOUT(state) {
+      // state.accessToken = null
+      // state.user.userSeq = 0
+      // state.user.userEmail = ""
+      // state.user.userName = ""
+      // state.user.userPhone = ""
+      // state.user.userViewWait = 0
+      // state.user.userComSeq = 0
+      // state.user.userComName = ""
+      // state.user.userComLogo = ""
+      // state.user.userComAddress = ""
+      // state.user.userComHomepage = ""
+
       state.accessToken = null
       for (const key in userInfo) {
         state.user[key] = ''
@@ -234,10 +271,12 @@ export default new Vuex.Store({
       state.user.userName = res["user-Name"]
       state.user.userPhone = res["user-Phone"]
     },
+
     // CLEAR_COMVIEWEELIST(){
     //   state.comVieweeList = ''
 
     // },
+
     GET_COMPANY_NAME_LIST(state, res) {
       // console.log(typeof res)
       // console.log("mutaions의 GET_COMPANY_NAME_LIST", res)
@@ -247,6 +286,7 @@ export default new Vuex.Store({
       // console.log("mutaions의 GET_COMPANY_LIST", res)
       state.companyList = res
     },
+
     // 공고 리스트 state에 저장
     GET_RECRUIT_LIST(state, res) {
       // console.log("mutaions의 GET_RECRUIT_LIST", res)
@@ -257,6 +297,7 @@ export default new Vuex.Store({
       // console.log("mutaions의 INSERT_RECRUIT", res)
       state.recruitList.push(res)
     },
+
     // // 업데이트된 지원자 리스트 state에 저장
     // UPDATE_VIEWEE_LIST(state, res) {
     //   console.log("mutaions의 UPDATE_VIEWEE_LIST", res)
@@ -306,16 +347,31 @@ export default new Vuex.Store({
       state.checkIn = data
       // console.log(state.checkIn.length)
     },
+
     // 공고 면접현황 리스트 state에 저장
     GET_PROGRESS_LIST(state, res) {
-      // console.log("뮤테이션 면접현황LIST 엄청많죠", res)
-      state.recruitProgressList = res
+      // console.log("GET_PROGRESS_LIST", res)
+      state.comProgressList = res
     },
-     // 지원자 리스트 state에 저장
-     GET_VIEWEE_LIST(state, res) {
+
+    // 지원자 리스트 state에 저장
+    //  GET_VIEWEE_LIST(state, res) {
+    //   for (var i = 0; i < res.length; i++) {
+    //     for (const key in vieweeInfo) {
+    //       state.comVieweeList[i][key] = res[i][vieweeInfo[key]]
+    //       // state.comVieweeList[key] = res[vieweeInfo[key]]
+    //       // var tempi[key] = res[i][vieweeInfo[key]]
+    //     }
+    //   }
+    //   // console.log("comvieeelisttype:", typeof(state.comVieweeList))
+    //   console.log("comvieweelist~~", state.comVieweeList)
+
+    // },
+    GET_VIEWEE_LIST(state, res) {
       state.comVieweeList = []
       for (var i = 0; i < res.length; i++) {
-        console.log(res[i])
+        // console.log(res[i])
+        state.viewee = {}
         for (const key in vieweeInfo) {
           state.viewee[key] = res[i][vieweeInfo[key]]
           // state.comVieweeList[key] = res[vieweeInfo[key]]
@@ -363,6 +419,7 @@ export default new Vuex.Store({
         })
       context.commit("LOGOUT")
     },
+
     GET_COMPANY_NAME_LIST(context) {
       axios.get(`${SERVER_URL}/recruit/companyNameList`)
         .then(res => {
@@ -375,6 +432,7 @@ export default new Vuex.Store({
           context.commit("GET_COMPANY_LIST", res.data)
         })
     },
+
     GET_RECRUIT_LIST(context) {
       axios.get(`${SERVER_URL}/recruit/getList/` + this.state.user.userComSeq)
         .then(res => {
@@ -419,21 +477,17 @@ export default new Vuex.Store({
         })
         .catch(err => console.log(err))
     },
+
     //회사의 면접현황 리스트 가져오기
     GET_PROGRESS_LIST(context, comSeq) {
-      axios.get(`${SERVER_URL}/groupInfo/totalList/${comSeq}`)
+      axios.get(`${SERVER_URL}/groupInfo/comTotalGroupList/${comSeq}`)
         .then(res => {
-          // console.log("recruitSeq", recruitSeq)
-          // console.log("response", res)
-          // console.log("공고에 대한 프로그레스 받아왓ㅅ나연", res.data)
-          // context.commit("GET_PROGRESS_LIST", res.data)
-          let respDataStr = res.data
-          let jsObject = JSON.parse(respDataStr)
-          console.log("파싱되었나", jsObject)
-
+          context.commit("GET_PROGRESS_LIST", res.data)
         })
         .catch(err => console.log(err))
     }
+
+
   },
 
   plugins: [createPersistedState()],

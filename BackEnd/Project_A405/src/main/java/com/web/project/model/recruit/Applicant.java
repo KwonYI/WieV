@@ -1,6 +1,5 @@
 package com.web.project.model.recruit;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,8 +12,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-
-
 
 @Entity
 @Data
@@ -39,9 +36,8 @@ public class Applicant {
 	private String applyResume3;
 	private String applyResume4;
 	private int applyAssigned;
-	
+
 	private int careerCaSeq;
 	private int recruitReSeq;
 
 }
-

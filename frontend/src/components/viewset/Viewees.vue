@@ -29,7 +29,7 @@
           <th class="text-center">생년월일</th>
           <th class="text-center">이메일</th>
           <th class="text-center">자기소개서</th>
-          <th class="text-center">이력서</th>
+          <!-- <th class="text-center">이력서</th> -->
         </tr>
       </thead>
       <tbody>
@@ -47,9 +47,9 @@
           <td>
             <v-btn>자기소개서</v-btn>
           </td>
-          <td>
+          <!-- <td>
             <v-btn>이력서</v-btn>
-          </td>
+          </td> -->
         </tr>
       </tbody>
     </v-simple-table>
@@ -59,9 +59,9 @@
 <script>
 import axios from "axios";
 import XLSX from "xlsx";
-const SERVER_URL = "https://localhost:8080";
+// const SERVER_URL = "https://localhost:8080";
 // const SERVER_URL = "https://i4a405.p.ssafy.io:8080"
-// const SERVER_URL = process.env.VUE_APP_SERVER_URL
+const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
 import { mapState, mapGetters } from "vuex";
 
