@@ -5,7 +5,7 @@ import createPersistedState from "vuex-persistedstate"
 import _ from "lodash"
 
 Vue.use(Vuex)
-//  const SERVER_URL = "https://localhost:8080"
+// const SERVER_URL = "https://localhost:8080"
 // const SERVER_URL = "https://i4a405.p.ssafy.io:8080"
 const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
@@ -53,31 +53,26 @@ export default new Vuex.Store({
 
     companyNameList: [],
 
-    companyList: [
-      {
-        comSeq: 0,
-        comName: "",
-        comLogo: "",
-        comAddress: "",
-        comHomepage: "",
-      },
-    ],
+    companyList: [{
+      comSeq: 0,
+      comName: "",
+      comLogo: "",
+      comAddress: "",
+      comHomepage: "",
+    }, ],
 
     // 전체 채용공고 리스트
-    recruitList: [
-      {
-        reSeq: 0,
-        reYear: 0,
-        reFlag: "",
-        reStatus: "",
-        reStartDate: "",
-        reEndDate: "",
-      },
-    ],
-
+    recruitList: [{
+      reSeq: 0,
+      reYear: 0,
+      reFlag: "",
+      reStatus: "",
+      reStartDate: "",
+      reEndDate: "",
+    }, ],
+   
     // 공고별 면접현황 리스트
-    recruitProgressList: [
-    ],
+    recruitProgressList: [],
 
     // 얘는 공고별 저장인데 comVieweeList 쓸거같다.
     recruitVieweeList: [],
@@ -124,7 +119,7 @@ export default new Vuex.Store({
     // },
 
     // 공고 최근순으로 정렬해서 가져오기
-    getRecruitListLately: function(state) {
+    getRecruitListLately: function (state) {
       // return _.sortBy(state.recruitList, 'reSeq').reverse()
       return _.orderBy(state.recruitList, ["reSeq"], ["desc"])
     },
@@ -231,7 +226,7 @@ export default new Vuex.Store({
       // console.log("mutaions의 GET_COMPANY_LIST", res)
       state.companyList = res
     },
-      
+
     // 공고 리스트 state에 저장
     GET_RECRUIT_LIST(state, res) {
       // console.log("mutaions의 GET_RECRUIT_LIST", res)
@@ -303,7 +298,7 @@ export default new Vuex.Store({
       state.recruitProgressList = res
     }
 
-   
+
   },
   actions: {
     // 로그인
@@ -371,7 +366,7 @@ export default new Vuex.Store({
         })
     },
     // 공고 삭제하기
-    DELETE_RECRUIT(context, reSeq){
+    DELETE_RECRUIT(context, reSeq) {
       axios.delete(`${SERVER_URL}/recruit/delete/` + reSeq)
         .then(() => alert("공고가 삭제되었습니다!"))
     },
@@ -405,13 +400,19 @@ export default new Vuex.Store({
     GET_PROGRESS_LIST(context, recruitSeq) {
       axios.get(`${SERVER_URL}/groupInfo/totalList/` + recruitSeq)
         .then(res => {
-          console.log("공고에 대한 프로그레스 받아왔니", res)
+          console.log("recruitSeq", recruitSeq)
+          console.log("response", res)
+          console.log("공고에 대한 프로그레스 받아왓ㅅ나연", res.data)
           context.commit("GET_PROGRESS_LIST", res.data)
+          let respDataStr = res.data
+          let jsObject = JSON.parse(respDataStr)
+          console.log("파싱되었나", jsObject)
+
         })
         .catch(err => console.log(err))
 
-      }
-      
+    }
+
 
   },
 
