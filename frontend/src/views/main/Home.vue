@@ -20,7 +20,7 @@
               <Schedule />
             </div>
             <div v-else>
-              <router-link :to="{ name: 'Main' }">
+              <router-link :to="{ name: 'Main', params: { isLogin: true } }">
                 대기실 이동하기
               </router-link>
             </div>
