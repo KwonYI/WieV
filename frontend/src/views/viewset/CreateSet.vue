@@ -89,6 +89,8 @@
           </v-row>
         </v-col>
         
+        <a-date-picker @change="change" />
+        <a-time-picker format="HH:mm"/>
         
         <hr>
         <!-- 스케줄 테이블 -->
@@ -437,8 +439,8 @@ export default {
     clicked: function (value) {
       this.schGroupTable.expanded.push(value)
     },
-    test: function () {
-      console.log('expanded')
+    change: function () {
+      
     }
   },
   watch: {
@@ -494,7 +496,7 @@ td {
   text-align: center;
 }
 
-table.table {
+/* table.table {
   margin:0 auto;
   width: 98%;
   max-width: 98%;
@@ -522,5 +524,5 @@ table.table {
   z-index: 2;
   border:1px solid #ccc;
   box-shadow: 0 4px 5px 0 rgba(0,0,0,0.15), 0 1px 10px 0 rgba(0,0,0,0.15), 0 2px 4px -1px rgba(0,0,0,0.2);
-}
+} */
 </style>
