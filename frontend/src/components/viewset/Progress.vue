@@ -14,14 +14,17 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in recruitProgressList" :key="item.progress_no" class="text-center">
-          <td>{{ item.group_date }}</td>
-          <td>{{ item.group_start_time }}</td>
-          <td>{{ item.ca }}</td>
-          <td>{{ item.types }}</td>
-          <td>{{ item.applicants }}</td>
-          <td>{{ item.view_wait }}</td>
-          <td>{{ item.interviewers }}</td>
+        <tr v-for="item in getProgressListCurrentRecruit" :key="item.progress_no" class="text-center">
+          <td>{{ item.groupDate }}</td>
+          <td>{{ item.groupStartTime }}:00</td>
+          <td>{{ item.groupCareerName }}</td>
+          <td>{{ item.interviewTypeList }}</td>
+          <td>{{ item.groupApplicantList }}</td>
+          <td>{{ item.waitInterviewerList }}</td>
+          <td>{{ item.interviewerList }}</td>
+          <td>
+            <v-checkbox color="indigo"></v-checkbox>
+          </td>
         </tr>
 
       </tbody>
@@ -45,10 +48,10 @@
     },
     data: function () {
       return {
+
       }
     },
     created: function () {
-     
       
     },
     methods:{
@@ -83,7 +86,7 @@
     },
     computed: {
       ...mapState(["recruitList", "recruitProgressList", "selectedRecruitNo"]),
-      ...mapGetters([]),
+      ...mapGetters(["getProgressListCurrentRecruit"]),
       // filterdProgressList: function () {
       //   return this.recruitProgressList.filter(re => re.reSeq === this.recruitNo)
       // }
