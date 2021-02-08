@@ -2,7 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
 import createPersistedState from "vuex-persistedstate";
-import _ from "lodash"
+import _ from "lodash";
 
 Vue.use(Vuex);
 //  const SERVER_URL = "https://localhost:8080"
@@ -221,7 +221,9 @@ export default new Vuex.Store({
       // viewSeq, viewWait
     ],
 
-    // participantsInInterviews: [],
+    participants: [],
+
+    checkIn: [],
   },
 
   getters: {
@@ -251,7 +253,7 @@ export default new Vuex.Store({
     getRecruitListLately: function(state) {
       // return _.sortBy(state.recruitList, 'reSeq').reverse()
       return _.orderBy(state.recruitList, ["reSeq"], ["desc"]);
-    }, 
+    },
     getRecruitListCount: function(state) {
       return state.recruitList.length;
     },
@@ -272,6 +274,18 @@ export default new Vuex.Store({
       console.log("게터 getComViewerList");
       console.log(state.user.comViewerList);
       return state.user.comViewerList;
+    },
+
+    getParticipants(state) {
+      console.log("게터 실행, 모든 연결 참가자 정보 수");
+      console.log(state.participants.length);
+      return state.participants;
+    },
+
+    getCheckIn(state) {
+      console.log("게터 실행, 모든 연결 수");
+      console.log(state.checkIn.length);
+      return state.checkIn;
     },
   },
   mutations: {
@@ -306,7 +320,7 @@ export default new Vuex.Store({
       state.user.userPhone = res["user-Phone"];
     },
     GET_COMPANY_NAME_LIST(state, res) {
-      console.log(typeof(res));
+      console.log(typeof res);
       console.log("mutaions의 GET_COMPANY_NAME_LIST", res);
       state.companyNameList = res;
     },
@@ -338,61 +352,101 @@ export default new Vuex.Store({
       state.comViewerList = res;
       // console.log(state.comViewerList);
     },
+    addParticipants(state, data) {
+      console.log("뮤테이션 실행 밑에 있는 데이터 넣을 예정");
+      console.log(data);
+      state.participants.push(data);
+    },
+    deleteParticipants(state, data) {
+      const index = state.participants.indexOf(data, 0);
+      console.log("정보 삭제 시도");
+      console.log("변경전 : ", state.participants.length);
+      if (index >= 0) {
+        state.participants.splice(index, 1);
+      }
+      console.log("변경후 : ", state.participants.length);
+    },
+    clearParticipants(state, data) {
+      console.log("클리어 실행, 실행 후 남은 정보");
+      state.participants = data;
+      console.log(state.participants.length);
+    },
+    addCheckIn(state, data) {
+      console.log("뮤테이션 실행 밑에 있는 데이터 넣을 예정");
+      console.log(data);
+      state.checkIn.push(data);
+    },
+    deleteCheckIn(state, data) {
+      const index = state.checkIn.indexOf(data, 0);
+      console.log("정보 삭제 시도");
+      console.log("변경전 : ", state.checkIn.length);
+      if (index >= 0) {
+        state.checkIn.splice(index, 1);
+      }
+      console.log("변경후 : ", state.checkIn.length);
+    },
+    clearcheckIn(state, data) {
+      console.log("클리어 실행, 실행 후 남은 정보");
+      state.checkIn = data;
+      console.log(state.checkIn.length);
+    },
   },
 
   actions: {
     // 로그인, 로그아웃
     LOGIN(context, user) {
-      axios.post(`${SERVER_URL}/hr/login`, user).then((response) => {
-        context.commit("LOGIN", response.data)
-        axios.defaults.headers.common[
-          "auth-token"
-        ] = `${response.data["auth-token"]}`
-      }).then((res) => {
-        console.log(res)
-      }).catch(() => 
-      alert("이메일과 비밀번호를 확인해주십시오.")
-    )},
+      axios
+        .post(`${SERVER_URL}/hr/login`, user)
+        .then((response) => {
+          context.commit("LOGIN", response.data);
+          axios.defaults.headers.common[
+            "auth-token"
+          ] = `${response.data["auth-token"]}`;
+        })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch(() => alert("이메일과 비밀번호를 확인해주십시오."));
+    },
     LOGOUT(context) {
       context.commit("LOGOUT");
       axios.defaults.headers.common["auth-token"] = undefined;
     },
-    USER_UPDATE(context, userUpdateRequest){
+    USER_UPDATE(context, userUpdateRequest) {
       axios
-        .put(`${SERVER_URL}/hr/update/` + this.state.user.userSeq, userUpdateRequest)
+        .put(
+          `${SERVER_URL}/hr/update/` + this.state.user.userSeq,
+          userUpdateRequest
+        )
         .then((res) => {
-          context.commit("USER_UPDATE", res.data)
-          alert("회원정보 수정이 완료되었습니다.")
+          context.commit("USER_UPDATE", res.data);
+          alert("회원정보 수정이 완료되었습니다.");
         });
     },
     USER_DELETE(context) {
       axios
         .delete(`${SERVER_URL}/hr/delete/` + this.state.user.userSeq)
         .then(() => {
-          alert("회원 탈퇴가 완료되었습니다.")
+          alert("회원 탈퇴가 완료되었습니다.");
         });
       context.commit("LOGOUT");
     },
 
     GET_COMPANY_NAME_LIST(context) {
-      axios
-        .get(`${SERVER_URL}/recruit/companyNameList`)
-        .then((res) => {
-          context.commit("GET_COMPANY_NAME_LIST", res.data);
-          console.log("회사 이름 리스트")
-          console.log(res.data);
-        });
+      axios.get(`${SERVER_URL}/recruit/companyNameList`).then((res) => {
+        context.commit("GET_COMPANY_NAME_LIST", res.data);
+        console.log("회사 이름 리스트");
+        console.log(res.data);
+      });
     },
     GET_COMPANY_LIST(context) {
-      axios
-        .get(`${SERVER_URL}/recruit/companyList`)
-        .then((response) => {
-          context.commit("GET_COMPANY_LIST", response.data);
-          console.log("회사 리스트")
-          console.log(response.data);
-        });
+      axios.get(`${SERVER_URL}/recruit/companyList`).then((response) => {
+        context.commit("GET_COMPANY_LIST", response.data);
+        console.log("회사 리스트");
+        console.log(response.data);
+      });
     },
- 
+
     GET_RECRUIT_LIST(context) {
       axios
         .get(`${SERVER_URL}/recruit/getList/` + this.state.user.userComSeq)
@@ -417,11 +471,10 @@ export default new Vuex.Store({
         });
     },
 
-    DELETE_RECRUIT(context, reSeq){
-      axios.delete(`${SERVER_URL}/recruit/delete/` + reSeq)
-      .then(
-        alert("삭제되었습니다!")
-      );
+    DELETE_RECRUIT(context, reSeq) {
+      axios
+        .delete(`${SERVER_URL}/recruit/delete/` + reSeq)
+        .then(alert("삭제되었습니다!"));
     },
 
     //지원자를 엑셀로 저장

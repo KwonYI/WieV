@@ -313,6 +313,10 @@ public class SessionController {
 
 		String msg = null;
 		HttpStatus status = null;
+		
+		System.out.println("변경전");
+		printMap();
+		System.out.println("--------------------------------------------------------------------------------------------------------------");
 
 		if (this.sessions.get(sessionName) != null && this.tokensInSession.get(sessionName) != null) { // 방이 존재하는지
 

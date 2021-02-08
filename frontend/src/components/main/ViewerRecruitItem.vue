@@ -44,7 +44,7 @@
                   </div>
                   <v-btn
                     color="blue lighten-3 yellow--text"
-                    dark
+                    :disabled="inWait === true"
                     @click="goWaitSession"
                   >
                     대기실 입장
@@ -52,114 +52,11 @@
 
                   <v-btn
                     color="blue lighten-3 yellow--text"
-                    dark
+                    :disabled="inInterview === true"
                     @click="goInterviewSession"
                   >
                     면접실 입장
                   </v-btn>
-                  <!--
-                  <div>
-                    <v-dialog v-model="dialog" persistent max-width="600px">
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                          color="blue lighten-3 yellow--text"
-                          dark
-                          v-bind="attrs"
-                          v-on="on"
-                        >
-                          대기실 입장
-                        </v-btn>
-                      </template>
-                      <v-card>
-                        <v-card-title>
-                          <span class="headline">User Profile</span>
-                        </v-card-title>
-                        <v-card-text>
-                          <v-container>
-                            <v-row>
-                              <v-col cols="12" sm="6" md="4">
-                                <v-text-field
-                                  label="Legal first name*"
-                                  required
-                                ></v-text-field>
-                              </v-col>
-                              <v-col cols="12" sm="6" md="4">
-                                <v-text-field
-                                  label="Legal middle name"
-                                  hint="example of helper text only on focus"
-                                >
-                                </v-text-field>
-                              </v-col>
-                              <v-col cols="12" sm="6" md="4">
-                                <v-text-field
-                                  label="Legal last name*"
-                                  hint="example of persistent helper text"
-                                  persistent-hint
-                                  required
-                                ></v-text-field>
-                              </v-col>
-                              <v-col cols="12">
-                                <v-text-field
-                                  label="Email*"
-                                  required
-                                ></v-text-field>
-                              </v-col>
-                              <v-col cols="12">
-                                <v-text-field
-                                  label="Password*"
-                                  type="password"
-                                  required
-                                ></v-text-field>
-                              </v-col>
-                              <v-col cols="12" sm="6">
-                                <v-select
-                                  :items="['0-17', '18-29', '30-54', '54+']"
-                                  label="Age*"
-                                  required
-                                ></v-select>
-                              </v-col>
-                              <v-col cols="12" sm="6">
-                                <v-autocomplete
-                                  :items="[
-                                    'Skiing',
-                                    'Ice hockey',
-                                    'Soccer',
-                                    'Basketball',
-                                    'Hockey',
-                                    'Reading',
-                                    'Writing',
-                                    'Coding',
-                                    'Basejump',
-                                  ]"
-                                  label="Interests"
-                                  multiple
-                                ></v-autocomplete>
-                              </v-col>
-                            </v-row>
-                          </v-container>
-                          <small>*indicates required field</small>
-                        </v-card-text>
-                        <v-card-actions>
-                          <v-spacer></v-spacer>
-                          <v-btn
-                            color="blue darken-1"
-                            text
-                            @click="dialog = false"
-                          >
-                            Close
-                          </v-btn>
-                          <v-btn
-                            color="blue darken-1"
-                            text
-                            @click="dialog = false"
-                          >
-                            Save
-                          </v-btn>
-                        </v-card-actions>
-                      </v-card>
-                    </v-dialog>
-                  </div>
-                    -->
                 </v-card-text>
               </v-card>
             </div>
@@ -172,6 +69,7 @@
 
 <script>
 import axios from "axios";
+import { mapGetters, mapMutations } from "vuex";
 
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 
@@ -185,24 +83,22 @@ export default {
       type: Object,
     },
   },
-  data: function() {
+  data: function () {
     return {
-      // re_data: [1, 2, 3],
-      // show: false,
-      // com_name: "버즈글로벌",
-      // re_year: 2021,
-      // re_flag: "상반기",
-      // re_status: "신입",
-      // re_startdate: "2021-08-07",
-      // re_enddate: "2021-08-08",
-      // group_date: "20-08-07",
-      // group_start_time: "14:00",
-      // ca_name: "마케팅",
-      // type_name: "PT면접",
-      // dialog: false,
+      // checkInWait: {
+      //   token: "",
+      //   isIn: false,
+      // },
+      // checkInInterview: {
+      //   token: "",
+      //   isIn: false,
+      // },
+      inWait: false,
+      inInterview: false,
     };
   },
   methods: {
+    ...mapMutations(["addCheckIn", "clearCheckIn", "deleteCheckIn"]),
     goWaitSession() {
       axios
         .get(`${SERVER_URL}/session/create`, {
@@ -214,10 +110,25 @@ export default {
         })
         .then((res) => {
           console.log(res);
-          this.$router.push({
+          // this.$router.push({
+          //   name: "WaitRoom",
+          //   params: { interview: this.interview, interviewer: res.data },
+          // });
+          let routeData = this.$router.resolve({
             name: "WaitRoom",
-            params: { interview: this.interview, interviewer: res.data },
+            query: {
+              comName: this.interview.comName,
+              re_year: this.interview.recruitYear,
+              re_flag: this.interview.recruitFlag,
+              re_status: this.interview.recruitStatus,
+              sessionName: res.data.sessionName,
+              token: res.data.token,
+              userName: res.data.interviewerName,
+              type: res.data.type,
+            },
           });
+          // this.inWait = true;
+          window.open(routeData.href, "_blank");
         })
         .catch((err) => {
           if (this.user.userViewWait == 0) {
@@ -253,6 +164,9 @@ export default {
           }
         });
     },
+  },
+  computed: {
+    ...mapGetters(["getCheckIn"]),
   },
 };
 </script>

@@ -5,11 +5,22 @@
     <!--상단 바-->
     <v-app-bar class="d-flex justify-end" dense dark>
       <v-toolbar-title class="">
-        {{ com_name }}
+        {{ comName }}
         {{ re_year }}
         {{ re_flag }}
         {{ re_status }}
-        <!-- 오른쪽에 붙이고 싶어요 -->
+        <input
+          class="btn"
+          type="button"
+          @click="audioOnOOff"
+          :value="audioMsg"
+        />
+        <input
+          class="btn"
+          type="button"
+          @click="videoOnOOff"
+          :value="videoMsg"
+        />
         <input
           class="btn"
           type="button"
@@ -19,6 +30,7 @@
       </v-toolbar-title>
     </v-app-bar>
 
+    <div id="screen"></div>
     <!-- 바 밑에 내용물들.  -->
     <v-container>
       <!--row1. : 공지사항 배너, 면접실 만들기 버튼-->
@@ -27,23 +39,34 @@
       <!-- row2 : 관리자, 지원자, FAQ 잡동사니 row-->
       <v-row>
         <!-- row2[왼쪽] : 관리자 리스트-->
+        <div
+          v-for="sub in subscribers"
+          :key="sub.stream.connection.connectionId"
+        >
+          <div v-for="(info, index) in participants" :key="index">
+            <v-col
+              cols="3"
+              v-if="
+                info.connectionId === sub.stream.connection.connectionId &&
+                info.type !== 'interviewer'
+              "
+            >
+              <user-video
+                :stream-manager="sub"
+                @click.native="updateMainVideoStreamManager(sub)"
+              />
+            </v-col>
+            <v-col cols="6" v-else
+              ><user-video
+                :stream-manager="sub"
+                @click.native="updateMainVideoStreamManager(sub)"
+              />
+            </v-col>
+          </div>
+        </div>
         <v-col cols="3">
-          <user-video :stream-manager="mainStreamManager" />
+          <!-- <user-video :stream-manager="mainStreamManager" /> -->
           <!-- <ManagerList /> -->
-        </v-col>
-        <!-- row2[가운데] : 지원자 리스트-->
-        <v-col cols="6">
-          <user-video
-            :stream-manager="publisher"
-            @click.native="updateMainVideoStreamManager(publisher)"
-          />
-          <user-video
-            v-for="sub in subscribers"
-            :key="sub.stream.connection.connectionId"
-            :stream-manager="sub"
-            @click.native="updateMainVideoStreamManager(sub)"
-          />
-          <!-- <VieweeList /> -->
         </v-col>
         <!-- row2[오른쪽] : 우측에 FAQ 채팅창 잡동사니 -->
         <v-col cols="3">
@@ -73,10 +96,9 @@ import { OpenVidu } from "openvidu-browser";
 import UserVideo from "@/components/room/UserVideo";
 import axios from "axios";
 
+import { mapGetters, mapMutations } from "vuex";
+
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
-
-// import { mapState } from "vuex";
-
 // import ManagerList from "@/components/room/ManagerList.vue"
 // import VieweeList from "@/components/room/VieweeList.vue"
 
@@ -94,10 +116,22 @@ export default {
       mainStreamManager: undefined, // 메인 비디오
       publisher: undefined, // 연결 객체
       subscribers: [],
+      participants: [],
 
       // 채팅
       text: "",
       messages: [],
+
+      // 화면, 소리, 화면 공유
+      audioOn: true,
+      audioMsg: "소리 On",
+      videoOn: true,
+      videoMsg: "화면 On",
+      // shareOn: false,
+      // shareMsg: "공유 Off",
+
+      // ConnectionId
+      info: { sessionName: "", type: "", connectionId: undefined },
 
       // From SessionController
       sessionName: undefined,
@@ -106,22 +140,40 @@ export default {
       type: undefined, // 대기실 관리자(manager) / 면접관(interviewer) / 면접자(interviewee)
 
       // From Main.vue
-      com_name: undefined,
+      comName: undefined,
       re_year: undefined,
       re_flag: undefined,
       re_status: undefined,
     };
   },
-  mounted() {
-    this.com_name = this.$route.params.interview.comName;
-    this.re_year = this.$route.params.interview.recruitYear;
-    this.re_flag = this.$route.params.interview.recruitFlag;
-    this.re_status = this.$route.params.interview.recruitStatus;
-    this.sessionName = this.$route.params.interviewer.sessionName;
-    this.token = this.$route.params.interviewer.token;
-    this.userName = this.$route.params.interviewer.interviewerName;
-    this.type = this.$route.params.interviewer.type;
+  created: function () {
+    window.addEventListener("beforeunload", this.leaveSession);
+    window.addEventListener("backbutton", this.leaveSession);
 
+    // this.comName = this.$route.params.interview.comName;
+    // this.re_year = this.$route.params.interview.recruitYear;
+    // this.re_flag = this.$route.params.interview.recruitFlag;
+    // this.re_status = this.$route.params.interview.recruitStatus;
+    // this.sessionName = this.$route.params.interviewer.sessionName;
+    // this.token = this.$route.params.interviewer.token;
+    // this.userName = this.$route.params.interviewer.interviewerName;
+    // this.type = this.$route.params.interviewer.type;
+
+    this.comName = this.$route.query.comName;
+    this.re_year = this.$route.query.re_year;
+    this.re_flag = this.$route.query.re_flag;
+    this.re_status = this.$route.query.re_status;
+    this.sessionName = this.$route.query.sessionName;
+    this.token = this.$route.query.token;
+    this.userName = this.$route.query.userName;
+    this.type = this.$route.query.type;
+  },
+  beforeDestroy() {
+    window.removeEventListener("beforeunload", this.leaveSession);
+    window.removeEventListener("backbutton", this.leaveSession);
+  },
+
+  mounted() {
     this.OV = new OpenVidu();
     this.session = this.OV.initSession();
 
@@ -163,6 +215,23 @@ export default {
         this.publisher = publisher;
 
         this.session.publish(this.publisher);
+        this.subscribers.push(this.publisher);
+
+        this.info.sessionName = this.sessionName;
+        this.info.type = this.type;
+        this.info.connectionId = this.publisher.stream.connection.connectionId;
+        this.addParticipants(this.info);
+
+        console.log("웨이트룸에서 길이 찍기");
+        console.log(this.getParticipants.length);
+
+        this.getParticipants.forEach((element) => {
+          if (element.sessionName == this.sessionName)
+            this.participants.push(element);
+        });
+
+        console.log(this.participants);
+        // this.clearParticipants([]);
       })
       .catch((error) => {
         console.log(
@@ -171,11 +240,17 @@ export default {
           error.message
         );
       });
-
-    // window.addEventListener("beforeunload", this.leaveSession);
+    window.addEventListener("beforeunload", this.leaveSession);
   },
 
   methods: {
+    ...mapMutations([
+      "addParticipants",
+      "clearParticipants",
+      "deleteParticipants",
+      "clearCheckIn",
+      "deleteCheckIn",
+    ]),
     sendMessage() {
       if (this.text === "") return;
 
@@ -194,14 +269,6 @@ export default {
     },
 
     leaveSession() {
-      if (this.session) this.session.disconnect();
-
-      this.session = undefined;
-      this.mainStreamManager = undefined;
-      this.publisher = undefined;
-      this.subscribers = [];
-      this.OV = undefined;
-
       axios
         .get(`${SERVER_URL}/session/leaveSession`, {
           params: {
@@ -211,32 +278,46 @@ export default {
         })
         .then((res) => {
           console.log(res);
-          this.$router.push({
-            name: "Main",
-          });
+          if (this.session) this.session.disconnect();
+          this.deleteParticipants(this.info);
+          this.session = undefined;
+          this.mainStreamManager = undefined;
+          this.publisher = undefined;
+          this.subscribers = [];
+          this.OV = undefined;
+
+          window.close();
         })
         .catch((err) => {
           console.log(err);
           console.log("방 나가기 실패!");
         });
-      // window.removeEventListener("beforeunload", this.leaveSession);
     },
 
     updateMainVideoStreamManager(stream) {
-      // 클릭시 객체 정보 반환
       if (this.mainStreamManager === stream) return;
       this.mainStreamManager = stream;
     },
-  },
 
-  created: function () {
-    // if (this.viewerLogin) {
-    //   this.$router.push({ name: "ViewerRecruitItem" })
-    // }
+    audioOnOOff() {
+      this.audioOn = !this.audioOn;
+      if (this.audioOn === true) this.audioMsg = "소리 Off";
+      else this.audioMsg = "소리 On";
+
+      this.publisher.publishAudio(this.audioOn);
+    },
+
+    videoOnOOff() {
+      this.videoOn = !this.videoOn;
+      if (this.videoOn === true) this.videoMsg = "화면 Off";
+      else this.videoMsg = "화면 On";
+
+      this.publisher.publishVideo(this.videoOn);
+    },
   },
 
   computed: {
-    // ...mapState(["whoLogin"]),
+    ...mapGetters(["getParticipants", "getCheckIn"]),
   },
 };
 </script>
