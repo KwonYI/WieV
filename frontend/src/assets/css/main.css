@@ -10,9 +10,16 @@
     opacity: 0.93;
 }
 
+​.main-bg-beige {
+    background-color: #FFF1C3;
+}
+
+
 ​.main-ft-beige {
     color: #FFF1C3;
 }
+
+
 
 ​.main-ft-white {
     color: white;

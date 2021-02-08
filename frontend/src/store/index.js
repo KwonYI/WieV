@@ -114,8 +114,6 @@ export default new Vuex.Store({
     // 공고별 면접현황 리스트
     recruitProgressList: [],
 
-    // 얘는 공고별 저장인데 comVieweeList 쓸거같다.
-    recruitVieweeList: [],
 
     // 얘는 공고별 지원자 저장인데 comVieweeList 쓸거같다.
     recruitVieweeList: [],
@@ -197,7 +195,7 @@ export default new Vuex.Store({
       let list = state.comProgressList.filter(
         (re) => re.recruitSeq === state.selectedRecruitNo
       )
-      console.log("현재", state.selectedRecruitNo, "공고의 면접현황 가져오기", list[0].groupInfoList)
+      // console.log("현재", state.selectedRecruitNo, "공고의 면접현황 가져오기", list[0].groupInfoList)
       return list[0].groupInfoList
 
     },
@@ -367,8 +365,7 @@ export default new Vuex.Store({
         }
         state.comVieweeList.push(state.viewee)
       }
-      // console.log("comvieeelisttype:", typeof(state.comVieweeList))
-      // console.log("comvieweelist~~", state.comVieweeList)
+      
       
     },
 

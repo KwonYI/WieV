@@ -73,36 +73,37 @@
 
         <hr>
         <!-- 스케줄 테이블 -->
-        <v-data-table :headers="schGroupTable.headers" :items="schGroupTable.schGroups"
-          :expanded.sync="schGroupTable.expanded" single-expand item-key="schGroupNo"
+        <!-- <v-data-table :headers="schGroupTable.headers" :items="schGroupTable.schGroups" -->
+        <v-data-table :headers="schGroupTable.headers" :items="getProgressListCurrentRecruit"
+          :expanded.sync="schGroupTable.expanded" single-expand item-key="groupSeq"
           @click:row="(item, slot) => slot.expand(!slot.isExpanded)">
           <!-- 스케줄 row -->
           <template v-slot:item="{ item, expand, isExpanded }">
             <tr @click="expand(!isExpanded)">
-              <td>{{ item.schGroupNo }}</td>
-              <td>{{ item.schGroupDate }}</td>
-              <td>{{ item.schGroupTime }}</td>
-              <td>{{ item.schGroupCareer }}</td>
+              <td>{{ item.groupSeq }}</td>
+              <td>{{ item.groupDate }}</td>
+              <td>{{ item.groupStartTime }}</td>
+              <td>{{ item.groupCareerName }}</td>
               <td>
-                <span v-for="(view, i) in item.schGroupInterview" :key="i">{{ view }} </span>
+                <span v-for="(view, i) in item.interviewTypeList" :key="i">{{ view }} </span>
               </td>
               <td>
-                <span v-for="(viewee, i) in slicedViewee(item.schGroupViewee)" :key="i">{{ viewee }} </span>
+                <span v-for="(viewee, i) in slicedViewee(item.groupApplicantList)" :key="i">{{ viewee }} </span>
               </td>
               <td>
-                <span v-for="(guide, i) in slicedGuide(item.schGroupGuide)" :key="i">{{ guide }} </span>
+                <span v-for="(guide, i) in slicedGuide(item.waitInterviewerList)" :key="i">{{ guide.interviewerName }} </span>
               </td>
               <td>
-                <span v-for="(viewer, i) in slicedViewer(item.schGroupViewer)" :key="i">{{ viewer }} </span>
+                <span v-for="(viewer, i) in slicedViewer(item.interviewerList)" :key="i">{{ viewer.interviewerName }} </span>
               </td>
             </tr>
           </template>
 
           <!-- 세부그룹 확장 패널 -->
-          <template v-slot:expanded-item="{ headers, item: groupItem }">
+          <template v-slot:expanded-item="{ headers, item: groupItem }" id="detailTable">
             <td :colspan="headers.length" class="pa-0">
               <!-- 세부그룹 테이블 -->
-              <v-data-table :headers="schGroupTable.headers" :items="groupItem.schSmallGroups"
+              <v-data-table :headers="schGroupTable.headers" :items="groupItem.groupDetailList"
                 item-key="schSmallGroupNo" hide-default-footer>
                 <!-- <template v-slot:header="{ headers }">
                   <thead>
@@ -114,22 +115,23 @@
                 <template v-slot:body="{ items }">
                   <tbody>
                     <tr v-for="(item, i) in items" :key="i">
-                      <td>{{ item.schSmallGroupNo }}</td>
-                      <td>{{ groupItem.schGroupDate }}</td>
-                      <td>{{ groupItem.schGroupTime }}</td>
-                      <td>{{ groupItem.schGroupCareer }}</td>
+                      <td>{{ item.groupDetailSeq }}</td>
+                      <td>{{ groupItem.groupDate }}</td>
+                      <td>{{ groupItem.groupStartTime }}</td>
+                      <td>{{ groupItem.groupCareerName }}</td>
                       <td>
-                        <span v-for="(view, i) in item.schSmallGroupInterview" :key="i">{{ view }} </span>
+                        <span v-for="(view, i) in item.detailOrder" :key="i">{{ view }} </span>
                       </td>
                       <td>
-                        <span v-for="(viewee, i) in slicedViewee(item.schSmallGroupViewee)" :key="i">{{ viewee }}
+                        <span v-for="(viewee, i) in slicedViewee(item.groupDetailApplicant)" :key="i">{{ viewee }}
                         </span>
                       </td>
                       <td>
-                        <span v-for="(guide, i) in slicedGuide(groupItem.schGroupGuide)" :key="i">{{ guide }} </span>
+                        <span v-for="(guide, i) in slicedGuide(groupItem.waitInterviewerList)" :key="i">{{ guide.interviewerName }}
+                        </span>
                       </td>
                       <td>
-                        <span v-for="(viewer, i) in slicedViewer(groupItem.schGroupViewer)" :key="i">{{ viewer }}
+                        <span v-for="(viewer, i) in slicedViewer(groupItem.interviewerList)" :key="i">{{ viewer.interviewerName }}
                         </span>
                       </td>
                     </tr>
@@ -148,6 +150,7 @@
 <script>
   import axios from 'axios'
   import _ from "lodash"
+  import { mapGetters } from "vuex"
 
   // const SERVER_URL = "https://localhost:8080"
   const SERVER_URL = process.env.VUE_APP_SERVER_URL
@@ -157,6 +160,7 @@
     data() {
       return {
         dialog: false,
+        // arr : this.getProgressListCurrentRecruit,
 
         recruitItem: this.$route.params.recruitItem,
 
@@ -313,6 +317,8 @@
           // 면접 그룹당 세부 그룹 수(자동 계산)
           // groupNum: 0
         },
+
+
         // 일정 데이터
         schGroupTable: {
           expanded: [],
@@ -366,39 +372,7 @@
               width: '15%'
             },
           ],
-          // 면접 그룹
-          schGroups: [{
-            // 면접 그룹 seq
-            schGroupNo: 1,
-            // 면접 그룹 시작 날짜
-            schGroupDate: '7/10',
-            // 면접 그룹 시작 시간
-            schGroupTime: '14:00',
-            // 면접 그룹 직군
-            schGroupCareer: '마케팅',
-            // 면접 그룹 면접 종류
-            schGroupInterview: ['직무', 'PT', '그룹'],
-            // 면접 그룹 지원자(면접자)
-            schGroupViewee: ['김일번', '박이번', '유삼번', '이사번', '권오번', '천육번', '강칠번', '하팔번'],
-            // 면접 그룹 대기관
-            schGroupGuide: ['강안내'],
-            // 면접 그룹 면접관
-            schGroupViewer: ['김면접', '이채용', '신평가'],
-            // 면접 세부 그룹
-            schSmallGroups: [{
-                schSmallGroupNo: 1,
-                // 세부그룹 면접 순서
-                schSmallGroupInterview: ['직무', 'PT', '그룹'],
-                // 세부 그룹의 지원자(면잡자)
-                schSmallGroupViewee: ['김일번', '유삼번', '천육번', '강칠번'],
-              },
-              {
-                schSmallGroupNo: 2,
-                schSmallGroupInterview: ['그룹', '직무', 'PT'],
-                schSmallGroupViewee: ['박이번', '이사번', '권오번', '하팔번'],
-              }
-            ]
-          }]
+          
         },
 
 
@@ -423,12 +397,15 @@
           divideDetailNum: this.formData.vieweePerGroup
         }
         console.log("보내질groupData", groupData)
-        // axios.post(`https://localhost:8080/groupAll/divide` + this.recruitNo, this.formData)
         axios.post(`${SERVER_URL}/groupAll/divide/` + this.recruitItem.reSeq, groupData)
           .then(res => {
-            console.log("추가된면접일정",res.data)
+            console.log("추가된면접일정", res.data)
           })
           .catch(err => console.log(err))
+
+        setTimeout(() =>this.$store.dispatch("GET_PROGRESS_LIST", this.getUserComSeq), 2000)
+
+
       },
       clicked: function (value) {
         this.schGroupTable.expanded.push(value)
@@ -453,6 +430,11 @@
 
     },
     computed: {
+
+
+      ...mapGetters(["getUserComSeq", "getProgressListCurrentRecruit"]),
+
+
       makeGroup() {
         return [this.formData.vieweePerGroup, this.formData.vieweeNum]
       },
@@ -474,8 +456,11 @@
           return _.slice(Viewer, 0, 3)
         }
       }
+
+      
     },
     created() {
+      // console.log("getProgressListCurrentRecruit", this.getProgressListCurrentRecruit)
 
     }
   }
@@ -491,6 +476,8 @@
     top: 0;
     color: black;
   } */
+
+
 
   td {
     text-align: center;
