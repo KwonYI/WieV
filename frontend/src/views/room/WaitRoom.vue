@@ -30,45 +30,25 @@
       </v-toolbar-title>
     </v-app-bar>
 
-    <div id="screen"></div>
-    <!-- 바 밑에 내용물들.  -->
     <v-container>
       <!--row1. : 공지사항 배너, 면접실 만들기 버튼-->
       <v-row> </v-row>
 
-      <!-- row2 : 관리자, 지원자, FAQ 잡동사니 row-->
       <v-row>
-        <!-- row2[왼쪽] : 관리자 리스트-->
-        <div
-          v-for="sub in subscribers"
-          :key="sub.stream.connection.connectionId"
-        >
-          <div v-for="(info, index) in participants" :key="index">
-            <v-col
-              cols="3"
-              v-if="
-                info.connectionId === sub.stream.connection.connectionId &&
-                info.type !== 'interviewer'
-              "
-            >
-              <user-video
-                :stream-manager="sub"
-                @click.native="updateMainVideoStreamManager(sub)"
-              />
-            </v-col>
-            <v-col cols="6" v-else
-              ><user-video
-                :stream-manager="sub"
-                @click.native="updateMainVideoStreamManager(sub)"
-              />
-            </v-col>
-          </div>
-        </div>
-        <v-col cols="3">
-          <!-- <user-video :stream-manager="mainStreamManager" /> -->
-          <!-- <ManagerList /> -->
+        <v-col cols="9" v-for="(sub, index) in subscribers" :key="index">
+          <v-col cols="3" v-if="index < 3">
+            <user-video
+              :stream-manager="sub"
+              @click.native="updateMainVideoStreamManager(sub)"
+            />
+          </v-col>
+          <v-col cols="6" v-else
+            ><user-video
+              :stream-manager="sub"
+              @click.native="updateMainVideoStreamManager(sub)"
+            />
+          </v-col>
         </v-col>
-        <!-- row2[오른쪽] : 우측에 FAQ 채팅창 잡동사니 -->
         <v-col cols="3">
           <div>
             <v-list v-auto-bottom="messages">
@@ -77,7 +57,6 @@
               </div>
             </v-list>
           </div>
-
           <div>
             <v-text-field
               label="보낼 메세지를 입력하세요."
@@ -96,7 +75,7 @@ import { OpenVidu } from "openvidu-browser";
 import UserVideo from "@/components/room/UserVideo";
 import axios from "axios";
 
-import { mapGetters, mapMutations } from "vuex";
+// import { mapGetters, mapMutations } from "vuex";
 
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 // import ManagerList from "@/components/room/ManagerList.vue"
@@ -116,7 +95,6 @@ export default {
       mainStreamManager: undefined, // 메인 비디오
       publisher: undefined, // 연결 객체
       subscribers: [],
-      participants: [],
 
       // 채팅
       text: "",
@@ -129,9 +107,6 @@ export default {
       videoMsg: "화면 On",
       // shareOn: false,
       // shareMsg: "공유 Off",
-
-      // ConnectionId
-      info: { sessionName: "", type: "", connectionId: undefined },
 
       // From SessionController
       sessionName: undefined,
@@ -178,6 +153,9 @@ export default {
     this.session = this.OV.initSession();
 
     this.session.on("streamCreated", ({ stream }) => {
+      console.log(
+        "스트림 크리에이트 실행, 나를 제외한 방에 있는 다른 비디오 연결중"
+      );
       const subscriber = this.session.subscribe(stream);
       this.subscribers.push(subscriber);
     });
@@ -200,6 +178,7 @@ export default {
     this.session
       .connect(this.token, { clientData: this.userName })
       .then(() => {
+        console.log("세션 커넥트 실행");
         let publisher = this.OV.initPublisher(undefined, {
           audioSource: undefined, // The source of audio. If undefined default microphone
           videoSource: undefined, // The source of video. If undefined default webcam
@@ -207,7 +186,7 @@ export default {
           publishVideo: true, // Whether you want to start publishing with your video enabled or not
           resolution: "320x240", // The resolution of your video
           frameRate: 30, // The frame rate of your video
-          insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
+          insertMode: "BEFORE", // How the video is inserted in the target element 'video-container'
           mirror: false, // Whether to mirror your local video or not
         });
 
@@ -216,22 +195,6 @@ export default {
 
         this.session.publish(this.publisher);
         this.subscribers.push(this.publisher);
-
-        this.info.sessionName = this.sessionName;
-        this.info.type = this.type;
-        this.info.connectionId = this.publisher.stream.connection.connectionId;
-        this.addParticipants(this.info);
-
-        console.log("웨이트룸에서 길이 찍기");
-        console.log(this.getParticipants.length);
-
-        this.getParticipants.forEach((element) => {
-          if (element.sessionName == this.sessionName)
-            this.participants.push(element);
-        });
-
-        console.log(this.participants);
-        // this.clearParticipants([]);
       })
       .catch((error) => {
         console.log(
@@ -244,13 +207,14 @@ export default {
   },
 
   methods: {
-    ...mapMutations([
-      "addParticipants",
-      "clearParticipants",
-      "deleteParticipants",
-      "clearCheckIn",
-      "deleteCheckIn",
-    ]),
+    // ...mapMutations([
+    //   "addParticipants",
+    //   "clearParticipants",
+    //   "deleteParticipants",
+    //   "clearCheckIn",
+    //   "deleteCheckIn",
+    // ]),
+
     sendMessage() {
       if (this.text === "") return;
 
@@ -276,10 +240,9 @@ export default {
             token: this.token,
           },
         })
-        .then((res) => {
-          console.log(res);
+        .then(() => {
           if (this.session) this.session.disconnect();
-          this.deleteParticipants(this.info);
+
           this.session = undefined;
           this.mainStreamManager = undefined;
           this.publisher = undefined;
@@ -317,7 +280,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["getParticipants", "getCheckIn"]),
+    // ...mapGetters(["getParticipants", "getCheckIn"]),
   },
 };
 </script>

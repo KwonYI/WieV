@@ -97,7 +97,7 @@ export default new Vuex.Store({
       comLogo: "",
       comAddress: "",
       comHomepage: "",
-    }, ],
+    },],
 
     // 전체 채용공고 리스트
     recruitList: [{
@@ -107,7 +107,7 @@ export default new Vuex.Store({
       reStatus: "",
       reStartDate: "",
       reEndDate: "",
-    }, ],
+    },],
 
     // 공고별 면접현황 리스트
     recruitProgressList: [],
@@ -129,10 +129,6 @@ export default new Vuex.Store({
       //viewEamil, viewName, viewPassword, viewPhone,
       // viewSeq, viewWait
     ],
-
-    participants: [],
-
-    checkIn: [],
   },
 
   getters: {
@@ -192,19 +188,6 @@ export default new Vuex.Store({
     getComViewerList(state) {
       return state.user.comViewerList
     },
-
-    getParticipants(state) {
-      console.log("게터 실행, 모든 연결 참가자 정보 수")
-      console.log(state.participants.length)
-      return state.participants
-    },
-
-    getCheckIn(state) {
-      console.log("게터 실행, 모든 연결 수")
-      console.log(state.checkIn.length)
-      return state.checkIn
-    },
-
   },
 
   mutations: {
@@ -293,44 +276,6 @@ export default new Vuex.Store({
     // 면접관 리스트 state에 저장
     GET_VIEWER_LIST(state, res) {
       state.comViewerList = res
-    },
-    addParticipants(state, data) {
-      console.log("뮤테이션 실행 밑에 있는 데이터 넣을 예정")
-      console.log(data)
-      state.participants.push(data)
-    },
-    deleteParticipants(state, data) {
-      const index = state.participants.indexOf(data, 0)
-      console.log("정보 삭제 시도")
-      console.log("변경전 : ", state.participants.length)
-      if (index >= 0) {
-        state.participants.splice(index, 1)
-      }
-      console.log("변경후 : ", state.participants.length)
-    },
-    clearParticipants(state, data) {
-      console.log("클리어 실행, 실행 후 남은 정보")
-      state.participants = data
-      console.log(state.participants.length)
-    },
-    addCheckIn(state, data) {
-      console.log("뮤테이션 실행 밑에 있는 데이터 넣을 예정")
-      console.log(data)
-      state.checkIn.push(data)
-    },
-    deleteCheckIn(state, data) {
-      const index = state.checkIn.indexOf(data, 0)
-      console.log("정보 삭제 시도")
-      console.log("변경전 : ", state.checkIn.length)
-      if (index >= 0) {
-        state.checkIn.splice(index, 1)
-      }
-      console.log("변경후 : ", state.checkIn.length)
-    },
-    clearcheckIn(state, data) {
-      // console.log("클리어 실행, 실행 후 남은 정보")
-      state.checkIn = data
-      // console.log(state.checkIn.length)
     },
 
     // 공고 면접현황 리스트 state에 저장
