@@ -18,10 +18,10 @@
           <td><p class="d-inline p-1">{{ group.groupDate }}</p></td>
           <td><p class="d-inline p-1">{{ group.groupStartTime }}:00</p></td>
           <td><p class="d-inline p-1">{{ group.groupCareerName }}</p></td>
-          <td><p v-for="item in group.interviewTypeList" :key="item" class="d-inline p-1" >{{ item }}</p></td>
-          <td><p v-for="item in group.groupApplicantList" :key="item" class="d-inline p-1">{{ item }}</p></td>
-          <td><p v-for="item in group.waitInterviewerList" :key="item" class="d-inline p-1">{{ item.interviewerName }}</p></td>
-          <td><p v-for="item in group.interviewerList" :key="item" class="d-inline p-1"> {{ item.interviewerName }}</p></td>
+          <td><p v-for="(item, index) in group.interviewTypeList" :key="index" class="d-inline p-1" >{{ item }}</p></td>
+          <td><p v-for="(item, index) in group.groupApplicantList" :key="index" class="d-inline p-1">{{ item }}</p></td>
+          <td><p v-for="(item, index) in group.waitInterviewerList" :key="index" class="d-inline p-1">{{ item.interviewerName }}</p></td>
+          <td><p v-for="(item, index) in group.interviewerList" :key="index" class="d-inline p-1"> {{ item.interviewerName }}</p></td>
           <td>
             <v-checkbox color="indigo"></v-checkbox>
           </td>

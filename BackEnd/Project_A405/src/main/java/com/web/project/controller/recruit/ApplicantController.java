@@ -136,9 +136,6 @@ public class ApplicantController {
 	CertificateDao certificateDao;
 	
 	@Autowired
-	GroupTypeDao groupTypeDao;
-	
-	@Autowired
 	InterviewTypeDao interviewTypeDao;
 
 	public static final Logger logger = LoggerFactory.getLogger(HrController.class);

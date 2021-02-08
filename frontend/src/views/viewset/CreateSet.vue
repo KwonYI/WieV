@@ -7,11 +7,7 @@
         <!-- 시즌 정보 입력 -->
         <v-col>
           <v-row justify="space-around" no-gutters>
-            <v-col
-              v-for="(item, index) in seasonData"
-              :key="index"
-              :cols="item.col"
-            >
+            <v-col v-for="(item, index) in seasonData" :key="index" :cols="item.col">
               <v-select :items="item.data" :label="item.name" solo hide-details disabled>
               </v-select>
             </v-col>
@@ -22,25 +18,13 @@
         <v-col class="mt-5 mb-0 h5">그룹 생성기</v-col>
         <v-col>
           <v-row class="brd" style="justify-between" no-gutters>
-            <v-col
-              v-for="(item, index) in groupForm"
-              :key="index"
-              :cols="item.col"
-              class="d-flex"
-            >
+            <v-col v-for="(item, index) in groupForm" :key="index" :cols="item.col" class="d-flex">
               <v-col class="d-flex justify-center align-center pa-0">
                 <span class="subtitle-1">{{ item.name }}</span>
               </v-col>
               <v-col v-if="item.data" cols="8" class="d-flex align-center">
-                <v-autocomplete
-                  v-model="formData[item.value]"
-                  :items="item.data"
-                  :label="item.name"
-                  solo
-                  :multiple="item.multiple"
-                  hide-details
-                  dense
-                ></v-autocomplete>
+                <v-autocomplete v-model="formData[item.value]" :items="item.data" :label="item.name" solo
+                  :multiple="item.multiple" hide-details dense></v-autocomplete>
               </v-col>
             </v-col>
 
@@ -76,32 +60,22 @@
             -->
 
             <v-col cols="3" class="d-flex justify-center align-center">
-              <v-btn
-                class="ma-2"
-                :loading="loading"
-                :disabled="loading"
-                color="secondary"
-                @click="[loader = 'loading', addSchedule()]"
-              >
+              <v-btn class="ma-2" :loading="loading" :disabled="loading" color="secondary"
+                @click="[loader = 'loading', addSchedule()]">
                 면접일정 추가
               </v-btn>
             </v-col>
           </v-row>
         </v-col>
-        
+
         <a-date-picker @change="change" />
-        <a-time-picker format="HH:mm"/>
-        
+        <a-time-picker format="HH:mm" />
+
         <hr>
         <!-- 스케줄 테이블 -->
-        <v-data-table
-          :headers="schGroupTable.headers"
-          :items="schGroupTable.schGroups"
-          :expanded.sync="schGroupTable.expanded"
-          single-expand
-          item-key="schGroupNo"
-          @click:row="(item, slot) => slot.expand(!slot.isExpanded)"
-        >
+        <v-data-table :headers="schGroupTable.headers" :items="schGroupTable.schGroups"
+          :expanded.sync="schGroupTable.expanded" single-expand item-key="schGroupNo"
+          @click:row="(item, slot) => slot.expand(!slot.isExpanded)">
           <!-- 스케줄 row -->
           <template v-slot:item="{ item, expand, isExpanded }">
             <tr @click="expand(!isExpanded)">
@@ -128,12 +102,8 @@
           <template v-slot:expanded-item="{ headers, item: groupItem }">
             <td :colspan="headers.length" class="pa-0">
               <!-- 세부그룹 테이블 -->
-              <v-data-table
-                :headers="schGroupTable.headers"
-                :items="groupItem.schSmallGroups"
-                item-key="schSmallGroupNo"
-                hide-default-footer
-              >
+              <v-data-table :headers="schGroupTable.headers" :items="groupItem.schSmallGroups"
+                item-key="schSmallGroupNo" hide-default-footer>
                 <!-- <template v-slot:header="{ headers }">
                   <thead>
                     <tr :colspan="headers.length">
@@ -152,13 +122,15 @@
                         <span v-for="(view, i) in item.schSmallGroupInterview" :key="i">{{ view }} </span>
                       </td>
                       <td>
-                        <span v-for="(viewee, i) in slicedViewee(item.schSmallGroupViewee)" :key="i">{{ viewee }} </span>
+                        <span v-for="(viewee, i) in slicedViewee(item.schSmallGroupViewee)" :key="i">{{ viewee }}
+                        </span>
                       </td>
                       <td>
                         <span v-for="(guide, i) in slicedGuide(groupItem.schGroupGuide)" :key="i">{{ guide }} </span>
                       </td>
                       <td>
-                        <span v-for="(viewer, i) in slicedViewer(groupItem.schGroupViewer)" :key="i">{{ viewer }} </span>
+                        <span v-for="(viewer, i) in slicedViewer(groupItem.schGroupViewer)" :key="i">{{ viewer }}
+                        </span>
                       </td>
                     </tr>
                   </tbody>
@@ -174,218 +146,228 @@
 </template>
 
 <script>
-import axios from 'axios'
-import _ from "lodash"
+  import axios from 'axios'
+  import _ from "lodash"
 
-const SERVER_URL = process.env.VUE_APP_SERVER_URL
+  const SERVER_URL = "https://localhost:8080"
+  // const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
-export default {
-  name: "CreateSet",
-  data() {
-    return {
-      dialog: false,
+  export default {
+    name: "CreateSet",
+    data() {
+      return {
+        dialog: false,
 
-      recruitItem: this.$route.params.recruitItem,
+        recruitItem: this.$route.params.recruitItem,
 
-      // 시즌 데이터
-      seasonData: [
+        // 시즌 데이터
+        seasonData: [
 
-        {
-          name: "시즌",
-          data: ["2020 하반기", "2021 상반기", "2021 하반기"],
-          col: 2,
-        },
-        { name: "유형", data: ["공채", "수시", "상시"], col: 2 },
-        { name: "분류", data: ["신입", "경력", "계약", "인턴"], col: 2 },
-        { name: "기간", data: [], col: 3 },
-      ],
-      // 일정 생성 폼
-      groupForm: [
-        {
-          name: "부서",
-          data: ["전략기획실", "IT영업", "브랜드마케팅"],
-          col: 3,
-          multiple: false,
-          value: 'part'
-        },
-        {
-          name: "직군",
-          data: ["SW 개발", "마케팅", "전략기획"],
-          col: 3,
-          multiple: false,
-          value: 'career'
-        },
-        {
-          name: "면접 유형",
-          data: ["직무", "인성", "PT", "토론"],
-          col: 5,
-          multiple: true,
-          value: 'viewTypes'
-        },
-        {
-          name: "시작",
-          col: 2
-        },
-        {
-          name: "날짜",
-          data: ['7/22'],
-          col: 2,
-          multiple: false,
-          value: 'startDate'
-        },
-        {
-          name: "시간",
-          data: ["13", "14"],
-          col: 2,
-          multiple: false,
-          value: 'startTime'
-        },
-        {
-          name: "종료",
-          col: 2
-        },
-        {
-          name: "날짜",
-          data: [],
-          col: 2,
-          multiple: false,
-          value: 'endDate'
-        },
-        {
-          name: "시간",
-          data: ["19", "20"],
-          col: 2,
-          multiple: false,
-          value: 'endTime'
-        },
-        {
-          name: "면접 그룹",
-          col: 2
-        },
-        {
-          name: "면접관 수",
-          data: [2, 3, 4],
-          col: 3,
-          multiple: false,
-          value: 'viewerNum'
-        },
-        {
-          name: "지원자 수",
-          data: [8, 9, 10, 11, 12],
-          col: 3,
-          multiple: false,
-          value: 'vieweeNum'
-        },
-        {
-          name: "소요 시간",
-          data: [1, 2, 3, 4],
-          col: 3,
-          multiple: false,
-          value: 'duration'
-        },
-        {
-          name: "면접 세부 그룹",
-          col: 2,
-        },
-        {
-          name: "지원자 수",
-          data: [1, 2, 3, 4, 5, 6],
-          col: 3,
-          mutiple: false,
-          value: 'vieweePerGroup'
-        },
-
-      ],
-      // 일정 생성 V-Model
-      formData: {
-        // 부서
-        part: '',
-        // 직군
-        career: '',
-        // 면접 유형
-        interviewTypeList: [],
-        // 시작 날짜, 7/10
-        startDate: '',
-        // 시작 시간
-        startTime: '',
-        // 종료 날짜(안 써도 됨)
-        // endDate: '',
-        // 종료 시간
-        endTime: '',
-        // 면접 그룹당 면접관 수, int
-        viewerNum: 0.1,
-        // divideInterviewer: 0.1,
-        // 면접 그룹당 지원자 수, int
-        vieweeNum: 0.1,
-        // divideInterviewee: 0.1,
-        // 면접 그룹당 소요 시간, int
-        duration: '',
-        // divideTime: '',
-        // 블라인드 여부
-        // blindView: false,
-        // 면접 세부그룹 당 지원자 수, int
-        vieweePerGroup: 0.1,
-        // divideDetailNum: 0.1,
-        // 면접 그룹당 세부 그룹 수(자동 계산)
-        // groupNum: 0
-      },
-      // 일정 데이터
-      schGroupTable: {
-        expanded: [],
-        headers: [
           {
-            text: 'No.',
-            align: 'center',
-            sortable: false,
-            value: 'schGroupNo',
-            width: '1%'
+            name: "시즌",
+            data: ["2020 하반기", "2021 상반기", "2021 하반기"],
+            col: 2,
           },
           {
-            text: '날짜',
-            align: 'center',
-            value: 'schGroupDate',
-            width: '5%'
+            name: "유형",
+            data: ["공채", "수시", "상시"],
+            col: 2
           },
           {
-            text: '시간',
-            align: 'center',
-            value: 'schGroupTime',
-            width: '5%'
+            name: "분류",
+            data: ["신입", "경력", "계약", "인턴"],
+            col: 2
           },
           {
-            text: '직무',
-            align: 'center',
-            value: 'schGroupCareer',
-            width: '5%'
-          },
-          {
-            text: '면접 유형',
-            align: 'center',
-            value: 'schGroupInterview',
-            width: '10%'
-          },
-          {
-            text: '지원자',
-            align: 'center',
-            value: 'schGroupViewee',
-            width: '20%'
-          },
-          {
-            text: '대기실',
-            align: 'center',
-            value: 'schGroupGuide',
-            width: '10%'
-          },
-          {
-            text: '면접실',
-            align: 'center',
-            value: 'schGroupViewer',
-            width: '15%'
+            name: "기간",
+            data: [],
+            col: 3
           },
         ],
-        // 면접 그룹
-        schGroups: [
+        // 일정 생성 폼
+        groupForm: [{
+            name: "부서",
+            data: ["CE/IM", "DS", "반도체"],
+            col: 3,
+            multiple: false,
+            value: 'part'
+          },
           {
+            name: "직군",
+            data: ["SW개발", "마케팅"],
+            col: 3,
+            multiple: false,
+            value: 'career'
+          },
+          {
+            name: "면접 유형",
+            data: ["직무", "인성", "PT", "토론"],
+            col: 5,
+            multiple: true,
+            value: 'viewTypes'
+          },
+          {
+            name: "시작",
+            col: 2
+          },
+          {
+            name: "날짜",
+            data: ['2021-01-05'],
+            col: 2,
+            multiple: false,
+            value: 'startDate'
+          },
+          {
+            name: "시간",
+            data: ["13", "14"],
+            col: 2,
+            multiple: false,
+            value: 'startTime'
+          },
+          {
+            name: "종료",
+            col: 2
+          },
+          {
+            name: "날짜",
+            data: [],
+            col: 2,
+            multiple: false,
+            value: 'endDate'
+          },
+          {
+            name: "시간",
+            data: ["19", "20"],
+            col: 2,
+            multiple: false,
+            value: 'endTime'
+          },
+          {
+            name: "면접 그룹",
+            col: 2
+          },
+          {
+            name: "면접관 수",
+            data: [2, 3, 4],
+            col: 3,
+            multiple: false,
+            value: 'viewerNum'
+          },
+          {
+            name: "지원자 수",
+            data: [8, 9, 10, 11, 12],
+            col: 3,
+            multiple: false,
+            value: 'vieweeNum'
+          },
+          {
+            name: "소요 시간",
+            data: [1, 2, 3, 4],
+            col: 3,
+            multiple: false,
+            value: 'duration'
+          },
+          {
+            name: "면접 세부 그룹",
+            col: 2,
+          },
+          {
+            name: "지원자 수",
+            data: [1, 2, 3, 4, 5, 6],
+            col: 3,
+            mutiple: false,
+            value: 'vieweePerGroup'
+          },
+
+        ],
+        // 일정 생성 V-Model
+        formData: {
+          // 부서
+          part: '',
+          // 직군
+          career: '',
+          // 면접 유형
+          interviewTypeList: [],
+          // 시작 날짜, 7/10
+          startDate: '',
+          // 시작 시간
+          startTime: '',
+          // 종료 날짜(안 써도 됨)
+          // endDate: '',
+          // 종료 시간
+          endTime: '',
+          // 면접 그룹당 면접관 수, int
+          viewerNum: 0.1,
+          // divideInterviewer: 0.1,
+          // 면접 그룹당 지원자 수, int
+          vieweeNum: 0.1,
+          // divideInterviewee: 0.1,
+          // 면접 그룹당 소요 시간, int
+          duration: '',
+          // divideTime: '',
+          // 블라인드 여부
+          // blindView: false,
+          // 면접 세부그룹 당 지원자 수, int
+          vieweePerGroup: 0.1,
+          // divideDetailNum: 0.1,
+          // 면접 그룹당 세부 그룹 수(자동 계산)
+          // groupNum: 0
+        },
+        // 일정 데이터
+        schGroupTable: {
+          expanded: [],
+          headers: [{
+              text: 'No.',
+              align: 'center',
+              sortable: false,
+              value: 'schGroupNo',
+              width: '1%'
+            },
+            {
+              text: '날짜',
+              align: 'center',
+              value: 'schGroupDate',
+              width: '5%'
+            },
+            {
+              text: '시간',
+              align: 'center',
+              value: 'schGroupTime',
+              width: '5%'
+            },
+            {
+              text: '직무',
+              align: 'center',
+              value: 'schGroupCareer',
+              width: '5%'
+            },
+            {
+              text: '면접 유형',
+              align: 'center',
+              value: 'schGroupInterview',
+              width: '10%'
+            },
+            {
+              text: '지원자',
+              align: 'center',
+              value: 'schGroupViewee',
+              width: '20%'
+            },
+            {
+              text: '대기실',
+              align: 'center',
+              value: 'schGroupGuide',
+              width: '10%'
+            },
+            {
+              text: '면접실',
+              align: 'center',
+              value: 'schGroupViewer',
+              width: '15%'
+            },
+          ],
+          // 면접 그룹
+          schGroups: [{
             // 면접 그룹 seq
             schGroupNo: 1,
             // 면접 그룹 시작 날짜
@@ -403,8 +385,7 @@ export default {
             // 면접 그룹 면접관
             schGroupViewer: ['김면접', '이채용', '신평가'],
             // 면접 세부 그룹
-            schSmallGroups: [
-              {
+            schSmallGroups: [{
                 schSmallGroupNo: 1,
                 // 세부그룹 면접 순서
                 schSmallGroupInterview: ['직무', 'PT', '그룹'],
@@ -417,68 +398,87 @@ export default {
                 schSmallGroupViewee: ['박이번', '이사번', '권오번', '하팔번'],
               }
             ]
-          }
-        ]
+          }]
+        },
+
+
+        loader: null,
+        loading: false,
+      }
+    },
+    methods: {
+      // 면접 스케줄 추가
+      addSchedule: function () {
+
+        let groupData = {
+          part: this.formData.part,
+          career: this.formData.career,
+          interviewTypeList: this.formData.viewTypes,
+          startDate: this.formData.startDate,
+          startTime: this.formData.startTime,
+          endTime: this.formData.endTime,
+          divideInterviewer: this.formData.viewerNum,
+          divideNumber: this.formData.vieweeNum,
+          divideTime: this.formData.duration,
+          divideDetailNum: this.formData.vieweePerGroup
+        }
+        console.log("보내질groupData", groupData)
+        // axios.post(`https://localhost:8080/groupAll/divide` + this.recruitNo, this.formData)
+        axios.post(`${SERVER_URL}/groupAll/divide/` + this.recruitItem.reSeq, groupData)
+          .then(res => {
+            console.log("추가된면접일정",res.data)
+          })
+          .catch(err => console.log(err))
       },
-      
+      clicked: function (value) {
+        this.schGroupTable.expanded.push(value)
+      },
+      change: function () {
 
-      loader: null,
-      loading: false,
-    }
-  },
-  methods: {
-    // 면접 스케줄 추가
-    addSchedule: function () {
-      // axios.post(`https://localhost:8080/groupAll/divide` + this.recruitNo, this.formData)
-      axios.post(`${SERVER_URL}/groupAll/divide/` + this.recruitItem.reSeq, this.formData)
-        .then(res => {
-          console.log(res)
-        })
-        .catch(err => console.log(err))
+      }
     },
-    clicked: function (value) {
-      this.schGroupTable.expanded.push(value)
-    },
-    change: function () {
-      
-    }
-  },
-  watch: {
-    loader() {
-      const l = this.loader
-      this[l] = !this[l]
+    watch: {
+      loader() {
+        const l = this.loader
+        this[l] = !this[l]
 
-      setTimeout(() => (this[l] = false), 3000)
+        setTimeout(() => (this[l] = false), 3000)
 
-      this.loader = null
+        this.loader = null
+      },
+      makeGroup() {
+        _.toInteger()
+        this.formData.groupNum = _.ceil(this.formData.vieweeNum / this.formData.vieweePerGroup)
+      },
+
     },
-    makeGroup() {
-      _.toInteger()
-      this.formData.groupNum = _.ceil(this.formData.vieweeNum/this.formData.vieweePerGroup)
+    computed: {
+      makeGroup() {
+        return [this.formData.vieweePerGroup, this.formData.vieweeNum]
+      },
+      viewTypesNum() {
+        return _.findLastIndex(this.formData.viewTypes) + 1
+      },
+      slicedViewee() {
+        return (Viewee) => {
+          return _.slice(Viewee, 0, 5)
+        }
+      },
+      slicedGuide() {
+        return (Guide) => {
+          return _.slice(Guide, 0, 2)
+        }
+      },
+      slicedViewer() {
+        return (Viewer) => {
+          return _.slice(Viewer, 0, 3)
+        }
+      }
     },
-    
-  },
-  computed: {
-    makeGroup() {
-      return [this.formData.vieweePerGroup, this.formData.vieweeNum]
-    },
-    viewTypesNum() {
-      return _.findLastIndex(this.formData.viewTypes) + 1
-    },
-    slicedViewee() {
-      return (Viewee) => { return _.slice(Viewee, 0, 5) }
-    },
-    slicedGuide() {
-      return (Guide) => { return _.slice(Guide, 0, 2) }
-    },
-    slicedViewer() {
-      return (Viewer) => { return _.slice(Viewer, 0, 3) }
+    created() {
+
     }
-  },
-  created () {
-    
   }
-}
 </script>
 
 <style scoped>
@@ -492,11 +492,11 @@ export default {
     color: black;
   } */
 
-td {
-  text-align: center;
-}
+  td {
+    text-align: center;
+  }
 
-/* table.table {
+  /* table.table {
   margin:0 auto;
   width: 98%;
   max-width: 98%;
