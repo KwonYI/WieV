@@ -5,9 +5,9 @@ import createPersistedState from "vuex-persistedstate"
 import _ from "lodash"
 
 Vue.use(Vuex)
- const SERVER_URL = "https://localhost:8080"
+//  const SERVER_URL = "https://localhost:8080"
 // const SERVER_URL = "https://i4a405.p.ssafy.io:8080"
-// const SERVER_URL = process.env.VUE_APP_SERVER_URL
+const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
 let userInfo = {
   userEmail: 'user-Email',
@@ -143,8 +143,6 @@ export default new Vuex.Store({
 
     // 회사 전체 면접관 리스트 가져오기
     getComViewerList(state) {
-      console.log("회사 전체 면접관 가져오기")
-      console.log(state.user.comViewerList)
       return state.user.comViewerList
     },
   },
@@ -193,7 +191,6 @@ export default new Vuex.Store({
     // },
     // 면접관 리스트 state에 저장
     GET_VIEWER_LIST(state, res) {
-      console.log("mutaions의 GET면접관LIST", res)
       state.comViewerList = res
     },
 
@@ -229,9 +226,7 @@ export default new Vuex.Store({
     GET_RECRUIT_LIST(context) {
       axios.get(`${SERVER_URL}/recruit/getList/` + this.state.user.userComSeq)
         .then(res => {
-          console.log(res.data)
           context.commit("GET_RECRUIT_LIST", res.data)
-          console.log("전체 공고 가져오기")
         })
       // context.commit("GET_RECRUIT_LIST")
     },
@@ -239,7 +234,6 @@ export default new Vuex.Store({
     INSERT_RECRUIT(context, newRecruit) {
       axios.post(`${SERVER_URL}/recruit/register/` + this.state.user.userComSeq, newRecruit)
         .then(res => {
-          console.log(res.data)
           context.commit("INSERT_RECRUIT", res.data)
           console.log("신규 공고 생성하기")
         })
@@ -253,9 +247,7 @@ export default new Vuex.Store({
     UPDATE_VIEWEE_LIST(context, recruitNo) {
       axios.get(`${SERVER_URL}/applicant/getList/${recruitNo}`)
         .then(res => {
-          console.log(res.data)
           context.commit("UPDATE_VIEWEE_LIST", res.data)
-          console.log("지원자 리스트 업데이트하기")
         })
         .catch(err => console.log(err))
     },
@@ -264,9 +256,7 @@ export default new Vuex.Store({
     GET_VIEWEE_LIST(context, comSeq) {
       axios.get(`${SERVER_URL}/applicant/getListByCompany/${comSeq}`)
         .then(res => {
-          console.log(res.data)
           context.commit("GET_VIEWEE_LIST", res.data)
-          console.log("전체 지원자 리스트 가져오기")
         })
         .catch(err => console.log(err))
     },
@@ -274,9 +264,7 @@ export default new Vuex.Store({
     GET_VIEWER_LIST(context, comSeq) {
       axios.get(`${SERVER_URL}/interviewer/getList/${comSeq}`)
         .then(res => {
-          console.log(res.data)
           context.commit("GET_VIEWER_LIST", res.data)
-          console.log("전체 면접관 리스트 가져오기")
         })
         .catch(err => console.log(err))
     },
@@ -285,7 +273,6 @@ export default new Vuex.Store({
     GET_PROGRESS_LIST(context, recruitSeq) {
       axios.get(`${SERVER_URL}/groupInfo/totalList/${recruitSeq}`)
       .then(res => {
-        console.log("rjdrjr", recruitSeq)
         console.log("공고에 대한 프로그레스 받아왓ㅅ나연", res)
         context.commit("GET_PROGRESS_LIST", res.data)
       })
