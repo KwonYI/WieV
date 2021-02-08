@@ -5,9 +5,9 @@ import createPersistedState from "vuex-persistedstate"
 import _ from "lodash"
 
 Vue.use(Vuex)
-//  const SERVER_URL = "https://localhost:8080"
+const SERVER_URL = "https://localhost:8080"
 // const SERVER_URL = "https://i4a405.p.ssafy.io:8080"
-const SERVER_URL = process.env.VUE_APP_SERVER_URL
+// const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
 let userInfo = {
   userEmail: 'user-Email',
@@ -19,7 +19,7 @@ let userInfo = {
   userComLogo: 'user-Company-Logo',
   userComAddress: 'user-Company-Address',
   userComHomepage: 'user-Company-Homepage',
-  userSeq : "user-Seq",
+  userSeq: "user-Seq",
 }
 
 export default new Vuex.Store({
@@ -53,31 +53,26 @@ export default new Vuex.Store({
 
     companyNameList: [],
 
-    companyList: [
-      {
-        comSeq: 0,
-        comName: "",
-        comLogo: "",
-        comAddress: "",
-        comHomepage: "",
-      },
-    ],
+    companyList: [{
+      comSeq: 0,
+      comName: "",
+      comLogo: "",
+      comAddress: "",
+      comHomepage: "",
+    }, ],
 
     // 전체 채용공고 리스트
-    recruitList: [
-      {
-        reSeq: 0,
-        reYear: 0,
-        reFlag: "",
-        reStatus: "",
-        reStartDate: "",
-        reEndDate: "",
-      },
-    ],
-
+    recruitList: [{
+      reSeq: 0,
+      reYear: 0,
+      reFlag: "",
+      reStatus: "",
+      reStartDate: "",
+      reEndDate: "",
+    }, ],
+   
     // 공고별 면접현황 리스트
-    recruitProgressList: [
-    ],
+    recruitProgressList: [],
 
     // 얘는 공고별 저장인데 comVieweeList 쓸거같다.
     recruitVieweeList: [],
@@ -124,16 +119,16 @@ export default new Vuex.Store({
     // },
 
     // 공고 최근순으로 정렬해서 가져오기
-    getRecruitListLately: function(state) {
+    getRecruitListLately: function (state) {
       // return _.sortBy(state.recruitList, 'reSeq').reverse()
       return _.orderBy(state.recruitList, ["reSeq"], ["desc"])
     },
-    getRecruitListCount: function(state) {
+    getRecruitListCount: function (state) {
       return state.recruitList.length;
     },
 
     // 현재 공고의 지원자만 가져오기
-    getVieweeListCurrentRecruit: function(state) {
+    getVieweeListCurrentRecruit: function (state) {
       console.log("되어라")
       let list = state.comVieweeList.filter(
         (re) => re.recruitReSeq === state.selectedRecruitNo
@@ -228,23 +223,23 @@ export default new Vuex.Store({
       state.companyNameList = res;
     },
     GET_COMPANY_LIST(state, res) {
-      console.log("mutaions의 GET_COMPANY_LIST", res);
+      // console.log("mutaions의 GET_COMPANY_LIST", res);
       state.companyList = res;
     },
-      
+
     // 공고 리스트 state에 저장
     GET_RECRUIT_LIST(state, res) {
-      console.log("mutaions의 GET_RECRUIT_LIST", res)
+      // console.log("mutaions의 GET_RECRUIT_LIST", res)
       state.recruitList = res
     },
     // 생성한 공고 state에 저장
     INSERT_RECRUIT(state, res) {
-      console.log("mutaions의 INSERT_RECRUIT", res)
+      // console.log("mutaions의 INSERT_RECRUIT", res)
       state.recruitList.push(res)
     },
     // 지원자 리스트 state에 저장
     GET_VIEWEE_LIST(state, res) {
-      console.log("mutaions의 GET_VIEWEE_LIST", res)
+      // console.log("mutaions의 GET_VIEWEE_LIST", res)
       state.comVieweeList = res
     },
     // // 업데이트된 지원자 리스트 state에 저장
@@ -292,9 +287,9 @@ export default new Vuex.Store({
       console.log("변경후 : ", state.checkIn.length);
     },
     clearcheckIn(state, data) {
-      console.log("클리어 실행, 실행 후 남은 정보");
+      // console.log("클리어 실행, 실행 후 남은 정보");
       state.checkIn = data;
-      console.log(state.checkIn.length);
+      // console.log(state.checkIn.length);
     },
 
     // 공고 면접현황 리스트 state에 저장
@@ -303,7 +298,7 @@ export default new Vuex.Store({
       state.recruitProgressList = res
     }
 
-   
+
   },
 
 
@@ -348,15 +343,15 @@ export default new Vuex.Store({
     GET_COMPANY_NAME_LIST(context) {
       axios.get(`${SERVER_URL}/recruit/companyNameList`).then((res) => {
         context.commit("GET_COMPANY_NAME_LIST", res.data);
-        console.log("회사 이름 리스트");
-        console.log(res.data);
+        // console.log("회사 이름 리스트");
+        // console.log(res.data);
       });
     },
     GET_COMPANY_LIST(context) {
       axios.get(`${SERVER_URL}/recruit/companyList`).then((response) => {
         context.commit("GET_COMPANY_LIST", response.data);
-        console.log("회사 리스트");
-        console.log(response.data);
+        // console.log("회사 리스트");
+        // console.log(response.data);
       });
     },
 
@@ -365,8 +360,8 @@ export default new Vuex.Store({
         .get(`${SERVER_URL}/recruit/getList/` + this.state.user.userComSeq)
         .then((response) => {
           context.commit("GET_RECRUIT_LIST", response.data);
-          console.log("겟 공고 실행");
-          console.log(response.data);
+          // console.log("겟 공고 실행");
+          // console.log(response.data);
         });
       // context.commit("GET_RECRUIT_LIST");
     },
@@ -375,11 +370,11 @@ export default new Vuex.Store({
       axios.post(`${SERVER_URL}/recruit/register/` + this.state.user.userComSeq, newRecruit)
         .then(res => {
           context.commit("INSERT_RECRUIT", res.data)
-          console.log("신규 공고 생성하기")
+          // console.log("신규 공고 생성하기")
         })
     },
     // 공고 삭제하기
-    DELETE_RECRUIT(context, reSeq){
+    DELETE_RECRUIT(context, reSeq) {
       axios.delete(`${SERVER_URL}/recruit/delete/` + reSeq)
         .then(() => alert("공고가 삭제되었습니다!"))
     },
@@ -412,18 +407,25 @@ export default new Vuex.Store({
     // 공고의 면접현황 리스트 가져오기
     GET_PROGRESS_LIST(context, recruitSeq) {
       axios.get(`${SERVER_URL}/groupInfo/totalList/${recruitSeq}`)
-      .then(res => {
-        console.log("공고에 대한 프로그레스 받아왓ㅅ나연", res)
-        context.commit("GET_PROGRESS_LIST", res.data)
-      })
-      .catch(err => console.log(err))
+        .then(res => {
+          console.log("recruitSeq", recruitSeq)
+          console.log("response", res)
+          console.log("공고에 대한 프로그레스 받아왓ㅅ나연", res.data)
+          context.commit("GET_PROGRESS_LIST", res.data)
 
-      }
-      
+          let respDataStr = res.data
+          let jsObject = JSON.parse(respDataStr)
+          console.log("파싱되었나", jsObject)
 
-   
+        })
+        .catch(err => console.log(err))
 
-   
+    }
+
+
+
+
+
 
   },
 
