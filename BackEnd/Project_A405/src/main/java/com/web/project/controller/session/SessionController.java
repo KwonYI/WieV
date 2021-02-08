@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,6 +26,7 @@ import com.web.project.dao.recruit.ApplicantDao;
 import com.web.project.dao.recruit.ApplicantGroupDao;
 import com.web.project.model.BasicResponse;
 import com.web.project.model.group.GroupType;
+import com.web.project.model.recruit.Applicant;
 
 import io.openvidu.java.client.ConnectionProperties;
 import io.openvidu.java.client.ConnectionType;
@@ -96,7 +98,7 @@ public class SessionController {
 		if (this.sessions.get(sessionName) != null) { // 존재한다
 			try {
 				if (interviewerWait == 1) { // 1이면 면접관
-					type = "interviewer";
+					type = "viewer";
 					role = OpenViduRole.PUBLISHER;
 				}
 
@@ -127,9 +129,7 @@ public class SessionController {
 					logger.error("방 입장 실패", e.getMessage());
 					resultMap.put("message", e.getMessage());
 					status = HttpStatus.INTERNAL_SERVER_ERROR;
-
 				}
-
 			} catch (Exception e) {
 				logger.error("면접관 정보가 잘못되었습니다.", e);
 				resultMap.put("message", e.getMessage());
@@ -163,19 +163,16 @@ public class SessionController {
 						logger.error("서버 오류", e.getMessage());
 						resultMap.put("message", e.getMessage());
 						status = HttpStatus.INTERNAL_SERVER_ERROR;
-
 					} catch (OpenViduHttpException e) {
 						logger.error("방 입장 실패", e.getMessage());
 						resultMap.put("message", e.getMessage());
 						status = HttpStatus.INTERNAL_SERVER_ERROR;
-
 					}
 				} else { // 면접관
 					logger.error("방이 아직 존재하지않습니다.");
 					resultMap.put("message", "방이 아직 존재하지않습니다");
 					status = HttpStatus.INTERNAL_SERVER_ERROR;
 				}
-
 			} catch (Exception e) {
 				logger.error("면접관 정보가 잘못되었습니다.", e);
 				resultMap.put("message", e.getMessage());
@@ -187,12 +184,11 @@ public class SessionController {
 		return new ResponseEntity<>(resultMap, status);
 	}
 
-	@PostMapping("/join/wait")
-	@ApiOperation(value = "지원자 대기방 세션 입장")
-	// 해당 지원자의 이름과 속한 세부그룹의 면접방seq가 필요
-	public Object enterWaitSession(@RequestParam(name = "group_type_group_type_seq") int groupTypeGroupTypeSeq,
-			@RequestParam(name = "applicant_name") String applicantName) {
-
+	@GetMapping("/join")
+	@ApiOperation(value = "지원자 세션 입장")
+	public Object enterSession(@RequestParam String applicantName, @RequestParam String sessionName) {
+		
+		System.out.println(sessionName);
 		final BasicResponse result = new BasicResponse();
 		Map<String, Object> resultMap = new HashMap<>();
 		HttpStatus status = null;
@@ -201,27 +197,19 @@ public class SessionController {
 		ConnectionProperties connectionProperties = null;
 		String token = null;
 
-		try {
-//			Applicant applicant = applicantDao.findApplicantByapplyId(applyId);
-//			int applySeq = applicant.getApplySeq(); 
-//		
-//			ApplicantGroup applicantGroup = applicantGroupDao.findApplicantGroupByApplicantApplySeq(applySeq);
-//			int groupDetailDetailSeq = applicantGroup.getGroupDetailDetailSeq();
+		if (this.sessions.get(sessionName) != null) {
+			session = this.sessions.get(sessionName);
+			connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC)
+					.role(OpenViduRole.PUBLISHER).data(applicantName).build();
 
-			GroupType groupType = groupTypeDao.findGroupTypeByGroupTypeSeq(groupTypeGroupTypeSeq);
-			String waitSessionName = groupType.getWaitSessionName();
-
-			if (this.sessions.get(waitSessionName) != null) {
-				session = this.sessions.get(waitSessionName);
-				connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC)
-						.role(OpenViduRole.PUBLISHER).data(applicantName).build();
-
+			try {
 				token = session.createConnection(connectionProperties).getToken();
-				this.tokensInSession.get(waitSessionName).put(token, OpenViduRole.PUBLISHER);
+				
+				this.tokensInSession.get(sessionName).put(token, OpenViduRole.PUBLISHER);
 
 				resultMap.put("token", token);
-				resultMap.put("type", "interviewee");
-				resultMap.put("sessionName", waitSessionName);
+				resultMap.put("type", "viewee");
+				resultMap.put("sessionName", sessionName);
 				resultMap.put("applicantName", applicantName);
 
 				result.status = true;
@@ -229,75 +217,17 @@ public class SessionController {
 				result.object = resultMap;
 
 				status = HttpStatus.OK;
-
-			} else {
-				logger.error("방이 존재하지않습니다.");
+			} catch (OpenViduJavaClientException e) {
+				logger.error("서버 오류", e.getMessage());
+				resultMap.put("message", e.getMessage());
+				status = HttpStatus.INTERNAL_SERVER_ERROR;
+			} catch (OpenViduHttpException e) {
+				logger.error("방 입장 실패", e.getMessage());
+				resultMap.put("message", e.getMessage());
 				status = HttpStatus.INTERNAL_SERVER_ERROR;
 			}
-		} catch (Exception e) {
-//			logger.error("지원자 정보가 잘못되었습니다.", e);
-//			status = HttpStatus.INTERNAL_SERVER_ERROR;
-			logger.error("방번호가 잘못되었습니다.", e);
-			resultMap.put("message", e.getMessage());
-			status = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-
-		printMap();
-
-		return new ResponseEntity<>(resultMap, status);
-	}
-	
-	@PostMapping("/join/interview")
-	@ApiOperation(value = "지원자 대기방 세션 입장")
-	public Object enterInterviewSession(@RequestParam(name = "group_type_group_type_seq") int groupTypeGroupTypeSeq,
-			@RequestParam(name = "applicant_name") String applicantName) {
-
-		final BasicResponse result = new BasicResponse();
-		Map<String, Object> resultMap = new HashMap<>();
-		HttpStatus status = null;
-
-		Session session = null;
-		ConnectionProperties connectionProperties = null;
-		String token = null;
-
-		try {
-//			Applicant applicant = applicantDao.findApplicantByapplyId(applyId);
-//			int applySeq = applicant.getApplySeq(); 
-//		
-//			ApplicantGroup applicantGroup = applicantGroupDao.findApplicantGroupByApplicantApplySeq(applySeq);
-//			int groupDetailDetailSeq = applicantGroup.getGroupDetailDetailSeq();
-
-			GroupType groupType = groupTypeDao.findGroupTypeByGroupTypeSeq(groupTypeGroupTypeSeq);
-			String interviewSessionName = groupType.getInterviewSessionName();
-
-			if (this.sessions.get(interviewSessionName) != null) {
-				session = this.sessions.get(interviewSessionName);
-				connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC)
-						.role(OpenViduRole.PUBLISHER).data(applicantName).build();
-
-				token = session.createConnection(connectionProperties).getToken();
-				this.tokensInSession.get(interviewSessionName).put(token, OpenViduRole.PUBLISHER);
-
-				resultMap.put("token", token);
-				resultMap.put("type", "interviewee");
-				resultMap.put("sessionName", interviewSessionName);
-				resultMap.put("applicantName", applicantName);
-
-				result.status = true;
-				result.data = "success";
-				result.object = resultMap;
-
-				status = HttpStatus.OK;
-
-			} else {
-				logger.error("방이 존재하지않습니다.");
-				status = HttpStatus.INTERNAL_SERVER_ERROR;
-			}
-		} catch (Exception e) {
-//			logger.error("지원자 정보가 잘못되었습니다.", e);
-//			status = HttpStatus.INTERNAL_SERVER_ERROR;
-			logger.error("방번호가 잘못되었습니다.", e);
-			resultMap.put("message", e.getMessage());
+		} else {
+			logger.error("방이 존재하지않습니다.");
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 		}
 
@@ -313,10 +243,11 @@ public class SessionController {
 
 		String msg = null;
 		HttpStatus status = null;
-		
+
 		System.out.println("변경전");
 		printMap();
-		System.out.println("--------------------------------------------------------------------------------------------------------------");
+		System.out.println(
+				"--------------------------------------------------------------------------------------------------------------");
 
 		if (this.sessions.get(sessionName) != null && this.tokensInSession.get(sessionName) != null) { // 방이 존재하는지
 
