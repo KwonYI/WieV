@@ -217,6 +217,8 @@ export default new Vuex.Store({
     ],
 
     participants: [],
+
+    checkIn: [],
   },
 
   getters: {
@@ -258,9 +260,15 @@ export default new Vuex.Store({
     },
 
     getParticipants(state) {
-      console.log("게터 실행, 모든 연결 정보 수");
+      console.log("게터 실행, 모든 연결 참가자 정보 수");
       console.log(state.participants.length);
       return state.participants;
+    },
+
+    getCheckIn(state) {
+      console.log("게터 실행, 모든 연결 수");
+      console.log(state.checkIn.length);
+      return state.checkIn;
     },
   },
   mutations: {
@@ -317,11 +325,6 @@ export default new Vuex.Store({
       console.log(data);
       state.participants.push(data);
     },
-    clearParticipants(state, data) {
-      console.log("클리어 실행, 실행 후 남은 정보");
-      state.participants = data;
-      console.log(state.participants.length);
-    },
     deleteParticipants(state, data) {
       const index = state.participants.indexOf(data, 0);
       console.log("정보 삭제 시도");
@@ -330,6 +333,30 @@ export default new Vuex.Store({
         state.participants.splice(index, 1);
       }
       console.log("변경후 : ", state.participants.length);
+    },
+    clearParticipants(state, data) {
+      console.log("클리어 실행, 실행 후 남은 정보");
+      state.participants = data;
+      console.log(state.participants.length);
+    },
+    addCheckIn(state, data) {
+      console.log("뮤테이션 실행 밑에 있는 데이터 넣을 예정");
+      console.log(data);
+      state.checkIn.push(data);
+    },
+    deleteCheckIn(state, data) {
+      const index = state.checkIn.indexOf(data, 0);
+      console.log("정보 삭제 시도");
+      console.log("변경전 : ", state.checkIn.length);
+      if (index >= 0) {
+        state.checkIn.splice(index, 1);
+      }
+      console.log("변경후 : ", state.checkIn.length);
+    },
+    clearcheckIn(state, data) {
+      console.log("클리어 실행, 실행 후 남은 정보");
+      state.checkIn = data;
+      console.log(state.checkIn.length);
     },
   },
 

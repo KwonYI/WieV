@@ -150,7 +150,7 @@ export default {
     window.addEventListener("beforeunload", this.leaveSession);
     window.addEventListener("backbutton", this.leaveSession);
 
-    // this.com_name = this.$route.params.interview.comName;
+    // this.comName = this.$route.params.interview.comName;
     // this.re_year = this.$route.params.interview.recruitYear;
     // this.re_flag = this.$route.params.interview.recruitFlag;
     // this.re_status = this.$route.params.interview.recruitStatus;
@@ -248,6 +248,8 @@ export default {
       "addParticipants",
       "clearParticipants",
       "deleteParticipants",
+      "clearCheckIn",
+      "deleteCheckIn",
     ]),
     sendMessage() {
       if (this.text === "") return;
@@ -267,16 +269,6 @@ export default {
     },
 
     leaveSession() {
-      this.deleteParticipants(this.info);
-
-      if (this.session) this.session.disconnect();
-
-      this.session = undefined;
-      this.mainStreamManager = undefined;
-      this.publisher = undefined;
-      this.subscribers = [];
-      this.OV = undefined;
-
       axios
         .get(`${SERVER_URL}/session/leaveSession`, {
           params: {
@@ -286,6 +278,14 @@ export default {
         })
         .then((res) => {
           console.log(res);
+          if (this.session) this.session.disconnect();
+          this.deleteParticipants(this.info);
+          this.session = undefined;
+          this.mainStreamManager = undefined;
+          this.publisher = undefined;
+          this.subscribers = [];
+          this.OV = undefined;
+
           window.close();
         })
         .catch((err) => {
@@ -317,7 +317,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["getParticipants"]),
+    ...mapGetters(["getParticipants", "getCheckIn"]),
   },
 };
 </script>
