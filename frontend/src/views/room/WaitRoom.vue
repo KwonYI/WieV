@@ -29,33 +29,54 @@
         />
       </v-toolbar-title>
     </v-app-bar>
+    <!-- 
+    화면 해상도
+    <div class="brd" style="width: 400px; height: 225px"></div>
+    <div class="brd" style="width: 480px; height: 270px"></div>
+    <div class="brd" style="width: 640px; height: 360px"></div>
+    <div class="brd" style="width: 960px; height: 540px"></div> -->
 
-    <div id="screen"></div>
-    <!-- 바 밑에 내용물들.  -->
+
     <v-container>
+      <v-row justify="space-between">
+        <v-col cols="5" class="brd">공지용 배너</v-col>
+        <v-col cols="2" class="brd">면접실 이동 대상자</v-col>
+        <v-col cols="4" class="brd">대기실-면접실 메신저</v-col>
+      </v-row>
+    </v-container>
+
+    <!-- 화면 공유 기능(미구현) -->
+    <!-- <div id="screen"></div> -->
+    
+    <!-- 바 밑에 내용물들.  -->
+    <v-container class="d-none">
       <!--row1. : 공지사항 배너, 면접실 만들기 버튼-->
       <v-row> </v-row>
 
       <!-- row2 : 관리자, 지원자, FAQ 잡동사니 row-->
       <v-row>
-        <!-- row2[왼쪽] : 관리자 리스트-->
+
+        <!-- 참가자 영상 출력-->
         <div
           v-for="sub in subscribers"
           :key="sub.stream.connection.connectionId"
         >
           <div v-for="(info, index) in participants" :key="index">
+            <!-- 대기관, 면접관 -->
             <v-col
               cols="3"
               v-if="
                 info.connectionId === sub.stream.connection.connectionId &&
-                info.type !== 'interviewer'
+                info.type !== 'interviewee'
               "
             >
+              <!-- 영상 송출 -->
               <user-video
                 :stream-manager="sub"
                 @click.native="updateMainVideoStreamManager(sub)"
               />
             </v-col>
+            <!-- 지원자 -->
             <v-col cols="6" v-else
               ><user-video
                 :stream-manager="sub"
@@ -64,12 +85,16 @@
             </v-col>
           </div>
         </div>
-        <v-col cols="3">
-          <!-- <user-video :stream-manager="mainStreamManager" /> -->
-          <!-- <ManagerList /> -->
-        </v-col>
+        <!-- <v-col cols="3">
+          <user-video :stream-manager="mainStreamManager" />
+          <ManagerList />
+        </v-col> -->
+
+
         <!-- row2[오른쪽] : 우측에 FAQ 채팅창 잡동사니 -->
-        <v-col cols="3">
+        
+        <!-- 채팅창 -->
+        <!-- <v-col cols="3">
           <div>
             <v-list v-auto-bottom="messages">
               <div v-for="(msg, index) in messages" :key="index">
@@ -85,20 +110,21 @@
               @keyup.13="sendMessage"
             ></v-text-field>
           </div>
-        </v-col>
+        </v-col> -->
+        
       </v-row>
     </v-container>
   </div>
 </template>
 
 <script>
-import { OpenVidu } from "openvidu-browser";
-import UserVideo from "@/components/room/UserVideo";
-import axios from "axios";
+import { OpenVidu } from "openvidu-browser"
+import UserVideo from "@/components/room/UserVideo"
+import axios from "axios"
 
-import { mapGetters, mapMutations } from "vuex";
+import { mapGetters, mapMutations } from "vuex"
 
-const SERVER_URL = process.env.VUE_APP_SERVER_URL;
+const SERVER_URL = process.env.VUE_APP_SERVER_URL
 // import ManagerList from "@/components/room/ManagerList.vue"
 // import VieweeList from "@/components/room/VieweeList.vue"
 
@@ -115,6 +141,18 @@ export default {
       session: undefined,
       mainStreamManager: undefined, // 메인 비디오
       publisher: undefined, // 연결 객체
+      // subscribers: [
+      //   {
+      //     ...,
+      //     connectionId: 78,
+      //     type: 'viewer'
+      //   },
+      //   {
+      //     ...,
+      //     connectionId: 78,
+      //     type: 'viewee'
+      //   },
+      // ],
       subscribers: [],
       participants: [],
 
@@ -144,103 +182,105 @@ export default {
       re_year: undefined,
       re_flag: undefined,
       re_status: undefined,
-    };
+    }
   },
   created: function () {
-    window.addEventListener("beforeunload", this.leaveSession);
-    window.addEventListener("backbutton", this.leaveSession);
+    window.addEventListener("beforeunload", this.leaveSession)
+    window.addEventListener("backbutton", this.leaveSession)
 
-    // this.comName = this.$route.params.interview.comName;
-    // this.re_year = this.$route.params.interview.recruitYear;
-    // this.re_flag = this.$route.params.interview.recruitFlag;
-    // this.re_status = this.$route.params.interview.recruitStatus;
-    // this.sessionName = this.$route.params.interviewer.sessionName;
-    // this.token = this.$route.params.interviewer.token;
-    // this.userName = this.$route.params.interviewer.interviewerName;
-    // this.type = this.$route.params.interviewer.type;
+    // this.comName = this.$route.params.interview.comName
+    // this.re_year = this.$route.params.interview.recruitYear
+    // this.re_flag = this.$route.params.interview.recruitFlag
+    // this.re_status = this.$route.params.interview.recruitStatus
+    // this.sessionName = this.$route.params.interviewer.sessionName
+    // this.token = this.$route.params.interviewer.token
+    // this.userName = this.$route.params.interviewer.interviewerName
+    // this.type = this.$route.params.interviewer.type
 
-    this.comName = this.$route.query.comName;
-    this.re_year = this.$route.query.re_year;
-    this.re_flag = this.$route.query.re_flag;
-    this.re_status = this.$route.query.re_status;
-    this.sessionName = this.$route.query.sessionName;
-    this.token = this.$route.query.token;
-    this.userName = this.$route.query.userName;
-    this.type = this.$route.query.type;
+    this.comName = this.$route.query.comName
+    this.re_year = this.$route.query.re_year
+    this.re_flag = this.$route.query.re_flag
+    this.re_status = this.$route.query.re_status
+    this.sessionName = this.$route.query.sessionName
+    this.token = this.$route.query.token
+    this.userName = this.$route.query.userName
+    this.type = this.$route.query.type
   },
   beforeDestroy() {
-    window.removeEventListener("beforeunload", this.leaveSession);
-    window.removeEventListener("backbutton", this.leaveSession);
+    window.removeEventListener("beforeunload", this.leaveSession)
+    window.removeEventListener("backbutton", this.leaveSession)
   },
 
   mounted() {
-    this.OV = new OpenVidu();
-    this.session = this.OV.initSession();
+    this.OV = new OpenVidu()
+    this.session = this.OV.initSession()
 
     this.session.on("streamCreated", ({ stream }) => {
-      const subscriber = this.session.subscribe(stream);
-      this.subscribers.push(subscriber);
-    });
+      const subscriber = this.session.subscribe(stream)
+      // if (personType == 'viewer') {
+      //   subscriber[type] = 'viewer'
+      // }
+      this.subscribers.push(subscriber)
+    })
 
     this.session.on("streamDestroyed", ({ stream }) => {
-      const index = this.subscribers.indexOf(stream.streamManager, 0);
+      const index = this.subscribers.indexOf(stream.streamManager, 0)
       if (index >= 0) {
-        this.subscribers.splice(index, 1);
+        this.subscribers.splice(index, 1)
       }
-    });
+    })
 
     this.session.on("signal:my-chat", (event) => {
-      let message = { from: "", text: "" };
-      message.from = event.from.data.split('":"')[1].slice(0, -8);
-      message.text = event.data;
+      let message = { from: "", text: "" }
+      message.from = event.from.data.split('":"')[1].slice(0, -8)
+      message.text = event.data
 
-      this.messages.push(message);
-    });
+      this.messages.push(message)
+    })
 
-    this.session
-      .connect(this.token, { clientData: this.userName })
+    this.session.connect(this.token, { clientData: this.userName })
       .then(() => {
         let publisher = this.OV.initPublisher(undefined, {
           audioSource: undefined, // The source of audio. If undefined default microphone
           videoSource: undefined, // The source of video. If undefined default webcam
           publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
           publishVideo: true, // Whether you want to start publishing with your video enabled or not
-          resolution: "320x240", // The resolution of your video
+          resolution: "640x360", // The resolution of your video
           frameRate: 30, // The frame rate of your video
           insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
           mirror: false, // Whether to mirror your local video or not
-        });
+        })
 
-        this.mainStreamManager = publisher;
-        this.publisher = publisher;
+        this.mainStreamManager = publisher
+        this.publisher = publisher
 
-        this.session.publish(this.publisher);
-        this.subscribers.push(this.publisher);
+        this.session.publish(this.publisher)
+        this.subscribers.push(this.publisher)
 
-        this.info.sessionName = this.sessionName;
-        this.info.type = this.type;
-        this.info.connectionId = this.publisher.stream.connection.connectionId;
-        this.addParticipants(this.info);
+        this.info.sessionName = this.sessionName
+        this.info.type = this.type
+        this.info.connectionId = this.publisher.stream.connection.connectionId
+        this.addParticipants(this.info)
 
-        console.log("웨이트룸에서 길이 찍기");
-        console.log(this.getParticipants.length);
+        console.log("웨이트룸에서 길이 찍기")
+        console.log(this.getParticipants.length)
 
         this.getParticipants.forEach((element) => {
           if (element.sessionName == this.sessionName)
-            this.participants.push(element);
-        });
+            this.participants.push(element)
+        })
 
-        console.log(this.participants);
-        // this.clearParticipants([]);
+        console.log(this.participants)
+        // this.clearParticipants([])
       })
       .catch((error) => {
         console.log(
           "There was an error connecting to the session:",
           error.code,
           error.message
-        );
-      });
-    window.addEventListener("beforeunload", this.leaveSession);
+        )
+      })
+    window.addEventListener("beforeunload", this.leaveSession)
   },
 
   methods: {
@@ -252,7 +292,7 @@ export default {
       "deleteCheckIn",
     ]),
     sendMessage() {
-      if (this.text === "") return;
+      if (this.text === "") return
 
       this.session
         .signal({
@@ -262,10 +302,10 @@ export default {
         })
         .then(() => {})
         .catch((error) => {
-          console.error(error);
-        });
+          console.error(error)
+        })
 
-      this.text = "";
+      this.text = ""
     },
 
     leaveSession() {
@@ -277,49 +317,49 @@ export default {
           },
         })
         .then((res) => {
-          console.log(res);
-          if (this.session) this.session.disconnect();
-          this.deleteParticipants(this.info);
-          this.session = undefined;
-          this.mainStreamManager = undefined;
-          this.publisher = undefined;
-          this.subscribers = [];
-          this.OV = undefined;
+          console.log(res)
+          if (this.session) this.session.disconnect()
+          this.deleteParticipants(this.info)
+          this.session = undefined
+          this.mainStreamManager = undefined
+          this.publisher = undefined
+          this.subscribers = []
+          this.OV = undefined
 
-          window.close();
+          window.close()
         })
         .catch((err) => {
-          console.log(err);
-          console.log("방 나가기 실패!");
-        });
+          console.log(err)
+          console.log("방 나가기 실패!")
+        })
     },
 
     updateMainVideoStreamManager(stream) {
-      if (this.mainStreamManager === stream) return;
-      this.mainStreamManager = stream;
+      if (this.mainStreamManager === stream) return
+      this.mainStreamManager = stream
     },
 
     audioOnOOff() {
-      this.audioOn = !this.audioOn;
-      if (this.audioOn === true) this.audioMsg = "소리 Off";
-      else this.audioMsg = "소리 On";
+      this.audioOn = !this.audioOn
+      if (this.audioOn === true) this.audioMsg = "소리 Off"
+      else this.audioMsg = "소리 On"
 
-      this.publisher.publishAudio(this.audioOn);
+      this.publisher.publishAudio(this.audioOn)
     },
 
     videoOnOOff() {
-      this.videoOn = !this.videoOn;
-      if (this.videoOn === true) this.videoMsg = "화면 Off";
-      else this.videoMsg = "화면 On";
+      this.videoOn = !this.videoOn
+      if (this.videoOn === true) this.videoMsg = "화면 Off"
+      else this.videoMsg = "화면 On"
 
-      this.publisher.publishVideo(this.videoOn);
+      this.publisher.publishVideo(this.videoOn)
     },
   },
 
   computed: {
     ...mapGetters(["getParticipants", "getCheckIn"]),
   },
-};
+}
 </script>
 
 <style scoped>
@@ -332,5 +372,8 @@ export default {
   height: 500px;
   width: 300px;
   overflow-y: auto;
+}
+.brd {
+  border: 1px solid lightslategrey;
 }
 </style>

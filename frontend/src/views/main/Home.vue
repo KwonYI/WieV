@@ -16,7 +16,7 @@
               <Schedule />
             </div>
             <div v-else>
-              <router-link :to="{ name: 'Main'}">
+              <router-link :to="{ name: 'Main', params: { isViewer: true } }">
                   대기실 이동하기
               </router-link>
             </div>
@@ -100,11 +100,10 @@
     },
     methods: {
       login: function () {
-        this.$store
-        .dispatch("LOGIN", this.credentials)
-        .then(() => {this.$router.replace(this.$router.currentRoute) 
-        this.credentials.userEmail = ""
-        this.credentials.userPassword = ""
+        this.$store.dispatch("LOGIN", this.credentials)
+          .then(() => {this.$router.replace(this.$router.currentRoute) 
+          this.credentials.userEmail = ""
+          this.credentials.userPassword = ""
         })
       },
     },

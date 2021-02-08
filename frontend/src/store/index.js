@@ -44,6 +44,11 @@ export default new Vuex.Store({
       userComHomepage: "",
     },
 
+    viewee: {
+
+    },
+
+
     //채용담당자가 선택한 현재 공고 :
     selectRecruitTrigger: false,
     selectedRecruitNo: -1,
@@ -93,6 +98,22 @@ export default new Vuex.Store({
     ],
 
     participants: [],
+
+    // allSessions: {
+    //   '38': [
+    //     {
+    //       connectionId: 35
+    //       type: 'viewer',
+
+    //     },
+    //     {
+    //       connectionId: 358
+    //       type: 'viewee'
+    //     },
+    //   ]
+    // },
+
+    // allSessions['38']['subscriber'][],
 
     checkIn: [],
   },

@@ -100,75 +100,73 @@ export default {
   methods: {
     ...mapMutations(["addCheckIn", "clearCheckIn", "deleteCheckIn"]),
     goWaitSession() {
-      axios
-        .get(`${SERVER_URL}/session/create`, {
+      axios.get(`${SERVER_URL}/session/create`, {
           params: {
             interviewerWait: this.user.userViewWait,
             interviewerName: this.user.userName,
             sessionName: this.interview.waitSessionName,
           },
         })
-        .then((res) => {
-          console.log(res);
-          // this.$router.push({
-          //   name: "WaitRoom",
-          //   params: { interview: this.interview, interviewer: res.data },
-          // });
-          let routeData = this.$router.resolve({
-            name: "WaitRoom",
-            query: {
-              comName: this.interview.comName,
-              re_year: this.interview.recruitYear,
-              re_flag: this.interview.recruitFlag,
-              re_status: this.interview.recruitStatus,
-              sessionName: res.data.sessionName,
-              token: res.data.token,
-              userName: res.data.interviewerName,
-              type: res.data.type,
-            },
-          });
-          // this.inWait = true;
-          window.open(routeData.href, "_blank");
+          .then(res => {
+            console.log(res)
+            // this.$router.push({
+            //   name: "WaitRoom",
+            //   params: { interview: this.interview, interviewer: res.data },
+            // });
+            let routeData = this.$router.resolve({
+              name: "WaitRoom",
+              query: {
+                comName: this.interview.comName,
+                re_year: this.interview.recruitYear,
+                re_flag: this.interview.recruitFlag,
+                re_status: this.interview.recruitStatus,
+                sessionName: res.data.sessionName,
+                token: res.data.token,
+                userName: res.data.interviewerName,
+                type: res.data.type,
+              },
+            })
+            // this.inWait = true;
+            window.open(routeData.href, "_blank")
+          })
+          .catch(err => {
+            if (this.user.userViewWait == 0) {
+              console.log(err)
+            } else {
+              alert("방이 아직 개설되지 않았습니다.")
+            }
         })
-        .catch((err) => {
-          if (this.user.userViewWait == 0) {
-            console.log(err);
-          } else {
-            alert("방이 아직 개설되지 않았습니다.");
-          }
-        });
     },
 
     // 라우터 이름 변경 필요
     goInterviewSession() {
-      axios
-        .get(`${SERVER_URL}/session/create`, {
+      axios.get(`${SERVER_URL}/session/create`, {
           params: {
             interviewerWait: this.user.userViewWait,
             interviewerName: this.user.userName,
             sessionName: this.interview.interviewSessionName,
           },
         })
-        .then((res) => {
-          console.log(res);
-          this.$router.push({
-            name: "WaitRoom",
-            params: { interview: this.interview, interviewer: res.data },
-          });
-        })
-        .catch((err) => {
-          if (this.user.userViewWait == 0) {
-            console.log(err);
-          } else {
-            alert("방이 아직 개설되지 않았습니다.");
-          }
-        });
+          .then(res => {
+            console.log(res);
+            this.$router.push({
+              name: "WaitRoom",
+              params: { interview: this.interview, interviewer: res.data },
+            })
+          })
+          .catch(err => {
+            if (this.user.userViewWait == 0) {
+              console.log(err)
+            } else {
+              alert("방이 아직 개설되지 않았습니다.")
+            }
+          })
     },
   },
   computed: {
     ...mapGetters(["getCheckIn"]),
   },
-};
+}
 </script>
 
 <style></style>
