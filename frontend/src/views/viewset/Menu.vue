@@ -3,13 +3,13 @@
     <v-container>
       <v-row>
         <div>
-          <v-card class="mx-auto mt-10 mb-10 rounded-b-lg" max-width="1000">
-            <v-card-title></v-card-title>
+          <v-card class="mx-auto mt-10 rounded-b-lg">
+            <v-icon dark>folder_open</v-icon><v-card-title>{{recruitItem.reYear}} {{recruitItem.reFlag}} {{recruitItem.reStatus}}</v-card-title>
             <v-card-subtitle></v-card-subtitle>
           </v-card>
         </div>
-        <v-col cols="3">
-          <v-list shaped dark id="sidebarCol">
+        <v-col cols="2">
+          <v-list shaped dark id="sidebarCol" >
             <v-subheader>
               채용공고 리스트
             </v-subheader>
@@ -30,7 +30,7 @@
           </v-list>
         </v-col>
 
-        <v-col cols="9">
+        <v-col cols="10">
           <Recruit v-if="recruitNo > -1" :recruitItem="recruitItem" />
           <RecruitWarning v-else/>
         </v-col>
@@ -113,7 +113,7 @@
     left: 0;
     /* position: fixed; */
     /* height: 100%; */
-    height: 70vh;
-    width: 200px;
+    height: 100vh;
+    width: 12vw;
   }
 </style>
