@@ -115,6 +115,8 @@ public class ApplicantController {
 	GroupDetailDao groupDetailDao;
 
 	@Autowired
+	GroupTypeDao groupTypeDao;
+	@Autowired
 	ApplicantGroupDao applicantGroupDao;
 
 	public static final Logger logger = LoggerFactory.getLogger(HrController.class);
@@ -228,6 +230,79 @@ public class ApplicantController {
 					
 					applicantList.add(resultMap);
 				}
+			}
+			
+			status = HttpStatus.OK;
+		} catch (RuntimeException e) {
+			logger.error("공고리스트 가져오기 실패", e);
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		
+		return new ResponseEntity<List<Map<String, Object>>>(applicantList, status);
+	}
+	
+	@GetMapping(value = "/getListBySessionName/{interviewSessionName}")
+	@ApiOperation(value = "세션  이름에 따른 지원자 리스트 모두 가져오기")
+	public ResponseEntity<List<Map<String, Object>>> getApplicationListBySessionName(@PathVariable("interviewSessionName") String interviewSessionName) {
+		HttpStatus status = null;
+		List<Map<String, Object>> applicantList = new ArrayList<Map<String,Object>>();
+		
+		
+		try {
+		
+			GroupType groupType=groupTypeDao.findGroupTypeByInterviewSessionName(interviewSessionName);
+			List<GroupDetail> groupDetailList=groupDetailDao.findAllGroupDetailByGroupGroupSeq(groupType.getGroupGroupSeq());
+			List<ApplicantGroup> applicantGroupList=new ArrayList<ApplicantGroup>();
+			List<Applicant> allApplicantList=new ArrayList<Applicant>();
+			
+			for (int i = 0; i < groupDetailList.size(); i++) {
+				applicantGroupList=applicantGroupDao.findListApplicantGroupByGroupDetailDetailSeq(groupDetailList.get(i).getDetailSeq());
+				for (int j = 0; j < applicantGroupList.size(); j++) {
+					allApplicantList.add(applicantDao.findApplicantByApplySeq(applicantGroupList.get(j).getApplicantApplySeq()));
+				}
+			}
+			
+			for (int i = 0; i < allApplicantList.size(); i++) {
+				Applicant applicant = allApplicantList.get(i);
+				
+
+					Map<String, Object> resultMap = new HashMap<String, Object>();
+					
+					// 지원자 seq
+					resultMap.put("apply-Seq", applicant.getApplySeq());
+					// 지원자 session Id
+					resultMap.put("apply-Id", applicant.getApplyId());
+					// 지원자 이름
+					resultMap.put("apply-Name", applicant.getApplyName());
+					// 지원자 email
+					resultMap.put("apply-Email", applicant.getApplyEmail());
+					// 지원자 생년월일
+					resultMap.put("apply-Birth", applicant.getApplyBirth());
+					// 지원자 핸드폰 번호
+					resultMap.put("apply-Phone", applicant.getApplyPhone());
+					// 지원자 대학교
+					resultMap.put("apply-University", applicant.getApplyUniversity());
+					// 지원자 전공
+					resultMap.put("apply-Major", applicant.getApplyMajor());
+					// 지원자 학점
+					resultMap.put("apply-Grade", applicant.getApplyGrade());
+					// 지원자 자기소개서 항목 1
+					resultMap.put("apply-Resume1", applicant.getApplyResume1());
+					// 지원자 자기소개서 항목 2
+					resultMap.put("apply-Resume2", applicant.getApplyResume2());
+					// 지원자 자기소개서 항목 3
+					resultMap.put("apply-Resume3", applicant.getApplyResume3());
+					// 지원자 자기소개서 항목 4
+					resultMap.put("apply-Resume4", applicant.getApplyResume4());
+					// 지원자가 할당되었는지
+					resultMap.put("apply-Assigned", applicant.getApplyAssigned());
+					// 지원자 직무 이름
+					resultMap.put("apply-Career-Name", careerDao.findCareerByCaSeq(applicant.getCareerCaSeq()).getCaName());
+					// 지원자 공고 seq
+					resultMap.put("apply-Recruit-Seq", applicant.getRecruitReSeq());
+					
+					applicantList.add(resultMap);
+			
 			}
 			
 			status = HttpStatus.OK;
@@ -516,6 +591,7 @@ public class ApplicantController {
 		String uuid = UUID.randomUUID().toString().replace("-", "");
 		return uuid;
 	}
+	
 	
 	@PostMapping("/send/{reSeq}")
 	@ApiOperation(value = "인증 메일 보내기")
