@@ -537,7 +537,6 @@ public class ApplicantController {
 				int groupSeq=groupDetailDao.findGroupDetailByDetailSeq(applicantGroup.getGroupDetailDetailSeq()).getGroupGroupSeq();
 				GroupAll groupAll=groupAllDao.findGroupAllByGroupSeq(groupSeq);
 				
-				
 				StringBuffer emailContent = new StringBuffer();
 				emailContent.append("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional //EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
 				emailContent.append("<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\">");
@@ -886,6 +885,8 @@ public class ApplicantController {
 				
 				emailService.sendMail(applicant.getApplyEmail(), "["+company.getComName()+"] "+recruit.getReYear()+"년 "+recruit.getReFlag()+" "+recruit.getReStatus() +" 채용 면접 일정 안내",
 						emailContent.toString());
+				
+				System.out.println(applicant.getApplyName()+" 이메일 전송 완료");
 			}
 			
 			status=HttpStatus.OK;

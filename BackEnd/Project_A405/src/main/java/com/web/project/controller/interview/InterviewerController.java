@@ -328,7 +328,7 @@ public class InterviewerController {
 				interviewer.setCareerCaSeq(careerSeq);
 
 				interviewer.setViewAssigned(0);
-				interviewer.setViewPassword(getUUID().substring(0, 10));
+				interviewer.setViewPassword(getUUID().substring(0, 10)+"!");
 				// insert문
 				// interviewerDao.save(interviewer);
 				interviewerList.add(interviewer);
@@ -655,7 +655,8 @@ public class InterviewerController {
 				emailService.sendMail(interviewer.getViewEmail(),
 						"[" + company.getComName() + "] " + interviewer.getViewName() + "님 면접 계정 안내",
 						emailContent.toString());
-
+			
+			System.out.println(interviewer.getViewName()+" 이메일 전송 완료");
 			}
 			status = HttpStatus.OK;
 			resultMap.put("message", "이메일 전송 성공");
