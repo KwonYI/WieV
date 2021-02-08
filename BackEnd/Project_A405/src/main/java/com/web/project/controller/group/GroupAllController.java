@@ -334,7 +334,7 @@ public class GroupAllController {
 					groupAll.setGroupDivide(divideNum);
 					totalApplyCount -= groupAllRequest.getDivideNumber();
 
-					groupAll.setGroupVisible(groupAllRequest.getDivideVisible());
+//					groupAll.setGroupVisible(groupAllRequest.getDivideVisible());
 
 					// 각 그룹 날짜 세팅
 					// 오늘 할당된 시간보다 늦어진 경우
@@ -370,7 +370,7 @@ public class GroupAllController {
 								groupAllDao.findGroupAllByGroupSeq(resultGroupAll.getGroupSeq()).getGroupSeq());
 //						System.out.println(groupAllRequest.getInterviewTypeList().get(j));
 
-						groupType.setInterviewTypeTypeSeq(groupAllRequest.getInterviewTypeList().get(j).getTypeSeq());
+						groupType.setInterviewTypeTypeSeq(interviewTypeDao.findInterviewTypeByTypeName(groupAllRequest.getInterviewTypeList().get(j)).getTypeSeq());
 						groupType.setWaitSessionName(getUUID());
 						groupType.setInterviewSessionName(getUUID());
 
@@ -388,9 +388,6 @@ public class GroupAllController {
 					interviewerAssign(resultGroupAll.getGroupSeq());
 					//4.지원자 배치
 					applicantAssign(resultGroupAll.getGroupSeq());
-					
-					
-					
 				}
 				status = HttpStatus.OK;
 			} else {

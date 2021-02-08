@@ -2,7 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
 import createPersistedState from "vuex-persistedstate";
-import _ from "lodash";
+import _ from "lodash"
 
 Vue.use(Vuex);
 //  const SERVER_URL = "https://localhost:8080"
@@ -19,6 +19,7 @@ export default new Vuex.Store({
     accessToken: null,
     // userViewWait => 인사담당자(-1), 대기관(0), 면접관(1) 구분자
     user: {
+      userSeq: 0,
       userEmail: "",
       userName: "",
       userPhone: "",
@@ -37,13 +38,17 @@ export default new Vuex.Store({
     //그냥 인담자, 면접관, 지원자 로그인 상황 한 변수로 통일하는 게 낫다.
     whoLogin: "viewer", //Manager, viewer, viewee
 
-    comData: {
-      comSeq: "1",
-      comName: "WieV Inc.",
-      comLogo: "asdf",
-      comAddress: "서울특별시 강남구 테헤란로",
-      comHomepage: "https://www.naver.com",
-    },
+    companyNameList: [],
+
+    companyList: [
+      {
+        comSeq: 0,
+        comName: "",
+        comLogo: "",
+        comAddress: "",
+        comHomepage: "",
+      },
+    ],
 
     recruitList: [
       {
@@ -232,6 +237,9 @@ export default new Vuex.Store({
     getUserComSeq(state) {
       return state.user.userComSeq;
     },
+    // getCompanyNameList(state){
+    //   return state.companyNameList;
+    // },
     // getParticipantsInInterview(state) {
     //   return (sessionName) =>
     //     state.participantsInInterviews.filter((interview) => {
@@ -243,6 +251,9 @@ export default new Vuex.Store({
     getRecruitListLately: function(state) {
       // return _.sortBy(state.recruitList, 'reSeq').reverse()
       return _.orderBy(state.recruitList, ["reSeq"], ["desc"]);
+    }, 
+    getRecruitListCount: function(state) {
+      return state.recruitList.length;
     },
 
     //현재 공고의 지원자만 가져오는 로직
@@ -266,6 +277,7 @@ export default new Vuex.Store({
   mutations: {
     LOGIN(state, res) {
       state.accessToken = res["auth-token"];
+      state.user.userSeq = res["user-Seq"];
       state.user.userEmail = res["user-Email"];
       state.user.userName = res["user-Name"];
       state.user.userPhone = res["user-Phone"];
@@ -278,6 +290,7 @@ export default new Vuex.Store({
     },
     LOGOUT(state) {
       state.accessToken = null;
+      state.user.userSeq = 0;
       state.user.userEmail = "";
       state.user.userName = "";
       state.user.userPhone = "";
@@ -287,6 +300,19 @@ export default new Vuex.Store({
       state.user.userComLogo = "";
       state.user.userComAddress = "";
       state.user.userComHomepage = "";
+    },
+    USER_UPDATE(state, res) {
+      state.user.userName = res["user-Name"];
+      state.user.userPhone = res["user-Phone"];
+    },
+    GET_COMPANY_NAME_LIST(state, res) {
+      console.log(typeof(res));
+      console.log("mutaions의 GET_COMPANY_NAME_LIST", res);
+      state.companyNameList = res;
+    },
+    GET_COMPANY_LIST(state, res) {
+      console.log("mutaions의 GET_COMPANY_LIST", res);
+      state.companyList = res;
     },
     GET_RECRUIT_LIST(state, res) {
       console.log("mutaions의 GET_RECRUIT_LIST", res);
@@ -331,7 +357,42 @@ export default new Vuex.Store({
       context.commit("LOGOUT");
       axios.defaults.headers.common["auth-token"] = undefined;
     },
+    USER_UPDATE(context, userUpdateRequest){
+      axios
+        .put(`${SERVER_URL}/hr/update/` + this.state.user.userSeq, userUpdateRequest)
+        .then((res) => {
+          context.commit("USER_UPDATE", res.data)
+          alert("회원정보 수정이 완료되었습니다.")
+        });
+    },
+    USER_DELETE(context) {
+      axios
+        .delete(`${SERVER_URL}/hr/delete/` + this.state.user.userSeq)
+        .then(() => {
+          alert("회원 탈퇴가 완료되었습니다.")
+        });
+      context.commit("LOGOUT");
+    },
 
+    GET_COMPANY_NAME_LIST(context) {
+      axios
+        .get(`${SERVER_URL}/recruit/companyNameList`)
+        .then((res) => {
+          context.commit("GET_COMPANY_NAME_LIST", res.data);
+          console.log("회사 이름 리스트")
+          console.log(res.data);
+        });
+    },
+    GET_COMPANY_LIST(context) {
+      axios
+        .get(`${SERVER_URL}/recruit/companyList`)
+        .then((response) => {
+          context.commit("GET_COMPANY_LIST", response.data);
+          console.log("회사 리스트")
+          console.log(response.data);
+        });
+    },
+ 
     GET_RECRUIT_LIST(context) {
       axios
         .get(`${SERVER_URL}/recruit/getList/` + this.state.user.userComSeq)
@@ -340,7 +401,7 @@ export default new Vuex.Store({
           console.log("겟 공고 실행");
           console.log(response.data);
         });
-      context.commit("GET_RECRUIT_LIST");
+      // context.commit("GET_RECRUIT_LIST");
     },
 
     INSERT_RECRUIT(context, newRecruit) {

@@ -100,22 +100,22 @@
             <th class="rec-header">시즌</th>
             <th class="rec-header">분류</th>
             <th class="rec-header">기간</th>
-            <th class="rec-header">관리</th>
+            <!-- <th class="rec-header">관리</th> -->
             <th class="rec-header">삭제</th>
           </tr>
         </thead>
         <tbody>
           <!-- reSeq 내림차순으로 정렬된 상태입니다.(최근 만든 순으로 보여줌)  -->
-          <tr v-for="(recruit, index) in getRecruitListLately" :key="index" class="text-center">
-            <td>{{ index+1 }}</td>
+          <tr v-for="(recruit, index) in getRecruitListLately" :key="index" class="text-center" @click="goToProgress(recruit)">
+            <td>{{ getRecruitListCount - index }}</td>
             <!-- <td>{{ recruit.reSeq }}</td> -->
             <td>{{ recruit.reYear }} {{ recruit.reFlag }}</td>
             <td>{{ recruit.reStatus }}</td>
-            <td>{{ recruit.reStartDate }} ~ {{ recruit.reEndDate }}</td>
-            <td>
+            <td>{{ recruit.reStartDate }} ~ {{recruit.reEndDate }}</td>
+            <!-- <td> -->
               <!-- <v-btn :to="{ name: 'Progress', params: { recruitNo: recruit.reSeq } }" >관리하기</v-btn> -->
-              <v-btn @click="goToProgress(recruit)">관리하기</v-btn>
-            </td>
+              <!-- <v-btn @click="goToProgress(recruit)">관리하기</v-btn> -->
+            <!-- </td> -->
             <td v-if="recruit.reSeq !== 3">
               <v-btn @click="deleteRecruit(recruit.reSeq)">삭제</v-btn>
             </td>
@@ -219,7 +219,7 @@
     },
     computed: {
       ...mapState(["recruitList", "user"]),
-      ...mapGetters(["getRecruitListLately"]),
+      ...mapGetters(["getRecruitListLately", "getRecruitListCount"]),
 
       dateRangeText() {
         return this.formData.reDates.join(' ~ ')

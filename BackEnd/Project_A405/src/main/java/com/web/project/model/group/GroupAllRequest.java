@@ -22,7 +22,7 @@ public class GroupAllRequest {
 	private String career;
 	@ApiModelProperty(required = true)
 	@NotNull
-	private List<InterviewType> interviewTypeList;
+	private List<String> interviewTypeList;
 	// 시작 시간이랑 끝 시간 포멧 맞춰야된다.
 	// 1시간 단위로 생각했음
 	@ApiModelProperty(required = true)
@@ -37,9 +37,9 @@ public class GroupAllRequest {
 	@ApiModelProperty(required = true)
 	@NotNull
 	private int divideTime;
-	@ApiModelProperty(required = true)
-	@NotNull
-	private int divideVisible;
+//	@ApiModelProperty(required = true)
+//	@NotNull
+//	private int divideVisible;
 	
 	@ApiModelProperty(required = true)
 	@NotNull
@@ -96,20 +96,20 @@ public class GroupAllRequest {
 	public void setDivideTime(int divideTime) {
 		this.divideTime = divideTime;
 	}
+//
+//	public int getDivideVisible() {
+//		return divideVisible;
+//	}
+//
+//	public void setDivideVisible(int divideVisible) {
+//		this.divideVisible = divideVisible;
+//	}
 
-	public int getDivideVisible() {
-		return divideVisible;
-	}
-
-	public void setDivideVisible(int divideVisible) {
-		this.divideVisible = divideVisible;
-	}
-
-	public List<InterviewType> getInterviewTypeList() {
+	public List<String> getInterviewTypeList() {
 		return interviewTypeList;
 	}
 
-	public void setInterviewTypeList(List<InterviewType> interviewTypeList) {
+	public void setInterviewTypeList(List<String> interviewTypeList) {
 		this.interviewTypeList = interviewTypeList;
 	}
 

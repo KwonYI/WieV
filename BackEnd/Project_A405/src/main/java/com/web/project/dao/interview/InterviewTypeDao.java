@@ -9,4 +9,5 @@ import com.web.project.model.interview.InterviewType;
 @Repository
 public interface InterviewTypeDao extends JpaRepository<InterviewType, String>{
 	InterviewType findInterviewTypeByTypeSeq(int typeSeq);
+	InterviewType findInterviewTypeByTypeName(String typeName);
 }

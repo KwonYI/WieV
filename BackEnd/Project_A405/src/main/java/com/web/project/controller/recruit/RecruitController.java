@@ -1,5 +1,6 @@
 package com.web.project.controller.recruit;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import com.web.project.controller.hr.HrController;
 import com.web.project.dao.hr.CompanyDao;
 import com.web.project.dao.recruit.RecruitDao;
 import com.web.project.model.BasicResponse;
+import com.web.project.model.hr.Company;
 import com.web.project.model.hr.Hr;
 import com.web.project.model.recruit.Recruit;
 import com.web.project.model.recruit.RegisterRequest;
@@ -129,5 +131,44 @@ public class RecruitController {//공고 등록
 		}
 
 		return new ResponseEntity<Recruit> (recruit, status);
+	}
+	
+	@GetMapping(value="/companyNameList")
+	@ApiOperation(value = "회사리스트 이름 모두 가져오기")
+	public ResponseEntity<List<String>> getCompanyNameList(){
+		HttpStatus status = null;
+		List<String> companyList = new ArrayList<String>();
+				
+		try {
+			List<Company> comList = companyDao.findAll();
+			
+			for (int i = 0; i < comList.size(); i++) {
+				companyList.add(comList.get(i).getComName());
+			}
+			
+			status = HttpStatus.OK;
+		} catch (RuntimeException e) {
+			logger.error("회사리스트 가져오기 실패", e);
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		
+		return new ResponseEntity<List<String>>(companyList, status);
+	}
+	
+	@GetMapping(value="/companyList")
+	@ApiOperation(value = "회사리스트 모두 가져오기")
+	public ResponseEntity<List<Company>> getCompanyList(){
+		HttpStatus status = null;
+		List<Company> companyList = null;
+				
+		try {
+			companyList = companyDao.findAll();
+			status = HttpStatus.OK;
+		} catch (RuntimeException e) {
+			logger.error("회사리스트 가져오기 실패", e);
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		
+		return new ResponseEntity<List<Company>>(companyList, status);
 	}
 }

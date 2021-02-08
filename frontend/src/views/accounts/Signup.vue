@@ -1,5 +1,5 @@
 <template>
-  <div id="signup" class="mt-12 ml-16 text-white">
+  <div id="signup" class="mt-12 ml-16 text-white" @keyup.enter="signup">
     <div class="h4">회원가입</div>
     <!-- 정보입력 Form -->
     <v-row no-gutters>
@@ -13,7 +13,16 @@
             <tbody>
               <tr v-for="(item, index) in userInfo" :key="index">
                 <td>{{ item.label }}</td>
-                <td>
+                <td v-if="index === 6"> <!-- index 6번 select box -->
+                <v-autocomplete
+                  v-model="credentials[item.value]"
+                  :items="companyNameList"
+                  :label="item.name"
+                  hide-details
+                  dense
+                ></v-autocomplete>
+                </td>
+                <td v-else>
                   <v-text-field
                     :label="item.label"
                     :type="item.type"
@@ -67,12 +76,17 @@
 
 <script>
 import axios from "axios"
+ import { mapState } from "vuex";
+
+// const SERVER_URL = "https://localhost:8080/"
+// const SERVER_URL = "https://i4a405.p.ssafy.io:8080"
 const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
 export default {
   name: "Signup",
   components: {},
   computed: {
+    ...mapState(["companyNameList"]),
     passwordConfirmation() {
       return [
         value => value === this.credentials.hrPassword || '비밀번호가 일치하지 않습니다.' 
@@ -113,7 +127,7 @@ export default {
         value: "hrPassword",
         rule: [
           value => !!value || '비밀번호는 필수 항목입니다.',
-          value => /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/.test(value) || '비밀번호는 반드시 1개 이상의 문자, 숫자, 특수문자를 포함해야 합니다.'
+          value => /^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/.test(value) || '비밀번호는 반드시 1개 이상의 문자, 숫자, 특수문자를 포함해야 합니다.'
         ],
         longmsg: 'longmsg'
       },
@@ -159,6 +173,11 @@ export default {
     isCertified: false,
     isPasswordCertified:false,
   }),
+  created: function () {
+    this.$store
+      .dispatch("GET_COMPANY_NAME_LIST")
+      .then(() => console.log("회사 리스트 가져오기 완료"))
+  },
   methods: {
     // 메일 발송
     send: function() {

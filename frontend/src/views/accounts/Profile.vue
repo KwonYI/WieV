@@ -30,6 +30,14 @@
           </div> -->
         </v-col>
       </v-row>
+      <v-row v-if="user.userViewWait === -1">
+        <div>
+          <router-link :to="{ name: 'ProfileUpdateForm' }">
+          수정하기
+          </router-link>
+        </div>
+        <div @click="userDelete">탈퇴하기</div>
+      </v-row>
     </v-container>
   </div>
 </template>
@@ -65,7 +73,17 @@ export default {
   computed: {
     ...mapState(['user']),
 
-  }
+  },
+  methods: {
+    userDelete: function() {
+      this.$store
+        .dispatch("USER_DELETE")
+        .then(() => {
+          console.log("회원탈퇴")
+          this.$router.replace({ name: "Home" })
+        });
+    }
+  },
 };
 </script>
 
