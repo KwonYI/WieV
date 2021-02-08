@@ -184,13 +184,13 @@ export default {
       
       let regexp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i
       if (!regexp.test(this.credentials.hrEmail)) {
-        alert("이메일은 이메일 형식으로 입력해주세요.")
+        alert("이메일 형식으로 입력해주세요.")
         return
       }
 
       if (this.credentials.hrEmail) {
         axios
-          .post(`${SERVER_URL}/email/send`, this.credentials)
+          .post(`${SERVER_URL}/hr/send`, this.credentials)
           .then((res) => {
             this.certifiedNum = res.data
             alert("메일 보내기 성공")

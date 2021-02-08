@@ -90,38 +90,38 @@ public class EmailController {
 			return sb.toString();
 		}
 	
-	@GetMapping("/certified")
-	@ApiOperation(value = "인증 확인하기")
-	public Object checkMail(@RequestParam(required = true) final String email,
-            @RequestParam(required = true) final String certified) throws MessagingException {
-		
-		ResponseEntity response = null;
-		
-		// 현재는 "N"을 가져옴
-		Optional<Hr> hrCertified = hrDao.findHrByHrCertified(certified);
-		
-		// UPDATE(U) -> SELECT(R) + INSERT(C)
-		hrCertified.ifPresent(selectHr->{
-			// 인증 여부 변경
-			selectHr.setHrCertified("Y");
-			
-			// INSERT!
-			hrDao.save(selectHr);
-		});
-		
-		
-		// 단순 확인 용!
-		if(hrCertified.isPresent()) {
-			final BasicResponse result = new BasicResponse();
-            result.status = true;
-            result.data = "success";
-            result.object = hrCertified;
-            
-            response = new ResponseEntity<>(result, HttpStatus.OK);
-		}else {
-			response = new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		
-		return response;
-	}
+//	@GetMapping("/certified")
+//	@ApiOperation(value = "인증 확인하기")
+//	public Object checkMail(@RequestParam(required = true) final String email,
+//            @RequestParam(required = true) final String certified) throws MessagingException {
+//		
+//		ResponseEntity response = null;
+//		
+//		// 현재는 "N"을 가져옴
+//		Optional<Hr> hrCertified = hrDao.findHrByHrCertified(certified);
+//		
+//		// UPDATE(U) -> SELECT(R) + INSERT(C)
+//		hrCertified.ifPresent(selectHr->{
+//			// 인증 여부 변경
+//			selectHr.setHrCertified("Y");
+//			
+//			// INSERT!
+//			hrDao.save(selectHr);
+//		});
+//		
+//		
+//		// 단순 확인 용!
+//		if(hrCertified.isPresent()) {
+//			final BasicResponse result = new BasicResponse();
+//            result.status = true;
+//            result.data = "success";
+//            result.object = hrCertified;
+//            
+//            response = new ResponseEntity<>(result, HttpStatus.OK);
+//		}else {
+//			response = new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+//		}
+//		
+//		return response;
+//	}
 }
