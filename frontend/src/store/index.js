@@ -91,7 +91,7 @@ export default new Vuex.Store({
     whoLogin: "viewer", //Manager, viewer, viewee
 
     companyNameList: [],
-    
+
 
     companyList: [{
       comSeq: 0,
@@ -99,7 +99,7 @@ export default new Vuex.Store({
       comLogo: "",
       comAddress: "",
       comHomepage: "",
-    }, ],
+    },],
 
     // 전체 채용공고 리스트
     recruitList: [{
@@ -109,7 +109,7 @@ export default new Vuex.Store({
       reStatus: "",
       reStartDate: "",
       reEndDate: "",
-    }, ],
+    },],
 
     // 공고별 면접현황 리스트
     recruitProgressList: [],
@@ -133,10 +133,6 @@ export default new Vuex.Store({
       //viewEamil, viewName, viewPassword, viewPhone,
       // viewSeq, viewWait
     ],
-
-    participants: [],
-
-    checkIn: [],
   },
 
   getters: {
@@ -206,7 +202,7 @@ export default new Vuex.Store({
     getComViewerList(state) {
       return state.user.comViewerList
     },
-    
+
 
     getParticipants(state) {
       // console.log("게터 실행, 모든 연결 참가자 정보 수")
@@ -369,7 +365,7 @@ export default new Vuex.Store({
       }
       // console.log("comvieeelisttype:", typeof(state.comVieweeList))
       // console.log("comvieweelist~~", state.comVieweeList)
-      
+
     },
 
   },
