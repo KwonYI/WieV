@@ -53,6 +53,9 @@
         </tr>
       </tbody>
     </v-simple-table>
+      <div class="d-flex justify-end">
+      <v-btn class="m-2" v-on:click="deleteAllApplicant()">지원자 전체삭제</v-btn>
+    </div>
   </div>
 </template>
 
@@ -156,7 +159,19 @@ export default {
       this.$store.dispatch("GET_VIEWEE_LIST",this.user.userComSeq );
 
     },
-
+ deleteAllApplicant: function() {
+      if(confirm('지원자 전체 삭제하시겠습니까?(면접에 배정된 지원자는 삭제할 수 없습니다.)')==true){
+        console.log("삭제됌")
+            axios.delete(`${SERVER_URL}/applicant/delete/` + this.recruitItem.reSeq)
+            .then(() => {
+              alert("지원자 전체 삭제 완료")
+            })
+            .catch((err) => {
+              console.log(err)
+              alert("지원자 전체 삭제 실패")
+            })   
+      }
+ },
     // watch: {
     //   getVieweeListCurrentRecruit: function () {
     //     this.getVieweeListCurrentRecruit = this.$store.getters.getVieweeListCurrentRecruit

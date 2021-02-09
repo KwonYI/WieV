@@ -43,6 +43,9 @@
         </tr>
       </tbody>
     </v-simple-table>
+    <div class="d-flex justify-end">
+      <v-btn class="m-2" v-on:click="deleteAllInterviewer()">면접관 전체삭제</v-btn>
+    </div>
   </div>
 </template>
 
@@ -120,11 +123,25 @@ const SERVER_URL = process.env.VUE_APP_SERVER_URL
         this.$store.dispatch("GET_VIEWER_LIST",this.user.userComSeq );
 
 
+      },
+       deleteAllInterviewer: function() {
+      if(confirm('면접관을 전체 삭제하시겠습니까?(면접에 배정된 면접관은 삭제할 수 없습니다.)')==true){
+        console.log("삭제됌")
+            axios.delete(`${SERVER_URL}/interviewer/delete/` + this.user.userComSeq)
+            .then(() => {
+              alert("면접관 전체 삭제 완료")
+            })
+            .catch((err) => {
+              console.log(err)
+              alert("면접관 전체 삭제 실패")
+            })   
       }
+ },
     },
     computed: {
       ...mapState(["selectedRecruitNo", "recruitList", "comViewerList", "user"]),
       ...mapGetters(["getComViewerList"])
+
     },
   }
 </script>
