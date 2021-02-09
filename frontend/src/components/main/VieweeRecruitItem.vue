@@ -140,9 +140,9 @@ export default {
             name: "WaitRoom",
             query: {
               comName: this.intervieweeData.company.comName,
-              re_year: this.intervieweeData.recruit.recruitYear,
-              re_flag: this.intervieweeData.recruit.recruitFlag,
-              re_status: this.intervieweeData.recruit.recruitStatus,
+              re_year: this.intervieweeData.recruit.reYear,
+              re_flag: this.intervieweeData.recruit.reFlag,
+              re_status: this.intervieweeData.recruit.reStatus,
               sessionName: res.data.sessionName,
               token: res.data.token,
               userName: res.data.applicantName,
