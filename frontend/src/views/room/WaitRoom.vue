@@ -86,7 +86,7 @@ import { OpenVidu } from "openvidu-browser";
 import UserVideo from "@/components/room/UserVideo";
 import axios from "axios";
 
-// import { mapGetters, mapMutations } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 // import ManagerList from "@/components/room/ManagerList.vue"
@@ -155,6 +155,12 @@ export default {
     this.token = this.$route.query.token;
     this.userName = this.$route.query.userName;
     this.type = this.$route.query.type;
+
+    // console.log(this.$route.query);
+    // console.log(this.$route.query);
+    // console.log(this.$route.query);
+    // console.log(this.$route.query);
+    // console.log(this.type);
 
     // this.session.on("streamCreated", ({ stream }) => {
     //   const subscriber = this.session.subscribe(stream);
@@ -235,6 +241,7 @@ export default {
           this.types[element.connectionId] = element.type;
         });
 
+        console.log(this.types);
         // console.log("마지막")
         // console.log(this.participants);
         // console.log(this.types)
@@ -251,13 +258,13 @@ export default {
   },
 
   methods: {
-    // ...mapMutations([
-    //   "addParticipants",
-    //   "clearParticipants",
-    //   "deleteParticipants",
-    //   "clearCheckIn",
-    //   "deleteCheckIn",
-    // ]),
+    ...mapMutations([
+      "addParticipants",
+      "clearParticipants",
+      "deleteParticipants",
+      "clearCheckIn",
+      "deleteCheckIn",
+    ]),
 
     sendMessage() {
       if (this.text === "") return;
