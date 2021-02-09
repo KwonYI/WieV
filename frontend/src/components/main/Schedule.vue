@@ -199,7 +199,8 @@
 
       goToProgress: function (recruit, index) {
         this.$store.state.selectedRecruitNo = recruit.reSeq
-        console.log("goToProgres!!", this.$store.state.selectedRecruitNo)
+        this.$store.state.storeRecruitItem = recruit
+        console.log("goToProgres!!", this.$store.state.storeRecruitItem)
         this.$router.push({
           // name: 'Progress',
           name: 'Menu',

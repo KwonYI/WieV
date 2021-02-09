@@ -4,7 +4,7 @@
       <v-row>
         <div>
           <v-card class="mx-auto mt-10 rounded-b-lg">
-            <v-icon dark>folder_open</v-icon><v-card-title>{{recruitItem.reYear}} {{recruitItem.reFlag}} {{recruitItem.reStatus}}</v-card-title>
+            <v-card-title>[ {{recruitItem.reYear}}년도 {{recruitItem.reFlag}} {{recruitItem.reStatus}} ] 면접현황</v-card-title>
             <v-card-subtitle></v-card-subtitle>
           </v-card>
         </div>
@@ -17,7 +17,8 @@
               <v-list-item
                 v-for="(item, i) in getRecruitListLately"
                 :key="i"
-                :disabled="item.reSeq == $store.state.selectedRecruitNo ? true:false"
+              :disabled="item.reSeq == $store.state.selectedRecruitNo ? true:false"
+                
                 @click="selectRecruit(item)"
               >
                 <v-list-item-content>
@@ -31,7 +32,7 @@
         </v-col>
 
         <v-col cols="10">
-          <Recruit v-if="recruitNo > -1" :recruitItem="recruitItem" />
+          <Recruit v-if="$store.state.selectedRecruitNo > -1" :recruitItem="recruitItem" />
           <RecruitWarning v-else/>
         </v-col>
 
@@ -56,8 +57,10 @@
     
     data: function () {
       return {
+        // recruitIndex: this.$route.params.recruitIndex,
+        // recruitItem: this.$route.params.recruitItem,
         recruitNo: this.$route.params.recruitIndex,
-        recruitItem: this.$route.params.recruitItem,
+        recruitItem: this.$store.state.storeRecruitItem,
 
       }
     },
@@ -67,9 +70,10 @@
       selectRecruit: function (selectedItem) {
         console.log("selectRecruit클릭!", selectedItem)
         this.$store.state.selectedRecruitNo = selectedItem.reSeq
-        this.recruitNo = selectedItem.reSeq
-        this.recruitItem = selectedItem
-        console.log(this.recruitItem)
+        this.$store.state.storeRecruitItem = selectedItem
+        this.recruitNo = this.$store.state.selectedRecruitNo
+        this.recruitItem = this.$store.state.storeRecruitItem
+        console.log("menu 왼쪽 리스트에서 선택한 아이템:", this.$store.state.storeRecruitItem)
         console.log("menu 왼쪽 리스트에서 선택한 번호:", this.recruitNo)
         
         // this.$router.push({
