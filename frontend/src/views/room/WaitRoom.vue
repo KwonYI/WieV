@@ -22,6 +22,7 @@
 
     <v-container style="max-width: 90%; height: 100%">
       <v-row style="margin: auto; height: 100%">
+
         <v-col cols="9">
           <!-- 메인 상단 - 배너, 면접실 이동 안내 -->
           <v-row style="height: 17%">
@@ -40,24 +41,27 @@
                   <div class="text-center text-subtitle-1">면접실 이동</div>
                 </v-card-title>
                 <v-card-text class="d-flex justify-center pa-0 text-white">
-                  <a-dropdown
-                    overlayClassName="to-view-box"
-                  >
-                    <a class="" @click="e => e.preventDefault()">
-                      면접실 이동자 선택하기
+                  <a-dropdown v-model="visible" class="d-flex justify-center align-center" style="width: 90%">
+                    <a class="ant-dropdown-link" @click="e => e.preventDefault()">
+                      <span v-for="(viewee, i) in moving_viewee" :key="i" class="pr-1">
+                        {{ viewee }} &nbsp;
+                      </span>
+                      <span v-if="!moving_viewee.length" class="px-1">
+                        면접실 이동자 선택하기
+                      </span>
+                      &nbsp;
                       <a-icon type="down" />
                     </a>
-
                     
-                    <a-menu slot="overlay" @click="onClick">
-                      <a-menu-item key="1">
-                        1st
-                      </a-menu-item>
-                      <a-menu-item key="2">
-                        2nd
-                      </a-menu-item>
-                      <a-menu-item key="3">
-                        3rd
+                    <a-menu
+                      slot="overlay"
+                      v-model="moving_viewee"
+                      multiple
+                      :default-selected-keys="[]"
+                      @click="handling"
+                    >
+                      <a-menu-item v-for="name in viewee_list" :key="name">
+                        {{ name }}
                       </a-menu-item>
                     </a-menu>
                   </a-dropdown>
@@ -66,29 +70,59 @@
             </v-col>
           </v-row>
           <!-- 메인 중앙 - 면접관, 지원자 화면 -->
+
           <v-row style="height: 87%">
             <!-- 면접관 -->
             <v-col cols="4" class="d-flex flex-column justify-center align-center">
-              <!-- <v-col v-for="i in 3" :key="i" class="brd pa-0"> -->
-                <div v-for="i in 3" :key="i" class="brd screen-res">면접관 {{i}}</div>
-              <!-- </v-col> -->
+              <span v-for="sub in subscribers" :key="sub.stream.connection.connectionId">
+                <user-video
+                  v-if="JSON.parse(sub.stream.connection.data.split('%/%')[0])['type'] !== 'viewee'"
+                  :stream-manager="sub" 
+                  @click.native="updateMainVideoStreamManager(sub)"
+                />
+              </span>
             </v-col>
             <!-- 지원자 -->
             <v-col cols="8" class="d-flex flex-wrap justify-center align-center">
-              <!-- <v-col v-for="i in 3" :key="i" cols="6" class="brd"> -->
-                <div v-for="i in 3" :key="i" class="brd screen-res">지원자 {{i}}</div>
-              <!-- </v-col> -->
+              <span v-for="sub in subscribers" :key="sub.stream.connection.connectionId">
+                <user-video
+                  v-if="JSON.parse(sub.stream.connection.data.split('%/%')[0])['type'] === 'viewee'"
+                  :stream-manager="sub" 
+                  @click.native="updateMainVideoStreamManager(sub)"
+                />
+              </span>
             </v-col>
           </v-row>
-
         </v-col>
-        <v-col cols="3">
 
-          <div class="brd" style="height: 10%">대기실-면접실 메신저</div>
+        <!-- 우측 중앙 - 부가기능 탭 -->
+        <v-col cols="3">
+          <!-- 대기실 - 면접실 메신저 -->
+          <div class="pb-2 mb-2 d-flex justify-space-between align-center" style="height: 10%">
+            <!-- 메시지 보내기 -->
+            <a-popover title="Message" trigger="click">
+              <v-btn color="#757575" elevation="3" height="100%" width="35%" dark>메시지 보내기</v-btn>
+              <template slot="content">
+                <v-textarea
+                  solo
+                  height="100px"
+                  clearable
+                  no-resize
+                  hide-details
+                ></v-textarea>
+                <v-btn text color="secondary">Send</v-btn>
+              </template>
+            </a-popover>
+            <!-- 메시지 출력 -->
+            <v-sheet color="white" height="100%" width="60%" elevation="3" class="d-flex justify-center align-center">
+              <div>면접 준비 완료</div>
+            </v-sheet>
+          </div>
           <!-- 면접 안내 -->
           <div style="height: 35%">
             <v-sheet color="white" height="100%" elevation="3">
-              <div class="headline text-center">면접 안내</div>
+              <div class="text-h6 text-center pt-1">면접 안내</div>
+              <v-divider class="my-1"></v-divider>
             </v-sheet>
           </div>
           <!-- FAQ -->
@@ -261,6 +295,11 @@ export default {
       // 배너
       banner_dialog: false,
 
+      // 면접 이동
+      visible: false,
+      viewee_list: ['김일번', '박이번', '신삼번', '강사번', '류오번', '이육번'],
+      moving_viewee: [],
+
       // 면접 안내
 
       // FAQ
@@ -275,24 +314,20 @@ export default {
     window.addEventListener("beforeunload", this.leaveSession)
     window.addEventListener("backbutton", this.leaveSession)
 
-    // this.comName = this.$route.params.interview.comName
-    // this.re_year = this.$route.params.interview.recruitYear
-    // this.re_flag = this.$route.params.interview.recruitFlag
-    // this.re_status = this.$route.params.interview.recruitStatus
-    // this.sessionName = this.$route.params.interviewer.sessionName
-    // this.token = this.$route.params.interviewer.token
-    // this.userName = this.$route.params.interviewer.interviewerName
-    // this.type = this.$route.params.interviewer.type
+    let user_data = ['comName', 're_year', 're_flag', 're_status', 'sessionName', 'token', 'userName', 'type']
 
-    this.comName = this.$route.query.comName
-    this.re_year = this.$route.query.re_year
-    this.re_flag = this.$route.query.re_flag
-    this.re_status = this.$route.query.re_status
-    this.token = this.$route.query.token
-    this.userName = this.$route.query.userName
-    this.type = this.$route.query.type
-    this.sessionName = this.$route.query.sessionName,
-    this.interviewSession = this.$route.query.interviewSession
+    for (const data of user_data) {
+      this[data] = this.$route.query[data]
+    }
+
+    // this.comName = this.$route.query.comName
+    // this.re_year = this.$route.query.re_year
+    // this.re_flag = this.$route.query.re_flag
+    // this.re_status = this.$route.query.re_status
+    // this.sessionName = this.$route.query.sessionName
+    // this.token = this.$route.query.token
+    // this.userName = this.$route.query.userName
+    // this.type = this.$route.query.type
   },
   beforeDestroy() {
     window.removeEventListener("beforeunload", this.leaveSession)
@@ -330,7 +365,7 @@ export default {
           videoSource: undefined, // The source of video. If undefined default webcam
           publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
           publishVideo: true, // Whether you want to start publishing with your video enabled or not
-          resolution: "640x360", // The resolution of your video
+          resolution: "272x153", // The resolution of your video
           frameRate: 30, // The frame rate of your video
           insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
           mirror: false, // Whether to mirror your local video or not
@@ -404,8 +439,19 @@ export default {
 
       this.publisher.publishVideo(this.videoOn)
     },
+
+    handling(e) {
+      if (this.moving_viewee.includes(e.key)) {
+        this.moving_viewee.splice(this.moving_viewee.indexOf(e.key), 1)
+      } else {
+        this.moving_viewee.push(e.key)
+      }
+
+      this.visible = true
+    }
   },
 
+  
   computed: {
   },
 }
@@ -427,8 +473,16 @@ export default {
 ::v-deep .banner .v-input, ::v-deep .banner .v-input__control {
   height: 100%;
 }
+::v-deep .ant-popover-inner .ant-popover-inner-content {
+  padding-bottom: 0;
+}
 .brd {
-  border: 1px solid lightslategrey;
+  border: 0.1px solid grey;
+  background-color: darkgrey;
+  color: white;
+  font-size: 1.5rem;
+  padding-top: 60px;
+  text-align: center;
 }
 .screen-res {
   width: 272px;
