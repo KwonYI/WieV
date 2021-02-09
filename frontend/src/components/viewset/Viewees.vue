@@ -28,7 +28,7 @@
           <th class="text-center">생년월일</th>
           <th class="text-center">이메일</th>
           <th class="text-center">자기소개서</th>
-          <!-- <th class="text-center">이력서</th> -->
+          <th class="text-center">상태</th>
         </tr>
       </thead>
 
@@ -47,6 +47,8 @@
                   자기소개서
                 </v-btn>
               </td>
+              <td v-if="viewee.applyAssigned === 1" class="blue--text">배정완료</td>
+              <td v-else class="red--text">미배정</td>
               <!-- <td>
             <v-btn>이력서</v-btn>
           </td> -->
