@@ -30,36 +30,28 @@
       </v-toolbar-title>
     </v-app-bar>
 
+    <div id="screen"></div>
+    <!-- 바 밑에 내용물들.  -->
     <v-container>
       <!--row1. : 공지사항 배너, 면접실 만들기 버튼-->
       <v-row> </v-row>
 
+      <!-- row2 : 관리자, 지원자, FAQ 잡동사니 row-->
       <v-row>
         <!-- row2[왼쪽] : 관리자 리스트-->
-        <div
-          v-for="sub in subscribers"
-          :key="sub.stream.connection.connectionId"
-        >
-          <v-col
-            cols="3"
-            v-if="types[sub.stream.connection.connectionId] === 'manager'"
-          >
-            <user-video
-              :stream-manager="sub"
-              @click.native="updateMainVideoStreamManager(sub)"
-            />
+        <div v-for="(sub) in subscribers" :key="sub.stream.connection.connectionId">
+          <v-col cols="3" v-if="types[sub.stream.connection.connectionId] === 'manager'">
+            <user-video :stream-manager="sub" @click.native="updateMainVideoStreamManager(sub)"/>
           </v-col>
           <v-col cols="6" class="d-flex justify-end" v-else>
-            <user-video
-              :stream-manager="sub"
-              @click.native="updateMainVideoStreamManager(sub)"
-            />
+            <user-video :stream-manager="sub" @click.native="updateMainVideoStreamManager(sub)"/>
           </v-col>
         </div>
         <v-col cols="3">
           <!-- <user-video :stream-manager="mainStreamManager" /> -->
           <!-- <ManagerList /> -->
         </v-col>
+        <!-- row2[오른쪽] : 우측에 FAQ 채팅창 잡동사니 -->
         <v-col cols="3">
           <div>
             <v-list v-auto-bottom="messages">
@@ -68,6 +60,7 @@
               </div>
             </v-list>
           </div>
+
           <div>
             <v-text-field
               label="보낼 메세지를 입력하세요."
@@ -121,6 +114,9 @@ export default {
       // shareOn: false,
       // shareMsg: "공유 Off",
 
+      // ConnectionId
+      info: { sessionName: "", type: "", connectionId: undefined },
+
       // From SessionController
       sessionName: undefined,
       token: undefined,
@@ -156,12 +152,6 @@ export default {
     this.userName = this.$route.query.userName;
     this.type = this.$route.query.type;
 
-    // console.log(this.$route.query);
-    // console.log(this.$route.query);
-    // console.log(this.$route.query);
-    // console.log(this.$route.query);
-    // console.log(this.type);
-
     // this.session.on("streamCreated", ({ stream }) => {
     //   const subscriber = this.session.subscribe(stream);
     //   this.subscribers.push(subscriber);
@@ -177,9 +167,6 @@ export default {
     this.session = this.OV.initSession();
 
     this.session.on("streamCreated", ({ stream }) => {
-      console.log(
-        "스트림 크리에이트 실행, 나를 제외한 방에 있는 다른 비디오 연결중"
-      );
       const subscriber = this.session.subscribe(stream);
       this.subscribers.push(subscriber);
       console.log("참여자 목록");
@@ -204,7 +191,6 @@ export default {
     this.session
       .connect(this.token, { clientData: this.userName })
       .then(() => {
-        console.log("세션 커넥트 실행");
         let publisher = this.OV.initPublisher(undefined, {
           audioSource: undefined, // The source of audio. If undefined default microphone
           videoSource: undefined, // The source of video. If undefined default webcam
@@ -212,15 +198,15 @@ export default {
           publishVideo: true, // Whether you want to start publishing with your video enabled or not
           resolution: "320x240", // The resolution of your video
           frameRate: 30, // The frame rate of your video
-          insertMode: "BEFORE", // How the video is inserted in the target element 'video-container'
+          insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
           mirror: false, // Whether to mirror your local video or not
         });
 
         this.mainStreamManager = publisher;
-        console.log("mainStreamManager");
-        console.log(this.mainStreamManager);
+        console.log("mainStreamManager")
+        console.log(this.mainStreamManager)
         this.publisher = publisher;
-        console.log("publisher" + this.publisher);
+        console.log("publisher" + this.publisher)
 
         this.session.publish(this.publisher);
         this.subscribers.push(this.publisher);
@@ -238,10 +224,9 @@ export default {
         this.getParticipants.forEach((element) => {
           if (element.sessionName == this.sessionName)
             this.participants.push(element);
-          this.types[element.connectionId] = element.type;
+            this.types[element.connectionId] = element.type;
         });
 
-        console.log(this.types);
         // console.log("마지막")
         // console.log(this.participants);
         // console.log(this.types)
@@ -265,7 +250,6 @@ export default {
       "clearCheckIn",
       "deleteCheckIn",
     ]),
-
     sendMessage() {
       if (this.text === "") return;
 
@@ -293,9 +277,9 @@ export default {
         })
         .then((res) => {
           console.log(res);
-          if (this.type === "manager") this.clearParticipants([]);
+          if(this.type === 'manager') this.clearParticipants([]);
           if (this.session) this.session.disconnect();
-
+          this.deleteParticipants(this.info);
           this.session = undefined;
           this.mainStreamManager = undefined;
           this.publisher = undefined;
@@ -333,6 +317,7 @@ export default {
   },
 
   computed: {
+    
     ...mapGetters(["getParticipants", "getCheckIn"]),
   },
 };
