@@ -32,6 +32,7 @@
     <div class="d-flex justify-end">
       <v-btn class="m-2" v-on:click="applicantSendMail()">지원자 안내메일 전송</v-btn>
       <v-btn class="m-2" v-on:click="interviewerSendMail()">면접관 안내메일 전송</v-btn>
+      <v-btn class="m-2" v-on:click="deleteGroupAll()">면접일정 전체삭제</v-btn>
     </div>
   </div>
 </template>
@@ -52,6 +53,7 @@
       }
     },
     created: function () {
+      console.log("getProgressListCurrentRecruit", this.getProgressListCurrentRecruit)
       
     },
     methods:{
@@ -80,6 +82,35 @@
             console.log(err)
             alert("면접관 메일 전송 실패")
           })
+    },
+      deleteGroupAll: function() {
+      if(confirm('모든 면접 일정을 삭제하시겠습니까?')==true){
+        console.log("삭제됌")
+            axios.delete(`${SERVER_URL}/groupAll/delete/` + this.recruitItem.reSeq)
+            .then(() => {
+               alert("면접 일정 전체 삭제 완료") 
+            })
+            .catch(() => {
+              alert("삭제할 면접 일정이 없습니다.")
+            })   
+      }
+      // .then(result => {
+      // console.log(result)
+      // })
+      // .catch((err) => {
+      //      console.log(err)
+      //        alert("면접관 메일 전송 실패")
+      //      })
+        // axios.post(`${SERVER_URL}/interviewer/send/`+this.recruitItem.reSeq)
+        //   .then(res => {
+        //     console.log(res)
+        //     alert("면접관 메일 전송 성공")
+        //     this.$router.push({ name: "Home" })
+        //   })
+        //   .catch((err) => {
+        //     console.log(err)
+        //     alert("면접관 메일 전송 실패")
+        //   })
     },
 
 

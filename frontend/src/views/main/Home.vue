@@ -20,14 +20,11 @@
               <Schedule />
             </div>
             <div v-else>
-              <!-- store -->
               <router-link :to="{ name: 'Main', params: { isLogin: true } }">
                 대기실 이동하기
               </router-link>
             </div>
           </v-col>
-
-          <!-- 미로그인 시 -->
           <v-col v-else cols="5" class="login-box mt-5" @keyup.enter="login">
             <v-col class="login-input mb-4">
               <v-simple-table dark style="background-color: transparent">
@@ -107,14 +104,16 @@ export default {
   },
   methods: {
     login: function () {
-      this.$store.dispatch("LOGIN", this.credentials).then(() => {
-        this.$router.replace(this.$router.currentRoute);
-        this.credentials.userEmail = "";
-        this.credentials.userPassword = "";
-      });
+      this.$store.dispatch("LOGIN", this.credentials)
+        .then(() => {
+          // this.$router.push(this.$router.currentRoute) 
+          this.$router.push({name: 'Home'})
+          this.credentials.userEmail = ""
+          this.credentials.userPassword = ""
+        })
     },
   },
-};
+}
 </script>
 
 <style scoped>

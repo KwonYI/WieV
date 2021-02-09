@@ -74,9 +74,13 @@
         <hr>
         <!-- 스케줄 테이블 -->
         <!-- <v-data-table :headers="schGroupTable.headers" :items="schGroupTable.schGroups" -->
-        <v-data-table :headers="schGroupTable.headers" :items="getProgressListCurrentRecruit"
-          :expanded.sync="schGroupTable.expanded" single-expand item-key="groupSeq"
-          @click:row="(item, slot) => slot.expand(!slot.isExpanded)">
+        <v-data-table
+          :headers="schGroupTable.headers" :items="getProgressListCurrentRecruit"
+          :expanded.sync="schGroupTable.expanded"
+          single-expand
+          item-key="groupSeq"
+          @click:row="(item, slot) => slot.expand(!slot.isExpanded)"
+        >
           <!-- 스케줄 row -->
           <template v-slot:item="{ item, expand, isExpanded }">
             <tr @click="expand(!isExpanded)">
@@ -166,7 +170,6 @@
 
         // 시즌 데이터
         seasonData: [
-
           {
             name: "시즌",
             data: ["2020 하반기", "2021 상반기", "2021 하반기"],
@@ -374,7 +377,6 @@
           ],
           
         },
-
 
         loader: null,
         loading: false,

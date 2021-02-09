@@ -119,9 +119,6 @@ export default new Vuex.Store({
     // 얘는 공고별 저장인데 comVieweeList 쓸거같다.
     // recruitVieweeList: [],
 
-    // 얘는 공고별 지원자 저장인데 comVieweeList 쓸거같다.
-    recruitVieweeList: [],
-
 
     // 회사별 면접현황 리스트
     comProgressList: [],
@@ -137,6 +134,22 @@ export default new Vuex.Store({
     ],
 
     participants: [],
+
+    // allSessions: {
+    //   '38': [
+    //     {
+    //       connectionId: 35
+    //       type: 'viewer',
+
+    //     },
+    //     {
+    //       connectionId: 358
+    //       type: 'viewee'
+    //     },
+    //   ]
+    // },
+
+    // allSessions['38']['subscriber'][],
 
     checkIn: [],
   },

@@ -44,6 +44,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -333,6 +334,41 @@ public class ApplicantController {
 		
 		return new ResponseEntity<List<Map<String, Object>>>(applicantList, status);
 	}
+	
+	@DeleteMapping("/delete/{reSeq}")
+	@ApiOperation(value = "공고에 따른 지원자 전체 삭제하기")
+	public Object delete(@PathVariable("reSeq") int reSeq) {
+		HttpStatus status = null;
+		Map<String, Object> resultMap = new HashMap<>();
+		
+		try {
+			List<Applicant> applicantList=applicantDao.findAllApplicantByRecruitReSeq(reSeq);
+            if(!applicantList.isEmpty()) {
+            	
+            	for (int i = 0; i < applicantList.size(); i++) {
+            		Applicant applicant=applicantList.get(i);
+            		if(applicant.getApplyAssigned()==0) {
+            		System.out.println(applicant.getApplyName()+"삭제");
+            		applicantDao.delete(applicant);
+            		}
+				}
+            	resultMap.put("message", "정보 삭제 성공");
+            	status = HttpStatus.OK;
+            }
+            else {
+				logger.error("정보 삭제 실패");
+				resultMap.put("message", "정보 삭제 실패");
+				status = HttpStatus.INTERNAL_SERVER_ERROR;
+			}            
+        } catch (RuntimeException e) {
+            logger.error("정보 삭제 실패 : {}", e);
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+		
+		return new ResponseEntity<>(resultMap, status);
+	}
+	
 
 //	@PostMapping("/assign/{groupSeq}")
 //	@ApiOperation(value = "지원자 자동 배정")

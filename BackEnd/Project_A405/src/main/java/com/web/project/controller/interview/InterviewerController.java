@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -114,6 +115,40 @@ public class InterviewerController {
 	public ResponseEntity<List<Interviewer>> getInterviewerList(@PathVariable("comSeq") int comSeq) {
 		List<Interviewer> interviewerList = interviewerDao.findAllInterviewerByCompanyComSeq(comSeq);
 		return new ResponseEntity<List<Interviewer>>(interviewerList, HttpStatus.OK);
+	}
+	
+	@DeleteMapping("/delete/{comSeq}")
+	@ApiOperation(value = "공고에 따른 지원자 전체 삭제하기")
+	public Object delete(@PathVariable("comSeq") int comSeq) {
+		HttpStatus status = null;
+		Map<String, Object> resultMap = new HashMap<>();
+		
+		try {
+			List<Interviewer> interviewerList=interviewerDao.findAllInterviewerByCompanyComSeq(comSeq);
+            if(!interviewerList.isEmpty()) {
+            	
+            	for (int i = 0; i < interviewerList.size(); i++) {
+            		Interviewer interviewer=interviewerList.get(i);
+            		if(interviewer.getViewAssigned()==0) {
+            		System.out.println(interviewer.getViewName()+"삭제");
+            		interviewerDao.delete(interviewer);
+            		}
+				}
+            	resultMap.put("message", "정보 삭제 성공");
+            	status = HttpStatus.OK;
+            }
+            else {
+				logger.error("정보 삭제 실패");
+				resultMap.put("message", "정보 삭제 실패");
+				status = HttpStatus.INTERNAL_SERVER_ERROR;
+			}            
+        } catch (RuntimeException e) {
+            logger.error("정보 삭제 실패 : {}", e);
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+		
+		return new ResponseEntity<>(resultMap, status);
 	}
 
 	public void interviewerAssign(int groupSeq) {
