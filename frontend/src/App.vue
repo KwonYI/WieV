@@ -11,6 +11,7 @@
       >
         <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
         <v-toolbar-title id="wiev">
+          <img :src="images.logo" width="40" alt="logo">
           <router-link :to="{name: 'Home'}">
             WieV
           </router-link>
@@ -112,7 +113,11 @@ export default {
     Manager: "",
     menuBar: [
       { title: '기업 정보', link: 'Profile' }
-    ]
+    ],
+    images: {
+      logo: require('@/assets/images/logo.png')
+
+    }
   }),
   computed: {
     ...mapState(["accessToken", 'user']),

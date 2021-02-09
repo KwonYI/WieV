@@ -1,22 +1,20 @@
 <template>
   <div id="viewers">
     현재 채용공고 번호 : {{ recruitItem.reSeq }}
-    <v-toolbar dark color="teal">
+    <v-toolbar dark color="brown lighten-2 font-weight-bold black--text">
+    <!-- <v-toolbar dark color="brown darken-1 black--text"> -->
       <v-toolbar-title></v-toolbar-title>
-      <!-- <v-toolbar-title>면접관 찾기</v-toolbar-title>
-      <v-autocomplete v-model="select" :loading="loading" :items="items" :search-input.sync="search" cache-items
-        class="mx-4" flat hide-no-data hide-details label="지원자 이름 검색" solo-inverted></v-autocomplete>
-      <v-btn class="m-3"> 검색 </v-btn> -->
-
-        <!-- <label>File
-          <input v-model="title"> -->
-          <span class="m-2">File:</span>
-          <input type="file" id="files" ref="files" v-on:change="handleFileUpload()" multiple />
-        <!-- </label> -->
-        <v-btn class="m-3" v-on:click="submitFile()">엑셀 업로드</v-btn>
-    
-      <v-btn class="m-3" @click="exportExcel">엑셀 양식 다운로드</v-btn>
-          <v-btn class="m-2" @click="updateViewerDB">목록 업데이트 </v-btn>
+     
+        <span class="m-2 text-subtitle-1">File:</span>
+        <input
+        type="file"
+         id="files"
+        ref="files" 
+        v-on:change="handleFileUpload()" 
+        multiple />
+      <v-btn class="m-3" v-on:click="submitFile()"><v-icon left>mdi-table-arrow-up</v-icon>엑셀 업로드</v-btn>
+      <v-btn class="m-3" @click="exportExcel"><v-icon left>mdi-download-box</v-icon>엑셀 양식 다운로드</v-btn>
+      <v-btn class="m-2" @click="updateViewerDB"><v-icon left>mdi-refresh</v-icon>목록 업데이트 </v-btn>
 
     </v-toolbar>
     <v-simple-table fixed-header  height="500px" class="mt-5">
@@ -101,11 +99,11 @@ const SERVER_URL = process.env.VUE_APP_SERVER_URL
         })
           .then(() => {
             console.log('면접관 엑셀 업로드 성공')
-            alert("면접관 등록 성공")
+            alert("면접관 등록 성공을 성공했습니다. 목록을 업데이트 해주세요")
           })
           .catch(err => {
             console.log(err)
-            alert("면접관 등록 실패")
+            alert("면접관 등록을 실패했습니다. 양식을 맞춰서 업로드 해주세요.")
             console.log('면접관 엑셀 업로드 실패')
           })
       },
