@@ -63,6 +63,7 @@
         // recruitIndex: this.$route.params.recruitIndex,
         // recruitItem: this.$route.params.recruitItem,
         recruitNo: this.$route.params.recruitIndex,
+        // recruitNo: this.$store.state.selectedRecruitNo,
         recruitItem: this.$store.state.storeRecruitItem,
 
       }
