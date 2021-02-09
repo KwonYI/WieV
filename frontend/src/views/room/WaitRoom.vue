@@ -225,10 +225,7 @@ export default {
           if (element.sessionName == this.sessionName){
             this.participants.push(element);
             this.types[element.connectionId] = element.type;
-<<<<<<< HEAD
           }
-=======
->>>>>>> 93a3d4e4d3b2971ce37e0513ceb8b5476e5d590b
         });
 
         // console.log("마지막")
