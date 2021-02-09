@@ -14,14 +14,14 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in getProgressListCurrentRecruit" :key="item.progress_no" class="text-center">
-          <td>{{ item.groupDate }}</td>
-          <td>{{ item.groupStartTime }}:00</td>
-          <td>{{ item.groupCareerName }}</td>
-          <td>{{ item.interviewTypeList }}</td>
-          <td>{{ item.groupApplicantList }}</td>
-          <td>{{ item.waitInterviewerList }}</td>
-          <td>{{ item.interviewerList }}</td>
+        <tr v-for="(group, index) in getProgressListCurrentRecruit" :key="index" class="text-center">
+          <td><p class="d-inline p-1">{{ group.groupDate }}</p></td>
+          <td><p class="d-inline p-1">{{ group.groupStartTime }}:00</p></td>
+          <td><p class="d-inline p-1">{{ group.groupCareerName }}</p></td>
+          <td><p v-for="(item, index) in group.interviewTypeList" :key="index" class="d-inline p-1" >{{ item }}</p></td>
+          <td><p v-for="(item, index) in group.groupApplicantList" :key="index" class="d-inline p-1">{{ item }}</p></td>
+          <td><p v-for="(item, index) in group.waitInterviewerList" :key="index" class="d-inline p-1">{{ item.interviewerName }}</p></td>
+          <td><p v-for="(item, index) in group.interviewerList" :key="index" class="d-inline p-1"> {{ item.interviewerName }}</p></td>
           <td>
             <v-checkbox color="indigo"></v-checkbox>
           </td>

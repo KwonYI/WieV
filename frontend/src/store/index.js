@@ -63,6 +63,7 @@ export default new Vuex.Store({
       userComAddress: "",
       userComHomepage: "",
     },
+
     viewee: {
       applyPhone: '',
       applyMajor: '',
@@ -90,6 +91,7 @@ export default new Vuex.Store({
     whoLogin: "viewer", //Manager, viewer, viewee
 
     companyNameList: [],
+    
 
     companyList: [{
       comSeq: 0,
@@ -112,6 +114,8 @@ export default new Vuex.Store({
     // 공고별 면접현황 리스트
     recruitProgressList: [],
 
+    // 얘는 공고별 저장인데 comVieweeList 쓸거같다.
+    recruitVieweeList: [],
 
     // 얘는 공고별 지원자 저장인데 comVieweeList 쓸거같다.
     recruitVieweeList: [],
@@ -177,6 +181,16 @@ export default new Vuex.Store({
 
       return list
     },
+    // // 현재 공고의 면접현황만 가져오기 => 안써요
+    // getProgressListCurrentRecruit: function(state) {
+    //   let list = state.comVieweeList.filter(
+    //     (re) => re.recruitReSeq === state.selectedRecruitNo
+    //   )
+    //   console.log("현재 공고의 면접현황 가져오기")
+    //   console.log(list)
+
+    //   return list
+    // },
 
     // 현재공고의 면접현황만 가져오기
     getProgressListCurrentRecruit: function (state) {
@@ -192,16 +206,17 @@ export default new Vuex.Store({
     getComViewerList(state) {
       return state.user.comViewerList
     },
+    
 
     getParticipants(state) {
-      console.log("게터 실행, 모든 연결 참가자 정보 수")
-      console.log(state.participants.length)
+      // console.log("게터 실행, 모든 연결 참가자 정보 수")
+      // console.log(state.participants.length)
       return state.participants
     },
 
     getCheckIn(state) {
-      console.log("게터 실행, 모든 연결 수")
-      console.log(state.checkIn.length)
+      // console.log("게터 실행, 모든 연결 수")
+      // console.log(state.checkIn.length)
       return state.checkIn
     },
 
@@ -263,12 +278,12 @@ export default new Vuex.Store({
     // },
 
     GET_COMPANY_NAME_LIST(state, res) {
-      console.log(typeof res)
-      console.log("mutaions의 GET_COMPANY_NAME_LIST", res)
+      // console.log(typeof res)
+      // console.log("mutaions의 GET_COMPANY_NAME_LIST", res)
       state.companyNameList = res
     },
     GET_COMPANY_LIST(state, res) {
-      console.log("mutaions의 GET_COMPANY_LIST", res)
+      // console.log("mutaions의 GET_COMPANY_LIST", res)
       state.companyList = res
     },
 
@@ -295,37 +310,37 @@ export default new Vuex.Store({
       state.comViewerList = res
     },
     addParticipants(state, data) {
-      console.log("뮤테이션 실행 밑에 있는 데이터 넣을 예정")
-      console.log(data)
+      // console.log("뮤테이션 실행 밑에 있는 데이터 넣을 예정")
+      // console.log(data)
       state.participants.push(data)
     },
     deleteParticipants(state, data) {
       const index = state.participants.indexOf(data, 0)
-      console.log("정보 삭제 시도")
-      console.log("변경전 : ", state.participants.length)
+      // console.log("정보 삭제 시도")
+      // console.log("변경전 : ", state.participants.length)
       if (index >= 0) {
         state.participants.splice(index, 1)
       }
-      console.log("변경후 : ", state.participants.length)
+      // console.log("변경후 : ", state.participants.length)
     },
     clearParticipants(state, data) {
-      console.log("클리어 실행, 실행 후 남은 정보")
+      // console.log("클리어 실행, 실행 후 남은 정보")
       state.participants = data
-      console.log(state.participants.length)
+      // console.log(state.participants.length)
     },
     addCheckIn(state, data) {
-      console.log("뮤테이션 실행 밑에 있는 데이터 넣을 예정")
-      console.log(data)
+      // console.log("뮤테이션 실행 밑에 있는 데이터 넣을 예정")
+      // console.log(data)
       state.checkIn.push(data)
     },
     deleteCheckIn(state, data) {
       const index = state.checkIn.indexOf(data, 0)
-      console.log("정보 삭제 시도")
-      console.log("변경전 : ", state.checkIn.length)
+      // console.log("정보 삭제 시도")
+      // console.log("변경전 : ", state.checkIn.length)
       if (index >= 0) {
         state.checkIn.splice(index, 1)
       }
-      console.log("변경후 : ", state.checkIn.length)
+      // console.log("변경후 : ", state.checkIn.length)
     },
     clearcheckIn(state, data) {
       // console.log("클리어 실행, 실행 후 남은 정보")
@@ -340,18 +355,6 @@ export default new Vuex.Store({
     },
 
     // 지원자 리스트 state에 저장
-    //  GET_VIEWEE_LIST(state, res) {
-    //   for (var i = 0; i < res.length; i++) {
-    //     for (const key in vieweeInfo) {
-    //       state.comVieweeList[i][key] = res[i][vieweeInfo[key]]
-    //       // state.comVieweeList[key] = res[vieweeInfo[key]]
-    //       // var tempi[key] = res[i][vieweeInfo[key]]
-    //     }
-    //   }
-    //   // console.log("comvieeelisttype:", typeof(state.comVieweeList))
-    //   console.log("comvieweelist~~", state.comVieweeList)
-
-    // },
     GET_VIEWEE_LIST(state, res) {
       state.comVieweeList = []
       for (var i = 0; i < res.length; i++) {
@@ -366,9 +369,13 @@ export default new Vuex.Store({
       }
       // console.log("comvieeelisttype:", typeof(state.comVieweeList))
       // console.log("comvieweelist~~", state.comVieweeList)
+      
     },
 
   },
+
+
+
 
   actions: {
     // 로그인
