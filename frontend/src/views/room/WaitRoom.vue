@@ -222,14 +222,15 @@ export default {
         // console.log(this.types)
 
         this.getParticipants.forEach((element) => {
-          if (element.sessionName == this.sessionName)
+          if (element.sessionName == this.sessionName){
             this.participants.push(element);
             this.types[element.connectionId] = element.type;
+          }
         });
 
         // console.log("마지막")
         // console.log(this.participants);
-        // console.log(this.types)
+        console.log(this.types)
         // this.clearParticipants([]);
       })
       .catch((error) => {

@@ -445,7 +445,11 @@ public class GroupAllController {
 			}
 			sb.append(month);
 			sb.append("-");
-			sb.append(day + 1);
+			day++;
+			if(day < 10) {
+				sb.append(0);
+			}
+			sb.append(day);
 		}
 		return sb.toString();
 	}
