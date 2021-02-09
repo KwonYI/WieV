@@ -153,6 +153,7 @@ export default {
                 type: res.data.type,
                 token: res.data.token,
                 sessionName: res.data.sessionName,
+                userSeq : this.user.userSeq
               },
             })
             // this.inInterview = true;

@@ -127,7 +127,7 @@ export default {
       applicantName: "",
     };
   },
-  created: function () {},
+  created: function () {  },
   methods: {
     goSession(waitSession, interviewSession) {
       axios
@@ -182,10 +182,11 @@ export default {
                 re_year: this.intervieweeData.recruit.reYear,
                 re_flag: this.intervieweeData.recruit.reFlag,
                 re_status: this.intervieweeData.recruit.reStatus,
-                token: res.data.token,
                 userName: res.data.applicantName,
                 type: res.data.type,
+                token: res.data.token,
                 sessionName: session,
+                userSeq : this.intervieweeData.user.applySeq
               },
             })
             // this.inInterview = true;
