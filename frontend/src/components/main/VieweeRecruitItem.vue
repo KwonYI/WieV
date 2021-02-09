@@ -68,8 +68,8 @@
                     {{ group.type_name }}
                   </div> -->
                   <v-btn
-                    color="blue lighten-3 yellow--text "
-                    @click="reveal = true"
+                    color="blue lighten-3 yellow--text"
+                    @click="goSession(interview.waitSessionName)"
                   >
                     대기실 입장
                   </v-btn>
@@ -87,6 +87,9 @@
 </template>
 
 <script>
+import axios from "axios";
+const SERVER_URL = process.env.VUE_APP_SERVER_URL;
+
 export default {
   name: "VieweeRecruitItem",
   props: {
@@ -113,9 +116,47 @@ export default {
       //   { type_name: "직무면접", check_terminate: "면접 미완료" },
       //   { type_name: "그룹면접", check_terminate: "면접 미완료" },
       // ],
+      applicantName: "",
     };
   },
   created: function () {},
+  methods: {
+    goSession(session) {
+      console.log(this.intervieweeData.user.applyName);
+      axios
+        .get(`${SERVER_URL}/session/join`, {
+          params: {
+            applicantName: this.intervieweeData.user.applyName,
+            sessionName: session,
+          },
+        })
+        .then((res) => {
+          console.log(res);
+          // this.$router.push({
+          //   name: "WaitRoom",
+          //   params: { interview: this.interview, interviewer: res.data },
+          // });
+          let routeData = this.$router.resolve({
+            name: "WaitRoom",
+            query: {
+              comName: this.intervieweeData.company.comName,
+              re_year: this.intervieweeData.recruit.reYear,
+              re_flag: this.intervieweeData.recruit.reFlag,
+              re_status: this.intervieweeData.recruit.reStatus,
+              sessionName: res.data.sessionName,
+              token: res.data.token,
+              userName: res.data.applicantName,
+              type: res.data.type,
+            },
+          });
+          window.open(routeData.href, "_blank");
+        })
+        .catch((err) => {
+          console.log(err);
+          alert("방이 아직 개설되지 않았습니다.");
+        });
+    },
+  },
 };
 </script>
 
