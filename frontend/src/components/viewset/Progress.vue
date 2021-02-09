@@ -4,11 +4,12 @@
 
 
     <div class="d-flex justify-end">
-      <v-btn class="m-2" v-on:click="applicantSendMail()">지원자 안내메일 전송</v-btn>
-      <v-btn class="m-2" v-on:click="interviewerSendMail()">면접관 안내메일 전송</v-btn>
-      <v-btn class="m-2" v-on:click="deleteGroupAll()">면접일정 전체삭제</v-btn>
-    </div>
+     
 
+      <v-btn class="m-2" v-on:click="applicantSendMail()"><v-icon left>mdi-email-send-outline</v-icon>지원자 안내메일 전송</v-btn>
+      <v-btn class="m-2" v-on:click="interviewerSendMail()"><v-icon left>mdi-email-send-outline</v-icon>면접관 안내메일 전송</v-btn>
+      <v-btn class="m-2" v-on:click="deleteGroupAll()"><v-icon left>mdi-trash-can-outline</v-icon>면접일정 초기화</v-btn>
+    </div>
 
 
     <hr>
@@ -47,15 +48,16 @@
 
 
       <!-- 세부그룹 확장 패널 -->
-      <template v-slot:expanded-item="{ headers, item: groupItem }" id="detailTable">
+      <template v-slot:expanded-item="{ headers, item: groupItem }" id="detailTable" >
         <td :colspan="headers.length" class="pa-0">
           <!-- 세부그룹 테이블 -->
           <v-data-table :headers="schGroupTable.headers" :items="groupItem.groupDetailList" item-key="schSmallGroupNo"
-            hide-default-footer>
+            hide-default-footer style="background-color:aliceblue;" >
 
             <template v-slot:body="{ items }">
-              <tbody>
-                <tr v-for="(item, i) in items" :key="i">
+              <tbody >
+              <!-- <tbody background-color="blue-grey lighten-4"> -->
+                <tr v-for="(item, i) in items" :key="i" style="background-color:ivory;" >
                   <td>{{ item.groupDetailSeq }}</td>
                   <td>{{ groupItem.groupDate }}</td>
                   <td>{{ groupItem.groupStartTime }}:00</td>
