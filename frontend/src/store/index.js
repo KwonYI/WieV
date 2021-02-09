@@ -87,6 +87,7 @@ export default new Vuex.Store({
 
     //채용담당자가 선택한 현재 공고 :
     selectedRecruitNo: -1,
+    selectedRecruitIndex: '', //얘는 나타내기 용 (지우지 말 것 )
     storeRecruitItem: {},
 
     //그냥 인담자, 면접관, 지원자 로그인 상황 한 변수로 통일하는 게 낫다.
