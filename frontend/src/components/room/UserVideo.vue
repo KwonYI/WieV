@@ -1,8 +1,9 @@
 <template>
-  <div v-if="streamManager">
+  <div v-if="streamManager" :video-type = "clientData.type">
     <ov-video :stream-manager="streamManager" />
     <div>
-      <p>{{ clientData }}</p>
+      <p>{{ clientData.name }}</p>
+      <p>{{ clientData.type }}</p>
     </div>
   </div>
 </template>
@@ -21,18 +22,15 @@ export default {
     streamManager: Object,
   },
 
-  computed: {
-    clientData() {
-      const { clientData } = this.getConnectionData();
-      return clientData;
-    },
+  data() {
+    return {
+      clientData : undefined,
+    }
   },
 
-  methods: {
-    getConnectionData() {
+  created() {
       const { connection } = this.streamManager.stream;
-      return JSON.parse(connection.data.split("%/%")[0]);
-    },
+      this.clientData = JSON.parse(connection.data.split("%/%")[0]);
   },
 };
 </script>

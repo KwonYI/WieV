@@ -40,13 +40,29 @@
       <v-row>
         <!-- row2[왼쪽] : 관리자 리스트-->
         <div v-for="(sub) in subscribers" :key="sub.stream.connection.connectionId">
+          <!-- <v-col cols="3" v-if="JSON.parse(sub.stream.connection.data.split('%/%')[0])['type'] === 'manager' "> -->
+          <v-col cols="3" v-if="JSON.parse(sub.stream.connection.data.split('%/%')[0])['type'] !== 'viewee' ">
+             <user-video 
+             :stream-manager="sub" 
+             @click.native="updateMainVideoStreamManager(sub)"/>
+          </v-col>
+          <v-col class="d-flex justify-end" cols="6" v-else>
+             <user-video 
+             :stream-manager="sub" 
+             @click.native="updateMainVideoStreamManager(sub)"/>
+          </v-col>
+        </div>
+        <!-- <user-video v-for="(sub) in subscribers" 
+        :key="sub.stream.connection.connectionId" 
+        :stream-manager="sub" @click.native="updateMainVideoStreamManager(sub)"/> -->
+        <!-- <div v-for="(sub) in subscribers" :key="sub.stream.connection.connectionId">
           <v-col cols="3" v-if="types[sub.stream.connection.connectionId] === 'manager'">
             <user-video :stream-manager="sub" @click.native="updateMainVideoStreamManager(sub)"/>
           </v-col>
           <v-col cols="6" class="d-flex justify-end" v-else>
             <user-video :stream-manager="sub" @click.native="updateMainVideoStreamManager(sub)"/>
           </v-col>
-        </div>
+        </div> -->
         <v-col cols="3">
           <!-- <user-video :stream-manager="mainStreamManager" /> -->
           <!-- <ManagerList /> -->
@@ -79,7 +95,6 @@ import { OpenVidu } from "openvidu-browser";
 import UserVideo from "@/components/room/UserVideo";
 import axios from "axios";
 
-import { mapGetters, mapMutations } from "vuex";
 
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 // import ManagerList from "@/components/room/ManagerList.vue"
@@ -99,8 +114,6 @@ export default {
       mainStreamManager: undefined, // 메인 비디오
       publisher: undefined, // 연결 객체
       subscribers: [],
-      participants: [],
-      types: {},
 
       // 채팅
       text: "",
@@ -108,14 +121,11 @@ export default {
 
       // 화면, 소리, 화면 공유
       audioOn: true,
-      audioMsg: "소리 On",
+      audioMsg: "소리 Off",
       videoOn: true,
-      videoMsg: "화면 On",
+      videoMsg: "화면 Off",
       // shareOn: false,
       // shareMsg: "공유 Off",
-
-      // ConnectionId
-      info: { sessionName: "", type: "", connectionId: undefined },
 
       // From SessionController
       sessionName: undefined,
@@ -169,8 +179,7 @@ export default {
     this.session.on("streamCreated", ({ stream }) => {
       const subscriber = this.session.subscribe(stream);
       this.subscribers.push(subscriber);
-      console.log("참여자 목록");
-      console.log(this.subscribers);
+      console.log(this.subscribers)
     });
 
     this.session.on("streamDestroyed", ({ stream }) => {
@@ -189,7 +198,7 @@ export default {
     });
 
     this.session
-      .connect(this.token, { clientData: this.userName })
+      .connect(this.token, { name: this.userName, type : this.type})
       .then(() => {
         let publisher = this.OV.initPublisher(undefined, {
           audioSource: undefined, // The source of audio. If undefined default microphone
@@ -203,35 +212,10 @@ export default {
         });
 
         this.mainStreamManager = publisher;
-        console.log("mainStreamManager")
-        console.log(this.mainStreamManager)
         this.publisher = publisher;
-        console.log("publisher" + this.publisher)
 
         this.session.publish(this.publisher);
         this.subscribers.push(this.publisher);
-
-        this.info.sessionName = this.sessionName;
-        this.info.type = this.type;
-        this.info.connectionId = this.publisher.stream.connection.connectionId;
-        this.addParticipants(this.info);
-
-        console.log("웨이트룸에서 길이 찍기");
-        console.log(this.getParticipants.length);
-
-        // console.log(this.types)
-
-        this.getParticipants.forEach((element) => {
-          if (element.sessionName == this.sessionName){
-            this.participants.push(element);
-            this.types[element.connectionId] = element.type;
-          }
-        });
-
-        // console.log("마지막")
-        // console.log(this.participants);
-        console.log(this.types)
-        // this.clearParticipants([]);
       })
       .catch((error) => {
         console.log(
@@ -244,13 +228,6 @@ export default {
   },
 
   methods: {
-    ...mapMutations([
-      "addParticipants",
-      "clearParticipants",
-      "deleteParticipants",
-      "clearCheckIn",
-      "deleteCheckIn",
-    ]),
     sendMessage() {
       if (this.text === "") return;
 
@@ -278,9 +255,7 @@ export default {
         })
         .then((res) => {
           console.log(res);
-          if(this.type === 'manager') this.clearParticipants([]);
           if (this.session) this.session.disconnect();
-          this.deleteParticipants(this.info);
           this.session = undefined;
           this.mainStreamManager = undefined;
           this.publisher = undefined;
@@ -318,8 +293,6 @@ export default {
   },
 
   computed: {
-    
-    ...mapGetters(["getParticipants", "getCheckIn"]),
   },
 };
 </script>
