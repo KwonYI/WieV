@@ -1,7 +1,7 @@
 <template>
   <div id="ViewRoom">
     <!-- 면접실 페이지. 신분에 따라 보여지는 컴포넌트가 다르다.  -->
-    
+    <h2>테스트용 면접방</h2>
     <!--상단 바-->
     <v-app-bar class="d-flex justify-end" dense dark>
       <v-toolbar-title class="">
@@ -165,7 +165,7 @@ export default {
 
     this.session.on("signal:my-chat", (event) => {
       let message = { from: "", text: "" };
-      message.from = event.from.data.split('":"')[1].slice(0, -8);
+      message.from = event.from.data.split('":"')[1].slice(0, -7);
       message.text = event.data;
 
       this.messages.push(message);
