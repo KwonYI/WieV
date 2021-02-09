@@ -138,6 +138,22 @@ export default new Vuex.Store({
 
     participants: [],
 
+    // allSessions: {
+    //   '38': [
+    //     {
+    //       connectionId: 35
+    //       type: 'viewer',
+
+    //     },
+    //     {
+    //       connectionId: 358
+    //       type: 'viewee'
+    //     },
+    //   ]
+    // },
+
+    // allSessions['38']['subscriber'][],
+
     checkIn: [],
   },
 
