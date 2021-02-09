@@ -15,4 +15,6 @@ public interface GroupAllDao extends JpaRepository<GroupAll, String>{
 	GroupAll findGroupAllByGroupSeq(int groupSeq);
 	
 	List<GroupAll> findListGroupAllByRecruitReSeq(int recruitReSeq);
+
+	Optional<List<GroupAll>> findOptionalGroupAllByRecruitReSeq(int recruitReSeq);
 }
