@@ -156,12 +156,6 @@ export default {
     this.userName = this.$route.query.userName;
     this.type = this.$route.query.type;
 
-    // console.log(this.$route.query);
-    // console.log(this.$route.query);
-    // console.log(this.$route.query);
-    // console.log(this.$route.query);
-    // console.log(this.type);
-
     // this.session.on("streamCreated", ({ stream }) => {
     //   const subscriber = this.session.subscribe(stream);
     //   this.subscribers.push(subscriber);
@@ -236,15 +230,15 @@ export default {
         // console.log(this.types)
 
         this.getParticipants.forEach((element) => {
-          if (element.sessionName == this.sessionName)
+          if (element.sessionName == this.sessionName){
             this.participants.push(element);
-          this.types[element.connectionId] = element.type;
+            this.types[element.connectionId] = element.type;
+          }
         });
 
-        console.log(this.types);
         // console.log("마지막")
         // console.log(this.participants);
-        // console.log(this.types)
+        console.log(this.types)
         // this.clearParticipants([]);
       })
       .catch((error) => {
