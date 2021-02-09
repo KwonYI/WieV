@@ -125,8 +125,6 @@ public class ApplicantController {
 	GroupDetailDao groupDetailDao;
 
 	@Autowired
-	GroupTypeDao groupTypeDao;
-	@Autowired
 	ApplicantGroupDao applicantGroupDao;
 	
 	@Autowired
@@ -1017,21 +1015,6 @@ public class ApplicantController {
 						"  </table>\r\n" + 
 						"  <!--[if mso]></div><![endif]-->\r\n" + 
 						"  <!--[if IE]></div><![endif]-->");
-//				emailContent.append(" <div"
-//						+ "	style=\"font-family: 'Apple SD Gothic Neo', 'sans-serif' !important; width: 400px; height: 600px; border-top: 4px solid #02b875; margin: 100px auto; padding: 30px 0; box-sizing: border-box;\">"
-//						+ "	<h1 style=\"margin: 0; padding: 0 5px; font-size: 28px; font-weight: 400;\">" + company.getComName()
-//						+ "<br /> " + recruit.getReYear() + " " + recruit.getReFlag() + " " + recruit.getReStatus() + " 채용"
-//						+ "	</h1>\n" + "	<h2 style=\"margin: 0; padding: 0 5px; font-size: 28px; font-weight: 400;\">"
-//						+ "		<span style=\"color: #02b875\">면접일정</span> 안내입니다." + "	</h2>\n"
-//						+ "	<p style=\"font-size: 16px; line-height: 26px; margin-top: 50px; padding: 0 5px;\">"
-//						+ applicant.getApplyName() + "		님 안녕하세요.<br />" + "		면접 일정 안내입니다.<br />"
-//						+ "		면접 일시에  <b style=\"color: #02b875\">'사이트 바로가기'</b> 버튼을 클릭하여 면접을 진행해 주세요.<br />" + "		감사합니다."
-//						+ "	</p>" + "	<a style=\"color: #FFF; text-decoration: none; text-align: center;\""
-//						+ "	href=\"http://localhost:8080/applicant/mypage?Id=" + applicant.getApplyId()
-//						+ "\" target=\"_blank\">" + "		<p"
-//						+ "			style=\"display: inline-block; wㅉidth: 210px; height: 45px; margin: 30px 5px 40px; background: #02b875; line-height: 45px; vertical-align: middle; font-size: 16px;\">"
-//						+ "			사이트 바로가기</p>" + "	</a>"
-//						+ "	<div style=\"border-top: 1px solid #DDD; padding: 5px;\"></div>" + " </div>");
 				emailContent.append("</body>");
 				emailContent.append("</html>");
 
