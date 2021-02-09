@@ -3,9 +3,12 @@
     <v-container>
       <v-row>
         <div>
+          
           <v-card class="mx-auto mt-10 rounded-b-lg">
+            <div class="d-flex">
+              <v-icon large color="blue-grey darken-3" class="ml-5">mdi-calendar-multiple</v-icon>
             <v-card-title>[ {{recruitItem.reYear}}년도 {{recruitItem.reFlag}} {{recruitItem.reStatus}} ] 면접현황</v-card-title>
-            <v-card-subtitle></v-card-subtitle>
+            </div>
           </v-card>
         </div>
         <v-col cols="2">
@@ -60,6 +63,7 @@
         // recruitIndex: this.$route.params.recruitIndex,
         // recruitItem: this.$route.params.recruitItem,
         recruitNo: this.$route.params.recruitIndex,
+        // recruitNo: this.$store.state.selectedRecruitNo,
         recruitItem: this.$store.state.storeRecruitItem,
 
       }

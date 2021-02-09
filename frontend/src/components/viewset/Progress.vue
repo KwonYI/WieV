@@ -53,6 +53,7 @@
       }
     },
     created: function () {
+      console.log("getProgressListCurrentRecruit", this.getProgressListCurrentRecruit)
       
     },
     methods:{
