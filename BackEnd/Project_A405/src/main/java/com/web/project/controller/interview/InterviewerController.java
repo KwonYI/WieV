@@ -116,8 +116,6 @@ public class InterviewerController {
 		return new ResponseEntity<List<Interviewer>>(interviewerList, HttpStatus.OK);
 	}
 
-	// @PostMapping("/assign/{groupSeq}")
-	// @ApiOperation(value = "면접관 자동 배정")
 	public void interviewerAssign(int groupSeq) {
 //		HttpStatus status = null;
 		List<Interviewer> interviewerList = new ArrayList<Interviewer>();
