@@ -256,6 +256,7 @@ export default {
       re_year: undefined,
       re_flag: undefined,
       re_status: undefined,
+      interviewSession: undefined,
 
       // 배너
       banner_dialog: false,
@@ -287,10 +288,11 @@ export default {
     this.re_year = this.$route.query.re_year
     this.re_flag = this.$route.query.re_flag
     this.re_status = this.$route.query.re_status
-    this.sessionName = this.$route.query.sessionName
     this.token = this.$route.query.token
     this.userName = this.$route.query.userName
     this.type = this.$route.query.type
+    this.sessionName = this.$route.query.sessionName,
+    this.interviewSession = this.$route.query.interviewSession
   },
   beforeDestroy() {
     window.removeEventListener("beforeunload", this.leaveSession)
@@ -315,7 +317,7 @@ export default {
 
     this.session.on("signal:my-chat", (event) => {
       let message = { from: "", text: "" }
-      message.from = event.from.data.split('":"')[1].slice(0, -8)
+      message.from = event.from.data.split('":"')[1].slice(0, -7)
       message.text = event.data
 
       this.messages.push(message)

@@ -69,7 +69,7 @@
                   </div> -->
                   <v-btn
                     color="blue lighten-3 yellow--text"
-                    @click="goSession(interview.waitSessionName)"
+                    @click="goSession(interview.waitSessionName, interview.interviewSessionName)"
                   >
                     대기실 입장
                   </v-btn>
@@ -121,13 +121,12 @@ export default {
   },
   created: function () {},
   methods: {
-    goSession(session) {
-      console.log(this.intervieweeData.user.applyName);
+    goSession(waitSession, interviewSession) {
       axios
         .get(`${SERVER_URL}/session/join`, {
           params: {
             applicantName: this.intervieweeData.user.applyName,
-            sessionName: session,
+            sessionName: waitSession,
           },
         })
         .then((res) => {
@@ -143,10 +142,11 @@ export default {
               re_year: this.intervieweeData.recruit.reYear,
               re_flag: this.intervieweeData.recruit.reFlag,
               re_status: this.intervieweeData.recruit.reStatus,
-              sessionName: res.data.sessionName,
               token: res.data.token,
               userName: res.data.applicantName,
               type: res.data.type,
+              sessionName: waitSession,
+              interviewSession : interviewSession,
             },
           });
           window.open(routeData.href, "_blank");
