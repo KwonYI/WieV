@@ -122,13 +122,10 @@ export default {
       re_year: undefined,
       re_flag: undefined,
       re_status: undefined,
-<<<<<<< HEAD
       
       //지원자 리스트
       applicantList:[],
-=======
       userSeq : undefined,
->>>>>>> 3afdc75c11a4453b61f0718d5d854d1b2f1d93fd
     };
   },
   created: function () {
@@ -146,15 +143,10 @@ export default {
     this.userSeq = this.$route.query.userSeq;
 
     //면접방에 해당하는 지원자 갖고오기
-    console.log("방세션이름"+this.sessionName)
      axios.get(`${SERVER_URL}/applicant/getListBySessionName/` +this.sessionName)
         .then(res => {
-          //console.log(res.data)
           this.applicantList=res.data
           console.log(this.applicantList)
-          for (const apply of this.applicantList) {
-            console.log(apply["apply-Resume1"])
-          }
         })
         .catch((err) => {
             console.log(err)
@@ -269,10 +261,25 @@ export default {
     },
 
     updateMainVideoStreamManager(stream) {
-      console.log("클릭한사람정보")
-      console.log(stream)
-      if (this.mainStreamManager === stream) return;
-      this.mainStreamManager = stream;
+      let info = JSON.parse(stream.stream.connection.data.split('%/%')[0])
+      if (this.mainStreamManager === stream){
+        console.log("자기 자신입니다.")
+      }
+      else if(info["type"]==="viewee"){
+        //지원자면
+        for (const apply of this.applicantList) {
+          if(apply["apply-Seq"]==info["userSeq"]){
+            console.log(info["userSeq"])
+            console.log(apply["apply-Resume1"])
+            console.log(apply["apply-Resume2"])
+            console.log(apply["apply-Resume3"])
+            console.log(apply["apply-Resume4"])
+          }
+          }
+      }
+      else {
+        console.log("지원자가 아닙니다.")
+      }
     },
 
     audioOnOOff() {
