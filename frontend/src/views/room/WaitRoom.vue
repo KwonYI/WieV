@@ -70,20 +70,33 @@
             </v-col>
           </v-row>
           <!-- 메인 중앙 - 면접관, 지원자 화면 -->
+
           <v-row style="height: 87%">
             <!-- 면접관 -->
             <v-col cols="4" class="d-flex flex-column justify-center align-center">
-              <div v-for="i in 3" :key="i" class="brd screen-res">면접관 {{i}}</div>
+              <span v-for="sub in subscribers" :key="sub.stream.connection.connectionId">
+                <user-video
+                  v-if="JSON.parse(sub.stream.connection.data.split('%/%')[0])['type'] !== 'viewee'"
+                  :stream-manager="sub" 
+                  @click.native="updateMainVideoStreamManager(sub)"
+                />
+              </span>
             </v-col>
             <!-- 지원자 -->
             <v-col cols="8" class="d-flex flex-wrap justify-center align-center">
-              <div v-for="i in 3" :key="i" class="brd screen-res">지원자 {{i}}</div>
+              <span v-for="sub in subscribers" :key="sub.stream.connection.connectionId">
+                <user-video
+                  v-if="JSON.parse(sub.stream.connection.data.split('%/%')[0])['type'] === 'viewee'"
+                  :stream-manager="sub" 
+                  @click.native="updateMainVideoStreamManager(sub)"
+                />
+              </span>
             </v-col>
           </v-row>
         </v-col>
 
+        <!-- 우측 중앙 - 부가기능 탭 -->
         <v-col cols="3">
-          <!-- 우측 중앙 - 부가기능 탭 -->
           <!-- 대기실 - 면접실 메신저 -->
           <div class="pb-2 mb-2 d-flex justify-space-between align-center" style="height: 10%">
             <!-- 메시지 보내기 -->
@@ -108,7 +121,8 @@
           <!-- 면접 안내 -->
           <div style="height: 35%">
             <v-sheet color="white" height="100%" elevation="3">
-              <div class="headline text-center">면접 안내</div>
+              <div class="text-h6 text-center pt-1">면접 안내</div>
+              <v-divider class="my-1"></v-divider>
             </v-sheet>
           </div>
           <!-- FAQ -->
@@ -350,7 +364,7 @@ export default {
           videoSource: undefined, // The source of video. If undefined default webcam
           publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
           publishVideo: true, // Whether you want to start publishing with your video enabled or not
-          resolution: "640x360", // The resolution of your video
+          resolution: "272x153", // The resolution of your video
           frameRate: 30, // The frame rate of your video
           insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
           mirror: false, // Whether to mirror your local video or not
