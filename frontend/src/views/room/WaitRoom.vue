@@ -72,11 +72,9 @@
           <!-- 메인 중앙 - 면접관, 지원자 화면 -->
 
           <v-row style="height: 87%">
-            <!-- 면접관 -->
             <v-col cols="4" class="d-flex flex-column justify-center align-center">
-              <span v-for="sub in subscribers" :key="sub.stream.connection.connectionId">
+              <span v-for="sub in viewers" :key="sub.stream.connection.connectionId">
                 <user-video
-                  v-if="JSON.parse(sub.stream.connection.data.split('%/%')[0])['type'] !== 'viewee'"
                   :stream-manager="sub" 
                   @click.native="updateMainVideoStreamManager(sub)"
                 />
@@ -84,6 +82,28 @@
             </v-col>
             <!-- 지원자 -->
             <v-col cols="8" class="d-flex flex-wrap justify-center align-center">
+              <span v-for="sub in viewees" :key="sub.stream.connection.connectionId">
+                <user-video
+                  :stream-manager="sub" 
+                  @click.native="updateMainVideoStreamManager(sub)"
+                />
+              </span>
+            </v-col>
+
+
+
+            <!-- 면접관 -->
+            <!-- <v-col cols="4" class="d-flex flex-column justify-center align-center">
+              <span v-for="sub in subscribers" :key="sub.stream.connection.connectionId">
+                <user-video
+                  v-if="JSON.parse(sub.stream.connection.data.split('%/%')[0])['type'] !== 'viewee'"
+                  :stream-manager="sub" 
+                  @click.native="updateMainVideoStreamManager(sub)"
+                />
+              </span>
+            </v-col> -->
+            <!-- 지원자 -->
+            <!-- <v-col cols="8" class="d-flex flex-wrap justify-center align-center">
               <span v-for="sub in subscribers" :key="sub.stream.connection.connectionId">
                 <user-video
                   v-if="JSON.parse(sub.stream.connection.data.split('%/%')[0])['type'] === 'viewee'"
@@ -91,7 +111,7 @@
                   @click.native="updateMainVideoStreamManager(sub)"
                 />
               </span>
-            </v-col>
+            </v-col> -->
           </v-row>
         </v-col>
 
@@ -193,47 +213,7 @@
     <!-- 화면 공유 기능(미구현) -->
     <!-- <div id="screen"></div> -->
     
-    <!-- 바 밑에 내용물들.  -->
-    <v-container class="d-none">
-      <!--row1. : 공지사항 배너, 면접실 만들기 버튼-->
-      <v-row> </v-row>
-
-      <!-- row2 : 관리자, 지원자, FAQ 잡동사니 row-->
-      <v-row>
-        <!-- row2[왼쪽] : 관리자 리스트-->
-        <div v-for="sub in subscribers" :key="sub.stream.connection.connectionId">
-          <v-col cols="3" v-if="JSON.parse(sub.stream.connection.data.split('%/%')[0])['type'] !== 'viewee' ">
-             <user-video 
-             :stream-manager="sub" 
-             @click.native="updateMainVideoStreamManager(sub)"/>
-          </v-col>
-          <v-col class="d-flex justify-end" cols="6" v-else>
-             <user-video 
-             :stream-manager="sub" 
-             @click.native="updateMainVideoStreamManager(sub)"/>
-          </v-col>
-        </div>
-
-        <!-- <user-video v-for="(sub) in subscribers" 
-        :key="sub.stream.connection.connectionId" 
-        :stream-manager="sub" @click.native="updateMainVideoStreamManager(sub)"/> -->
-        <!-- <div v-for="(sub) in subscribers" :key="sub.stream.connection.connectionId">
-          <v-col cols="3" v-if="types[sub.stream.connection.connectionId] === 'manager'">
-            <user-video :stream-manager="sub" @click.native="updateMainVideoStreamManager(sub)"/>
-          </v-col>
-          <v-col cols="6" class="d-flex justify-end" v-else>
-            <user-video :stream-manager="sub" @click.native="updateMainVideoStreamManager(sub)"/>
-          </v-col>
-        </div> -->
-        
-        <!-- <v-col cols="3">
-          <user-video :stream-manager="mainStreamManager" />
-          <ManagerList />
-        </v-col> -->
-        
-      </v-row>
-    </v-container>
-    
+    <!-- 바 밑에 내용물들.  -->    
     <v-bottom-navigation dark class="main-bg-navy">
       <input class="btn" type="button" @click="audioOnOOff" :value="audioMsg" />
       <input class="btn" type="button" @click="videoOnOOff" :value="videoMsg" />
@@ -266,6 +246,10 @@ export default {
       mainStreamManager: undefined, // 메인 비디오
       publisher: undefined, // 연결 객체
       subscribers: [],
+
+      // 면접관, 지원자들만 담아두는 리스트
+      viewers : [],
+      viewees : [],
 
       // 채팅
       text: "",
@@ -340,7 +324,14 @@ export default {
 
     this.session.on("streamCreated", ({ stream }) => {
       const subscriber = this.session.subscribe(stream)
-      this.subscribers.push(subscriber)
+
+      if(JSON.parse(subscriber.stream.connection.data.split('%/%')[0])['type'] === 'viewee'){
+        this.viewees.push(subscriber)
+      }else{
+        this.viewers.push(subscriber)
+      }
+      
+      // this.subscribers.push(subscriber)
     })
 
     this.session.on("streamDestroyed", ({ stream }) => {
@@ -375,7 +366,15 @@ export default {
         this.publisher = publisher
 
         this.session.publish(this.publisher)
-        this.subscribers.push(this.publisher)
+
+        console.log("나는 이 타입이야", JSON.parse(this.publisher.stream.connection.data.split('%/%')[0])['type'])
+
+        if(this.type === 'viewee'){
+          this.viewees.push(this.publisher)
+        }else{
+          this.viewers.push(this.publisher)
+        }
+        // this.subscribers.push(this.publisher)
       })
       .catch(err => {
         console.log("There was an error connecting to the session:", err.code, err.message)
