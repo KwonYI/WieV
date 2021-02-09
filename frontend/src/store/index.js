@@ -115,7 +115,7 @@ export default new Vuex.Store({
     recruitProgressList: [],
 
     // 얘는 공고별 저장인데 comVieweeList 쓸거같다.
-    recruitVieweeList: [],
+    // recruitVieweeList: [],
 
     // 얘는 공고별 지원자 저장인데 comVieweeList 쓸거같다.
     recruitVieweeList: [],
