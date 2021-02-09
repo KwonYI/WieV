@@ -8,7 +8,7 @@
       <v-dialog v-model="dialog" persistent max-width="600px">
         <template v-slot:activator="{ on, attrs }">
           <v-btn dark v-bind="attrs" v-on="on">
-            공고 추가하기
+            <v-icon left>mdi-calendar-plus</v-icon>공고 추가하기
           </v-btn>
         </template>
         <v-card>
@@ -189,6 +189,7 @@
       goToProgress: function (recruit, index) {
         this.$store.state.selectedRecruitNo = recruit.reSeq
         this.$store.state.storeRecruitItem = recruit
+        this.$store.state.selectedRecruitIndex = index
         console.log("goToProgres!!", this.$store.state.storeRecruitItem)
         this.$router.push({
           // name: 'Progress',

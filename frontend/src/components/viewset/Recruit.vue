@@ -23,9 +23,9 @@
           </v-tabs>
           
           <div>
-            <v-chip style="" outlined>
+            <v-chip style="" outlined color="blue-grey darken-3">
               <router-link :to="{ name: 'CreateSet', params: { recruitItem: recruitItem }}">
-                면접스케줄 생성
+                면접스케줄 생성 +
               </router-link>
             </v-chip>
           </div>
