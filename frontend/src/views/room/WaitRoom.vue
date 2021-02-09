@@ -290,6 +290,7 @@ export default {
       re_year: undefined,
       re_flag: undefined,
       re_status: undefined,
+      interviewSession: undefined,
 
       // 배너
       banner_dialog: false,
@@ -351,7 +352,7 @@ export default {
 
     this.session.on("signal:my-chat", (event) => {
       let message = { from: "", text: "" }
-      message.from = event.from.data.split('":"')[1].slice(0, -8)
+      message.from = event.from.data.split('":"')[1].slice(0, -7)
       message.text = event.data
 
       this.messages.push(message)

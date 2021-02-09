@@ -119,9 +119,6 @@ export default new Vuex.Store({
     // 얘는 공고별 저장인데 comVieweeList 쓸거같다.
     // recruitVieweeList: [],
 
-    // 얘는 공고별 지원자 저장인데 comVieweeList 쓸거같다.
-    recruitVieweeList: [],
-
 
     // 회사별 면접현황 리스트
     comProgressList: [],
@@ -315,6 +312,9 @@ export default new Vuex.Store({
       // console.log("mutaions의 INSERT_RECRUIT", res)
       state.recruitList.push(res)
     },
+    DELETE_RECRUIT(state, reSeq){
+      state.recruitList.splice(state.recruitList.findIndex(r => r.reSeq == reSeq), 1)
+    },
 
     // // 업데이트된 지원자 리스트 state에 저장
     // UPDATE_VIEWEE_LIST(state, res) {
@@ -455,7 +455,9 @@ export default new Vuex.Store({
     // 공고 삭제하기
     DELETE_RECRUIT(context, reSeq) {
       axios.delete(`${SERVER_URL}/recruit/delete/` + reSeq)
-        .then(() => alert("공고가 삭제되었습니다!"))
+        .then(() => {alert("공고가 삭제되었습니다!")
+          context.commit("DELETE_RECRUIT", reSeq)}
+        )
     },
     // 지원자를 엑셀로 업데이트하기
     UPDATE_VIEWEE_LIST(context, recruitNo) {

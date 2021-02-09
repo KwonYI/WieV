@@ -116,9 +116,6 @@
                 <!-- <v-btn :to="{ name: 'Progress', params: { recruitNo: recruit.reSeq } }" >관리하기</v-btn> -->
                 <!-- <v-btn @click="goToProgress(recruit)">관리하기</v-btn> -->
               <!-- </td> -->
-              <!-- <td v-if="recruit.reSeq !== 3">
-                <v-btn @click="deleteRecruit(recruit.reSeq)">삭제</v-btn>
-              </td> -->
 
             </tr>
             </tbody>
@@ -187,14 +184,6 @@
           // this.$refs.form.reset()
         // }
         }
-      },
-
-      deleteRecruit: function (reSeq) {
-        this.$store
-          .dispatch("DELETE_RECRUIT", reSeq)
-          .then(() => {console.log("deleteRecruit")
-            this.$router.go(this.$router.currentRoute)}
-          )
       },
 
       goToProgress: function (recruit, index) {

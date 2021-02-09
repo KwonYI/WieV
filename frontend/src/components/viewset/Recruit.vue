@@ -17,7 +17,7 @@
           
           <v-tabs v-model="recruitTab" align-with-title>
             <v-tabs-slider></v-tabs-slider>
-            <v-tab v-for="(tab, i) in tabs" :key="i">
+            <v-tab v-for="(tab, i) in tabs" :key="i" class=" text-subtitle-1">
               {{ tab.name }}
             </v-tab>
           </v-tabs>
