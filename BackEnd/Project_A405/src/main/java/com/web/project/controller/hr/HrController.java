@@ -100,6 +100,8 @@ public class HrController {
 				resultMap.put("user-Name", loginHr.getHrName());
 				// 핸드폰 번호
 				resultMap.put("user-Phone", loginHr.getHrPhone());
+				// 비밀번호
+				resultMap.put("user-Password", loginHr.getHrPassword());
 				// 면접관(1)인지 대기관(0)인지
 				resultMap.put("user-View-Wait", -1);
 				// 소속 회사 Seq
@@ -135,6 +137,8 @@ public class HrController {
 				resultMap.put("user-Name", loginInterviewer.getViewName());
 				// 핸드폰 번호
 				resultMap.put("user-Phone", loginInterviewer.getViewPhone());
+				// 비밀번호
+				resultMap.put("user-Password", loginInterviewer.getViewPassword());
 				// 면접관(1)인지 대기관(0)인지
 				resultMap.put("user-View-Wait", loginInterviewer.getViewWait());
 				// 소속 회사 Seq

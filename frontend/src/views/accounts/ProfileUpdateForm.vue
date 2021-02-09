@@ -21,20 +21,14 @@
         </v-simple-table>
       </v-col>
       <v-col cols="12"></v-col>
-      <span @click="update" class="ma-8 pr-16">
-        수정하기
-      </span>
+      <div @click="update" class="ma-8 pr-16">
+        확인
+      </div>
     </v-row>
   </div>
 </template>
 
 <script>
-// import axios from "axios"
-import { mapState } from "vuex";
-
-// const SERVER_URL = "https://localhost:8080/"
-// const SERVER_URL = "https://i4a405.p.ssafy.io:8080"
-// const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
 export default {
   name: "ProfileUpdateForm",
@@ -58,14 +52,6 @@ export default {
     },
     isPasswordCertified:false,
   }),
-  created: function () {
-    this.$store
-      .dispatch("GET_COMPANY_NAME_LIST")
-      .then(() => console.log("회사 리스트 가져오기 완료"))
-  },
-  computed: {
-      ...mapState(["companyNameList"]),
-  },
   methods: {
     //비밀번호 같은지 다른지 확인
     password_certified: function() {
@@ -73,6 +59,7 @@ export default {
       let patternEngAtListOne = new RegExp(/[a-zA-Z]+/); // + for at least one
       let patternSpeAtListOne = new RegExp(/[~!@#$%^&*()_+|<>?:{}]+/); // + for at least one
       let patternNumAtListOne = new RegExp(/[0-9]+/); // + for at least one
+
       if (
         !patternEngAtListOne.test(this.credentials.hrPassword) ||
         !patternSpeAtListOne.test(this.credentials.hrPassword) ||
@@ -86,7 +73,7 @@ export default {
         return;
       }
 
-   if(!this.credentials.hrPasswordConfirmation){
+      if(!this.credentials.hrPasswordConfirmation){
         alert("비밀번호 확인을 입력해주세요")
       }
       else if (this.credentials.hrPassword == this.credentials.hrPasswordConfirmation) {

@@ -36,7 +36,11 @@
           수정하기
           </router-link>
         </div>
-        <div @click="userDelete">탈퇴하기</div>
+        <div>
+          <router-link :to="{ name: 'ProfileDeleteForm' }">
+          탈퇴하기
+          </router-link>
+        </div>
       </v-row>
     </v-container>
   </div>
@@ -75,14 +79,6 @@ export default {
 
   },
   methods: {
-    userDelete: function() {
-      this.$store
-        .dispatch("USER_DELETE")
-        .then(() => {
-          console.log("회원탈퇴")
-          this.$router.replace({ name: "Home" })
-        });
-    }
   },
 };
 </script>
