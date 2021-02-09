@@ -4,9 +4,13 @@
       <v-row>
         <div>
           <v-card class="mx-auto mt-10 rounded-b-lg d-flex justify-space-between align-center">
+              <div class="d-flex">
+                <v-icon large color="blue-grey darken-3" class="ml-5">mdi-calendar-multiple</v-icon>
             <v-card-title>
               [ {{recruitItem.reYear}}년도 {{recruitItem.reFlag}} {{recruitItem.reStatus}} ] 공고 현황
             </v-card-title>
+
+              </div>
             <v-btn class="mr-5" @click="deleteRecruit(recruitItem.reSeq)">공고 삭제</v-btn>
             <!-- <v-card-subtitle></v-card-subtitle> -->
           </v-card>
