@@ -122,6 +122,9 @@ export default {
       re_year: undefined,
       re_flag: undefined,
       re_status: undefined,
+      
+      //지원자 리스트
+      applicantList:[],
     };
   },
   created: function () {
@@ -136,6 +139,22 @@ export default {
     this.token = this.$route.query.token;
     this.userName = this.$route.query.userName;
     this.type = this.$route.query.type;
+
+    //면접방에 해당하는 지원자 갖고오기
+    console.log("방세션이름"+this.sessionName)
+     axios.get(`${SERVER_URL}/applicant/getListBySessionName/` +this.sessionName)
+        .then(res => {
+          //console.log(res.data)
+          this.applicantList=res.data
+          console.log(this.applicantList)
+          for (const apply of this.applicantList) {
+            console.log(apply["apply-Resume1"])
+          }
+        })
+        .catch((err) => {
+            console.log(err)
+            alert("세션 이름에 따른 지원자 갖고오기 실패")
+          })
 
     // this.session.on("streamCreated", ({ stream }) => {
     //   const subscriber = this.session.subscribe(stream);
@@ -245,6 +264,8 @@ export default {
     },
 
     updateMainVideoStreamManager(stream) {
+      console.log("클릭한사람정보")
+      console.log(stream)
       if (this.mainStreamManager === stream) return;
       this.mainStreamManager = stream;
     },
