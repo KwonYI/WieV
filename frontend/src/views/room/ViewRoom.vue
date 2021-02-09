@@ -122,6 +122,7 @@ export default {
       re_year: undefined,
       re_flag: undefined,
       re_status: undefined,
+      userSeq : undefined,
     };
   },
   created: function () {
@@ -136,6 +137,7 @@ export default {
     this.token = this.$route.query.token;
     this.userName = this.$route.query.userName;
     this.type = this.$route.query.type;
+    this.userSeq = this.$route.query.userSeq;
 
     // this.session.on("streamCreated", ({ stream }) => {
     //   const subscriber = this.session.subscribe(stream);
@@ -172,7 +174,7 @@ export default {
     });
 
     this.session
-      .connect(this.token, { name: this.userName, type : this.type})
+      .connect(this.token, { name: this.userName, type : this.type, userSeq : this.userSeq})
       .then(() => {
         let publisher = this.OV.initPublisher(undefined, {
           audioSource: undefined, // The source of audio. If undefined default microphone
