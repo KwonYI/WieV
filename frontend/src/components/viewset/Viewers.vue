@@ -1,7 +1,7 @@
 <template>
   <div id="viewers">
     현재 채용공고 번호 : {{ recruitItem.reSeq }}
-    <v-toolbar dark color="brown lighten-2 font-weight-bold black--text">
+    <v-toolbar dark color="brown lighten-1 font-weight-bold black--text">
     <!-- <v-toolbar dark color="brown darken-1 black--text"> -->
       <v-toolbar-title></v-toolbar-title>
      
