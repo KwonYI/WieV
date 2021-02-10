@@ -215,9 +215,18 @@
     
     <!-- 바 밑에 내용물들.  -->    
     <v-bottom-navigation dark class="main-bg-navy">
-      <input class="btn" type="button" @click="audioOnOOff" :value="audioMsg" />
+      <v-btn @click="audioOnOOff">
+        <v-icon v-if="audioOn === true">mdi-volume-high</v-icon>
+        <v-icon v-if="audioOn === false">mdi-volume-off</v-icon> 
+      </v-btn>
+      <v-btn @click="videoOnOOff">
+        <v-icon v-if="videoOn === true">mdi-video</v-icon>
+        <v-icon v-if="videoOn === false">mdi-video-off</v-icon> 
+      </v-btn>
+      <v-btn @click="leaveSession">방 나가기</v-btn>
+      <!-- <input class="btn" type="button" @click="audioOnOOff" :value="audioMsg" />
       <input class="btn" type="button" @click="videoOnOOff" :value="videoMsg" />
-      <input class="btn" type="button" @click="leaveSession" value="방 나가기" />
+      <input class="btn" type="button" @click="leaveSession" value="방 나가기" /> -->
     </v-bottom-navigation>
   </div>
 </template>
@@ -257,9 +266,9 @@ export default {
 
       // 화면, 소리, 화면 공유
       audioOn: true,
-      audioMsg: "소리 Off",
+      // audioMsg: "소리 Off",
       videoOn: true,
-      videoMsg: "화면 Off",
+      // videoMsg: "화면 Off",
       // shareOn: false,
       // shareMsg: "공유 Off",
 
@@ -425,16 +434,16 @@ export default {
 
     audioOnOOff() {
       this.audioOn = !this.audioOn
-      if (this.audioOn === true) this.audioMsg = "소리 Off"
-      else this.audioMsg = "소리 On"
+      // if (this.audioOn === true) this.audioMsg = "소리 Off"
+      // else this.audioMsg = "소리 On"
 
       this.publisher.publishAudio(this.audioOn)
     },
 
     videoOnOOff() {
       this.videoOn = !this.videoOn
-      if (this.videoOn === true) this.videoMsg = "화면 Off"
-      else this.videoMsg = "화면 On"
+      // if (this.videoOn === true) this.videoMsg = "화면 Off"
+      // else this.videoMsg = "화면 On"
 
       this.publisher.publishVideo(this.videoOn)
     },
