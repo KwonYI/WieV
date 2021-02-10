@@ -1,31 +1,6 @@
 <template>
-  <div id="waitroom">
-    <!--상단 바-->
-    <v-app-bar class="d-none" dense dark>
-      <v-toolbar-title class="">
-        {{ comName }}
-        {{ re_year }}
-        {{ re_flag }}
-        {{ re_status }}
-        
-      </v-toolbar-title>
-    </v-app-bar>
-    <!-- 
-    화면 해상도
-    <div class="brd" style="width: 400px; height: 225px"></div>
-    <div class="brd" style="width: 480px; height: 270px"></div>
-    <div class="brd" style="width: 640px; height: 360px"></div>
-    <div class="brd" style="width: 960px; height: 540px"></div> -->
-
-    <!-- 면접 유형에 따른 구분 -->
-    <!-- <v-container >
-      <GrView v-if="roomType === 'gr'" />
-      <PTView v-else-if="roomType === 'pt'" />
-      <CaView v-else />
-    </v-container> -->
-
-    <v-container class="room">
-      <v-row style="height: 100%">
+  <div id="caview">
+    <v-row style="height: 100%">
 
         <v-col cols="9" class="main-box">
           <!-- 메인 상단 - 배너, 면접실 이동 안내 -->
@@ -199,47 +174,26 @@
           </div>
         </v-col>
     </v-row>
-    </v-container>
-
-    <!-- 화면 공유 기능(미구현) -->
-    <!-- <div id="screen"></div> -->
-    
-    <!-- 메인 하단 - 환경설정 -->
-    <v-bottom-navigation dark class="main-bg-navy">
-      <input class="btn" type="button" @click="audioOnOOff" :value="audioMsg" />
-      <input class="btn" type="button" @click="videoOnOOff" :value="videoMsg" />
-      <input class="btn" type="button" @click="leaveSession" value="방 나가기" />
-    </v-bottom-navigation>
   </div>
 </template>
+
 
 <script>
 import { OpenVidu } from "openvidu-browser"
 // import UserVideo from "@/components/room/UserVideo"
-// import CaView from "@/components/room/CaView"
-// import PTView from "@/components/room/PTView"
-// import GrView from "@/components/room/GrView"
 import axios from "axios"
 
 
 const SERVER_URL = process.env.VUE_APP_SERVER_URL
-// import ManagerList from "@/components/room/ManagerList.vue"
-// import VieweeList from "@/components/room/VieweeList.vue"
 
 export default {
-  name: "WaitRoom",
+  name: "caview",
   components: {
     // UserVideo,
-    // ManagerList,
-    // VieweeList,
-    // CaView,
-    // PTView,
-    // GrView
   },
   data: function () {
     return {
       isViewee: false,
-      roomType: '',
 
       OV: undefined,
       session: undefined,
@@ -270,7 +224,6 @@ export default {
       re_year: undefined,
       re_flag: undefined,
       re_status: undefined,
-      interviewSession: undefined,
 
       // 배너
       banner_dialog: false,
@@ -431,16 +384,8 @@ export default {
 </script>
 
 <style scoped>
-#waitroom {
+#caview {
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  background-color: #ECEFF1;
-}
-.room {
-  flex: 1;
-  align-items: center;
-  max-width: 95%;
 }
 .col {
   padding: 0.5rem;

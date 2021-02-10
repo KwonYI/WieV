@@ -1,24 +1,21 @@
-import Vue from "vue";
-import VueRouter from "vue-router";
-import Home from "@/views/main/Home.vue";
-import NotFound from "@/views/main/NotFound.vue";
-import Profile from "@/views/accounts/Profile";
-import ProfileUpdate from "@/views/accounts/ProfileUpdateForm";
-import ProfileDelete from "@/views/accounts/ProfileDeleteForm";
-import Signup from "@/views/accounts/Signup";
-import Menu from "@/views/viewset/Menu";
-import CreateSet from "@/views/viewset/CreateSet";
-// import Viewees from '@/views/viewset/Viewees'
-// import Viewers from '@/views/viewset/Viewers'
-// import Progress from '@/views/viewset/Progress'
-import Main from "@/views/main/Main";
-import WaitRoom from "@/views/room/WaitRoom";
-import ViewRoom from "@/views/room/ViewRoom";
-import FindPassword from "@/views/accounts/FindPassword";
+import Vue from "vue"
+import VueRouter from "vue-router"
+import Home from "@/views/main/Home.vue"
+import NotFound from "@/views/main/NotFound.vue"
+import Profile from "@/views/accounts/Profile"
+import ProfileUpdate from "@/views/accounts/ProfileUpdateForm"
+import ProfileDelete from "@/views/accounts/ProfileDeleteForm"
+import Signup from "@/views/accounts/Signup"
+import Menu from "@/views/viewset/Menu"
+import CreateSet from "@/views/viewset/CreateSet"
+import Main from "@/views/main/Main"
+import WaitRoom from "@/views/room/WaitRoom"
+import ViewRoom from "@/views/room/ViewRoom"
+import FindPassword from "@/views/accounts/FindPassword"
 
 // import Recruit from '@/components/viewset/Recruit'
 
-Vue.use(VueRouter);
+Vue.use(VueRouter)
 
 const routes = [
   {
@@ -113,7 +110,7 @@ const routes = [
     name: "FindPassword",
     component: FindPassword,
   },
-];
+]
 
 const router = new VueRouter({
   mode: "history",
@@ -122,6 +119,6 @@ const router = new VueRouter({
   // routes :[
   //   { path: '/menu/:recruitno', component : Progress}
   // ]
-});
+})
 
-export default router;
+export default router
