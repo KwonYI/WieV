@@ -186,17 +186,18 @@ export default {
     });
 
     this.session.on("streamDestroyed", ({ stream }) => {
-      if(this.type == 'viewee'){
-        const index = this.viewees.indexOf(stream.streamManager, 0);
-        if (index >= 0) {
-          this.viewees.splice(index, 1);
-        }
-      }else{
-        const index = this.viewers.indexOf(stream.streamManager, 0);
-        if (index >= 0) {
-          this.viewers.splice(index, 1);
-        }
+      const index1 = this.viewees.indexOf(stream.streamManager, 0);
+      if (index1 >= 0) {
+        this.viewees.splice(index1, 1);
       }
+      const index2 = this.viewers.indexOf(stream.streamManager, 0);
+      if (index2 >= 0) {
+        this.viewers.splice(index2, 1);
+      }
+
+      console.log("나는 ", this.type, "인데 누가 나갔어 내가 가진 리스트를 보여줄게")
+      console.log(this.viewees)
+      console.log(this.viewers)
       // const index = this.subscribers.indexOf(stream.streamManager, 0);
       // if (index >= 0) {
       //   this.subscribers.splice(index, 1);
@@ -219,7 +220,7 @@ export default {
           videoSource: undefined, // The source of video. If undefined default webcam
           publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
           publishVideo: true, // Whether you want to start publishing with your video enabled or not
-          resolution: "320x240", // The resolution of your video
+          resolution: "640x480", // The resolution of your video
           frameRate: 30, // The frame rate of your video
           insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
           mirror: false, // Whether to mirror your local video or not
@@ -235,7 +236,6 @@ export default {
 
         if(this.type === 'viewee'){
           this.viewees.push(this.publisher)
-          this.viewee_list.push(info['name'])
         }else{
           this.viewers.push(this.publisher)
         }
@@ -247,6 +247,7 @@ export default {
       });
 
     window.addEventListener("beforeunload", this.leaveSession);
+    window.addEventListener("backbutton", this.leaveSession)
   },
 
   methods: {

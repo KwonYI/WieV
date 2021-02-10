@@ -338,17 +338,18 @@ export default {
     })
 
     this.session.on("streamDestroyed", ({ stream }) => {
-      if(this.type == 'viewee'){
-        const index = this.viewees.indexOf(stream.streamManager, 0);
-        if (index >= 0) {
-          this.viewees.splice(index, 1);
-        }
-      }else{
-        const index = this.viewers.indexOf(stream.streamManager, 0);
-        if (index >= 0) {
-          this.viewers.splice(index, 1);
-        }
+      const index1 = this.viewees.indexOf(stream.streamManager, 0);
+      if (index1 >= 0) {
+        this.viewees.splice(index1, 1);
       }
+      const index2 = this.viewers.indexOf(stream.streamManager, 0);
+      if (index2 >= 0) {
+        this.viewers.splice(index2, 1);
+      }
+
+      console.log("나는 ", this.type, "인데 누가 나갔어 내가 가진 리스트를 보여줄게")
+      console.log(this.viewees)
+      console.log(this.viewers)
       // const index = this.subscribers.indexOf(stream.streamManager, 0)
       // if (index >= 0) {
       //   this.subscribers.splice(index, 1)
@@ -397,6 +398,7 @@ export default {
       })
 
     window.addEventListener("beforeunload", this.leaveSession)
+    window.addEventListener("backbutton", this.leaveSession)
   },
 
   methods: {
