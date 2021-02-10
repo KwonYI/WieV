@@ -113,6 +113,15 @@ export default new Vuex.Store({
       reEndDate: "",
     }, ],
 
+    // 부서와 직군 정보
+    partCareer:{
+        partSeq: 0,
+        partName: '',
+        careerName: [],
+      },
+
+    partCareerList: [],
+
     // 공고별 면접현황 리스트
     recruitProgressList: [],
 
@@ -235,6 +244,13 @@ export default new Vuex.Store({
       return state.checkIn
     },
 
+    getPartCareerList(state) {
+      return state.partCareerList
+    },
+
+    getPartCareerListLength(state) {
+      return state.partCareerList.length
+    }
   },
 
   mutations: {
@@ -280,6 +296,7 @@ export default new Vuex.Store({
       state.user.userComSeq = 0
       state.user.userSeq = 0
       state.comVieweeList = []
+      state.partCareerList = []
     },
 
     USER_UPDATE(state, res) {
@@ -385,8 +402,19 @@ export default new Vuex.Store({
         }
         state.comVieweeList.push(state.viewee)
       }
-      
-      
+    },
+
+    GET_PART_CAREER_LIST(state, res) {
+      for (var i = 0; i < res.length; i++) {
+        const element = res[i];
+        
+        state.partCareer = {}
+        state.partCareer.partSeq = element["part-Seq"]
+        state.partCareer.partName = element["part-Name"]
+        state.partCareer.careerName = element["career-Name-List"]
+
+        state.partCareerList.push(state.partCareer)
+      }
     },
 
   },
@@ -492,7 +520,17 @@ export default new Vuex.Store({
           context.commit("GET_PROGRESS_LIST", res.data)
         })
         .catch(err => console.log(err))
-    }
+    },
+
+    GET_PART_CAREER_LIST(context, comSeq){
+      axios.get(`${SERVER_URL}/recruit/partAndCareerList/` + comSeq)
+        .then(res => {
+          context.commit("GET_PART_CAREER_LIST", res.data)
+          // console.log(res.data)
+          // console.log(res.data.length)
+        })
+        .catch(err => console.log(err))
+    },
 
 
   },

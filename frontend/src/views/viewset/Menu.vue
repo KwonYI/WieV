@@ -115,6 +115,10 @@
       this.$store.dispatch("GET_VIEWER_LIST", this.getUserComSeq)
       this.$store.dispatch("GET_VIEWEE_LIST", this.getUserComSeq)
       this.$store.dispatch("GET_PROGRESS_LIST", this.getUserComSeq)
+
+      this.$store
+        .dispatch("GET_PART_CAREER_LIST", this.$store.state.user.userComSeq)
+        .then(() => {})
     },
 
     computed: {
