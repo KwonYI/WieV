@@ -43,8 +43,7 @@
           <!-- <v-col cols="3" v-if="JSON.parse(sub.stream.connection.data.split('%/%')[0])['type'] === 'manager' "> -->
           <v-col cols="3" v-if="JSON.parse(sub.stream.connection.data.split('%/%')[0])['type'] !== 'viewee' ">
              <user-video 
-             :stream-manager="sub" 
-             @click.native="updateMainVideoStreamManager(sub)"/>
+             :stream-manager="sub" />
           </v-col>
           <v-col class="d-flex justify-end" cols="6" v-else>
              <user-video 
@@ -275,7 +274,7 @@ export default {
             console.log(apply["apply-Resume3"])
             console.log(apply["apply-Resume4"])
           }
-          }
+        }
       }
       else {
         console.log("지원자가 아닙니다.")
