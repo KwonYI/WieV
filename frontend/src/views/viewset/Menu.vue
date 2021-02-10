@@ -126,16 +126,13 @@
       this.$store.dispatch("GET_VIEWER_LIST", this.getUserComSeq)
       this.$store.dispatch("GET_VIEWEE_LIST", this.getUserComSeq)
       this.$store.dispatch("GET_PROGRESS_LIST", this.getUserComSeq)
-<<<<<<< HEAD
 
       this.$store
         .dispatch("GET_PART_CAREER_LIST", this.$store.state.user.userComSeq)
         .then(() => {})
-=======
       console.log("created__index", this.$store.state.selectedRecruitIndex)
       this.recruitIndex = this.$store.state.selectedRecruitIndex
       // this.recruitItem = this.$store.state.storeRecruitItem
->>>>>>> 58455b6bc1a04cab905eb21ed67ffbcbd340fdc2
     },
 
     computed: {
