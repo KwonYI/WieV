@@ -89,9 +89,6 @@
                 />
               </span>
             </v-col>
-
-
-
             <!-- 면접관 -->
             <!-- <v-col cols="4" class="d-flex flex-column justify-center align-center">
               <span v-for="sub in subscribers" :key="sub.stream.connection.connectionId">
@@ -265,10 +262,10 @@ export default {
       // shareMsg: "공유 Off",
 
       // From SessionController
+      sessionName: undefined, // 대기방 세션
       token: undefined,
       userName: "",
       type: undefined, // 대기실 관리자(manager) / 면접관(viewer) / 면접자(viewee)
-      sessionName: undefined, // 대기방 세션
 
       // From Main.vue
       comName: undefined,
@@ -341,10 +338,21 @@ export default {
     })
 
     this.session.on("streamDestroyed", ({ stream }) => {
-      const index = this.subscribers.indexOf(stream.streamManager, 0)
-      if (index >= 0) {
-        this.subscribers.splice(index, 1)
+      if(this.type == 'viewee'){
+        const index = this.viewees.indexOf(stream.streamManager, 0);
+        if (index >= 0) {
+          this.viewees.splice(index, 1);
+        }
+      }else{
+        const index = this.viewers.indexOf(stream.streamManager, 0);
+        if (index >= 0) {
+          this.viewers.splice(index, 1);
+        }
       }
+      // const index = this.subscribers.indexOf(stream.streamManager, 0)
+      // if (index >= 0) {
+      //   this.subscribers.splice(index, 1)
+      // }
     })
 
     this.session.on("signal:my-chat", (event) => {
@@ -409,20 +417,23 @@ export default {
           token: this.token,
         },
       })
-        .then(res => {
-          console.log(res)
+        .then(() => {
           if (this.session) {
             this.session.disconnect()
-            this.session = undefined
-            this.mainStreamManager = undefined
-            this.publisher = undefined
-            this.subscribers = []
-            this.OV = undefined
           }
+
+          this.session = undefined
+          this.mainStreamManager = undefined
+          this.publisher = undefined
+          this.subscribers = []
+          this.OV = undefined
 
           window.close()
         })
-        .catch(err => console.log(err))
+        .catch((err) => {
+          console.log(err);
+          alert("방 나가기 실패!");
+        });
     },
 
     updateMainVideoStreamManager(stream) {
@@ -466,8 +477,6 @@ export default {
     },
 
     goInterview(){
-      console.log(this.userName)
-      console.log(this.interviewSession)
       axios.get(`${SERVER_URL}/session/join`, {
         params: {
           applicantName: this.userName,

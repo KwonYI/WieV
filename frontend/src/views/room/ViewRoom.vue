@@ -39,13 +39,12 @@
       <!-- row2 : 관리자, 지원자, FAQ 잡동사니 row-->
       <v-row>
         <!-- row2[왼쪽] : 관리자 리스트-->
-        <div v-for="(sub) in subscribers" :key="sub.stream.connection.connectionId">
-          <!-- <v-col cols="3" v-if="JSON.parse(sub.stream.connection.data.split('%/%')[0])['type'] === 'manager' "> -->
-          <v-col cols="3" v-if="JSON.parse(sub.stream.connection.data.split('%/%')[0])['type'] !== 'viewee' ">
+        <div>
+          <v-col cols="3" v-for="sub in viewers" :key="sub.stream.connection.connectionId">
              <user-video 
              :stream-manager="sub" />
           </v-col>
-          <v-col class="d-flex justify-end" cols="6" v-else>
+          <v-col class="d-flex justify-end" cols="6" v-for="sub in viewees" :key="sub.stream.connection.connectionId">
              <user-video 
              :stream-manager="sub" 
              @click.native="updateMainVideoStreamManager(sub)"/>
@@ -98,6 +97,10 @@ export default {
       publisher: undefined, // 연결 객체
       subscribers: [],
 
+      // 면접관, 지원자들만 담아두는 리스트
+      viewers : [],
+      viewees : [],
+
       // 채팅
       text: "",
       messages: [],
@@ -114,48 +117,50 @@ export default {
       sessionName: undefined,
       token: undefined,
       userName: "",
-      type: undefined, // 대기실 관리자(manager) / 면접관(interviewer) / 면접자(interviewee)
+      type: undefined, // 대기실 관리자(manager) / 면접관(viewer) / 면접자(viewee)
 
       // From Main.vue
       comName: undefined,
       re_year: undefined,
       re_flag: undefined,
       re_status: undefined,
+      userSeq : undefined,
       
       //지원자 리스트
       applicantList:[],
-      userSeq : undefined,
     };
   },
   created: function () {
     window.addEventListener("beforeunload", this.leaveSession);
     window.addEventListener("backbutton", this.leaveSession);
 
-    this.comName = this.$route.query.comName;
-    this.re_year = this.$route.query.re_year;
-    this.re_flag = this.$route.query.re_flag;
-    this.re_status = this.$route.query.re_status;
-    this.sessionName = this.$route.query.sessionName;
-    this.token = this.$route.query.token;
-    this.userName = this.$route.query.userName;
-    this.type = this.$route.query.type;
-    this.userSeq = this.$route.query.userSeq;
+    let user_data = ['comName', 're_year', 're_flag', 're_status', 'sessionName', 'token', 'userName', 'type', 'userSeq']
+
+    for (const data of user_data) {
+      this[data] = this.$route.query[data]
+    }
+
+    // this.comName = this.$route.query.comName;
+    // this.re_year = this.$route.query.re_year;
+    // this.re_flag = this.$route.query.re_flag;
+    // this.re_status = this.$route.query.re_status;
+    // this.sessionName = this.$route.query.sessionName;
+    // this.token = this.$route.query.token;
+    // this.userName = this.$route.query.userName;
+    // this.type = this.$route.query.type;
+    // this.userSeq = this.$route.query.userSeq;
 
     //면접방에 해당하는 지원자 갖고오기
-     axios.get(`${SERVER_URL}/applicant/getListBySessionName/` +this.sessionName)
-        .then(res => {
-          this.applicantList=res.data
-          console.log(this.applicantList)
-        })
-        .catch((err) => {
-            console.log(err)
-            alert("세션 이름에 따른 지원자 갖고오기 실패")
-          })
-
-    // this.session.on("streamCreated", ({ stream }) => {
-    //   const subscriber = this.session.subscribe(stream);
-    //   this.subscribers.push(subscriber);
-    // });
+    axios
+    .get(`${SERVER_URL}/applicant/getListBySessionName/` + this.sessionName)
+    .then(res => {
+      this.applicantList=res.data
+      console.log("지원자 정보를 출력중(ViewRoom)", this.applicantList)
+    })
+    .catch((err) => {
+        console.log(err)
+        alert("세션 이름에 따른 지원자 갖고오기 실패")
+      })
   },
   beforeDestroy() {
     window.removeEventListener("beforeunload", this.leaveSession);
@@ -168,14 +173,34 @@ export default {
 
     this.session.on("streamCreated", ({ stream }) => {
       const subscriber = this.session.subscribe(stream);
-      this.subscribers.push(subscriber);
+
+      let info = JSON.parse(subscriber.stream.connection.data.split('%/%')[0])
+
+      if(info['type'] === 'viewee'){
+        this.viewees.push(subscriber)
+      }else{
+        this.viewers.push(subscriber)
+      }
+
+      // this.subscribers.push(subscriber);
     });
 
     this.session.on("streamDestroyed", ({ stream }) => {
-      const index = this.subscribers.indexOf(stream.streamManager, 0);
-      if (index >= 0) {
-        this.subscribers.splice(index, 1);
+      if(this.type == 'viewee'){
+        const index = this.viewees.indexOf(stream.streamManager, 0);
+        if (index >= 0) {
+          this.viewees.splice(index, 1);
+        }
+      }else{
+        const index = this.viewers.indexOf(stream.streamManager, 0);
+        if (index >= 0) {
+          this.viewers.splice(index, 1);
+        }
       }
+      // const index = this.subscribers.indexOf(stream.streamManager, 0);
+      // if (index >= 0) {
+      //   this.subscribers.splice(index, 1);
+      // }
     });
 
     this.session.on("signal:my-chat", (event) => {
@@ -204,15 +229,23 @@ export default {
         this.publisher = publisher;
 
         this.session.publish(this.publisher);
-        this.subscribers.push(this.publisher);
+
+        let info = JSON.parse(this.publisher.stream.connection.data.split('%/%')[0])
+        console.log("내 이름은 ", info['name'], " 이고", info['type'], "야")
+
+        if(this.type === 'viewee'){
+          this.viewees.push(this.publisher)
+          this.viewee_list.push(info['name'])
+        }else{
+          this.viewers.push(this.publisher)
+        }
+        // this.subscribers.push(this.publisher);
       })
       .catch((error) => {
         console.log(
-          "There was an error connecting to the session:",
-          error.code,
-          error.message
-        );
+          "There was an error connecting to the session:", error.code, error.message);
       });
+
     window.addEventListener("beforeunload", this.leaveSession);
   },
 
@@ -220,16 +253,9 @@ export default {
     sendMessage() {
       if (this.text === "") return;
 
-      this.session
-        .signal({
-          data: this.text,
-          to: [],
-          type: "my-chat",
-        })
-        .then(() => {})
-        .catch((error) => {
-          console.error(error);
-        });
+      this.session.signal({ data: this.text, to: [], type: "my-chat", })
+        .then()
+        .catch((error) => console.error(error));
 
       this.text = "";
     },
@@ -242,9 +268,11 @@ export default {
             token: this.token,
           },
         })
-        .then((res) => {
-          console.log(res);
-          if (this.session) this.session.disconnect();
+        .then(() => {
+          if (this.session) {
+            this.session.disconnect();
+          }
+
           this.session = undefined;
           this.mainStreamManager = undefined;
           this.publisher = undefined;
@@ -255,7 +283,7 @@ export default {
         })
         .catch((err) => {
           console.log(err);
-          console.log("방 나가기 실패!");
+          alert("방 나가기 실패!");
         });
     },
 
