@@ -43,6 +43,7 @@
                     {{ interview.interviewType }} 면접
                   </div>
                   <v-btn
+                    v-if="user.userViewWait === 0"
                     color="blue lighten-3 yellow--text"
                     :disabled="inWait === true"
                     @click="goWaitSession"
@@ -69,7 +70,6 @@
 
 <script>
 import axios from "axios";
-import { mapGetters, mapMutations } from "vuex";
 
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 
@@ -85,20 +85,14 @@ export default {
   },
   data: function () {
     return {
-      // checkInWait: {
-      //   token: "",
-      //   isIn: false,
-      // },
-      // checkInInterview: {
-      //   token: "",
-      //   isIn: false,
-      // },
       inWait: false,
       inInterview: false,
     };
   },
+  created() {
+    console.log(this.user)
+  },
   methods: {
-    ...mapMutations(["addCheckIn", "clearCheckIn", "deleteCheckIn"]),
     goWaitSession() {
       axios.get(`${SERVER_URL}/session/create`, {
           params: {
@@ -120,13 +114,13 @@ export default {
                 re_year: this.interview.recruitYear,
                 re_flag: this.interview.recruitFlag,
                 re_status: this.interview.recruitStatus,
-                sessionName: res.data.sessionName,
                 token: res.data.token,
                 userName: res.data.interviewerName,
                 type: res.data.type,
+                sessionName: res.data.sessionName,
+                interviewSession : this.interview.interviewSessionName,
               },
             })
-            // this.inWait = true;
             window.open(routeData.href, "_blank")
           })
           .catch(err => {
@@ -138,7 +132,6 @@ export default {
         })
     },
 
-    // 라우터 이름 변경 필요
     goInterviewSession() {
       axios.get(`${SERVER_URL}/session/create`, {
           params: {
@@ -149,10 +142,22 @@ export default {
         })
           .then(res => {
             console.log(res);
-            this.$router.push({
-              name: "WaitRoom",
-              params: { interview: this.interview, interviewer: res.data },
+            let routeData = this.$router.resolve({
+              name: "ViewRoom",
+              query: {
+                comName: this.interview.comName,
+                re_year: this.interview.recruitYear,
+                re_flag: this.interview.recruitFlag,
+                re_status: this.interview.recruitStatus,
+                userName: res.data.interviewerName,
+                type: res.data.type,
+                token: res.data.token,
+                sessionName: res.data.sessionName,
+                userSeq : this.user.userSeq
+              },
             })
+            // this.inInterview = true;
+            window.open(routeData.href, "_blank")
           })
           .catch(err => {
             if (this.user.userViewWait == 0) {
@@ -164,7 +169,6 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["getCheckIn"]),
   },
 }
 </script>

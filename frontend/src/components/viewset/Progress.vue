@@ -1,46 +1,127 @@
 <template>
   <div id="progress">
     현재 채용공고 번호 : {{ recruitItem.reSeq }}
-    <v-simple-table fixed-header class="mt-5" >
-      <thead>
-        <tr>
-          <th class="text-center">날짜</th>
-          <th class="text-center">시작시간</th>
-          <th class="text-center">직무</th>
-          <th class="text-center">면접유형</th>
-          <th class="text-center">지원자</th>
-          <th class="text-center">대기관</th>
-          <th class="text-center">면접관</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(group, index) in getProgressListCurrentRecruit" :key="index" class="text-center">
-          <td><p class="d-inline p-1">{{ group.groupDate }}</p></td>
-          <td><p class="d-inline p-1">{{ group.groupStartTime }}:00</p></td>
-          <td><p class="d-inline p-1">{{ group.groupCareerName }}</p></td>
-          <td><p v-for="(item, index) in group.interviewTypeList" :key="index" class="d-inline p-1" >{{ item }}</p></td>
-          <td><p v-for="(item, index) in group.groupApplicantList" :key="index" class="d-inline p-1">{{ item }}</p></td>
-          <td><p v-for="(item, index) in group.waitInterviewerList" :key="index" class="d-inline p-1">{{ item.interviewerName }}</p></td>
-          <td><p v-for="(item, index) in group.interviewerList" :key="index" class="d-inline p-1"> {{ item.interviewerName }}</p></td>
+
+
+    <div class="d-flex justify-end">
+     
+
+      <v-btn class="m-2" v-on:click="applicantSendMail()"><v-icon left>mdi-email-send-outline</v-icon>지원자 안내메일 전송</v-btn>
+      <v-btn class="m-2" v-on:click="interviewerSendMail()"><v-icon left>mdi-email-send-outline</v-icon>면접관 안내메일 전송</v-btn>
+      <v-btn class="m-2" v-on:click="deleteGroupAll()"><v-icon left>mdi-trash-can-outline</v-icon>면접일정 초기화</v-btn>
+    </div>
+
+
+    <hr>
+    <!-- 스케줄 테이블 -->
+
+    <v-data-table :headers="schGroupTable.headers" :items="getProgressListCurrentRecruit"
+      :expanded.sync="schGroupTable.expanded" single-expand item-key="groupSeq"
+      @click:row="(item, slot) => slot.expand(!slot.isExpanded)">
+      <!-- 스케줄 row -->
+      <template v-slot:item="{ item, expand, isExpanded }">
+        
+        <tr @click="expand(!isExpanded)">
+          <td>{{ item.groupSeq }}</td>
+          <td>{{ item.groupDate }}</td>
+          <td>{{ item.groupStartTime }}:00</td>
+          <td>{{ item.groupCareerName }}</td>
           <td>
-            <v-checkbox color="indigo"></v-checkbox>
+            <span v-for="(view, i) in item.interviewTypeList" :key="i">{{ view }} </span>
+          </td>
+          <td>
+            <span v-for="(viewee, i) in (item.groupApplicantList)" :key="i">{{ viewee }} </span>
+          </td>
+          <td>
+            <span v-for="(guide, i) in (item.waitInterviewerList)" :key="i">{{ guide.interviewerName }} </span>
+          </td>
+          <td>
+            <span v-for="(viewer, i) in (item.interviewerList)" :key="i">{{ viewer.interviewerName }} </span>
           </td>
         </tr>
 
-      </tbody>
-    </v-simple-table>
-    <div class="d-flex justify-end">
-      <v-btn class="m-2" v-on:click="applicantSendMail()">지원자 안내메일 전송</v-btn>
-      <v-btn class="m-2" v-on:click="interviewerSendMail()">면접관 안내메일 전송</v-btn>
-      <v-btn class="m-2" v-on:click="deleteGroupAll()">면접일정 전체삭제</v-btn>
-    </div>
+      </template>
+        
+
+      
+
+
+
+      <!-- 세부그룹 확장 패널 -->
+      <template v-slot:expanded-item="{ headers, item: groupItem }" id="detailTable" >
+        <td :colspan="headers.length" class="pa-0">
+          <!-- 세부그룹 테이블 -->
+          <v-data-table :headers="schGroupTable.headers" :items="groupItem.groupDetailList" item-key="schSmallGroupNo"
+            hide-default-footer style="background-color:aliceblue;" >
+
+            <template v-slot:body="{ items }">
+              <tbody >
+              <!-- <tbody background-color="blue-grey lighten-4"> -->
+                <tr v-for="(item, i) in items" :key="i" style="background-color:ivory;" >
+                  <td>{{ item.groupDetailSeq }}</td>
+                  <td>{{ groupItem.groupDate }}</td>
+                  <td>{{ groupItem.groupStartTime }}:00</td>
+                  <td>{{ groupItem.groupCareerName }}</td>
+                  <td>
+                    <span v-for="(view, i) in item.detailOrder" :key="i">{{i+1}}.{{ view }} </span>
+                  </td>
+                  <td>
+                    <span v-for="(viewee, i) in (item.groupDetailApplicant)" :key="i">{{ viewee }}
+                    </span>
+                  </td>
+                  <td>
+                    <span v-for="(guide, i) in (groupItem.waitInterviewerList)"
+                      :key="i">[{{guide.interviewType}}]{{ guide.interviewerName }},
+                    </span>
+                  </td>
+                  <td>
+                    <span v-for="(viewer, i) in (groupItem.interviewerList)"
+                      :key="i">[{{viewer.interviewType}}]{{ viewer.interviewerName }},
+                    </span>
+                  </td>
+                  
+                </tr>
+                <tr>
+                  <td v-for="(item, i) in 8" :key="i"><hr></td>
+                </tr>
+                
+              </tbody>
+              
+              
+            </template>
+            
+
+          </v-data-table>
+        </td>
+
+
+      </template>
+
+      
+
+
+    </v-data-table>
+    
+
+
+
+
+
+
+
+
+
   </div>
 </template>
 
 <script>
-  import { mapState, mapGetters } from "vuex"
-  const SERVER_URL ="https://localhost:8080"
+  import {
+    mapState,
+    mapGetters
+  } from "vuex"
+  const SERVER_URL = "https://localhost:8080"
   import axios from "axios"
+  import _ from "lodash"
 
   export default {
     name: "Progress",
@@ -49,78 +130,147 @@
     },
     data: function () {
       return {
+        schGroupTable: {
+          expanded: [],
+          headers: [{
+              text: 'No.',
+              align: 'center',
+              sortable: false,
+              value: 'schGroupNo',
+              width: '1%'
+            },
+            {
+              text: '날짜',
+              align: 'center',
+              value: 'schGroupDate',
+              width: '5%'
+            },
+            {
+              text: '시간',
+              align: 'center',
+              value: 'schGroupTime',
+              width: '5%'
+            },
+            {
+              text: '직무',
+              align: 'center',
+              value: 'schGroupCareer',
+              width: '5%'
+            },
+            {
+              text: '면접 유형',
+              align: 'center',
+              value: 'schGroupInterview',
+              width: '10%'
+            },
+            {
+              text: '지원자',
+              align: 'center',
+              value: 'schGroupViewee',
+              width: '20%'
+            },
+            {
+              text: '대기실',
+              align: 'center',
+              value: 'schGroupGuide',
+              width: '10%'
+            },
+            {
+              text: '면접실',
+              align: 'center',
+              value: 'schGroupViewer',
+              width: '15%'
+            },
+          ],
+
+        },
+
 
       }
     },
     created: function () {
       console.log("getProgressListCurrentRecruit", this.getProgressListCurrentRecruit)
-      
+
     },
-    methods:{
-    applicantSendMail: function() {
-      console.log(this.recruitItem.reSeq)
-        axios.post(`${SERVER_URL}/applicant/send/`+this.recruitItem.reSeq)
+    methods: {
+      applicantSendMail: function () {
+        console.log(this.recruitItem.reSeq)
+        axios.post(`${SERVER_URL}/applicant/send/` + this.recruitItem.reSeq)
           .then(res => {
             console.log(res)
             alert("지원자 메일 전송 성공")
-            this.$router.push({ name: "Home" })
+            this.$router.push({
+              name: "Home"
+            })
           })
           .catch((err) => {
             console.log(err)
             alert("지원자 메일 전송 실패")
           })
-    },
-    interviewerSendMail: function() {
-      console.log(this.recruitItem.reSeq)
-        axios.post(`${SERVER_URL}/interviewer/send/`+this.recruitItem.reSeq)
+      },
+      interviewerSendMail: function () {
+        console.log(this.recruitItem.reSeq)
+        axios.post(`${SERVER_URL}/interviewer/send/` + this.recruitItem.reSeq)
           .then(res => {
             console.log(res)
             alert("면접관 메일 전송 성공")
-            this.$router.push({ name: "Home" })
+            this.$router.push({
+              name: "Home"
+            })
           })
           .catch((err) => {
             console.log(err)
             alert("면접관 메일 전송 실패")
           })
-    },
-      deleteGroupAll: function() {
-      if(confirm('모든 면접 일정을 삭제하시겠습니까?')==true){
-        console.log("삭제됌")
-            axios.delete(`${SERVER_URL}/groupAll/delete/` + this.recruitItem.reSeq)
+      },
+      deleteGroupAll: function () {
+        if (confirm('모든 면접 일정을 삭제하시겠습니까?') == true) {
+          console.log("삭제됨")
+          axios.delete(`${SERVER_URL}/groupAll/delete/` + this.recruitItem.reSeq)
             .then(() => {
-               alert("면접 일정 전체 삭제 완료") 
+              alert(
+                `[${this.recruitItem.reYear}년도 ${this.recruitItem.reFlag} ${this.recruitItem.reStatus}]공고의 면접 일정이 모두 삭제되었습니다.`
+                )
+              this.$store.dispatch("GET_PROGRESS_LIST", this.getUserComSeq)
+              this.$store.dispatch("GET_VIEWER_LIST", this.getUserComSeq) //assigned 상태를 refresh해주기 위한 작업
+              this.$store.dispatch("GET_VIEWEE_LIST", this.getUserComSeq) //assigned 상태를 refresh해주기 위한 작업
             })
             .catch(() => {
               alert("삭제할 면접 일정이 없습니다.")
-            })   
-      }
-      // .then(result => {
-      // console.log(result)
-      // })
-      // .catch((err) => {
-      //      console.log(err)
-      //        alert("면접관 메일 전송 실패")
-      //      })
-        // axios.post(`${SERVER_URL}/interviewer/send/`+this.recruitItem.reSeq)
-        //   .then(res => {
-        //     console.log(res)
-        //     alert("면접관 메일 전송 성공")
-        //     this.$router.push({ name: "Home" })
-        //   })
-        //   .catch((err) => {
-        //     console.log(err)
-        //     alert("면접관 메일 전송 실패")
-        //   })
-    },
+            })
+        }
+      },
+
+
+
+      clicked: function (value) {
+        this.schGroupTable.expanded.push(value)
+      },
+
+
 
 
     },
     computed: {
       ...mapState(["recruitList", "recruitProgressList", "selectedRecruitNo"]),
-      ...mapGetters(["getProgressListCurrentRecruit"]),
-      // filterdProgressList: function () {
-      //   return this.recruitProgressList.filter(re => re.reSeq === this.recruitNo)
-      // }
+      ...mapGetters(["getProgressListCurrentRecruit", "getUserComSeq"]),
+
+      slicedViewee() {
+        return (Viewee) => {
+          return _.slice(Viewee, 0, 5)
+        }
+      },
+      slicedGuide() {
+        return (Guide) => {
+          return _.slice(Guide, 0, 2)
+        }
+      },
+      slicedViewer() {
+        return (Viewer) => {
+          return _.slice(Viewer, 0, 3)
+        }
+      }
+
     },
   }
 </script>

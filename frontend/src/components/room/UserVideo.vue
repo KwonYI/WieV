@@ -1,10 +1,10 @@
 <template>
   <div v-if="streamManager" :video-type = "clientData.type">
     <ov-video :stream-manager="streamManager" />
-    <div>
+    <!-- <div>
       <p>{{ clientData.name }}</p>
       <p>{{ clientData.type }}</p>
-    </div>
+    </div> -->
   </div>
 </template>
 

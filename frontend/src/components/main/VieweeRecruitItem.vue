@@ -69,9 +69,17 @@
                   </div> -->
                   <v-btn
                     color="blue lighten-3 yellow--text"
-                    @click="goSession(interview.waitSessionName)"
+                    @click="goSession(interview.waitSessionName, interview.interviewSessionName)"
                   >
                     대기실 입장
+                  </v-btn>
+
+                  <!-- v-btn 지울 예정 -->
+                  <v-btn
+                    color="blue lighten-3 yellow--text"
+                    @click="goInterviewSession(interview.interviewSessionName)"
+                  >
+                    면접실 입장
                   </v-btn>
                   <!-- <div class="text--primary">
                     {{ group.check_terminate }}
@@ -119,15 +127,14 @@ export default {
       applicantName: "",
     };
   },
-  created: function () {},
+  created: function () {  },
   methods: {
-    goSession(session) {
-      console.log(this.intervieweeData.user.applyName);
+    goSession(waitSession, interviewSession) {
       axios
         .get(`${SERVER_URL}/session/join`, {
           params: {
             applicantName: this.intervieweeData.user.applyName,
-            sessionName: session,
+            sessionName: waitSession,
           },
         })
         .then((res) => {
@@ -143,10 +150,11 @@ export default {
               re_year: this.intervieweeData.recruit.reYear,
               re_flag: this.intervieweeData.recruit.reFlag,
               re_status: this.intervieweeData.recruit.reStatus,
-              sessionName: res.data.sessionName,
               token: res.data.token,
               userName: res.data.applicantName,
               type: res.data.type,
+              sessionName: waitSession,
+              interviewSession : interviewSession,
             },
           });
           window.open(routeData.href, "_blank");
@@ -155,6 +163,42 @@ export default {
           console.log(err);
           alert("방이 아직 개설되지 않았습니다.");
         });
+    },
+
+    // 테스트용,지울예정
+    goInterviewSession(session) {
+      axios.get(`${SERVER_URL}/session/join`, {
+          params: {
+            applicantName: this.intervieweeData.user.applyName,
+            sessionName: session,
+          },
+        })
+          .then(res => {
+            console.log(res);
+            let routeData = this.$router.resolve({
+              name: "ViewRoom",
+              query: {
+                comName: this.intervieweeData.company.comName,
+                re_year: this.intervieweeData.recruit.reYear,
+                re_flag: this.intervieweeData.recruit.reFlag,
+                re_status: this.intervieweeData.recruit.reStatus,
+                userName: res.data.applicantName,
+                type: res.data.type,
+                token: res.data.token,
+                sessionName: session,
+                userSeq : this.intervieweeData.user.applySeq
+              },
+            })
+            // this.inInterview = true;
+            window.open(routeData.href, "_blank")
+          })
+          .catch(err => {
+            if (this.user.userViewWait == 0) {
+              console.log(err)
+            } else {
+              alert("방이 아직 개설되지 않았습니다.")
+            }
+          })
     },
   },
 };

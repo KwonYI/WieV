@@ -3,11 +3,16 @@
     <v-container>
       <v-row>
         <div>
-          <v-card class="mx-auto mt-10 rounded-b-lg d-flex justify-space-between align-center">
+          <v-card class="mx-auto mt-5 rounded-b-lg d-flex justify-space-between align-center">
+              <div class="d-flex">
+                <v-icon large color="blue-grey darken-3" class="ml-5">mdi-calendar-multiple</v-icon>
             <v-card-title>
               [ {{recruitItem.reYear}}년도 {{recruitItem.reFlag}} {{recruitItem.reStatus}} ] 공고 현황
             </v-card-title>
-            <v-btn class="mr-5" @click="deleteRecruit(recruitItem.reSeq)">공고 삭제</v-btn>
+
+              </div>
+
+            <v-btn rounded class="mr-5" color="red lighten-1" outlined @click="deleteRecruit(recruitItem.reSeq)"><v-icon left>mdi-trash-can</v-icon>공고 삭제</v-btn>
             <!-- <v-card-subtitle></v-card-subtitle> -->
           </v-card>
         </div>
@@ -16,13 +21,13 @@
             <v-subheader>
               채용공고 리스트
             </v-subheader>
-            <v-list-item-group v-model="recruitNo" color="#FFF1C3">
+            <v-list-item-group v-model="recruitIndex" color="#FFF1C3">
               <v-list-item
                 v-for="(item, i) in getRecruitListLately"
                 :key="i"
               :disabled="item.reSeq == $store.state.selectedRecruitNo ? true:false"
                 
-                @click="selectRecruit(item)"
+                @click="selectRecruit(item, i)"
               >
                 <v-list-item-content>
                   <v-list-item-title>
@@ -61,9 +66,11 @@
     data: function () {
       return {
         // recruitIndex: this.$route.params.recruitIndex,
+        recruitIndex: '',
         // recruitItem: this.$route.params.recruitItem,
-        recruitNo: this.$route.params.recruitIndex,
-        // recruitNo: this.$stroe.state.selectedRecruitNo,
+        // recruitNo: this.$route.params.recruitIndex,
+        // recruitNo: this.$store.state.selectedRecruitIndex,
+        // recruitNo: this.$store.state.selectedRecruitNo,
         recruitItem: this.$store.state.storeRecruitItem,
 
       }
@@ -71,14 +78,17 @@
 
     methods: {
       // 선택한 공고 정보
-      selectRecruit: function (selectedItem) {
+      selectRecruit: function (selectedItem, i) {
         console.log("selectRecruit클릭!", selectedItem)
         this.$store.state.selectedRecruitNo = selectedItem.reSeq
         this.$store.state.storeRecruitItem = selectedItem
-        this.recruitNo = this.$store.state.selectedRecruitNo
+        this.$store.state.selectedRecruitIndex = i
+        this.recruitIndex = this.$store.state.selectedRecruitNo
+        // this.recruitNo = this.$store.state.selectedRecruitIndex
         this.recruitItem = this.$store.state.storeRecruitItem
         console.log("menu 왼쪽 리스트에서 선택한 아이템:", this.$store.state.storeRecruitItem)
         console.log("menu 왼쪽 리스트에서 선택한 번호:", this.recruitNo)
+        console.log("menu에서 index", this.$store.state.selectedRecruitIndex)
         
         // this.$router.push({
         //   name: 'Progress',
@@ -102,7 +112,8 @@
               .then(() => {
                 console.log("deleteRecruit")
                 this.$store.state.selectedRecruitNo = -1;
-                // this.$store.state.selectedRecruitNo = this.$store.state.recruitList[this.$store.state.recruitList.length - 1].reSeq;
+                // this.$store.state.selectedRecruitNo = this.$store.state.recruitList[this.$store.state.recruitList.length - 1].reSeq
+                this.$store.state.selectedRecruitIndex = null
                 this.$router.push({ name: "Menu" })
                 })
         }
@@ -115,10 +126,16 @@
       this.$store.dispatch("GET_VIEWER_LIST", this.getUserComSeq)
       this.$store.dispatch("GET_VIEWEE_LIST", this.getUserComSeq)
       this.$store.dispatch("GET_PROGRESS_LIST", this.getUserComSeq)
+<<<<<<< HEAD
 
       this.$store
         .dispatch("GET_PART_CAREER_LIST", this.$store.state.user.userComSeq)
         .then(() => {})
+=======
+      console.log("created__index", this.$store.state.selectedRecruitIndex)
+      this.recruitIndex = this.$store.state.selectedRecruitIndex
+      // this.recruitItem = this.$store.state.storeRecruitItem
+>>>>>>> 58455b6bc1a04cab905eb21ed67ffbcbd340fdc2
     },
 
     computed: {

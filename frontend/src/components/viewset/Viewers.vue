@@ -1,7 +1,7 @@
 <template>
   <div id="viewers">
     현재 채용공고 번호 : {{ recruitItem.reSeq }}
-    <v-toolbar dark color="brown lighten-2 font-weight-bold black--text">
+    <v-toolbar dark color="brown lighten-1 font-weight-bold black--text">
     <!-- <v-toolbar dark color="brown darken-1 black--text"> -->
       <v-toolbar-title></v-toolbar-title>
      
@@ -26,6 +26,7 @@
           <th class="text-center">연락처</th>
           <th class="text-center">비밀번호</th>
           <th class="text-center">관리</th>
+          <th class="text-center">상태</th>
         </tr>
       </thead>
       <tbody>
@@ -35,6 +36,8 @@
           <td>{{ viewer.viewEmail }}</td>
           <td>{{ viewer.viewPhone }}</td>
           <td>{{ viewer.viewPassword }}</td>
+          <td v-if="viewer.viewAssigned === 1" class="blue--text">배정완료</td>
+            <td v-else class="red--text">미배정</td>
           <td>
             <v-btn>삭제</v-btn>
           </td>
@@ -42,7 +45,7 @@
       </tbody>
     </v-simple-table>
     <div class="d-flex justify-end">
-      <v-btn class="m-2" v-on:click="deleteAllInterviewer()">면접관 전체삭제</v-btn>
+      <v-btn class="m-2" v-on:click="deleteAllInterviewer">면접관 전체삭제</v-btn>
     </div>
   </div>
 </template>
@@ -128,6 +131,7 @@ const SERVER_URL = process.env.VUE_APP_SERVER_URL
             axios.delete(`${SERVER_URL}/interviewer/delete/` + this.user.userComSeq)
             .then(() => {
               alert("면접관 전체 삭제 완료")
+              this.$store.dispatch("GET_VIEWER_LIST", this.getUserComSeq)
             })
             .catch((err) => {
               console.log(err)
@@ -138,7 +142,7 @@ const SERVER_URL = process.env.VUE_APP_SERVER_URL
     },
     computed: {
       ...mapState(["selectedRecruitNo", "recruitList", "comViewerList", "user"]),
-      ...mapGetters(["getComViewerList"])
+      ...mapGetters(["getComViewerList", "getUserComSeq"])
 
     },
   }
