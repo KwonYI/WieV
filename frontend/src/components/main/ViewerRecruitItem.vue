@@ -71,6 +71,9 @@
 import axios from "axios";
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 
+import Stomp from 'webstomp-client'
+import SockJS from 'sockjs-client'
+
 export default {
   name: "ViewerRecruitItem",
   props: {
@@ -89,6 +92,7 @@ export default {
   },
   created() {
     console.log("현재 유저를 보여줍니다(ViewerRecruit)", this.user)
+    this.connect()
   },
   methods: {
     goWaitSession() {
@@ -120,6 +124,7 @@ export default {
                 interviewSession : this.interview.interviewSessionName,
               },
             })
+            this.inWait = true;
             window.open(routeData.href, "_blank")
           })
           .catch(err => {
@@ -156,7 +161,7 @@ export default {
                 sessionName: res.data.sessionName,
               },
             })
-            // this.inInterview = true;
+            this.inInterview = true;
             window.open(routeData.href, "_blank")
           })
           .catch(err => {
@@ -167,6 +172,30 @@ export default {
               alert("방이 아직 개설되지 않았습니다.")
             }
           })
+    },
+
+    connect() {
+      let socket = new SockJS(SERVER_URL);
+      this.stompClient = Stomp.over(socket);
+      this.stompClient.connect(
+        {},
+        frame => {
+          // 소켓 연결 성공
+          this.connected = true;
+          console.log('소켓 연결 성공', frame);
+          this.stompClient.subscribe("/sendInWaitSession", res => {
+            this.inWait = JSON.parse(res.body)['signal']
+          });
+
+          this.stompClient.subscribe("/sendInInterviewSession", res => {
+            this.inInterview = JSON.parse(res.body)['signal']
+          });
+        },
+        error => {
+          console.log('소켓 연결 실패', error);
+          this.connected = false;
+        }
+      );        
     },
   },
   computed: {

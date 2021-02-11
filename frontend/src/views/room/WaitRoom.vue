@@ -215,7 +215,7 @@
       <input class="btn" type="button" @click="audioOnOOff" :value="audioMsg" />
       <input class="btn" type="button" @click="videoOnOOff" :value="videoMsg" />
       <input class="btn" type="button" @click="leaveSession" value="방 나가기" />
-      <input class="btn" type="button" v-if="type === 'viewee' " @click="goInterview" value="면접실 들어가기" />
+      <!-- <input class="btn" type="button" v-if="type === 'viewee' " @click="goInterview" value="면접실 들어가기" /> -->
     </v-bottom-navigation>
   </div>
 </template>
@@ -441,21 +441,31 @@ export default {
           token: this.token,
         },
       })
-        .then(() => {
-          if (this.session) {
-            this.session.disconnect()
-            this.session = undefined
-            this.mainStreamManager = undefined
-            this.publisher = undefined
-            this.subscribers = []
-            this.OV = undefined
-          }
+      .then(() => {
+        if (this.stompClient && this.stompClient.connected) {
+          const msg = {
+            name : '',
+            message : '',
+            target : [],
+            signal : false,
+          };
+          this.stompClient.send("/receiveInWaitSession", JSON.stringify(msg), {});
+        }
 
-          window.close()
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+        if (this.session) {
+          this.session.disconnect()
+          this.session = undefined
+          this.mainStreamManager = undefined
+          this.publisher = undefined
+          this.subscribers = []
+          this.OV = undefined
+        }
+
+        window.close()
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     },
 
     updateMainVideoStreamManager(stream) {
