@@ -371,11 +371,11 @@ export default {
     })
 
     this.session.on('publisherStartSpeaking', (event) => {
-      console.log('Publisher ' +  JSON.parse(event.connection.data,split('%/%')[0])['name'] + ' start speaking');
+      console.log('Publisher ' +  JSON.parse(event.connection.data.split('%/%')[0])['name'] + ' start speaking');
     });
 
     this.session.on('publisherStopSpeaking', (event) => {
-      console.log('Publisher ' + JSON.parse(event.connection.data,split('%/%')[0])['name'] + ' stop speaking');
+      console.log('Publisher ' + JSON.parse(event.connection.data.split('%/%')[0])['name'] + ' stop speaking');
     });
 
     this.session.on("signal:my-chat", (event) => {
@@ -497,14 +497,42 @@ export default {
       this.visible = true
     },
 
+    // 관리자가 지원자에게
     sendSignal() {
-      console.log("Send Signal");
       if (this.stompClient && this.stompClient.connected) {
         const msg = {
-          message : '면접실 보내기',
+          name : this.userName,
+          message : '',
           target : this.moving_viewee,
+          signal : true,
         };
-        this.stompClient.send("/receive", JSON.stringify(msg), {});
+        this.stompClient.send("/receiveViewerToViewee", JSON.stringify(msg), {});
+      }
+    },
+    
+    // 지원자가 관리자에게
+    answerSignal(flag) {
+      if (this.stompClient && this.stompClient.connected) {
+        const msg = {
+          name : this.userName,
+          message : '',
+          target : [],
+          signal : flag,
+        };
+        this.stompClient.send("/receiveVieweeToViewer", JSON.stringify(msg), {});
+      }
+    },
+
+    // 대기방과 면접방 소통
+    sendToInterview() {
+      if (this.stompClient && this.stompClient.connected) {
+        const msg = {
+          name : this.userName,
+          message : '', // this.message
+          target : [],
+          signal : true,
+        };
+        this.stompClient.send("/receiveViewerToViewer", JSON.stringify(msg), {});
       }
     },
 
@@ -517,14 +545,37 @@ export default {
           // 소켓 연결 성공
           this.connected = true;
           console.log('소켓 연결 성공', frame);
-          this.stompClient.subscribe("/send", res => {
-            let target = JSON.parse(res.body)['target']
-            target.forEach(name => {
-              if(name === this.userName){
-                alert("이동하래")
+
+          if(this.type == 'viewee'){
+            this.stompClient.subscribe("/sendViewerToViewee", res => {
+              let target = JSON.parse(res.body)['target']
+              target.forEach(name => {
+                if(name === this.userName){
+                  if(confirm("OK??") === true){
+                    this.answerSignal(true)
+                    this.goInterview();
+                  }else{
+                    console.log("No누름")
+                    this.answerSignal(false)
+                  }
+                }
+              });
+            });
+          }else{
+            this.stompClient.subscribe("/sendVieweeToViewer", res => {
+              let answer = JSON.parse(res.body)
+              if(answer['signal'] === true){
+                console.log(answer['name'], " 간다")
+              }else{
+                console.log(answer['name'], ' 안 간다')
               }
             });
-          });
+
+            this.stompClient.subscribe("/sendViewerToViewer", res => {
+              // 대기방과 면접방 소통
+              console.log(res)
+            });
+          }
         },
         error => {
           console.log('소켓 연결 실패', error);

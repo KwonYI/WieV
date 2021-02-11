@@ -9,6 +9,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class SocketVO {
 	
+	private String name;
     private String message;
     private List<String> target;
     private boolean signal;

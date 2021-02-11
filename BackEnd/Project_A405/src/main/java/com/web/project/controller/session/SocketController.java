@@ -11,30 +11,41 @@ import com.web.project.model.SocketVO;
 @Controller
 public class SocketController {
 
-	// receive로 메시지를 받는다
-	@MessageMapping("/receiveViewee")
-	// send로 메시지 반환
-	@SendTo("/sendToViewee")
-	public SocketVO sendViewee(SocketVO socketVo) {
+	@MessageMapping("/receiveViewerToViewee")
+	@SendTo("/sendViewerToViewee")
+	public SocketVO viewerToViewee(SocketVO socketVo) {
+		String name = socketVo.getName();
 		String message = socketVo.getMessage();
 		List<String> target = socketVo.getTarget();
-		boolean flag = socketVo.isSignal();
+		boolean signal = socketVo.isSignal();
 		
-		SocketVO result = new SocketVO(message, target, flag);
+		SocketVO result = new SocketVO(name, message, target, signal);
 		
 		return result;
 	}
 	
-	// receive로 메시지를 받는다
-	@MessageMapping("/receiveViewer")
-	// send로 메시지 반환
-	@SendTo("/sendToViewer")
-	public SocketVO sendviewer(SocketVO socketVo) {
+	@MessageMapping("/receiveVieweeToViewer")
+	@SendTo("/sendVieweeToViewer")
+	public SocketVO vieweeToViewer(SocketVO socketVo) {
+		String name = socketVo.getName();
 		String message = socketVo.getMessage();
 		List<String> target = socketVo.getTarget();
-		boolean flag = socketVo.isSignal();
+		boolean signal = socketVo.isSignal();
+
+		SocketVO result = new SocketVO(name, message, target, signal);
 		
-		SocketVO result = new SocketVO(message, target, flag);
+		return result;
+	}
+	
+	@MessageMapping("/receiveViewerToViewer")
+	@SendTo("/sendViewerToViewer")
+	public SocketVO viewerToViewer(SocketVO socketVo) {
+		String name = socketVo.getName();
+		String message = socketVo.getMessage();
+		List<String> target = socketVo.getTarget();
+		boolean signal = socketVo.isSignal();
+
+		SocketVO result = new SocketVO(name, message, target, signal);
 		
 		return result;
 	}
