@@ -72,8 +72,9 @@
       </v-sheet>
     </v-card>
 
-    <Introduce/>
-    <Ask/>
+<!--이거 Home에 두면 부드럽게 안내려감.. 그래서 app.vue에 넣음-->
+    <Introduce v-if="isHome"/>
+    <Ask v-if="isHome"/>
 
      <footer class="bg-dark py-4 mt-5 tf-footer">
     <div class="container text-light">
@@ -151,6 +152,7 @@
     },
     created: function () {
       this.Manager = this.$store.state.Manager
+      console.log("this.", this.$route.name)
     },
   }
 </script>
