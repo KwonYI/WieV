@@ -1,5 +1,6 @@
 <template>
-  <div id="home">
+  <div id="home" >
+    <div class="container">
     <v-row justify="center" class="pt-10" no-gutters>
       <v-col cols="8" class="main-box text-center">
         <div class="d-flex flex-column justify-center align-center text-white">
@@ -25,7 +26,7 @@
               </router-link>
             </div>
           </v-col>
-          <v-col v-else cols="5" class="login-box mt-5" @keyup.enter="login">
+          <v-col v-else cols="6" class="login-box mt-5" @keyup.enter="login">
             <v-col class="login-input mb-4">
               <v-simple-table dark style="background-color: transparent">
                 <!-- <form>
@@ -79,7 +80,17 @@
         </div>
       </v-col>
     </v-row>
+
+    </div>
+
+<!--여기서는 플랫폼소개를 보여준다. -->
+
+
+      
+
+
   </div>
+
 </template>
 
 <script>

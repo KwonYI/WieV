@@ -67,9 +67,9 @@
         </v-col>
       </v-form> 
       <v-col cols="12"></v-col>
-      <span @click="signup" class="text-white text-right ma-8 pr-16">
+      <v-btn @click="signup">
         가입하기
-      </span>
+      </v-btn>
     </v-row>
   </div>
 </template>
