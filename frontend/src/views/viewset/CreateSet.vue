@@ -147,7 +147,8 @@
         dialog: false,
         // arr : this.getProgressListCurrentRecruit,
 
-        recruitItem: this.$route.params.recruitItem,
+        // recruitItem: this.$route.params.recruitItem,
+        recruitItem: {},
 
         // 일정 생성 폼
         groupForm: [{
@@ -398,6 +399,8 @@
         const element = this.$store.state.partCareerList[i];
         this.groupForm[0].data.push(element.partName)
       }
+
+      this.recruitItem = this.$store.state.storeRecruitItem
     },
     beforeDestroy() {
       this.$store.state.partCareerList = []
