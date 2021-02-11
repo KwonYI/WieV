@@ -3,8 +3,6 @@ import VueRouter from "vue-router";
 import Home from "@/views/main/Home.vue";
 import NotFound from "@/views/main/NotFound.vue";
 import Profile from "@/views/accounts/Profile";
-import ProfileUpdate from "@/views/accounts/ProfileUpdateForm";
-import ProfileDelete from "@/views/accounts/ProfileDeleteForm";
 import Signup from "@/views/accounts/Signup";
 import Menu from "@/views/viewset/Menu";
 import CreateSet from "@/views/viewset/CreateSet";
@@ -56,19 +54,9 @@ const routes = [
     component: Signup,
   },
   {
-    path: "profile",
+    path: "/profile",
     name: "Profile",
     component: Profile,
-  },
-  {
-    path: "profileUpdateForm",
-    name: "ProfileUpdateForm",
-    component: ProfileUpdate,
-  },
-  {
-    path: "profileDeleteForm",
-    name: "ProfileDeleteForm",
-    component: ProfileDelete,
   },
   {
     path: "/menu",
