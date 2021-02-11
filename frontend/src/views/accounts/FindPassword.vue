@@ -1,33 +1,30 @@
 <template>
-  <div id="signup" class="mt-12 ml-16" @keyup.enter="signup">
-    <div class="h4">회원정보 수정</div>
+  <div id="findPassword" class="mt-12 ml-16">
+    <div class="h4">비밀번호 찾기</div>
     <!-- 정보입력 Form -->
     <v-row no-gutters>
-        <v-form
-        ref="form"
-        v-model="recFormValid"
-        lazy-validation
-        >
-      <v-col cols="5" class="mt-5 ml-16">
-        <v-simple-table class="info-table" dark>
-          <tbody>
-            <tr v-for="(item, index) in userInfo" :key="index">
-              <td>{{ item.label }}</td>
-              <td>
-                <v-text-field
-                  :label="item.label"
-                  :type="item.type"
-                  :class="item.longmsg"
-                  v-model="credentials[item.value]"
-                  :rules="item.rule"
-                ></v-text-field>
-              </td>
-            </tr>
-            <v-btn @click="findPassword">비밀번호 찾기</v-btn>
-          </tbody>
-        </v-simple-table>
-      </v-col>
-        </v-form>
+      <!-- v-model="recFormValid" -->
+      <v-form ref="form" lazy-validation>
+        <v-col cols="5" class="mt-5 ml-16">
+          <v-simple-table class="info-table" dark>
+            <tbody>
+              <tr v-for="(item, index) in userInfo" :key="index">
+                <td>{{ item.label }}</td>
+                <td>
+                  <v-text-field
+                    :label="item.label"
+                    :type="item.type"
+                    :class="item.longmsg"
+                    v-model="credentials[item.value]"
+                    :rules="item.rule"
+                  ></v-text-field>
+                </td>
+              </tr>
+              <v-btn @click="findPassword">비밀번호 찾기</v-btn>
+            </tbody>
+          </v-simple-table>
+        </v-col>
+      </v-form>
     </v-row>
   </div>
 </template>
@@ -41,7 +38,7 @@ export default {
   components: {},
   data: () => ({
     userInfo: [
-       {
+      {
         label: "이름",
         type: "text",
         value: "hrName",
@@ -50,7 +47,7 @@ export default {
         ],
         longmsg: ''
       },
-       {
+      {
         label: "이메일",
         type: "text",
         value: "hrEmail",
@@ -60,7 +57,7 @@ export default {
         ],
         longmsg: ''
       },
-       {
+      {
         label: "연락처",
         type: "text",
         value: "hrPhone",
@@ -77,33 +74,27 @@ export default {
       hrPhone: "",
     },
   }),
-  created: function () {
-
-  },
-  computed: {
- 
-  },
   methods: {
     findPassword: function() {
-        if (this.$refs.form.validate()) {
+      if (this.$refs.form.validate()) {
 
-         let signupForm = {
-            hrEmail: this.credentials.hrEmail,
-            hrName: this.credentials.hrName,
-            hrPhone: this.credentials.hrPhone
-          }
+        let signupForm = {
+          hrEmail: this.credentials.hrEmail,
+          hrName: this.credentials.hrName,
+          hrPhone: this.credentials.hrPhone
+        }
 
-          axios.post(`${SERVER_URL}/hr/findPassword`,signupForm)
-            .then(res => {
-              console.log(res)
-              alert("입력한 이메일로 새로운 비밀번호를 전송했습니다.")
-              this.$router.push({ name: "Home" })
-            })
-            .catch((err) => {
-              console.log(err)
-              alert("가입된 정보가 존재하지 않습니다.")
-            })   
-        }  
+        axios.post(`${SERVER_URL}/hr/findPassword`,signupForm)
+          .then(res => {
+            console.log(res)
+            alert("입력한 이메일로 새로운 비밀번호를 전송했습니다.")
+            this.$router.push({ name: "Home" })
+          })
+          .catch((err) => {
+            console.log(err)
+            alert("가입된 정보가 존재하지 않습니다.")
+          })   
+      }  
     },
   },
 }

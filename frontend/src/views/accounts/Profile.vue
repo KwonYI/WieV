@@ -3,7 +3,7 @@
     <v-container>
       <v-row class="h-100">
         <v-col col="6">
-          <v-card class="mx-auto my-12">
+          <v-card class="mx-auto my-12" style="height:400px">
             <v-card-title class="main-bg-navy">
               <h2 style="color:white">
                 <v-icon style="color:white" large>mdi-office-building</v-icon> 소속 회사
@@ -19,7 +19,7 @@
         </v-col>
 
         <v-col col="6">
-          <v-card class="mx-auto my-12">
+          <v-card class="mx-auto my-12" style="height:400px">
             <v-card-title class="main-bg-navy" >
               <h2 style="color:white">
                 <v-icon style="color:white" large>mdi-account-box</v-icon> 내 정보
@@ -31,7 +31,7 @@
               <h4><v-icon large>mdi-account</v-icon> 이름 : {{ user.userName }}</h4>
               <h4><v-icon large>mdi-cellphone</v-icon> 연락처 : {{ user.userPhone }}</h4>
             </v-card-text>
-            <div v-if="user.userViewWait === -1">
+            <div v-if="user.userViewWait === -1" class="d-flex justify-center">
               <v-dialog v-model="dialogUpdate" width="500">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn class="ma-3" text color="blue lighten-2" v-bind="attrs" v-on="on">
@@ -244,7 +244,12 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+#profile{
+  background-color: aliceblue;
+  height: 100%;
+}
+
 #profileRow {
   height: 30vh;
 }

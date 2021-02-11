@@ -25,57 +25,6 @@
               </router-link>
             </div>
           </v-col>
-          <v-col v-else cols="5" class="login-box mt-5" @keyup.enter="login">
-            <v-col class="login-input mb-4">
-              <v-simple-table dark style="background-color: transparent">
-                <!-- <form>
-                  <v-form-group>
-                    <label for="userEmail">이메일</label>
-                    <v-form-input id="userEmail" v-model="credentials.userEmail" required></v-form-input>
-                  </v-form-group>
-                  <v-form-group>
-                    <label for="userPassword">비밀번호</label>
-                    <v-form-input id="userPassword" v-model="credentials.userPassword" required></v-form-input>
-                  </v-form-group>
-                </form> -->
-                <tbody>
-                  <tr>
-                    <td class="pt-3">이메일</td>
-                    <td>
-                      <v-text-field
-                        label="email"
-                        v-model="credentials.userEmail"
-                        hide-details
-                      >
-                      </v-text-field>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="pt-3">비밀번호</td>
-                    <td>
-                      <v-text-field
-                        label="password"
-                        v-model="credentials.userPassword"
-                        type="password"
-                        hide-details
-                      >
-                      </v-text-field>
-                    </td>
-                  </tr>
-                </tbody>
-              </v-simple-table>
-            </v-col>
-            <div>
-              <router-link :to="{ name: 'FindPassword' }">
-                비밀번호 찾기
-              </router-link>
-            </div>
-            <v-col class="subtitle-1" @click="login"> 로그인 </v-col>
-
-            <v-col>
-              <router-link :to="{ name: 'Signup' }"> 회원가입 </router-link>
-            </v-col>
-          </v-col>
         </div>
       </v-col>
     </v-row>
@@ -93,25 +42,12 @@ export default {
     Schedule,
   },
   data: () => ({
-    credentials: {
-      userEmail: "",
-      userPassword: "",
-    },
     message: "",
   }),
   computed: {
     ...mapGetters(["getUser", "getAccessToken", "getUserViewWait"]),
   },
   methods: {
-    login: function () {
-      this.$store.dispatch("LOGIN", this.credentials)
-        .then(() => {
-          // this.$router.push(this.$router.currentRoute) 
-          this.$router.push({name: 'Home'})
-          this.credentials.userEmail = ""
-          this.credentials.userPassword = ""
-        })
-    },
   },
 }
 </script>

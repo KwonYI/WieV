@@ -43,22 +43,12 @@
             <!-- 인사담당자일 경우 면접 스케줄 생성 버튼 -->
             <v-menu open-on-hover offset-y>
               <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  color="blue-grey darken-3"
-                  dark
-                  v-bind="attrs"
-                  v-on="on"
-                  style="height: 50% !important"
-                  rounded
-                >
+                <v-btn color="blue-grey darken-3" dark v-bind="attrs" v-on="on" style="height: 50% !important" rounded>
                   Profile
                 </v-btn>
               </template>
               <v-list>
-                <v-list-item
-                  v-for="(item, index) in menuBar"
-                  :key="index"
-                >
+                <v-list-item v-for="(item, index) in menuBar" :key="index">
                   <v-list-item-title>
                     <router-link :to="{ name: item.link }">
                       {{ item.title }}
@@ -68,15 +58,97 @@
               </v-list>
             </v-menu>
 
-            <v-btn plain style="font-size: 1rem" @click="logout">로그아웃</v-btn>
+            <v-btn plain style="font-size: 1rem" @click="logout">Logout</v-btn>
           </v-toolbar-items>
           <!-- 오른쪽 상단 위치, 대기실/면접실 -->
           <v-toolbar-items v-else class="d-flex align-center body-1 mr-5">
             WieV Inc. 2021 하반기 신입 공채
           </v-toolbar-items>
         </div>
+        <div v-else class="h-100">
+          <!-- 오른쪽 상단 위치, 로그인 후 -->
+          <v-toolbar-items v-if="isNotRoom" class="align-center">
+            <v-dialog v-model="dialogLogin" width="500">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn class="ma-3" text color="lighten-2" v-bind="attrs" v-on="on">
+                  <div><v-icon>mdi-account-key</v-icon> Login</div>
+                </v-btn>
+              </template>
+  
+              <v-card @keyup.enter="login">
+                <v-card-title class="headline main-bg-navy lighten-2">
+                  <div>LOGIN</div>
+                </v-card-title>
+          
+                <v-card-text>
+                  <v-container class="d-flex flex-column" fluid>
+                    <v-simple-table fixed-header class="d-flex flex-column" style="overflow-y: hidden">
+                      <template v-slot:default>
+                        <tbody>
+                          <tr>
+                            <td class="pt-3"><div><v-icon>mdi-email</v-icon> 이메일</div></td>
+                            <td><v-text-field label="email" v-model="userCredentials.userEmail"></v-text-field></td>
+                          </tr>
+                          <tr>
+                            <td class="pt-3"><div><v-icon>mdi-key</v-icon> 비밀번호</div></td>
+                            <td><v-text-field label="password" v-model="userCredentials.userPassword" type="password"></v-text-field></td>
+                          </tr>
+                        </tbody>
+                      </template>
+                    </v-simple-table>
+                  </v-container>
+                </v-card-text>
 
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="primary" text @click="login">로그인</v-btn>
+                  <!-- <v-btn color="primary" text @click="dialogLogin=false" :to="{ name: 'FindPassword' }">비밀번호 찾기</v-btn> -->
+                  <!------------------------------------------------------------------------------------------------>
+                  <v-dialog v-model="dialogPassword" width="500">
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn class="ma-3" text color="primary" v-bind="attrs" v-on="on">비밀번호 찾기</v-btn>
+                    </template>
         
+                    <v-card @keyup.enter="findPassword">
+                      <v-card-title class="headline main-bg-navy lighten-2">
+                        <div>비밀번호 찾기</div>
+                      </v-card-title>
+                
+                      <v-card-text>
+                        <v-container class="d-flex flex-column" fluid>
+                          <v-form ref="form" lazy-validation>
+                            <v-simple-table fixed-header class="d-flex flex-column" style="overflow-y: hidden">
+                              <template v-slot:default>
+                                <tbody>
+                                  <tr v-for="(item, index) in userInfo" :key="index">
+                                    <td><v-icon class="mr-2">{{ item.icon }}</v-icon>{{ item.label }}</td>
+                                    <td>
+                                      <v-text-field :label="item.label" :type="item.type" :class="item.longmsg" v-model="credentials[item.value]" :rules="item.rule"></v-text-field>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </template>
+                            </v-simple-table>
+                          </v-form>
+                        </v-container>
+                      </v-card-text>
+
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="primary" text @click="findPassword">임시 비밀번호 발급</v-btn>
+                      </v-card-actions>
+                    </v-card>
+                  </v-dialog>
+                  <!------------------------------------------------------------------------------------------------>
+                  <v-btn color="primary" text @click="dialogLogin=false" :to="{ name: 'Signup' }">회원가입</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+            <v-btn color="white" text @click="dialogLogin=false" :to="{ name: 'Signup' }">
+              <div><v-icon>mdi-account-plus</v-icon> Sign Up</div>
+            </v-btn>
+          </v-toolbar-items>
+        </div>
       </v-app-bar>
 
       <!-- Contents -->
@@ -100,8 +172,6 @@
           style="min-height: 100vh"
         >
         </v-parallax> -->
-
-        
       </v-sheet>
     </v-card>
   </v-app>
@@ -109,21 +179,71 @@
 
 <script>
 import { mapGetters, mapState } from "vuex"
+import axios from "axios"
+const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
 export default {
   name: "App",
   components: {
   },
-  data: () => ({
-    Manager: "",
-    menuBar: [
-      { title: '기업 정보', link: 'Profile' }
-    ],
-    images: {
-      logo: require('@/assets/images/logo.png')
+  data: function () {
+    return {
+      dialogLogin: false,
+      dialogPassword: false,
 
+      Manager: "",
+      menuBar: [
+        { title: '기업 정보', link: 'Profile' }
+      ],
+      images: {
+        logo: require('@/assets/images/logo.png')
+      },
+      userCredentials: {
+        userEmail: "",
+        userPassword: "",
+      },
+
+      userInfo: [
+        {
+          label: "이름",
+          type: "text",
+          value: "hrName",
+          icon: "mdi-account",
+          rule: [
+            value => !!value || '이름은 필수 항목입니다.',
+          ],
+          longmsg: ''
+        },
+        {
+          label: "이메일",
+          type: "text",
+          value: "hrEmail",
+          icon: "mdi-email",
+          rule: [
+            value => !!value || '이메일은 필수 항목입니다.',
+            value => /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/.test(value) || '이메일 형식이 유효하지 않습니다.',
+          ],
+          longmsg: ''
+        },
+        {
+          label: "연락처",
+          type: "text",
+          value: "hrPhone",
+          icon: "mdi-cellphone",
+          rule: [
+            value => !!value || '연락처는 필수 항목입니다.',
+            value => /^\d{3}-\d{3,4}-\d{4}$/.test(value) || '연락처 형식이 유효하지 않습니다.'
+          ],
+          longmsg: ''
+        },
+      ],
+      credentials: {
+        hrName: "",
+        hrEmail: "",
+        hrPhone: "",
+      },
     }
-  }),
+  },
   computed: {
     ...mapState(["accessToken", 'user']),
     ...mapGetters(["getAccessToken"]),
@@ -142,16 +262,54 @@ export default {
       }
     }
   },
-  methods: {
-    logout: function () {
-      this.$store.dispatch("LOGOUT")
-        .then(() => this.$router.replace({ name: "Home" }))
-    },
-  },
   created: function () {
     this.Manager = this.$store.state.Manager
   },
-}
+  methods: {
+    findPassword: function() {
+      if (this.$refs.form.validate()) {
+
+        let signupForm = {
+          hrEmail: this.credentials.hrEmail,
+          hrName: this.credentials.hrName,
+          hrPhone: this.credentials.hrPhone
+        }
+
+        axios.post(`${SERVER_URL}/hr/findPassword`,signupForm)
+          .then(() => {
+            // console.log(res)
+            alert("입력한 이메일로 새로운 비밀번호를 전송했습니다.")
+            this.$router.push({ name: "Home" })
+          })
+          .catch((err) => {
+            console.log(err)
+            alert("가입된 정보가 존재하지 않습니다.")
+          })   
+
+        this.credentials.hrName = ""
+        this.credentials.hrEmail = ""
+        this.credentials.hrPhone = ""
+        this.dialogPassword = false
+      }
+      
+    },
+    login: function () {
+      this.$store.dispatch("LOGIN", this.userCredentials)
+         .then(() => {
+          // this.$router.push(this.$router.currentRoute) 
+          this.$router.push({name: 'Home'})
+          this.userCredentials.userEmail = ""
+          this.userCredentials.userPassword = ""
+        })
+
+      this.dialogLogin = false
+    },
+    logout: function () {
+        this.$store.dispatch("LOGOUT")
+          .then(() => this.$router.replace({ name: "Home" }))
+      },
+    },
+  }
 </script>
 
 <style>
