@@ -338,18 +338,27 @@ export default {
     })
 
     this.session.on("streamDestroyed", ({ stream }) => {
-      const index1 = this.viewees.indexOf(stream.streamManager, 0);
-      if (index1 >= 0) {
-        this.viewees.splice(index1, 1);
-      }
-      const index2 = this.viewers.indexOf(stream.streamManager, 0);
-      if (index2 >= 0) {
-        this.viewers.splice(index2, 1);
+      let info = JSON.parse(stream.connection.data.split('%/%')[0])
+
+      if(info['type'] === 'viewee'){
+        const index = this.viewees.indexOf(stream.streamManager, 0);
+        if (index >= 0) {
+          this.viewees.splice(index, 1);
+        }
+
+        const idx = this.viewee_list.indexOf(info['name'], 0);
+        if (idx >= 0) {
+          this.viewee_list.splice(idx, 1);
+        }
+
+      }else{
+        const index = this.viewers.indexOf(stream.streamManager, 0);
+        if (index >= 0) {
+          this.viewers.splice(index, 1);
+        }
       }
 
-      console.log("나는 ", this.type, "인데 누가 나갔어 내가 가진 리스트를 보여줄게")
-      console.log(this.viewees)
-      console.log(this.viewers)
+      console.log("viewee : ",this.viewees, " viewer : ", this.viewers)
       // const index = this.subscribers.indexOf(stream.streamManager, 0)
       // if (index >= 0) {
       //   this.subscribers.splice(index, 1)
@@ -364,12 +373,13 @@ export default {
       this.messages.push(message)
     })
 
-    this.session.connect(this.token, { name: this.userName, type : this.type, userSeq : this.userSeq})
+    this.session.connect(this.token, { name: this.userName, type : this.type, userSeq : this.userSeq, interviewSession : this.interviewSession})
       .then(() => {
         let publisher = this.OV.initPublisher(undefined, {
           audioSource: undefined, // The source of audio. If undefined default microphone
           videoSource: undefined, // The source of video. If undefined default webcam
-          publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
+          // 여기 바꿔줘야합니다
+          publishAudio: false, // Whether you want to start publishing with your audio unmuted or not
           publishVideo: true, // Whether you want to start publishing with your video enabled or not
           resolution: "272x153", // The resolution of your video
           frameRate: 30, // The frame rate of your video
@@ -434,18 +444,20 @@ export default {
         })
         .catch((err) => {
           console.log(err);
-          alert("방 나가기 실패!");
         });
     },
 
     updateMainVideoStreamManager(stream) {
-      let info = JSON.parse(stream.stream.connection.data.split('%/%')[0])
-      if (this.mainStreamManager === stream) return // 자기자신 클릭하면 이벤트 발생X
-      
-      if(info["type"]==="viewee"){
-        console.log("해당 면접자 정보 출력", info)
-        console.log("해당 면접자 session 정보", stream)
+      // 지원자면 이벤트 발생 X
+      if(JSON.parse(this.mainStreamManager.stream.connection.data.split('%/%')[0])['type'] === 'viewee') {
+        return
       }
+      // 자기자신이면 이벤트 발생X
+      if (this.mainStreamManager === stream) {
+        return
+      }
+      let info = JSON.parse(stream.stream.connection.data.split('%/%')[0])
+      console.log(info)
     },
 
     audioOnOOff() {
@@ -475,7 +487,14 @@ export default {
     },
 
     sendVieweeToInterview(){
-      console.log(this.moving_viewee)
+      this.moving_viewee.forEach(name => {
+        this.viewees.forEach(connection => {
+          let info = JSON.parse(connection.stream.connection.data.split('%/%')[0])
+          if(name === info['name']){
+            console.log(info)
+          }
+        })
+      });
     },
 
     goInterview(){

@@ -1,17 +1,37 @@
 <template>
-  <video autoplay />
+	<video :class="{viewee: isViewee, viewer:!isViewee}" autoplay/>
 </template>
 
 <script>
 export default {
-  name: "OvVideo",
+	name: 'OvVideo',
 
-  props: {
-    streamManager: Object,
+  data() {
+    return {
+      isViewee : false,
+    }
   },
 
-  mounted() {
+	props: {
+		streamManager: Object,
+	},
+
+	mounted () {
+    let type = JSON.parse(this.streamManager.stream.connection.data.split('%/%')[0]).type
+		if(type == 'viewee'){
+      this.isViewee = true
+    }
     this.streamManager.addVideoElement(this.$el);
-  },
+	},
 };
 </script>
+<style>
+video.viewee {
+	width: 150%;
+	height: auto;
+}
+video.viewer {
+	width: 100%;
+	height: auto;
+}
+</style>

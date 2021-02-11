@@ -30,46 +30,30 @@
       </v-toolbar-title>
     </v-app-bar>
 
-    <div id="screen"></div>
-    <!-- 바 밑에 내용물들.  -->
-    <v-container>
-      <!--row1. : 공지사항 배너, 면접실 만들기 버튼-->
-      <v-row> </v-row>
-
-      <!-- row2 : 관리자, 지원자, FAQ 잡동사니 row-->
-      <v-row>
-        <!-- row2[왼쪽] : 관리자 리스트-->
-        <div>
-          <v-col cols="3" v-for="sub in viewers" :key="sub.stream.connection.connectionId">
-             <user-video 
-             :stream-manager="sub" />
+    <v-container style="max-width: 90%; height: 100%">
+      <v-row style="height: 87%">
+        <v-col cols="9">
+          <v-col cols = "4" class="d-flex flex-column justify-center align-center">
+            <span v-for="sub in viewers" :key="sub.stream.connection.connectionId" >
+              <user-video :stream-manager="sub"/>
+            </span>
           </v-col>
-          <v-col class="d-flex justify-end" cols="6" v-for="sub in viewees" :key="sub.stream.connection.connectionId">
-             <user-video 
-             :stream-manager="sub" 
-             @click.native="updateMainVideoStreamManager(sub)"/>
+          <v-col cols = "8" class="d-flex flex-wrap justify-center align-center">
+            <span v-for="sub in viewees" :key="sub.stream.connection.connectionId">
+              <user-video
+                :stream-manager="sub" 
+                @click.native="updateMainVideoStreamManager(sub)"
+              />
+              </span>
           </v-col>
-        </div>
-        <v-col cols="3">
-          <!-- <user-video :stream-manager="mainStreamManager" /> -->
         </v-col>
-        <!-- row2[오른쪽] : 우측에 FAQ 채팅창 잡동사니 -->
         <v-col cols="3">
-          <div>
-            <v-list v-auto-bottom="messages">
-              <div v-for="(msg, index) in messages" :key="index">
-                {{ msg.from }} : {{ msg.text }}
-              </div>
-            </v-list>
-          </div>
-
-          <div>
-            <v-text-field
-              label="보낼 메세지를 입력하세요."
-              v-model="text"
-              @keyup.13="sendMessage"
-            ></v-text-field>
-          </div>
+          <v-list v-auto-bottom="messages">
+            <div v-for="(msg, index) in messages" :key="index">
+              {{ msg.from }} : {{ msg.text }}
+            </div>
+          </v-list>
+          <v-text-field label="보낼 메세지를 입력하세요." v-model="text" @keyup.13="sendMessage" />
         </v-col>
       </v-row>
     </v-container>
@@ -80,7 +64,6 @@
 import { OpenVidu } from "openvidu-browser";
 import UserVideo from "@/components/room/UserVideo";
 import axios from "axios";
-
 
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 
@@ -181,23 +164,28 @@ export default {
       }else{
         this.viewers.push(subscriber)
       }
-
       // this.subscribers.push(subscriber);
     });
 
     this.session.on("streamDestroyed", ({ stream }) => {
-      const index1 = this.viewees.indexOf(stream.streamManager, 0);
-      if (index1 >= 0) {
-        this.viewees.splice(index1, 1);
-      }
-      const index2 = this.viewers.indexOf(stream.streamManager, 0);
-      if (index2 >= 0) {
-        this.viewers.splice(index2, 1);
+
+      let info = JSON.parse(stream.connection.data.split('%/%')[0])
+
+
+
+      if(info['type'] === 'viewee'){
+        const index = this.viewees.indexOf(stream.streamManager, 0);
+        if (index >= 0) {
+          this.viewees.splice(index, 1);
+        }
+      }else{
+        const index = this.viewers.indexOf(stream.streamManager, 0);
+        if (index >= 0) {
+          this.viewers.splice(index, 1);
+        }
       }
 
-      console.log("나는 ", this.type, "인데 누가 나갔어 내가 가진 리스트를 보여줄게")
-      console.log(this.viewees)
-      console.log(this.viewers)
+      console.log("viewee : ",this.viewees, " viewer : ", this.viewers)
       // const index = this.subscribers.indexOf(stream.streamManager, 0);
       // if (index >= 0) {
       //   this.subscribers.splice(index, 1);
@@ -218,9 +206,10 @@ export default {
         let publisher = this.OV.initPublisher(undefined, {
           audioSource: undefined, // The source of audio. If undefined default microphone
           videoSource: undefined, // The source of video. If undefined default webcam
-          publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
+          // 여기 바꿔줘야합니다
+          publishAudio: false, // Whether you want to start publishing with your audio unmuted or not
           publishVideo: true, // Whether you want to start publishing with your video enabled or not
-          resolution: "640x480", // The resolution of your video
+          resolution: "1280x720", // The resolution of your video
           frameRate: 30, // The frame rate of your video
           insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
           mirror: false, // Whether to mirror your local video or not
@@ -262,6 +251,12 @@ export default {
     },
 
     leaveSession() {
+
+      if(this.type === 'manager'){
+        this.session.forceDisconnect(this.viewers)
+        this.session.forceDisconnect(this.viewees)
+      }
+
       axios
         .get(`${SERVER_URL}/session/leaveSession`, {
           params: {
@@ -284,7 +279,6 @@ export default {
         })
         .catch((err) => {
           console.log(err);
-          alert("방 나가기 실패!");
         });
     },
 
@@ -333,10 +327,9 @@ export default {
 </script>
 
 <style scoped>
-#standbyRoom {
-  background-color: white;
-  /* width: 100vw; */
-  height: 100vh;
+#ViewRoom {
+  height: 100%;
+  background-color: #ECEFF1;
 }
 .v-list {
   height: 500px;

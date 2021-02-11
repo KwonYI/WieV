@@ -1,10 +1,10 @@
 <template>
-  <div v-if="streamManager" :video-type = "clientData.type">
+  <div v-if="streamManager">
     <ov-video :stream-manager="streamManager" />
-    <!-- <div>
+    <div>
       <p>{{ clientData.name }}</p>
-      <p>{{ clientData.type }}</p>
-    </div> -->
+      <!-- <p>{{ clientData.type }}</p> -->
+    </div>
   </div>
 </template>
 
@@ -25,12 +25,19 @@ export default {
   data() {
     return {
       clientData : undefined,
+      // length : 0
     }
   },
 
   created() {
       const { connection } = this.streamManager.stream;
       this.clientData = JSON.parse(connection.data.split("%/%")[0]);
+
+      // if(this.clientData.type === 'viewee'){
+      //   this.length = 6;
+      // }else{
+      //   this.length = 3;
+      // }
   },
 };
 </script>
