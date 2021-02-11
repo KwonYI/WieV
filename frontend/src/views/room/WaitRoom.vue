@@ -39,6 +39,7 @@
               <v-card color="#304B61" elevation="2" style="height: 100%" dark>
                 <v-card-title class="justify-center pt-1 pb-2">
                   <div class="text-center text-subtitle-1">면접실 이동</div>
+                  <input class="btn" type="button" v-if="moving_viewee.length" @click="sendVieweeToInterview" value="면접실 보내기" />
                 </v-card-title>
                 <v-card-text class="d-flex justify-center pa-0 text-white">
                   <a-dropdown v-model="visible" class="d-flex justify-center align-center" style="width: 90%">
@@ -76,7 +77,6 @@
               <span v-for="sub in viewers" :key="sub.stream.connection.connectionId">
                 <user-video
                   :stream-manager="sub" 
-                  @click.native="updateMainVideoStreamManager(sub)"
                 />
               </span>
             </v-col>
@@ -89,9 +89,6 @@
                 />
               </span>
             </v-col>
-
-
-
             <!-- 면접관 -->
             <!-- <v-col cols="4" class="d-flex flex-column justify-center align-center">
               <span v-for="sub in subscribers" :key="sub.stream.connection.connectionId">
@@ -218,6 +215,7 @@
       <input class="btn" type="button" @click="audioOnOOff" :value="audioMsg" />
       <input class="btn" type="button" @click="videoOnOOff" :value="videoMsg" />
       <input class="btn" type="button" @click="leaveSession" value="방 나가기" />
+      <input class="btn" type="button" v-if="type === 'viewee' " @click="goInterview" value="면접실 들어가기" />
     </v-bottom-navigation>
   </div>
 </template>
@@ -264,10 +262,10 @@ export default {
       // shareMsg: "공유 Off",
 
       // From SessionController
-      sessionName: undefined,
+      sessionName: undefined, // 대기방 세션
       token: undefined,
       userName: "",
-      type: undefined, // 대기실 관리자(manager) / 면접관(interviewer) / 면접자(interviewee)
+      type: undefined, // 대기실 관리자(manager) / 면접관(viewer) / 면접자(viewee)
 
       // From Main.vue
       comName: undefined,
@@ -275,13 +273,15 @@ export default {
       re_flag: undefined,
       re_status: undefined,
       interviewSession: undefined,
+      userSeq : undefined,
 
       // 배너
       banner_dialog: false,
 
       // 면접 이동
       visible: false,
-      viewee_list: ['김일번', '박이번', '신삼번', '강사번', '류오번', '이육번'],
+      // viewee_list: ['김일번', '박이번', '신삼번', '강사번', '류오번', '이육번'],
+      viewee_list : [],
       moving_viewee: [],
 
       // 면접 안내
@@ -298,7 +298,7 @@ export default {
     window.addEventListener("beforeunload", this.leaveSession)
     window.addEventListener("backbutton", this.leaveSession)
 
-    let user_data = ['comName', 're_year', 're_flag', 're_status', 'sessionName', 'token', 'userName', 'type']
+    let user_data = ['comName', 're_year', 're_flag', 're_status', 'token', 'userName', 'userSeq', 'type', 'sessionName', 'interviewSession']
 
     for (const data of user_data) {
       this[data] = this.$route.query[data]
@@ -325,8 +325,11 @@ export default {
     this.session.on("streamCreated", ({ stream }) => {
       const subscriber = this.session.subscribe(stream)
 
-      if(JSON.parse(subscriber.stream.connection.data.split('%/%')[0])['type'] === 'viewee'){
+      let info = JSON.parse(subscriber.stream.connection.data.split('%/%')[0])
+
+      if(info['type'] === 'viewee'){
         this.viewees.push(subscriber)
+        this.viewee_list.push(info['name'])
       }else{
         this.viewers.push(subscriber)
       }
@@ -335,10 +338,31 @@ export default {
     })
 
     this.session.on("streamDestroyed", ({ stream }) => {
-      const index = this.subscribers.indexOf(stream.streamManager, 0)
-      if (index >= 0) {
-        this.subscribers.splice(index, 1)
+      let info = JSON.parse(stream.connection.data.split('%/%')[0])
+
+      if(info['type'] === 'viewee'){
+        const index = this.viewees.indexOf(stream.streamManager, 0);
+        if (index >= 0) {
+          this.viewees.splice(index, 1);
+        }
+
+        const idx = this.viewee_list.indexOf(info['name'], 0);
+        if (idx >= 0) {
+          this.viewee_list.splice(idx, 1);
+        }
+
+      }else{
+        const index = this.viewers.indexOf(stream.streamManager, 0);
+        if (index >= 0) {
+          this.viewers.splice(index, 1);
+        }
       }
+
+      console.log("viewee : ",this.viewees, " viewer : ", this.viewers)
+      // const index = this.subscribers.indexOf(stream.streamManager, 0)
+      // if (index >= 0) {
+      //   this.subscribers.splice(index, 1)
+      // }
     })
 
     this.session.on("signal:my-chat", (event) => {
@@ -349,12 +373,13 @@ export default {
       this.messages.push(message)
     })
 
-    this.session.connect(this.token, { name: this.userName, type : this.type})
+    this.session.connect(this.token, { name: this.userName, type : this.type, userSeq : this.userSeq, interviewSession : this.interviewSession})
       .then(() => {
         let publisher = this.OV.initPublisher(undefined, {
           audioSource: undefined, // The source of audio. If undefined default microphone
           videoSource: undefined, // The source of video. If undefined default webcam
-          publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
+          // 여기 바꿔줘야합니다
+          publishAudio: false, // Whether you want to start publishing with your audio unmuted or not
           publishVideo: true, // Whether you want to start publishing with your video enabled or not
           resolution: "272x153", // The resolution of your video
           frameRate: 30, // The frame rate of your video
@@ -367,10 +392,12 @@ export default {
 
         this.session.publish(this.publisher)
 
-        console.log("나는 이 타입이야", JSON.parse(this.publisher.stream.connection.data.split('%/%')[0])['type'])
+        let info = JSON.parse(this.publisher.stream.connection.data.split('%/%')[0])
+        console.log("내 이름은 ", info['name'], " 이고", info['type'], "야")
 
         if(this.type === 'viewee'){
           this.viewees.push(this.publisher)
+          this.viewee_list.push(info['name'])
         }else{
           this.viewers.push(this.publisher)
         }
@@ -381,6 +408,7 @@ export default {
       })
 
     window.addEventListener("beforeunload", this.leaveSession)
+    window.addEventListener("backbutton", this.leaveSession)
   },
 
   methods: {
@@ -401,26 +429,35 @@ export default {
           token: this.token,
         },
       })
-        .then(res => {
-          console.log(res)
+        .then(() => {
           if (this.session) {
             this.session.disconnect()
-            this.session = undefined
-            this.mainStreamManager = undefined
-            this.publisher = undefined
-            this.subscribers = []
-            this.OV = undefined
           }
+
+          this.session = undefined
+          this.mainStreamManager = undefined
+          this.publisher = undefined
+          this.subscribers = []
+          this.OV = undefined
 
           window.close()
         })
-        .catch(err => console.log(err))
+        .catch((err) => {
+          console.log(err);
+        });
     },
 
     updateMainVideoStreamManager(stream) {
-      if (this.mainStreamManager === stream) {
-        return this.mainStreamManager = stream
+      // 지원자면 이벤트 발생 X
+      if(JSON.parse(this.mainStreamManager.stream.connection.data.split('%/%')[0])['type'] === 'viewee') {
+        return
       }
+      // 자기자신이면 이벤트 발생X
+      if (this.mainStreamManager === stream) {
+        return
+      }
+      let info = JSON.parse(stream.stream.connection.data.split('%/%')[0])
+      console.log(info)
     },
 
     audioOnOOff() {
@@ -447,7 +484,49 @@ export default {
       }
 
       this.visible = true
-    }
+    },
+
+    sendVieweeToInterview(){
+      this.moving_viewee.forEach(name => {
+        this.viewees.forEach(connection => {
+          let info = JSON.parse(connection.stream.connection.data.split('%/%')[0])
+          if(name === info['name']){
+            console.log(info)
+          }
+        })
+      });
+    },
+
+    goInterview(){
+      axios.get(`${SERVER_URL}/session/join`, {
+        params: {
+          applicantName: this.userName,
+          sessionName: this.interviewSession,
+        },
+      }).then(res => {
+          console.log(res);
+          let routeData = this.$router.resolve({
+            name: "ViewRoom",
+            query: {
+              comName: this.comName,
+              re_year: this.re_year,
+              re_flag: this.re_flag,
+              re_status: this.re_status,
+              userName: res.data.applicantName,
+              type: res.data.type,
+              token: res.data.token,
+              sessionName: res.data.sessionName,
+              userSeq : this.userSeq
+            },
+          })
+          this.leaveSession();
+          window.open(routeData.href, "_blank")
+        })
+        .catch(err => {
+          alert("방이 아직 개설되지 않았습니다.")
+          console.log(err)
+        })
+      }
   },
 
   

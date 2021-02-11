@@ -74,7 +74,7 @@
                     대기실 입장
                   </v-btn>
 
-                  <!-- v-btn 지울 예정 -->
+                  <!-- 지원자는 대기방에서 면접방 입장가능, 다시 지울 예정 -->
                   <v-btn
                     color="blue lighten-3 yellow--text"
                     @click="goInterviewSession(interview.interviewSessionName)"
@@ -152,6 +152,7 @@ export default {
               re_status: this.intervieweeData.recruit.reStatus,
               token: res.data.token,
               userName: res.data.applicantName,
+              userSeq : this.intervieweeData.user.applySeq,
               type: res.data.type,
               sessionName: waitSession,
               interviewSession : interviewSession,
@@ -193,13 +194,10 @@ export default {
             window.open(routeData.href, "_blank")
           })
           .catch(err => {
-            if (this.user.userViewWait == 0) {
-              console.log(err)
-            } else {
-              alert("방이 아직 개설되지 않았습니다.")
-            }
+            console.log(err)
+            alert("방이 아직 개설되지 않았습니다.")
           })
-    },
+       },
   },
 };
 </script>
