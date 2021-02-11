@@ -27,11 +27,11 @@ export default {
 </script>
 <style>
 video.viewee {
-	width: 150%;
-	height: auto;
+width: 350px; /* 여기 값 바꿔줘야된다 */ 
+height: auto;
 }
 video.viewer {
-	width: 100%;
-	height: auto;
+width: 350px; /* 여기 값 바꿔줘야된다 */ 
+height: auto;
 }
 </style>

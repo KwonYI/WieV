@@ -206,8 +206,7 @@ export default {
         let publisher = this.OV.initPublisher(undefined, {
           audioSource: undefined, // The source of audio. If undefined default microphone
           videoSource: undefined, // The source of video. If undefined default webcam
-          // 여기 바꿔줘야합니다
-          publishAudio: false, // Whether you want to start publishing with your audio unmuted or not
+          publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
           publishVideo: true, // Whether you want to start publishing with your video enabled or not
           resolution: "1280x720", // The resolution of your video
           frameRate: 30, // The frame rate of your video
@@ -251,12 +250,6 @@ export default {
     },
 
     leaveSession() {
-
-      if(this.type === 'manager'){
-        this.session.forceDisconnect(this.viewers)
-        this.session.forceDisconnect(this.viewees)
-      }
-
       axios
         .get(`${SERVER_URL}/session/leaveSession`, {
           params: {
@@ -267,13 +260,12 @@ export default {
         .then(() => {
           if (this.session) {
             this.session.disconnect();
+            this.session = undefined;
+            this.mainStreamManager = undefined;
+            this.publisher = undefined;
+            this.subscribers = [];
+            this.OV = undefined;
           }
-
-          this.session = undefined;
-          this.mainStreamManager = undefined;
-          this.publisher = undefined;
-          this.subscribers = [];
-          this.OV = undefined;
 
           window.close();
         })

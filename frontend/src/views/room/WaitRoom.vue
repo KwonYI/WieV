@@ -39,7 +39,7 @@
               <v-card color="#304B61" elevation="2" style="height: 100%" dark>
                 <v-card-title class="justify-center pt-1 pb-2">
                   <div class="text-center text-subtitle-1">면접실 이동</div>
-                  <input class="btn" type="button" v-if="moving_viewee.length" @click="sendVieweeToInterview" value="면접실 보내기" />
+                  <input class="btn" type="button" v-if="moving_viewee.length" @click="sendSignal" value="면접실 보내기" />
                 </v-card-title>
                 <v-card-text class="d-flex justify-center pa-0 text-white">
                   <a-dropdown v-model="visible" class="d-flex justify-center align-center" style="width: 90%">
@@ -225,6 +225,8 @@ import { OpenVidu } from "openvidu-browser"
 import UserVideo from "@/components/room/UserVideo"
 import axios from "axios"
 
+import Stomp from 'webstomp-client'
+import SockJS from 'sockjs-client'
 
 const SERVER_URL = process.env.VUE_APP_SERVER_URL
 // import ManagerList from "@/components/room/ManagerList.vue"
@@ -295,6 +297,9 @@ export default {
     }
   },
   created: function () {
+    //소켓 연결 시도
+    this.connect()
+
     window.addEventListener("beforeunload", this.leaveSession)
     window.addEventListener("backbutton", this.leaveSession)
 
@@ -365,6 +370,14 @@ export default {
       // }
     })
 
+    this.session.on('publisherStartSpeaking', (event) => {
+      console.log('Publisher ' +  JSON.parse(event.connection.data,split('%/%')[0])['name'] + ' start speaking');
+    });
+
+    this.session.on('publisherStopSpeaking', (event) => {
+      console.log('Publisher ' + JSON.parse(event.connection.data,split('%/%')[0])['name'] + ' stop speaking');
+    });
+
     this.session.on("signal:my-chat", (event) => {
       let message = { from: "", text: "" }
       message.from = event.from.data.split('":"')[1].slice(0, -7)
@@ -378,8 +391,7 @@ export default {
         let publisher = this.OV.initPublisher(undefined, {
           audioSource: undefined, // The source of audio. If undefined default microphone
           videoSource: undefined, // The source of video. If undefined default webcam
-          // 여기 바꿔줘야합니다
-          publishAudio: false, // Whether you want to start publishing with your audio unmuted or not
+          publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
           publishVideo: true, // Whether you want to start publishing with your video enabled or not
           resolution: "272x153", // The resolution of your video
           frameRate: 30, // The frame rate of your video
@@ -432,13 +444,12 @@ export default {
         .then(() => {
           if (this.session) {
             this.session.disconnect()
+            this.session = undefined
+            this.mainStreamManager = undefined
+            this.publisher = undefined
+            this.subscribers = []
+            this.OV = undefined
           }
-
-          this.session = undefined
-          this.mainStreamManager = undefined
-          this.publisher = undefined
-          this.subscribers = []
-          this.OV = undefined
 
           window.close()
         })
@@ -486,15 +497,40 @@ export default {
       this.visible = true
     },
 
-    sendVieweeToInterview(){
-      this.moving_viewee.forEach(name => {
-        this.viewees.forEach(connection => {
-          let info = JSON.parse(connection.stream.connection.data.split('%/%')[0])
-          if(name === info['name']){
-            console.log(info)
-          }
-        })
-      });
+    sendSignal() {
+      console.log("Send Signal");
+      if (this.stompClient && this.stompClient.connected) {
+        const msg = {
+          message : '면접실 보내기',
+          target : this.moving_viewee,
+        };
+        this.stompClient.send("/receive", JSON.stringify(msg), {});
+      }
+    },
+
+    connect() {
+      let socket = new SockJS(SERVER_URL);
+      this.stompClient = Stomp.over(socket);
+      this.stompClient.connect(
+        {},
+        frame => {
+          // 소켓 연결 성공
+          this.connected = true;
+          console.log('소켓 연결 성공', frame);
+          this.stompClient.subscribe("/send", res => {
+            let target = JSON.parse(res.body)['target']
+            target.forEach(name => {
+              if(name === this.userName){
+                alert("이동하래")
+              }
+            });
+          });
+        },
+        error => {
+          console.log('소켓 연결 실패', error);
+          this.connected = false;
+        }
+      );        
     },
 
     goInterview(){
