@@ -41,7 +41,12 @@
           <!-- 오른쪽 상단 위치, 로그인 후 -->
           <v-toolbar-items v-if="isNotRoom" class="align-center">
             <!-- 인사담당자일 경우 면접 스케줄 생성 버튼 -->
-            <v-menu open-on-hover offset-y>
+          <v-btn plain style="font-size: 1rem">
+            <router-link :to="{ name: 'Profile' }">
+              Profile
+            </router-link>
+              </v-btn>
+            <!-- <v-menu open-on-hover offset-y>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
                   color="blue-grey darken-3"
@@ -66,7 +71,7 @@
                   </v-list-item-title>
                 </v-list-item>
               </v-list>
-            </v-menu>
+            </v-menu> -->
 
             <v-btn plain style="font-size: 1rem" @click="logout">로그아웃</v-btn>
           </v-toolbar-items>
@@ -116,9 +121,9 @@ export default {
   },
   data: () => ({
     Manager: "",
-    menuBar: [
-      { title: '기업 정보', link: 'Profile' }
-    ],
+    // menuBar: [
+    //   { title: '기업 정보', link: 'Profile' }
+    // ],
     images: {
       logo: require('@/assets/images/logo.png')
 
