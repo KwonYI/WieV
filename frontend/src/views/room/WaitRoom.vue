@@ -246,8 +246,8 @@ import UserVideo from "@/components/room/UserVideo"
 // import GrView from "@/components/room/GrView"
 import axios from "axios"
 
-import Stomp from 'webstomp-client'
-import SockJS from 'sockjs-client'
+// import Stomp from 'webstomp-client'
+// import SockJS from 'sockjs-client'
 
 const SERVER_URL = process.env.VUE_APP_SERVER_URL
 // import ManagerList from "@/components/room/ManagerList.vue"
@@ -325,7 +325,7 @@ export default {
   },
   created: function () {
     //소켓 연결 시도
-    this.connect()
+    // this.connect()
 
     window.addEventListener("beforeunload", this.leaveSession)
     window.addEventListener("backbutton", this.leaveSession)
@@ -484,15 +484,15 @@ export default {
         },
       })
       .then(() => {
-          if (this.stompClient && this.stompClient.connected) {
-            const msg = {
-              name : '',
-              message : '',
-              target : [],
-              signal : false,
-            };
-            this.stompClient.send("/receiveInWaitSession", JSON.stringify(msg), {});
-          }
+          // if (this.stompClient && this.stompClient.connected) {
+          //   const msg = {
+          //     name : '',
+          //     message : '',
+          //     target : [],
+          //     signal : false,
+          //   };
+          //   this.stompClient.send("/receiveInWaitSession", JSON.stringify(msg), {});
+          // }
 
           if (this.session) {
             this.session.disconnect()
@@ -546,92 +546,93 @@ export default {
       this.visible = true
     },
 
-    // 관리자가 지원자에게
-    sendSignal() {
-      if (this.stompClient && this.stompClient.connected) {
-        const msg = {
-          name : this.userName,
-          message : '',
-          target : this.moving_viewee,
-          signal : true,
-        };
-        this.stompClient.send("/receiveViewerToViewee", JSON.stringify(msg), {});
-      }
-    },
+    // // 관리자가 지원자에게
+    // sendSignal() {
+    //   if (this.stompClient && this.stompClient.connected) {
+    //     const msg = {
+    //       name : this.userName,
+    //       message : '',
+    //       target : this.moving_viewee,
+    //       signal : true,
+    //     };
+    //     this.stompClient.send("/receiveViewerToViewee", JSON.stringify(msg), {});
+    //   }
+    //   this.moving_viewee = []
+    // },
     
-    // 지원자가 관리자에게
-    answerSignal(flag) {
-      if (this.stompClient && this.stompClient.connected) {
-        const msg = {
-          name : this.userName,
-          message : '',
-          target : [],
-          signal : flag,
-        };
-        this.stompClient.send("/receiveVieweeToViewer", JSON.stringify(msg), {});
-      }
-    },
+    // // 지원자가 관리자에게
+    // answerSignal(flag) {
+    //   if (this.stompClient && this.stompClient.connected) {
+    //     const msg = {
+    //       name : this.userName,
+    //       message : '',
+    //       target : [],
+    //       signal : flag,
+    //     };
+    //     this.stompClient.send("/receiveVieweeToViewer", JSON.stringify(msg), {});
+    //   }
+    // },
 
-    // 대기방과 면접방 소통
-    sendToInterview() {
-      if (this.stompClient && this.stompClient.connected) {
-        const msg = {
-          name : this.userName,
-          message : '', // this.message
-          target : [],
-          signal : true,
-        };
-        this.stompClient.send("/receiveViewerToViewer", JSON.stringify(msg), {});
-      }
-    },
+    // // 대기방과 면접방 소통
+    // sendToInterview() {
+    //   if (this.stompClient && this.stompClient.connected) {
+    //     const msg = {
+    //       name : this.userName,
+    //       message : '', // this.message
+    //       target : [],
+    //       signal : true,
+    //     };
+    //     this.stompClient.send("/receiveViewerToViewer", JSON.stringify(msg), {});
+    //   }
+    // },
 
-    connect() {
-      let socket = new SockJS(SERVER_URL);
-      this.stompClient = Stomp.over(socket);
-      this.stompClient.connect(
-        {},
-        frame => {
-          // 소켓 연결 성공
-          this.connected = true;
-          console.log('소켓 연결 성공', frame);
+    // connect() {
+    //   let socket = new SockJS("https://i4a405.p.ssafy.io:8080");
+    //   this.stompClient = Stomp.over(socket);
+    //   this.stompClient.connect(
+    //     {},
+    //     frame => {
+    //       // 소켓 연결 성공
+    //       this.connected = true;
+    //       console.log('소켓 연결 성공', frame);
 
-          if(this.type == 'viewee'){
-            this.stompClient.subscribe("/sendViewerToViewee", res => {
-              let target = JSON.parse(res.body)['target']
-              target.forEach(name => {
-                if(name === this.userName){
-                  if(confirm("OK??") === true){
-                    this.answerSignal(true)
-                    this.goInterview();
-                  }else{
-                    console.log("No누름")
-                    this.answerSignal(false)
-                  }
-                }
-              });
-            });
-          }else{
-            this.stompClient.subscribe("/sendVieweeToViewer", res => {
-              let answer = JSON.parse(res.body)
-              if(answer['signal'] === true){
-                console.log(answer['name'], " 간다")
-              }else{
-                console.log(answer['name'], ' 안 간다')
-              }
-            });
+    //       if(this.type == 'viewee'){
+    //         this.stompClient.subscribe("/sendViewerToViewee", res => {
+    //           let target = JSON.parse(res.body)['target']
+    //           target.forEach(name => {
+    //             if(name === this.userName){
+    //               if(confirm("OK??") === true){
+    //                 this.answerSignal(true)
+    //                 this.goInterview();
+    //               }else{
+    //                 console.log("No누름")
+    //                 this.answerSignal(false)
+    //               }
+    //             }
+    //           });
+    //         });
+    //       }else{
+    //         this.stompClient.subscribe("/sendVieweeToViewer", res => {
+    //           let answer = JSON.parse(res.body)
+    //           if(answer['signal'] === true){
+    //             console.log(answer['name'], " 간다")
+    //           }else{
+    //             console.log(answer['name'], ' 안 간다')
+    //           }
+    //         });
 
-            this.stompClient.subscribe("/sendViewerToViewer", res => {
-              // 대기방과 면접방 소통
-              console.log(res)
-            });
-          }
-        },
-        error => {
-          console.log('소켓 연결 실패', error);
-          this.connected = false;
-        }
-      );        
-    },
+    //         this.stompClient.subscribe("/sendViewerToViewer", res => {
+    //           // 대기방과 면접방 소통
+    //           console.log(res)
+    //         });
+    //       }
+    //     },
+    //     error => {
+    //       console.log('소켓 연결 실패', error);
+    //       this.connected = false;
+    //     }
+    //   );        
+    // },
 
     goInterview(){
       axios.get(`${SERVER_URL}/session/join`, {

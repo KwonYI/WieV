@@ -1,7 +1,7 @@
 import Vue from "vue"
 import VueRouter from "vue-router"
 import Home from "@/views/main/Home.vue"
-import NotFound from "@/views/main/NotFound.vue"
+// import NotFound from "@/views/main/NotFound.vue"
 import Profile from "@/views/accounts/Profile"
 import Signup from "@/views/accounts/Signup"
 import Menu from "@/views/viewset/Menu"
@@ -29,15 +29,15 @@ const routes = [
     name: "Main",
     component: Main,
   },
-  {
-    path: "/404",
-    name: "notFound",
-    component: NotFound,
-  },
-  {
-    path: "*",
-    redirect: "/404",
-  },
+  // {
+  //   path: "/404",
+  //   name: "notFound",
+  //   component: NotFound,
+  // },
+  // {
+  //   path: "*",
+  //   redirect: "/404",
+  // },
   {
     path: "/waitroom",
     name: "WaitRoom",
