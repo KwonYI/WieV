@@ -50,7 +50,6 @@ export default {
   },
   data: function () {
     return {
-      isViewee: false,
       roomType: '',
 
       OV: undefined,
