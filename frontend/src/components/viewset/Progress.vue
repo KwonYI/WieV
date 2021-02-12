@@ -152,7 +152,7 @@
               width: '5%'
             },
             {
-              text: '직무',
+              text: '직군',
               align: 'center',
               value: 'schGroupCareer',
               width: '5%'
