@@ -41,3 +41,9 @@ export default {
   },
 };
 </script>
+<style>
+.speaking{
+  border-color: red;
+  border-style: solid;
+}  
+</style>

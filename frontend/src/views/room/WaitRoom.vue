@@ -76,6 +76,7 @@
             <v-col cols="4" class="d-flex flex-column justify-center align-center">
               <span v-for="sub in viewers" :key="sub.stream.connection.connectionId">
                 <user-video
+                  :id = "sub.stream.connection.connectionId"
                   :stream-manager="sub" 
                 />
               </span>
@@ -85,6 +86,7 @@
               <span v-for="sub in viewees" :key="sub.stream.connection.connectionId">
                 <user-video
                   :stream-manager="sub" 
+                  :id = "sub.stream.connection.connectionId"
                   @click.native="updateMainVideoStreamManager(sub)"
                 />
               </span>
@@ -371,11 +373,31 @@ export default {
     })
 
     this.session.on('publisherStartSpeaking', (event) => {
-      console.log('Publisher ' +  JSON.parse(event.connection.data.split('%/%')[0])['name'] + ' start speaking');
+      let id = event.connection.connectionId
+      this.viewers.forEach(viewer => {
+        if(viewer !== this.mainStreamManager && viewer.stream.connection.connectionId === id){
+          document.getElementById(id).classList.add("speaking");
+        }
+      })
+      this.viewees.forEach(viewee => {
+        if(viewee !== this.mainStreamManager && viewee.stream.connection.connectionId === id){
+          document.getElementById(id).classList.add("speaking");
+        }
+      })
     });
-
+    
     this.session.on('publisherStopSpeaking', (event) => {
-      console.log('Publisher ' + JSON.parse(event.connection.data.split('%/%')[0])['name'] + ' stop speaking');
+      let id = event.connection.connectionId
+      this.viewers.forEach(viewer => {
+        if(viewer !== this.mainStreamManager && viewer.stream.connection.connectionId === id){
+          document.getElementById(id).classList.remove("speaking");
+        }
+      })
+      this.viewees.forEach(viewee => {
+        if(viewee !== this.mainStreamManager && viewee.stream.connection.connectionId === id){
+          document.getElementById(id).classList.remove("speaking");
+        }
+      })
     });
 
     this.session.on("signal:my-chat", (event) => {

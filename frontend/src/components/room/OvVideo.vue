@@ -34,4 +34,8 @@ video.viewer {
 width: 350px; /* 여기 값 바꿔줘야된다 */ 
 height: auto;
 }
+.speaking{
+  border-color: red;
+  border-style: solid;
+}
 </style>
