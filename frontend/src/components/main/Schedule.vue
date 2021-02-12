@@ -5,7 +5,7 @@
     </div>
 
     <!-- <div> -->
-      <v-dialog v-model="dialog" persistent max-width="600px">
+      <v-dialog v-model="dialog" persistent max-width="600px" @click:outside="onClickOutside">
         <template v-slot:activator="{ on, attrs }">
           <v-btn dark v-bind="attrs" v-on="on">
             <v-icon left>mdi-calendar-plus</v-icon>공고 추가하기
@@ -67,8 +67,7 @@
                     <div>면접 종료일 : {{ formData.reDates[1] }}</div>
                   </v-col>
                   <v-col cols="12" sm="6">
-                    <v-date-picker v-model="formData.reDates" range>
-                    </v-date-picker>
+                    <v-date-picker v-model="formData.reDates" range></v-date-picker>
                   </v-col>
                 </v-row>
               </v-container>
@@ -161,7 +160,7 @@
 
     methods: {
       createRecruit: function () {
-        console.log(this.$refs.form.value)
+        // console.log(this.$refs.form.value)
         if (this.$refs.form.validate()) {
           this.dialog = false
 
@@ -172,7 +171,7 @@
             reStartDate: this.formData.reDates[0],
             reEndDate: this.formData.reDates[1],
           }
-          console.log(recruitForm)
+          // console.log(recruitForm)
 
           this.$store.dispatch("INSERT_RECRUIT", recruitForm)
             .then(() => console.log("insertRecruit"))
@@ -184,6 +183,14 @@
           // this.$refs.form.reset()
         // }
         }
+      },
+      onClickOutside: function() {
+        this.reYear = ''
+        this.reFlag = ''
+        this.reStatus = ''
+        this.formData.reDates = ['2021-01-01', '2021-01-01']
+
+        this.dialog = false;
       },
 
       goToProgress: function (recruit, index) {
