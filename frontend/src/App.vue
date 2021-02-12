@@ -102,8 +102,6 @@
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn color="primary" text @click="login">로그인</v-btn>
-                  <!-- <v-btn color="primary" text @click="dialogLogin=false" :to="{ name: 'FindPassword' }">비밀번호 찾기</v-btn> -->
-                  <!------------------------------------------------------------------------------------------------>
                   <v-dialog v-model="dialogPassword" width="500">
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn class="ma-3" text color="primary" v-bind="attrs" v-on="on">비밀번호 찾기</v-btn>
@@ -139,7 +137,6 @@
                       </v-card-actions>
                     </v-card>
                   </v-dialog>
-                  <!------------------------------------------------------------------------------------------------>
                   <v-btn color="primary" text @click="dialogLogin=false" :to="{ name: 'Signup' }">회원가입</v-btn>
                 </v-card-actions>
               </v-card>
