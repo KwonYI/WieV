@@ -119,7 +119,7 @@
     mapState,
     mapGetters
   } from "vuex"
-  const SERVER_URL = "https://localhost:8080"
+  const SERVER_URL = process.env.VUE_APP_SERVER_URL
   import axios from "axios"
   import _ from "lodash"
 
@@ -152,7 +152,7 @@
               width: '5%'
             },
             {
-              text: '직무',
+              text: '직군',
               align: 'center',
               value: 'schGroupCareer',
               width: '5%'

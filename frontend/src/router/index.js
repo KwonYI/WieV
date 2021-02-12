@@ -12,6 +12,7 @@ import CreateSet from "@/views/viewset/CreateSet"
 import Main from "@/views/main/Main"
 import WaitRoom from "@/views/room/WaitRoom"
 import ViewRoom from "@/views/room/ViewRoom"
+import Test from "@/views/main/Test"
 
 // import Recruit from '@/components/viewset/Recruit'
 
@@ -94,6 +95,11 @@ const routes = [
     path: "/",
     name: "Home",
     component: Home,
+  },
+  {
+    path: "/test",
+    name: "Test",
+    component: Test,
   },
 ]
 
