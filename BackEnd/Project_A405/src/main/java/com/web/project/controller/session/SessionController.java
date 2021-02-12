@@ -243,12 +243,7 @@ public class SessionController {
 
 		String msg = null;
 		HttpStatus status = null;
-
-		System.out.println("변경전");
-		printMap();
-		System.out.println(
-				"--------------------------------------------------------------------------------------------------------------");
-
+		
 		if (this.sessions.get(sessionName) != null && this.tokensInSession.get(sessionName) != null) { // 방이 존재하는지
 
 			if (this.tokensInSession.get(sessionName).remove(token) != null) { // 입력으로 들어온 토큰 제거
@@ -303,6 +298,7 @@ public class SessionController {
 	}
 
 	public void printMap() { // 모든 방과 방에 있는 사람 정보 출력
+		System.out.println("모든 세션 출력중....");
 		sessions.forEach((sessionName, session) -> {
 			System.out.println("세션 UUID : " + sessionName);
 			System.out.println("세션에 있는 사람 수 : " + tokensInSession.get(sessionName).size());

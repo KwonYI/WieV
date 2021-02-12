@@ -24,48 +24,30 @@
       </v-toolbar-title>
     </v-app-bar>
 
-    <div id="screen"></div>
-    <!-- 바 밑에 내용물들.  -->
-    <v-container>
-      <!--row1. : 공지사항 배너, 면접실 만들기 버튼-->
-      <v-row> </v-row>
-
-      <!-- row2 : 관리자, 지원자, FAQ 잡동사니 row-->
-      <v-row>
-        <!-- row2[왼쪽] : 관리자 리스트-->
-        <div v-for="(sub) in subscribers" :key="sub.stream.connection.connectionId">
-          <!-- <v-col cols="3" v-if="JSON.parse(sub.stream.connection.data.split('%/%')[0])['type'] === 'manager' "> -->
-          <v-col cols="3" v-if="JSON.parse(sub.stream.connection.data.split('%/%')[0])['type'] !== 'viewee' ">
-             <user-video 
-             :stream-manager="sub" 
-             @click.native="updateMainVideoStreamManager(sub)"/>
+    <v-container style="max-width: 90%; height: 100%">
+      <v-row style="height: 87%">
+        <v-col cols="9">
+          <v-col cols = "4" class="d-flex flex-column justify-center align-center">
+            <span v-for="sub in viewers" :key="sub.stream.connection.connectionId" >
+              <user-video :stream-manager="sub"/>
+            </span>
           </v-col>
-          <v-col class="d-flex justify-end" cols="6" v-else>
-             <user-video 
-             :stream-manager="sub" 
-             @click.native="updateMainVideoStreamManager(sub)"/>
+          <v-col cols = "8" class="d-flex flex-wrap justify-center align-center">
+            <span v-for="sub in viewees" :key="sub.stream.connection.connectionId">
+              <user-video
+                :stream-manager="sub" 
+                @click.native="updateMainVideoStreamManager(sub)"
+              />
+              </span>
           </v-col>
-        </div>
-        <v-col cols="3">
-          <!-- <user-video :stream-manager="mainStreamManager" /> -->
         </v-col>
-        <!-- row2[오른쪽] : 우측에 FAQ 채팅창 잡동사니 -->
         <v-col cols="3">
-          <div>
-            <v-list v-auto-bottom="messages">
-              <div v-for="(msg, index) in messages" :key="index">
-                {{ msg.from }} : {{ msg.text }}
-              </div>
-            </v-list>
-          </div>
-
-          <div>
-            <v-text-field
-              label="보낼 메세지를 입력하세요."
-              v-model="text"
-              @keyup.13="sendMessage"
-            ></v-text-field>
-          </div>
+          <v-list v-auto-bottom="messages">
+            <div v-for="(msg, index) in messages" :key="index">
+              {{ msg.from }} : {{ msg.text }}
+            </div>
+          </v-list>
+          <v-text-field label="보낼 메세지를 입력하세요." v-model="text" @keyup.13="sendMessage" />
         </v-col>
       </v-row>
     </v-container>
@@ -76,7 +58,6 @@
 import { OpenVidu } from "openvidu-browser";
 import UserVideo from "@/components/room/UserVideo";
 import axios from "axios";
-
 
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 
@@ -92,6 +73,10 @@ export default {
       mainStreamManager: undefined, // 메인 비디오
       publisher: undefined, // 연결 객체
       subscribers: [],
+
+      // 면접관, 지원자들만 담아두는 리스트
+      viewers : [],
+      viewees : [],
 
       // 채팅
       text: "",
@@ -109,48 +94,50 @@ export default {
       sessionName: undefined,
       token: undefined,
       userName: "",
-      type: undefined, // 대기실 관리자(manager) / 면접관(interviewer) / 면접자(interviewee)
+      type: undefined, // 대기실 관리자(manager) / 면접관(viewer) / 면접자(viewee)
 
       // From Main.vue
       comName: undefined,
       re_year: undefined,
       re_flag: undefined,
       re_status: undefined,
+      userSeq : undefined,
       
       //지원자 리스트
       applicantList:[],
-      userSeq : undefined,
     };
   },
   created: function () {
     window.addEventListener("beforeunload", this.leaveSession);
     window.addEventListener("backbutton", this.leaveSession);
 
-    this.comName = this.$route.query.comName;
-    this.re_year = this.$route.query.re_year;
-    this.re_flag = this.$route.query.re_flag;
-    this.re_status = this.$route.query.re_status;
-    this.sessionName = this.$route.query.sessionName;
-    this.token = this.$route.query.token;
-    this.userName = this.$route.query.userName;
-    this.type = this.$route.query.type;
-    this.userSeq = this.$route.query.userSeq;
+    let user_data = ['comName', 're_year', 're_flag', 're_status', 'sessionName', 'token', 'userName', 'type', 'userSeq']
+
+    for (const data of user_data) {
+      this[data] = this.$route.query[data]
+    }
+
+    // this.comName = this.$route.query.comName;
+    // this.re_year = this.$route.query.re_year;
+    // this.re_flag = this.$route.query.re_flag;
+    // this.re_status = this.$route.query.re_status;
+    // this.sessionName = this.$route.query.sessionName;
+    // this.token = this.$route.query.token;
+    // this.userName = this.$route.query.userName;
+    // this.type = this.$route.query.type;
+    // this.userSeq = this.$route.query.userSeq;
 
     //면접방에 해당하는 지원자 갖고오기
-     axios.get(`${SERVER_URL}/applicant/getListBySessionName/` +this.sessionName)
-        .then(res => {
-          this.applicantList=res.data
-          console.log(this.applicantList)
-        })
-        .catch((err) => {
-            console.log(err)
-            alert("세션 이름에 따른 지원자 갖고오기 실패")
-          })
-
-    // this.session.on("streamCreated", ({ stream }) => {
-    //   const subscriber = this.session.subscribe(stream);
-    //   this.subscribers.push(subscriber);
-    // });
+    axios
+    .get(`${SERVER_URL}/applicant/getListBySessionName/` + this.sessionName)
+    .then(res => {
+      this.applicantList=res.data
+      console.log("지원자 정보를 출력중(ViewRoom)", this.applicantList)
+    })
+    .catch((err) => {
+        console.log(err)
+        alert("세션 이름에 따른 지원자 갖고오기 실패")
+      })
   },
   beforeDestroy() {
     window.removeEventListener("beforeunload", this.leaveSession);
@@ -163,14 +150,40 @@ export default {
 
     this.session.on("streamCreated", ({ stream }) => {
       const subscriber = this.session.subscribe(stream);
-      this.subscribers.push(subscriber);
+
+      let info = JSON.parse(subscriber.stream.connection.data.split('%/%')[0])
+
+      if(info['type'] === 'viewee'){
+        this.viewees.push(subscriber)
+      }else{
+        this.viewers.push(subscriber)
+      }
+      // this.subscribers.push(subscriber);
     });
 
     this.session.on("streamDestroyed", ({ stream }) => {
-      const index = this.subscribers.indexOf(stream.streamManager, 0);
-      if (index >= 0) {
-        this.subscribers.splice(index, 1);
+
+      let info = JSON.parse(stream.connection.data.split('%/%')[0])
+
+
+
+      if(info['type'] === 'viewee'){
+        const index = this.viewees.indexOf(stream.streamManager, 0);
+        if (index >= 0) {
+          this.viewees.splice(index, 1);
+        }
+      }else{
+        const index = this.viewers.indexOf(stream.streamManager, 0);
+        if (index >= 0) {
+          this.viewers.splice(index, 1);
+        }
       }
+
+      console.log("viewee : ",this.viewees, " viewer : ", this.viewers)
+      // const index = this.subscribers.indexOf(stream.streamManager, 0);
+      // if (index >= 0) {
+      //   this.subscribers.splice(index, 1);
+      // }
     });
 
     this.session.on("signal:my-chat", (event) => {
@@ -189,7 +202,7 @@ export default {
           videoSource: undefined, // The source of video. If undefined default webcam
           publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
           publishVideo: true, // Whether you want to start publishing with your video enabled or not
-          resolution: "320x240", // The resolution of your video
+          resolution: "1280x720", // The resolution of your video
           frameRate: 30, // The frame rate of your video
           insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
           mirror: false, // Whether to mirror your local video or not
@@ -199,32 +212,33 @@ export default {
         this.publisher = publisher;
 
         this.session.publish(this.publisher);
-        this.subscribers.push(this.publisher);
+
+        let info = JSON.parse(this.publisher.stream.connection.data.split('%/%')[0])
+        console.log("내 이름은 ", info['name'], " 이고", info['type'], "야")
+
+        if(this.type === 'viewee'){
+          this.viewees.push(this.publisher)
+        }else{
+          this.viewers.push(this.publisher)
+        }
+        // this.subscribers.push(this.publisher);
       })
       .catch((error) => {
         console.log(
-          "There was an error connecting to the session:",
-          error.code,
-          error.message
-        );
+          "There was an error connecting to the session:", error.code, error.message);
       });
+
     window.addEventListener("beforeunload", this.leaveSession);
+    window.addEventListener("backbutton", this.leaveSession)
   },
 
   methods: {
     sendMessage() {
       if (this.text === "") return;
 
-      this.session
-        .signal({
-          data: this.text,
-          to: [],
-          type: "my-chat",
-        })
-        .then(() => {})
-        .catch((error) => {
-          console.error(error);
-        });
+      this.session.signal({ data: this.text, to: [], type: "my-chat", })
+        .then()
+        .catch((error) => console.error(error));
 
       this.text = "";
     },
@@ -237,20 +251,20 @@ export default {
             token: this.token,
           },
         })
-        .then((res) => {
-          console.log(res);
-          if (this.session) this.session.disconnect();
-          this.session = undefined;
-          this.mainStreamManager = undefined;
-          this.publisher = undefined;
-          this.subscribers = [];
-          this.OV = undefined;
+        .then(() => {
+          if (this.session) {
+            this.session.disconnect();
+            this.session = undefined;
+            this.mainStreamManager = undefined;
+            this.publisher = undefined;
+            this.subscribers = [];
+            this.OV = undefined;
+          }
 
           window.close();
         })
         .catch((err) => {
           console.log(err);
-          console.log("방 나가기 실패!");
         });
     },
 
@@ -269,7 +283,7 @@ export default {
             console.log(apply["apply-Resume3"])
             console.log(apply["apply-Resume4"])
           }
-          }
+        }
       }
       else {
         console.log("지원자가 아닙니다.")
@@ -299,10 +313,9 @@ export default {
 </script>
 
 <style scoped>
-#standbyRoom {
-  background-color: white;
-  /* width: 100vw; */
-  height: 100vh;
+#ViewRoom {
+  height: 100%;
+  background-color: #ECEFF1;
 }
 .v-list {
   height: 500px;
