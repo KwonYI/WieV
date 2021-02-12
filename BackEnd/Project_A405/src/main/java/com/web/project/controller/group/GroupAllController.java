@@ -353,7 +353,7 @@ public class GroupAllController {
 		System.out.println("recruitSeq:" + recruitSeq);
 		System.out.println(groupAllRequest);
 		GroupAll resultGroupAll = null;
-
+		
 		Recruit recruit = recruitDao.findRecruitByReSeq(recruitSeq);
 
 		try {

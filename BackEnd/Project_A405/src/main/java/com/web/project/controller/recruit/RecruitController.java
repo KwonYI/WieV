@@ -24,11 +24,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.web.project.controller.hr.HrController;
+import com.web.project.dao.hr.CareerDao;
 import com.web.project.dao.hr.CompanyDao;
+import com.web.project.dao.hr.PartDao;
 import com.web.project.dao.recruit.RecruitDao;
 import com.web.project.model.BasicResponse;
+import com.web.project.model.hr.Career;
 import com.web.project.model.hr.Company;
 import com.web.project.model.hr.Hr;
+import com.web.project.model.hr.Part;
 import com.web.project.model.recruit.Recruit;
 import com.web.project.model.recruit.RegisterRequest;
 import io.swagger.annotations.ApiOperation;
@@ -50,6 +54,12 @@ public class RecruitController {//공고 등록
 	
 	@Autowired
 	CompanyDao companyDao;
+	
+	@Autowired
+	PartDao partDao;
+	
+	@Autowired
+	CareerDao careerDao;
 
 	public static final Logger logger = LoggerFactory.getLogger(HrController.class);
 	
@@ -170,5 +180,42 @@ public class RecruitController {//공고 등록
 		}
 		
 		return new ResponseEntity<List<Company>>(companyList, status);
+	}
+	
+	@GetMapping(value="/partAndCareerList/{comSeq}")
+	@ApiOperation(value="회사의 부서, 직무 리스트 모두 가져오기")
+	public ResponseEntity<List<Map<String, Object>>> getPartAndCareerList(@PathVariable("comSeq") int comSeq){
+		HttpStatus status = null;
+		List<Map<String, Object>> partAndCareerList = new ArrayList<Map<String,Object>>();
+		
+		try {
+			List<Part> partList = partDao.findListPartByCompanyComSeq(comSeq);
+			
+			for (int i = 0; i < partList.size(); i++) {
+				Part part = partList.get(i);
+				
+				Map<String, Object> resultMap = new HashMap<String, Object>();
+				
+				resultMap.put("part-Seq", part.getPartSeq());
+				resultMap.put("part-Name", part.getPartName());
+				
+				List<Career> careerList = careerDao.findListCareerByPartPartSeq(part.getPartSeq());
+				List<String> careerNameList = new ArrayList<String>();
+				
+				for (int j = 0; j < careerList.size(); j++) {
+					careerNameList.add(careerList.get(j).getCaName());
+				}
+				
+				resultMap.put("career-Name-List", careerNameList);
+				
+				partAndCareerList.add(resultMap);
+			}
+			status = HttpStatus.OK;
+		} catch (RuntimeException e) {
+			logger.error("회사리스트 가져오기 실패", e);
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		
+		return new ResponseEntity<List<Map<String, Object>>> (partAndCareerList, status);
 	}
 }

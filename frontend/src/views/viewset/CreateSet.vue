@@ -1,75 +1,56 @@
 <template>
   <div id="createset" class="mt-12 mx-14">
-    <div class="h4">신규 면접스케줄 생성</div>
+    <div class="h4 text-center">
+      [ {{ user.userComName }} {{ recruitItem.reYear }}년 {{ recruitItem.reFlag }} {{ recruitItem.reStatus }} ] 신규 면접 스케줄 생성
+      <br><br>
+      {{ recruitItem.reStartDate }} ~ {{ recruitItem.reEndDate }} 
+      <br><br>
+      <div class="h6">
+        <router-link :to="{ name: 'Menu' }">
+         면접 현황으로 돌아가기
+        </router-link>
+      </div>
+    </div>
     <!-- 스케줄생성 Form -->
     <v-row justify="center" no-gutters>
       <v-col cols="10" class="mt-10">
-        <!-- 시즌 정보 입력 -->
-        <v-col>
-          <v-row justify="space-around" no-gutters>
-            <v-col v-for="(item, index) in seasonData" :key="index" :cols="item.col">
-              <v-select :items="item.data" :label="item.name" solo hide-details disabled>
-              </v-select>
-            </v-col>
-            {{ recruitItem }}
-          </v-row>
-        </v-col>
         <!-- 스케줄 자동생성 입력 -->
-        <v-col class="mt-5 mb-0 h5">그룹 생성기</v-col>
-        <v-col>
-          <v-row class="brd" style="justify-between" no-gutters>
+        <v-card class="mx-auto mt-10 rounded-b-lg">
+          <v-card-title>
+            <div class="h5" style="margin: 10px">면접 그룹 생성기</div>
+            <!-- <v-col cols="3" class="d-flex justify-center align-center"> -->
+              <v-btn class="mr-5" :loading="loading" :disabled="loading" color="secondary"
+                @click="[loader = 'loading', addSchedule()]">
+                면접일정 추가
+              </v-btn>
+            <!-- </v-col> -->
+          </v-card-title>
+          <!-- <hr style="margin: 0px auto"> -->
+          <v-row class="brd" no-gutters>
             <v-col v-for="(item, index) in groupForm" :key="index" :cols="item.col" class="d-flex">
               <v-col class="d-flex justify-center align-center pa-0">
                 <span class="subtitle-1">{{ item.name }}</span>
               </v-col>
-              <v-col v-if="item.data" cols="8" class="d-flex align-center">
+              <v-col v-if="index === 0" cols="8" class="d-flex align-center">
+                <v-autocomplete v-model="formData[item.value]" :items="item.data" :label="item.name" solo
+                  :multiple="item.multiple" @change="partChange($event)" hide-details dense></v-autocomplete>
+              </v-col>
+              <v-col v-if="index === 1 || index === 2" cols="8" class="d-flex align-center">
                 <v-autocomplete v-model="formData[item.value]" :items="item.data" :label="item.name" solo
                   :multiple="item.multiple" hide-details dense></v-autocomplete>
               </v-col>
-            </v-col>
-
-            <!--
-            <v-col class="d-flex justify-center align-center" cols="4">
-              <v-dialog v-model="dialog" max-width="500px">
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                    color="secondary"
-                    v-bind="attrs"
-                    v-on="on"
-                  >
-                    그룹 설정
-                  </v-btn>
-                </template>
-                <v-card>
-                  <v-card-title>
-                    그룹 설정
-                  </v-card-title>
-                  <v-card-text>
-                    <v-row v-for="i in this.formData.groupNum" :key="i" no-gutters>
-                      <v-col v-for="j in viewTypesNum" :key="j">
-                        <v-select
-                          :items="formData.viewTypes"
-                          solo
-                        ></v-select>
-                      </v-col>
-                    </v-row>
-                  </v-card-text>
-                </v-card>
-              </v-dialog>
-            </v-col>
-            -->
-
-            <v-col cols="3" class="d-flex justify-center align-center">
-              <v-btn class="ma-2" :loading="loading" :disabled="loading" color="secondary"
-                @click="[loader = 'loading', addSchedule()]">
-                면접일정 추가
-              </v-btn>
+              <!-- <v-col v-if="index === 3" cols="6" class="d-flex align-center">
+                <a-date-picker @change="change"  v-model="formData[item.value]"/>
+              </v-col> -->
+              <!-- <v-col v-if="index === 3 || index === 4" cols="6" class="d-flex align-center">
+                <a-time-picker format="HH" v-model="formData[item.value]"/>
+              </v-col> -->
+              <v-col v-if="index > 2" cols="6" class="d-flex align-center">
+                <v-text-field :label="item.name" :type="item.type" v-model="formData[item.value]" single-line></v-text-field>
+              </v-col>
             </v-col>
           </v-row>
-        </v-col>
-
-        <a-date-picker @change="change" />
-        <a-time-picker format="HH:mm" />
+        </v-card>
 
         <hr>
         <!-- 스케줄 테이블 -->
@@ -154,7 +135,7 @@
 <script>
   import axios from 'axios'
   import _ from "lodash"
-  import { mapGetters } from "vuex"
+  import { mapGetters, mapState } from "vuex"
 
   // const SERVER_URL = "https://localhost:8080"
   const SERVER_URL = process.env.VUE_APP_SERVER_URL
@@ -166,123 +147,70 @@
         dialog: false,
         // arr : this.getProgressListCurrentRecruit,
 
-        recruitItem: this.$route.params.recruitItem,
+        // recruitItem: this.$route.params.recruitItem,
+        recruitItem: {},
 
-        // 시즌 데이터
-        seasonData: [
-          {
-            name: "시즌",
-            data: ["2020 하반기", "2021 상반기", "2021 하반기"],
-            col: 2,
-          },
-          {
-            name: "유형",
-            data: ["공채", "수시", "상시"],
-            col: 2
-          },
-          {
-            name: "분류",
-            data: ["신입", "경력", "계약", "인턴"],
-            col: 2
-          },
-          {
-            name: "기간",
-            data: [],
-            col: 3
-          },
-        ],
         // 일정 생성 폼
         groupForm: [{
             name: "부서",
-            data: ["CE/IM", "DS", "반도체"],
-            col: 3,
+            data: [],
+            col: 4,
             multiple: false,
             value: 'part'
           },
           {
             name: "직군",
-            data: ["SW개발", "마케팅"],
-            col: 3,
+            data: [],
+            col: 4,
             multiple: false,
             value: 'career'
           },
           {
             name: "면접 유형",
-            data: ["직무", "인성", "PT", "토론"],
-            col: 5,
+            data: ["인성", "직무", "PT", "토론"],
+            col: 4,
             multiple: true,
             value: 'viewTypes'
           },
+          // {
+          //   name: "면접 시작 날짜",
+          //   col: 3,
+          //   value: 'startDate'
+          // },
           {
-            name: "시작",
-            col: 2
-          },
-          {
-            name: "날짜",
-            data: ['2021-01-05'],
-            col: 2,
-            multiple: false,
-            value: 'startDate'
-          },
-          {
-            name: "시간",
-            data: ["13", "14"],
-            col: 2,
-            multiple: false,
+            name: "시작 시간",
+            type: "text",
+            col: 4,
             value: 'startTime'
           },
           {
-            name: "종료",
-            col: 2
-          },
-          {
-            name: "날짜",
-            data: [],
-            col: 2,
-            multiple: false,
-            value: 'endDate'
-          },
-          {
-            name: "시간",
-            data: ["19", "20"],
-            col: 2,
-            multiple: false,
+            name: "종료 시간",
+            type: "text",
+            col: 4,
             value: 'endTime'
           },
           {
-            name: "면접 그룹",
-            col: 2
+            name: "소요 시간",
+            type: "number",
+            col: 4,
+            value: 'duration'
           },
           {
             name: "면접관 수",
-            data: [2, 3, 4],
-            col: 3,
-            multiple: false,
+            type: "number",
+            col: 4,
             value: 'viewerNum'
           },
           {
             name: "지원자 수",
-            data: [8, 9, 10, 11, 12],
-            col: 3,
-            multiple: false,
+            type: "number",
+            col: 4,
             value: 'vieweeNum'
           },
           {
-            name: "소요 시간",
-            data: [1, 2, 3, 4],
-            col: 3,
-            multiple: false,
-            value: 'duration'
-          },
-          {
-            name: "면접 세부 그룹",
-            col: 2,
-          },
-          {
-            name: "지원자 수",
-            data: [1, 2, 3, 4, 5, 6],
-            col: 3,
-            mutiple: false,
+            name: "세부 그룹 지원자 수",
+            type: "number",
+            col: 4,
             value: 'vieweePerGroup'
           },
 
@@ -304,18 +232,18 @@
           // 종료 시간
           endTime: '',
           // 면접 그룹당 면접관 수, int
-          viewerNum: 0.1,
+          viewerNum: 0,
           // divideInterviewer: 0.1,
           // 면접 그룹당 지원자 수, int
-          vieweeNum: 0.1,
+          vieweeNum: 0,
           // divideInterviewee: 0.1,
           // 면접 그룹당 소요 시간, int
-          duration: '',
+          duration: 0,
           // divideTime: '',
           // 블라인드 여부
           // blindView: false,
           // 면접 세부그룹 당 지원자 수, int
-          vieweePerGroup: 0.1,
+          vieweePerGroup: 0,
           // divideDetailNum: 0.1,
           // 면접 그룹당 세부 그룹 수(자동 계산)
           // groupNum: 0
@@ -412,8 +340,13 @@
       clicked: function (value) {
         this.schGroupTable.expanded.push(value)
       },
-      change: function () {
-
+      partChange: function (event) {
+        for (var i = 0; i < this.$store.state.partCareerList.length; i++) {
+          const element = this.$store.state.partCareerList[i]
+          if(element.partName === event){
+            this.groupForm[1].data = element.careerName
+          }
+        }
       }
     },
     watch: {
@@ -433,8 +366,8 @@
     },
     computed: {
 
-
-      ...mapGetters(["getUserComSeq", "getProgressListCurrentRecruit"]),
+      ...mapState(["user"]),
+      ...mapGetters(["getUserComSeq", "getProgressListCurrentRecruit", "getPartCareerListLength", "getPartCareerList"]),
 
 
       makeGroup() {
@@ -462,9 +395,16 @@
       
     },
     created() {
-      // console.log("getProgressListCurrentRecruit", this.getProgressListCurrentRecruit)
+      for (var i = 0; i < this.$store.state.partCareerList.length; i++) {
+        const element = this.$store.state.partCareerList[i];
+        this.groupForm[0].data.push(element.partName)
+      }
 
-    }
+      this.recruitItem = this.$store.state.storeRecruitItem
+    },
+    beforeDestroy() {
+      this.$store.state.partCareerList = []
+    },
   }
 </script>
 

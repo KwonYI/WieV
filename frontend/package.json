@@ -13,11 +13,13 @@
     "core-js": "^3.6.5",
     "lodash": "^4.17.15",
     "openvidu-browser": "2.16.0",
+    "sockjs-client": "^1.5.0",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",
     "vuetify": "^2.2.11",
     "vuex": "^3.4.0",
     "vuex-persistedstate": "^4.0.0-beta.3",
+    "webstomp-client": "^1.2.6",
     "xlsx": "^0.16.9"
   },
   "devDependencies": {

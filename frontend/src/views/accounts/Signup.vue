@@ -1,14 +1,12 @@
 <template>
-  <div id="signup" class="mt-12 ml-16 text-white" @keyup.enter="signup">
-    <div class="h4">회원가입</div>
+  <div id="signup" class="text-white" @keyup.enter="signup">
     <!-- 정보입력 Form -->
-    <v-row no-gutters>
-      <v-form
-        ref="form"
-        v-model="recFormValid"
-        lazy-validation
-      >
-        <v-col cols="5" class="mt-5 ml-16">
+    <!-- <v-row no-gutters> -->
+      <!-- v-model="recFormValid" -->
+      <div class="h3 text-center mt-5 mb-5">회원가입</div>
+
+      <v-form ref="form" lazy-validation>
+        <v-col md="6" offset-md="3">
           <v-simple-table class="info-table" dark>
             <tbody>
               <tr v-for="(item, index) in userInfo" :key="index">
@@ -64,13 +62,11 @@
             :rules="[value => !!value || '약관동의는 필수 항목입니다.']"
             dark
           ></v-checkbox>
+          <div class="d-flex justify-end"><v-btn @click="signup" large id="signUpButton" class="mb-5">가입하기</v-btn></div>
         </v-col>
       </v-form> 
-      <v-col cols="12"></v-col>
-      <span @click="signup" class="text-white text-right ma-8 pr-16">
-        가입하기
-      </span>
-    </v-row>
+      
+    <!-- </v-row> -->
   </div>
 </template>
 
@@ -244,44 +240,21 @@ export default {
             })
         }
       }
-
-    //   if (
-    //     this.credentials.hrPassword != this.credentials.hrPasswordConfirmation
-    //   ) {
-    //     alert("비밀번호가 다릅니다.")
-    //     return
-    //   }
-
-
-    //   let regexp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i
-    //   if (!regexp.test(this.credentials.hrEmail)) {
-    //     alert("이메일은 이메일 형식으로 입력해주세요.")
-    //     return
-    //   }
-
-    //   
-
-    //   if (this.credentials.agreed) {
-    //     axios
-    //       .post(`${SERVER_URL}/hr/signup`, this.credentials)
-    //       .then((res) => {
-    //         console.log(res)
-    //         alert("회원가입 성공")
-    //         this.$router.push({ name: "Home" })
-    //       })
-    //       .catch((err) => {
-    //         console.log(err)
-    //         alert("회원가입 정보가 올바르지 않습니다.")
-    //       })
-    //   } else {
-    //     alert("개인정보 이용 약관에 동의해야 합니다.")
-    //   }
     }
   }
 }
 </script>
 
 <style scoped>
+#signup{
+  /* color: black !important; */
+  background-color: #304B61;
+}
+
+#signUpButton {
+  width: 20px;
+}
+
 .info-table {
   background-color: transparent !important;
 }

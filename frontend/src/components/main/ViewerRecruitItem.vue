@@ -43,7 +43,6 @@
                     {{ interview.interviewType }} 면접
                   </div>
                   <v-btn
-                    v-if="user.userViewWait === 0"
                     color="blue lighten-3 yellow--text"
                     :disabled="inWait === true"
                     @click="goWaitSession"
@@ -70,8 +69,10 @@
 
 <script>
 import axios from "axios";
-
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
+
+import Stomp from 'webstomp-client'
+import SockJS from 'sockjs-client'
 
 export default {
   name: "ViewerRecruitItem",
@@ -90,7 +91,8 @@ export default {
     };
   },
   created() {
-    console.log(this.user)
+    console.log("현재 유저를 보여줍니다(ViewerRecruit)", this.user)
+    this.connect()
   },
   methods: {
     goWaitSession() {
@@ -116,16 +118,19 @@ export default {
                 re_status: this.interview.recruitStatus,
                 token: res.data.token,
                 userName: res.data.interviewerName,
+                userSeq : this.user.userSeq,
                 type: res.data.type,
                 sessionName: res.data.sessionName,
                 interviewSession : this.interview.interviewSessionName,
               },
             })
+            this.inWait = true;
             window.open(routeData.href, "_blank")
           })
           .catch(err => {
             if (this.user.userViewWait == 0) {
               console.log(err)
+              alert("방 입장 실패")
             } else {
               alert("방이 아직 개설되지 않았습니다.")
             }
@@ -149,22 +154,48 @@ export default {
                 re_year: this.interview.recruitYear,
                 re_flag: this.interview.recruitFlag,
                 re_status: this.interview.recruitStatus,
-                userName: res.data.interviewerName,
-                type: res.data.type,
                 token: res.data.token,
+                userName: res.data.interviewerName,
+                userSeq : this.user.userSeq,
+                type: res.data.type,
                 sessionName: res.data.sessionName,
               },
             })
-            // this.inInterview = true;
+            this.inInterview = true;
             window.open(routeData.href, "_blank")
           })
           .catch(err => {
             if (this.user.userViewWait == 0) {
               console.log(err)
+              alert("방 입장 실패")
             } else {
               alert("방이 아직 개설되지 않았습니다.")
             }
           })
+    },
+
+    connect() {
+      let socket = new SockJS(SERVER_URL);
+      this.stompClient = Stomp.over(socket);
+      this.stompClient.connect(
+        {},
+        frame => {
+          // 소켓 연결 성공
+          this.connected = true;
+          console.log('소켓 연결 성공', frame);
+          this.stompClient.subscribe("/sendInWaitSession", res => {
+            this.inWait = JSON.parse(res.body)['signal']
+          });
+
+          this.stompClient.subscribe("/sendInInterviewSession", res => {
+            this.inInterview = JSON.parse(res.body)['signal']
+          });
+        },
+        error => {
+          console.log('소켓 연결 실패', error);
+          this.connected = false;
+        }
+      );        
     },
   },
   computed: {

@@ -87,6 +87,7 @@ export default new Vuex.Store({
 
     //채용담당자가 선택한 현재 공고 :
     selectedRecruitNo: -1,
+    selectedRecruitIndex: '', //얘는 나타내기 용 (지우지 말 것 )
     storeRecruitItem: {},
 
     //그냥 인담자, 면접관, 지원자 로그인 상황 한 변수로 통일하는 게 낫다.
@@ -112,6 +113,15 @@ export default new Vuex.Store({
       reStartDate: "",
       reEndDate: "",
     }, ],
+
+    // 부서와 직군 정보
+    partCareer:{
+        partSeq: 0,
+        partName: '',
+        careerName: [],
+      },
+
+    partCareerList: [],
 
     // 공고별 면접현황 리스트
     recruitProgressList: [],
@@ -235,6 +245,13 @@ export default new Vuex.Store({
       return state.checkIn
     },
 
+    getPartCareerList(state) {
+      return state.partCareerList
+    },
+
+    getPartCareerListLength(state) {
+      return state.partCareerList.length
+    }
   },
 
   mutations: {
@@ -280,6 +297,7 @@ export default new Vuex.Store({
       state.user.userComSeq = 0
       state.user.userSeq = 0
       state.comVieweeList = []
+      state.partCareerList = []
     },
 
     USER_UPDATE(state, res) {
@@ -385,8 +403,19 @@ export default new Vuex.Store({
         }
         state.comVieweeList.push(state.viewee)
       }
-      
-      
+    },
+
+    GET_PART_CAREER_LIST(state, res) {
+      for (var i = 0; i < res.length; i++) {
+        const element = res[i];
+        
+        state.partCareer = {}
+        state.partCareer.partSeq = element["part-Seq"]
+        state.partCareer.partName = element["part-Name"]
+        state.partCareer.careerName = element["career-Name-List"]
+
+        state.partCareerList.push(state.partCareer)
+      }
     },
 
   },
@@ -492,7 +521,17 @@ export default new Vuex.Store({
           context.commit("GET_PROGRESS_LIST", res.data)
         })
         .catch(err => console.log(err))
-    }
+    },
+
+    GET_PART_CAREER_LIST(context, comSeq){
+      axios.get(`${SERVER_URL}/recruit/partAndCareerList/` + comSeq)
+        .then(res => {
+          context.commit("GET_PART_CAREER_LIST", res.data)
+          // console.log(res.data)
+          // console.log(res.data.length)
+        })
+        .catch(err => console.log(err))
+    },
 
 
   },
