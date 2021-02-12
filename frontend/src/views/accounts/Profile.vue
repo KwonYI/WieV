@@ -32,7 +32,7 @@
               <h4><v-icon large>mdi-cellphone</v-icon> 연락처 : {{ user.userPhone }}</h4>
             </v-card-text>
             <div v-if="user.userViewWait === -1" class="d-flex justify-center">
-              <v-dialog v-model="dialogUpdate" width="500">
+              <v-dialog v-model="dialogUpdate" width="500" @click:outside="updateOutside">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn class="ma-3" text color="blue lighten-2" v-bind="attrs" v-on="on">
                   <div>
@@ -76,7 +76,7 @@
                   </v-card-actions>
                 </v-card>
               </v-dialog>
-              <v-dialog v-model="dialogDelete" width="500">
+              <v-dialog v-model="dialogDelete" width="500" @click:outside="deleteOutside">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn class="ma-3" text color="red lighten-2" v-bind="attrs" v-on="on">
                   <div>
@@ -222,7 +222,13 @@ export default {
 
       this.dialogUpdate = false
     },
-
+    updateOutside: function() {
+      this.dialogUpdate = false
+      this.updateCredentials.hrName = ""
+      this.updateCredentials.hrPassword = ""
+      this.updateCredentials.hrPasswordConfirmation = ""
+      this.updateCredentials.hrPhone = ""
+    },
     userDelete: function() {
       console.log(this.$store.state.user.userPassword)
       console.log(this.deleteCredentials.hrPassword)
@@ -239,6 +245,10 @@ export default {
       }
 
       this.dialogDelete = false
+    },
+    deleteOutside: function() {
+      this.dialogDelete = false
+      this.deleteCredentials.hrPassword = ""
     }
   },
 };

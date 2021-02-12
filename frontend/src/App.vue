@@ -35,13 +35,7 @@
           <!-- 오른쪽 상단 위치, 로그인 후 -->
           <v-toolbar-items v-if="isNotRoom" class="align-center">
             <!-- 인사담당자일 경우 면접 스케줄 생성 버튼 -->
-            <v-btn plain style="font-size: 1rem">
-              <router-link :to="{ name: 'Profile' }">
-                Profile
-              </router-link>
-            </v-btn>
-
-
+            <v-btn plain style="font-size: 1rem" :to="{ name: 'Profile' }">Profile</v-btn>
             <v-btn plain style="font-size: 1rem" @click="logout">Logout</v-btn>
           </v-toolbar-items>
           <!-- 오른쪽 상단 위치, 대기실/면접실 -->
@@ -52,7 +46,7 @@
         <div v-else class="h-100">
           <!-- 오른쪽 상단 위치, 로그인 후 -->
           <v-toolbar-items v-if="isNotRoom" class="align-center">
-            <v-dialog v-model="dialogLogin" width="500">
+            <v-dialog v-model="dialogLogin" width="500" @click:outside="loginOutside">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn class="ma-3" text color="lighten-2" v-bind="attrs" v-on="on">
                   <div><v-icon>mdi-account-key</v-icon> Login</div>
@@ -86,7 +80,7 @@
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn color="primary" text @click="login">로그인</v-btn>
-                  <v-dialog v-model="dialogPassword" width="500">
+                  <v-dialog v-model="dialogPassword" width="500" @click:outside="findPasswordOutside">
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn class="ma-3" text color="primary" v-bind="attrs" v-on="on">비밀번호 찾기</v-btn>
                     </template>
@@ -164,12 +158,6 @@
     </v-card>
 
 <!--이거 Home에 두면 부드럽게 안내려감.. 그래서 app.vue에 넣음-->
-    
-
-
-
-
-
 
   </v-app>
 </template>
@@ -285,7 +273,12 @@ export default {
         this.credentials.hrPhone = ""
         this.dialogPassword = false
       }
-      
+    },
+    findPasswordOutside: function() {
+      this.credentials.hrName = ""
+      this.credentials.hrEmail = ""
+      this.credentials.hrPhone = ""
+      this.dialogPassword = false
     },
     login: function () {
       this.$store.dispatch("LOGIN", this.userCredentials)
@@ -297,6 +290,11 @@ export default {
         })
 
       this.dialogLogin = false
+    },
+    loginOutside: function() {
+      this.dialogLogin = false
+      this.userCredentials.userEmail = ''
+      this.userCredentials.userPassword = ''
     },
     logout: function () {
       this.$store.dispatch("LOGOUT")
