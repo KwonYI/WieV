@@ -43,19 +43,20 @@
                     {{ interview.interviewType }} 면접
                   </div>
                   <v-btn
-                    color="blue lighten-3 yellow--text"
+                    v-if="user.userViewWait === 0"
+                    color="blue-grey darken-1"
                     :disabled="inWait === true"
                     @click="goWaitSession"
                   >
-                    대기실 입장
+                    <span style="color: #FFF1C3">대기실 입장</span>
                   </v-btn>
 
                   <v-btn
-                    color="blue lighten-3 yellow--text"
+                    color="blue-grey darken-1"
                     :disabled="inInterview === true"
                     @click="goInterviewSession"
                   >
-                    면접실 입장
+                    <span style="color: #FFF1C3">면접실 입장</span>
                   </v-btn>
                 </v-card-text>
               </v-card>

@@ -29,7 +29,7 @@
 
         <v-col cols="9" class="main-box">
           <!-- 메인 상단 - 배너, 면접실 이동 안내 -->
-          <v-row class="main-banner" style="height: 15%">
+          <v-row class="main-banner">
             <!-- 공지 배너 -->
             <v-col cols="9" class="banner">
               <v-text-field
@@ -690,12 +690,13 @@ export default {
   --bs-gutter-x: initial;
 }
 .main-box {
-  display: flex;
-  flex-direction: column;
   padding: 0;
 }
 .main-banner {
-  height: 15%;
+  height: 14%;
+}
+.main-screen {
+  height: 86%;
 }
 .v-list {
   height: 85%;
