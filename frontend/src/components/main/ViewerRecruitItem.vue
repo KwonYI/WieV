@@ -29,7 +29,7 @@
                 <v-card-text class="d-flex justify-space-around align-center">
                   <!-- <div class="text--primary">{{ this.index }}</div> -->
 
-                  <div class="text--primary">
+                  <div class="y">
                     {{ interview.groupDate }}
                   </div>
                   <!-- 시간이 조금 이상하게 생겼다 -->
@@ -44,19 +44,19 @@
                   </div>
                   <v-btn
                     v-if="user.userViewWait === 0"
-                    color="blue lighten-3 yellow--text"
+                    color="blue-grey darken-1"
                     :disabled="inWait === true"
                     @click="goWaitSession"
                   >
-                    대기실 입장
+                    <span style="color: #FFF1C3">대기실 입장</span>
                   </v-btn>
 
                   <v-btn
-                    color="blue lighten-3 yellow--text"
+                    color="blue-grey darken-1"
                     :disabled="inInterview === true"
                     @click="goInterviewSession"
                   >
-                    면접실 입장
+                    <span style="color: #FFF1C3">면접실 입장</span>
                   </v-btn>
                 </v-card-text>
               </v-card>

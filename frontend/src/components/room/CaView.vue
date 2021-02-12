@@ -16,6 +16,7 @@
               elevation="3"
               height="70%"
               class="centering"
+              :class="isViewee ? 'd-none' : ''"
               tile
             >
               <span class="subtitle-1 px-4">
@@ -81,15 +82,21 @@
             </span> -->
           </v-col>
           <!-- 지원자 -->
-          <v-col cols="8" class="viewee-box centering flex-wrap">
+          <v-col v-if="!isViewee" cols="8" class="viewee-box centering flex-wrap">
             <div v-for="i in viewee" :key="i" :class="[viewee === 1 ? `screen-res-md` : `screen-res-sm`, 'brd']">지원자 {{i}}</div>
             <!-- <span v-for="sub in subscribers" :key="sub.stream.connection.connectionId">
+            <div v-if="!isViewee">
+              
+            </div>
               <user-video
                 v-if="JSON.parse(sub.stream.connection.data.split('%/%')[0])['type'] === 'viewee'"
                 :stream-manager="sub" 
                 @click.native="updateMainVideoStreamManager(sub)"
               />
             </span> -->
+          </v-col>
+          <v-col v-else cols="8" class="viewee-box centering flex-wrap">
+            <div class="screen-res-md brd">나</div>
           </v-col>
         </v-row>
       </v-col>
@@ -118,22 +125,20 @@
           </v-sheet>
         </div>
         <!-- 자기소개서 -->
-        <v-card style="height: 90%">
-          <!-- <template v-slot:extension> -->
-            <v-tabs
-              v-model="letterTab"
-              slider-color="#304B61"
-              class="letterTab"
-              center-active
+        <v-card v-if="!isViewee" style="height: 90%">
+          <v-tabs
+            v-model="letterTab"
+            slider-color="#304B61"
+            class="letterTab"
+            center-active
+          >
+            <v-tab
+              v-for="(item, i) in letterList"
+              :key="i"
             >
-              <v-tab
-                v-for="(item, i) in letterList"
-                :key="i"
-              >
-                질문 {{ i+1 }}
-              </v-tab>
-            </v-tabs>
-          <!-- </template> -->
+              질문 {{ i+1 }}
+            </v-tab>
+          </v-tabs>
           <v-card-text class="">
             <v-tabs-items v-model="letterTab">
               <v-tab-item v-for="(item, i) in letterList" :key="i">
@@ -158,6 +163,7 @@
             ></v-textarea>
           </v-card-text>
         </v-card>
+        <v-card v-else style="height: 90%"></v-card>
         <!-- 평가 -->
 
       </v-col>

@@ -2,177 +2,172 @@
   <div id="ptview">
     <v-row style="height: 100%">
 
-        <v-col cols="9" class="main-box">
-          <!-- 메인 상단 - 배너, 면접실 이동 안내 -->
-          <v-row class="main-banner">
-            <!-- 공지 배너 -->
-            <v-col cols="9" class="banner">
+      <v-col cols="9" class="main-box">
+        <!-- 메인 상단 - 면접실 이름, 타이머 -->
+        <v-row class="main-banner">
+          <!-- 면접실 이름 -->
+          <v-col cols="2" class="d-flex align-center">
+            <h5 class="mb-0 font-weight-bold">PT 면접실</h5>
+          </v-col>
+          <v-col cols="3"></v-col>
+          <!-- 타이머 -->
+          <v-col cols="7" class="centering justify-start">
+            <v-card
+              elevation="3"
+              height="70%"
+              class="centering"
+              :class="isViewee ? 'd-none' : ''"
+              tile
+            >
+              <span class="subtitle-1 px-4">
+                남은 시간 {{ minutes }} : {{ seconds }}
+              </span>
+              <!-- <span v-for="(item, i) in timerBtn" :key="i">
+                <v-btn v-if="item.if" color="#757575" height="100%" tile dark @click="item.click">
+                  {{ item.name }}
+                </v-btn>
+              </span> -->
+              <v-btn v-if="!timer" color="#757575" height="100%" tile dark @click="startTimer">
+                시작
+              </v-btn>
+              <v-btn v-else color="#757575" height="100%" tile dark @click="stopTimer">
+                정지
+              </v-btn>
+              <v-btn v-if="resetButton" color="#757575" height="100%" tile dark @click="resetTimer">
+                리셋
+              </v-btn>
+              <v-btn v-if="!timer" color="#757575" height="100%" tile dark @click="editTimer">
+                시간 설정
+              </v-btn>
+              
+            </v-card>
+            <v-col v-if="edit" cols="2" class="d-flex pa-0" style="height: 70%">
               <v-text-field
+                v-model="inputMin"
                 solo
-                hide-details
                 height="100%"
-              ></v-text-field>
-            </v-col>
-            <!-- 면접실 이동 안내 -->
-            <v-col cols="3">
-              <v-card color="#304B61" elevation="2" style="height: 100%" dark>
-                <v-card-title class="justify-center py-1">
-                  <div class="text-center text-subtitle-1">면접실 이동</div>
-                </v-card-title>
-                <v-card-text class="d-flex justify-center pa-0 pb-1 text-white">
-                  <!-- 면접관 -->
-                  <a-dropdown v-if="!isViewee" v-model="visible" class="centering" style="width: 90%">
-                    <a class="ant-dropdown-link" @click="e => e.preventDefault()">
-                      <span v-for="(viewee, i) in moving_viewee" :key="i" class="pr-1">
-                        {{ viewee }} &nbsp;
-                      </span>
-                      <span v-if="!moving_viewee.length" class="px-1">
-                        면접실 이동자 선택하기
-                      </span>
-                      &nbsp;
-                      <a-icon type="down" />
-                    </a>
-                    
-                    <a-menu
-                      slot="overlay"
-                      v-model="moving_viewee"
-                      multiple
-                      :default-selected-keys="[]"
-                      @click="handling"
-                    >
-                      <a-menu-item v-for="name in viewee_list" :key="name">
-                        {{ name }}
-                      </a-menu-item>
-                    </a-menu>
-                  </a-dropdown>
-                  <!-- 지원자 -->
-                  <span v-else v-for="(viewee, i) in moving_viewee" :key="i" class="pr-1">
-                    {{ viewee }} &nbsp;
-                  </span>
-                </v-card-text>
-              </v-card>
-            </v-col>
-          </v-row>
-
-          <!-- 메인 중앙 - 면접관, 지원자 화면 -->
-          <v-row class="main-screen">
-            <!-- 면접관 -->
-            <v-col cols="4" class="viewer-box centering flex-column">
-              <div v-for="i in viewer" :key="i" class="brd screen-res-sm">면접관 {{i}}</div>
-              <!-- <span v-for="sub in subscribers" :key="sub.stream.connection.connectionId">
-                <user-video
-                  v-if="JSON.parse(sub.stream.connection.data.split('%/%')[0])['type'] !== 'viewee'"
-                  :stream-manager="sub" 
-                  @click.native="updateMainVideoStreamManager(sub)"
-                />
-              </span> -->
-            </v-col>
-            <!-- 지원자 -->
-            <v-col cols="8" class="viewee-box centering flex-wrap">
-              <div v-for="i in viewee" :key="i" :class="[viewee === 1 ? `screen-res-md` : `screen-res-sm`, 'brd']">지원자 {{i}}</div>
-              <!-- <span v-for="sub in subscribers" :key="sub.stream.connection.connectionId">
-                <user-video
-                  v-if="JSON.parse(sub.stream.connection.data.split('%/%')[0])['type'] === 'viewee'"
-                  :stream-manager="sub" 
-                  @click.native="updateMainVideoStreamManager(sub)"
-                />
-              </span> -->
-            </v-col>
-          </v-row>
-        </v-col>
-
-        <!-- 우측 중앙 - 기능 탭 -->
-        <v-col cols="3" class="sub-box">
-          <!-- 대기실 - 면접실 메신저 -->
-          <div :class="isViewee ? 'hidden' : ''" class="pb-2 mb-2 centering justify-space-between" style="height: 10%">
-            <!-- 메시지 보내기 -->
-            <a-popover title="Message" trigger="click">
-              <v-btn color="#757575" elevation="3" height="100%" width="35%" dark>메시지 보내기</v-btn>
-              <template slot="content">
-                <v-textarea
-                  solo
-                  height="100px"
-                  clearable
-                  no-resize
-                  hide-details
-                ></v-textarea>
-                <v-btn text color="secondary">Send</v-btn>
-              </template>
-            </a-popover>
-            <!-- 메시지 출력 -->
-            <v-sheet color="white" height="100%" width="60%" elevation="3" class="d-flex justify-center align-center">
-              <div>면접 준비 완료</div>
-            </v-sheet>
-          </div>
-          <!-- 면접 안내 -->
-          <div style="height: 35%">
-            <v-sheet color="white" height="100%" elevation="3">
-              <div class="text-h6 text-center pt-1">면접 안내</div>
-              <v-divider class="my-1"></v-divider>
-            </v-sheet>
-          </div>
-          <!-- FAQ -->
-          <div style="height: 10%">
-            <v-sheet color="white" height="100%" elevation="3">
-              <v-dialog
-                v-model="faq_dialog"
-                scrollable
-                max-width="500px"
-              > 
-                <!-- FAQ 버튼 -->
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                    color="#757575"
-                    dark
-                    block
-                    tile
-                    v-bind="attrs"
-                    v-on="on"
-                    height="100%"
-                  >
-                    FAQ
-                  </v-btn>
-                </template>
-                <!-- FAQ Modal -->
-                <v-card>
-                  <v-card-title class="justify-center">FAQ</v-card-title>
-                  <v-divider class="mt-2 mb-3"></v-divider>
-                  <v-card-text style="height: 300px">
-                    <v-expansion-panels accordion focusable>
-                      <v-expansion-panel
-                        v-for="(item, i) in questions"
-                        :key="i"
-                      >
-                        <v-expansion-panel-header>{{ item.title }}</v-expansion-panel-header>
-                        <v-expansion-panel-content>
-                          <div class="mt-5">{{ item.answer }}</div>
-                        </v-expansion-panel-content>
-                      </v-expansion-panel>
-                    </v-expansion-panels>
-                  </v-card-text>
-                </v-card>
-              </v-dialog>
-            </v-sheet>
-          </div>
-          <!-- 채팅창 -->
-          <div style="height: 45%">
-            <v-sheet color="white" height="100%" elevation="3">
-              <v-list class="pa-0" v-auto-bottom="messages">
-                <div v-for="(msg, index) in messages" :key="index">
-                  {{ msg.from }} : {{ msg.text }}
-                </div>
-              </v-list>
-              <v-text-field
-                v-model="text"
-                label="메세지를 입력하세요."
-                class="pa-0 ma-0 mx-1"
+                max-width="70px"
+                type="number"
+                label="분"
+                class="time-input"
+                tile
                 hide-details
-                dense
-                @keyup.13="sendMessage"
               ></v-text-field>
-            </v-sheet>
-          </div>
-        </v-col>
+              <v-text-field
+                v-model="inputSec"
+                solo
+                height="100%"
+                max-width="70px"
+                type="number"
+                label="초"
+                class="time-input"
+                tile
+                hide-details
+              ></v-text-field>
+            </v-col>
+          </v-col>
+        </v-row>
+
+        <!-- 메인 중앙 - 면접관, 지원자 화면 -->
+        <v-row class="main-screen">
+          <!-- 면접관 -->
+          <v-col cols="4" class="viewer-box centering flex-column">
+            <div v-for="i in viewer" :key="i" class="brd screen-res-sm">면접관 {{i}}</div>
+            <!-- <span v-for="sub in subscribers" :key="sub.stream.connection.connectionId">
+              <user-video
+                v-if="JSON.parse(sub.stream.connection.data.split('%/%')[0])['type'] !== 'viewee'"
+                :stream-manager="sub" 
+                @click.native="updateMainVideoStreamManager(sub)"
+              />
+            </span> -->
+          </v-col>
+          <!-- 지원자 -->
+          <v-col v-if="!isViewee" cols="8" class="viewee-box centering flex-wrap">
+            <div v-for="i in viewee" :key="i" :class="[viewee === 1 ? `screen-res-md` : `screen-res-sm`, 'brd']">지원자 {{i}}</div>
+            <!-- <span v-for="sub in subscribers" :key="sub.stream.connection.connectionId">
+            <div v-if="!isViewee">
+              
+            </div>
+              <user-video
+                v-if="JSON.parse(sub.stream.connection.data.split('%/%')[0])['type'] === 'viewee'"
+                :stream-manager="sub" 
+                @click.native="updateMainVideoStreamManager(sub)"
+              />
+            </span> -->
+          </v-col>
+          <v-col v-else cols="8" class="viewee-box centering flex-wrap">
+            <div class="screen-res-md brd">나</div>
+          </v-col>
+        </v-row>
+      </v-col>
+
+      <!-- 우측 중앙 - 기능 탭 -->
+      <v-col cols="3" class="sub-box">
+        <!-- 대기실 - 면접실 메신저 -->
+        <div :class="isViewee ? 'hidden' : ''" class="pb-2 mb-2 centering justify-space-between" style="height: 10%">
+          <!-- 메시지 보내기 -->
+          <a-popover title="Message" trigger="click">
+            <v-btn color="#757575" elevation="3" height="100%" width="35%" dark>메시지 보내기</v-btn>
+            <template slot="content">
+              <v-textarea
+                solo
+                height="100px"
+                clearable
+                no-resize
+                hide-details
+              ></v-textarea>
+              <v-btn text color="secondary">Send</v-btn>
+            </template>
+          </a-popover>
+          <!-- 메시지 출력 -->
+          <v-sheet color="white" height="100%" width="60%" elevation="3" class="d-flex justify-center align-center">
+            <div>면접 준비 완료</div>
+          </v-sheet>
+        </div>
+        <!-- 자기소개서 -->
+        <v-card v-if="!isViewee" style="height: 90%">
+          <v-tabs
+            v-model="letterTab"
+            slider-color="#304B61"
+            class="letterTab"
+            center-active
+          >
+            <v-tab
+              v-for="(item, i) in letterList"
+              :key="i"
+            >
+              질문 {{ i+1 }}
+            </v-tab>
+          </v-tabs>
+          <v-card-text class="">
+            <v-tabs-items v-model="letterTab">
+              <v-tab-item v-for="(item, i) in letterList" :key="i">
+                {{ i+1 }}. {{ item.quest }}
+                <v-divider></v-divider>
+                <v-virtual-scroll
+                  item-height="250"
+                  :items="[item]"
+                >
+                  {{ item.answer }}
+                </v-virtual-scroll>
+              </v-tab-item>
+            </v-tabs-items>
+            <v-textarea
+              label="Memo"
+              outlined
+              rows="2"
+              row-height="3"
+              style="margin-top: .5rem;"
+              no-resize
+              hide-details
+            ></v-textarea>
+          </v-card-text>
+        </v-card>
+        <v-card v-else style="height: 90%"></v-card>
+        <!-- 평가 -->
+
+      </v-col>
+
     </v-row>
   </div>
 </template>
@@ -229,22 +224,48 @@ export default {
       viewer: 2,
       viewee: 4,
 
-      // 배너
-      banner_dialog: false,
+      // 타이머
+      // timerBtn: [
+      //   { name: '시작', if: !this.timer, click: this.startTimer },
+      //   { name: '정지', if: this.timer, click: this.stopTimer },
+      //   { name: '리셋', if: this.resetButton, click: this.resetTimer },
+      //   { name: '시간 설정', if: !this.timer, click: this.editTimer },
+      // ],
 
-      // 면접 이동
-      visible: false,
-      viewee_list: ['김일번', '박이번', '신삼번', '강사번', '류오번', '이육번'],
-      moving_viewee: [],
+      timer: null,
+      inputMin: 0,
+      inputSec: 0,
+      time: 0,
+      resetButton: false,
+      edit: false,
 
-      // 면접 안내
+      // 탭
+      letterList: [
+        {
+          'quest' : '애국가',
+          'answer' : '동해 물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라 만세. 무궁화 삼천리 화려 강산. 대한 사람, 대한으로 길이 보전하세.'
+        },
+        {
+          'quest' : '미국 국가',
+          'answer' : 'O say, can you see, by the dawn’s early light, What so proudly we hailed at the twilight’s last gleaming, Whose broad stripes and bright stars, through the perilous fight, O’er the ramparts we watched, were so gallantly streaming? And the rockets’ red glare, the bombs bursting in air, Gave proof through the night that our flag was still there. O say, does that star-spangled banner yet wave. O’er the land of the free and the home of the brave?'
+        },
+        {
+          'quest' : '몽골 국가',
+          'answer' : 'Дархан манай тусгаар улс, Даяар Монголын ариун голомт. Далай их дээдсийн гэгээн үйлс, Дандаа энхжиж, үүрд мөнхөжинө. Хамаг дэлхийн шударга улстай. Хамтран нэгдсэн эвээ бэхжүүлж. Хатан зориг, бүхий л чадлаараа. Хайртай Монгол орноо мандуулъя. Өндөр төрийн минь сүлд ивээж. Өргөн түмний минь заяа түшиж. Үндэс язгуур, хэл соёлоо. Үрийн үрдээ өвлөн бадраая'
+        },
+        {
+          'quest' : '원주율 1000자리',
+          'answer' : '3.14159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214808651328230664709384460955058223172535940812848111745028410270193852110555964462294895493038196442881097566593344612847564823378678316527120190914564856692346034861045432664821339360726024914127372458700660631558817488152092096282925409171536436789259036001133053054882046652138414695194151160943305727036575959195309218611738193261179310511854807446237996274956735188575272489122793818301194912'
+        },
+        {
+          'quest' : '1차 공통 프로젝트 우승팀은?',
+          'answer' : 'WieV! WieV!'
+        },
+      ],
+      length: 5,
+      letterTab: null,
+      
 
-      // FAQ
-      faq_dialog: false,
-      questions: [
-        { title: '면접 시간은 어떻게 되나요?', answer: '안 알랴줌' },
-        { title: '뭐야 내 면접 돌려줘요', answer: '안 돼 안 바꿔줘 바꿀 생각 없어 빨리 돌아가' },
-      ]
     }
   },
   created: function () {
@@ -379,16 +400,67 @@ export default {
       }
 
       this.visible = true
+    },
+
+    startTimer: function() {
+      //1000ms = 1 second
+      this.timer = setInterval(() => this.countdown(), 1000)
+      this.resetButton = true
+      this.edit = false
+    },
+    stopTimer: function() {
+      clearInterval(this.timer)
+      this.timer = null
+      this.resetButton = true
+    },
+    resetTimer: function() {
+      this.time = this.totalTime
+      clearInterval(this.timer)
+      this.timer = null
+      this.resetButton = false
+    },
+    editTimer: function() {
+      this.edit = !this.edit
+    },
+    padTime: function(time){
+      return (time < 10 ? '0' : '') + time
+    },
+    countdown: function() {
+      this.time--
     }
   },
 
   computed: {
+    totalTime() {
+      return Number(this.inputMin * 60) + Number(this.inputSec)
+    },
+    minutes: function() {
+      const minutes = Math.floor(this.time / 60)
+      return this.padTime(minutes)
+    },
+    seconds: function() {
+      const seconds = this.time - (this.minutes * 60)
+      return this.padTime(seconds)
+    },
+    questLen() {
+      return this.letterList.length
+    }
   },
+
+  watch: {
+    totalTime() {
+      this.time = this.totalTime
+    },
+    
+    length (val) {
+      this.tab = val - 1
+    },
+  }
 }
 </script>
 
 <style scoped>
-#ptview {
+#caview {
   height: 100%;
 }
 .col {
@@ -414,6 +486,19 @@ export default {
   padding: 0;
   align-content: center;
 }
+
+.letterTab {
+  height: 5%;
+}
+::v-deep .letterTab > .v-item-group {
+  height: 100%;
+}
+.v-tab {
+  min-width: initial;
+  font-size: 0.7rem;
+  padding: 0 0.3rem;
+}
+
 .v-list {
   height: 85%;
   width: 100%;
@@ -428,6 +513,32 @@ export default {
 ::v-deep .ant-popover-inner .ant-popover-inner-content {
   padding-bottom: 0;
 }
+
+.time-input {
+  height: 100%;
+  border-radius: initial;
+}
+::v-deep .time-input > .v-input__control {
+  min-height: initial;
+  height: 100%;
+}
+::v-deep .time-input > .v-input__slot {
+  padding: 0;
+}
+::v-deep .v-item-group > .v-slide-group__prev, ::v-deep .v-item-group > .v-slide-group__next {
+  display: none;
+}
+
+::v-deep .v-input__slot > fieldset {
+  height: 100%;
+  top: 0;
+}
+::v-deep fieldset > legend {
+  position: absolute;
+  top: -5px;
+  background: white;
+}
+
 .brd {
   border: 0.1px solid grey;
   background-color: darkgrey;
@@ -444,6 +555,7 @@ export default {
 .hidden {
   visibility: hidden;
 }
+
 .screen-res-sm {
   width: 288px;
   height: 162px;
@@ -451,5 +563,12 @@ export default {
 .screen-res-md {
   width: 640px;
   height: 360px;
+}
+
+
+::v-deep input::-webkit-outer-spin-button,
+::v-deep input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 </style>
