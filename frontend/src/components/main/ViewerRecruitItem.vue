@@ -29,7 +29,7 @@
                 <v-card-text class="d-flex justify-space-around align-center">
                   <!-- <div class="text--primary">{{ this.index }}</div> -->
 
-                  <div class="y">
+                  <div class="text--primary">
                     {{ interview.groupDate }}
                   </div>
                   <!-- 시간이 조금 이상하게 생겼다 -->
