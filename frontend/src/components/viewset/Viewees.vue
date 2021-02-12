@@ -21,7 +21,7 @@
       <thead>
         <tr>
           <th class="text-center">No</th>
-          <th class="text-center">직군부류</th>
+          <th class="text-center">직군</th>
           <th class="text-center">이름</th>
           <th class="text-center">연락처</th>
           <th class="text-center">생년월일</th>

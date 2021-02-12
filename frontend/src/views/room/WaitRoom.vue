@@ -484,15 +484,15 @@ export default {
         },
       })
       .then(() => {
-          if (this.stompClient && this.stompClient.connected) {
-            const msg = {
-              name : '',
-              message : '',
-              target : [],
-              signal : false,
-            };
-            this.stompClient.send("/receiveInWaitSession", JSON.stringify(msg), {});
-          }
+          // if (this.stompClient && this.stompClient.connected) {
+          //   const msg = {
+          //     name : '',
+          //     message : '',
+          //     target : [],
+          //     signal : false,
+          //   };
+          //   this.stompClient.send("/receiveInWaitSession", JSON.stringify(msg), {});
+          // }
 
           if (this.session) {
             this.session.disconnect()
@@ -557,6 +557,7 @@ export default {
     //     };
     //     this.stompClient.send("/receiveViewerToViewee", JSON.stringify(msg), {});
     //   }
+    //   this.moving_viewee = []
     // },
     
     // // 지원자가 관리자에게

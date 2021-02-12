@@ -69,12 +69,12 @@
                   </div> -->
                   <v-btn
                     color="blue lighten-3 yellow--text"
-                    :disabled="inWait === true"
                     @click="goSession(interview.waitSessionName, interview.interviewSessionName)"
                   >
                     대기실 입장
                   </v-btn>
 
+                  <!-- :disabled="inWait === true" -->
                   <!-- 지원자는 대기방에서 면접방 입장가능, 다시 지울 예정 -->
                   <!-- <v-btn
                     color="blue lighten-3 yellow--text"
@@ -126,7 +126,7 @@ export default {
       //   { type_name: "그룹면접", check_terminate: "면접 미완료" },
       // ],
       applicantName: "",
-      inWait : false,
+      // inWait : false,
     };
   },
   created: function () {  },
@@ -160,7 +160,7 @@ export default {
               interviewSession : interviewSession,
             },
           });
-          this.inWait = true;
+          // this.inWait = true;
           window.open(routeData.href, "_blank");
         })
         .catch((err) => {
