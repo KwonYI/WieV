@@ -45,7 +45,6 @@
                   <v-btn
                     v-if="user.userViewWait === 0"
                     color="blue-grey darken-1"
-                    :disabled="inWait === true"
                     @click="goWaitSession"
                   >
                     <span style="color: #FFF1C3">대기실 입장</span>
@@ -53,10 +52,13 @@
 
                   <v-btn
                     color="blue-grey darken-1"
-                    :disabled="inInterview === true"
                     @click="goInterviewSession"
                   >
                     <span style="color: #FFF1C3">면접실 입장</span>
+                    <!-- 
+                    :disabled="inWait === true"
+                    :disabled="inInterview === true"
+                     -->
                   </v-btn>
                 </v-card-text>
               </v-card>
@@ -87,8 +89,8 @@ export default {
   },
   data: function () {
     return {
-      inWait: false,
-      inInterview: false,
+      // inWait: false,
+      // inInterview: false,
     };
   },
   created() {
@@ -125,7 +127,7 @@ export default {
                 interviewSession : this.interview.interviewSessionName,
               },
             })
-            this.inWait = true;
+            // this.inWait = true;
             window.open(routeData.href, "_blank")
           })
           .catch(err => {
@@ -162,7 +164,7 @@ export default {
                 sessionName: res.data.sessionName,
               },
             })
-            this.inInterview = true;
+            // this.inInterview = true;
             window.open(routeData.href, "_blank")
           })
           .catch(err => {
