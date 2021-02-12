@@ -1,3 +1,5 @@
+html { overflow-y: auto; }
+
 /* 메인 컬러  */
 .main-bg-navy {
     background-color: #304B61 !important;

@@ -50,7 +50,9 @@
                   >
                     <span style="color: #FFF1C3">대기실 입장</span>
                   </v-btn>
-
+                  <v-btn>
+                    면접실 세팅
+                  </v-btn>
                   <v-btn
                     color="blue-grey darken-1"
                     :disabled="inInterview === true"

@@ -1,7 +1,5 @@
 <template>
 	<div id="ask">
-
-	
 			<div class="container" id="contact">
 				<h2 class="mt-5">문의하기</h2>
 			</div>

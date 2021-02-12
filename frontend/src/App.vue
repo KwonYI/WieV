@@ -13,7 +13,7 @@
 
         <!-- 왼쪽 상단 위치 -->
         <v-toolbar-items v-if="isNotRoom" class="srv-btn">
-          <v-btn plain style="font-size: 1rem" href="#work">플랫폼 소개</v-btn>
+          <v-btn plain style="font-size: 1rem" @click="$vuetify.goTo('#work')">플랫폼 소개</v-btn>
           <v-btn plain style="font-size: 1rem" href="#contact">문의하기</v-btn>
         </v-toolbar-items>
 
@@ -138,10 +138,16 @@
           style="min-height: 100vh; max-width: initial; height: 100%">
           
           <router-view></router-view>
+
         </v-container>
 
+        <div id="work">
+          aaa
+        </div>
         <Introduce v-if="isHome"/>
         <Ask v-if="isHome"/>
+
+        
         <!-- <v-parallax
           dark
           class="mt-16"
@@ -158,7 +164,6 @@
                   target="_blank">SSAFY A405</a></div>
             </div>
           </div>
-
         </footer>
       </v-sheet>
     </v-card>
@@ -180,6 +185,9 @@ import axios from "axios"
 import Ask from '@/components/main/Ask'
 import Introduce from '@/components/main/Introduce'
 const SERVER_URL = process.env.VUE_APP_SERVER_URL
+
+// import Router from 'vue-router'
+// import goTo from 'vuetify/es5/services/goto'
 
 export default {
   name: "App",
@@ -257,9 +265,17 @@ export default {
       } else {
         return false
       }
-    }
+    },
+    target () {
+      const value = '#work'
+      if (!isNaN(value)) return Number(value)
+      else return value
+    },
   },
   methods: {
+    moveWork() {
+      this.$vuetify.goTo('#work', { container: '#contact'}, {duration: 1000, offset: 0, easing: 'easeInOutCubic'})
+    },
     findPassword: function() {
       if (this.$refs.form.validate()) {
 
@@ -313,6 +329,7 @@ export default {
   },
 }
 </script>
+
 
 <style>
   @import url(https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@1.0/nanumsquare.css);

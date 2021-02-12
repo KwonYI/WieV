@@ -62,30 +62,25 @@ export default {
   },
   created: function () {
     if (this.$route.fullPath === '/main') {
-    this.user = this.getUser
-    axios.get(`${SERVER_URL}/interviewer/getMyInterview`, {
+      this.user = this.getUser
+      this.isLogin = true
+      axios.get(`${SERVER_URL}/interviewer/getMyInterview`, {
         params: {
           userComName: this.user.userComName,
           interviewerEmail: this.user.userEmail,
         },
       })
-      .then((res) => {
-        this.isLogin = true;
-        this.interview = res.data.interview;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  } else {
-    axios
-      .get(`${SERVER_URL}/applicant/mypage/` + this.$route.query.Id)
-      .then((res) => {
-        console.log("지원자가 가진 정보를 보여줍니다(Main)", res.data);
-        this.intervieweeData = res.data;
-      })
-      .catch((err) => {
-        console.log("Main.vue에서 에러발생", err);
-      });
+        .then(res => {
+          this.interview = res.data.interview
+        })
+        .catch(err => console.log(err))
+    } else {
+      axios.get(`${SERVER_URL}/applicant/mypage/` + this.$route.query.Id)
+        .then(res => {
+          console.log("지원자가 가진 정보를 보여줍니다(Main)", res.data)
+          this.intervieweeData = res.data
+        })
+        .catch(err => console.log("Main.vue에서 에러발생", err))
     }
   },
   mounted() {},
