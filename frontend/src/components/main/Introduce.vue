@@ -1,7 +1,7 @@
 <template>
 	<div id="introduce">
 
-		<div class="tf-work-section">
+
 			<div class="container" id="work">
 				<h2 class="h3 text-center">"View Easy, View Everywhere"</h2>
 			</div>
@@ -48,7 +48,6 @@
 
 				</div>
 			</div>
-		</div>
 
 
 

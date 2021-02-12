@@ -7,32 +7,32 @@
 				<div class="row">
 					<div class="col-md-6 col-sm-12">
 						<h3 class="h5">플랫폼 도입 문의</h3>
-						<form action="https://formspree.io/youremail@example.com" method="POST">
+						<form action="" method="">
 							<div class="row no-gutters">
 								<div class="col-lg-6 col-md-12 col-sm-12 p-1">
-									<input class="bg-light form-control" type="text" name="name" placeholder="*회사 이름"
+									<input class="bg-light form-control" type="text" name="name" placeholder="*회사 이름" id="ask1"
 										required="required" />
 								</div>
 								<div class="col-lg-6 col-md-12 col-sm-12 p-1">
-									<input class="bg-light form-control" type="email" name="_replyto" placeholder="*이메일"
+									<input class="bg-light form-control" type="email" name="_replyto" placeholder="*이메일" id="ask2"
 										required="required" />
 								</div>
 								<div class="col-lg-6 col-md-12 col-sm-12 p-1">
-									<input class="bg-light form-control" type="text" name="name" placeholder="*전화번호"
+									<input class="bg-light form-control" type="text" name="name" placeholder="*전화번호" id="ask3"
 										required="required" />
 								</div>
 								<div class="col-lg-6 col-md-12 col-sm-12 p-1">
-									<input class="bg-light form-control" type="text" name="name" placeholder="*사용기간"
+									<input class="bg-light form-control" type="text" name="name" placeholder="*사용기간" id="ask4"
 										required="required" />
 								</div>
 							</div>
 							<div class="row pb-2 no-gutters">
 								<div class="col-md-12 col-sm-12">
-									<textarea class="bg-light mb-2 form-control p-3" name="message" placeholder="*비지니스 요구에 대한 추가 정보" rows="5"
+									<textarea class="bg-light mb-2 form-control p-3" name="message" placeholder="*비지니스 요구에 대한 추가 정보" rows="5" id="ask5"
 										required="required"></textarea>
 								</div>
 							</div>
-							<button class="btn btn-primary" type="submit">도입 문의</button>
+							<button class="btn btn-primary" type="submit" @click="askForm('문의가 접수되었습니다. \n최대한 빠른 시일 내로 이메일 답변 드리겠습니다.\n감사합니다.',$event)">도입 문의</button>
 						</form>
 					</div>
 					<div class="col-md-6 col-sm-12 float-right text-right">
@@ -62,6 +62,15 @@
 		},
 
 		methods: {
+      askForm: function (message, event) {
+        if (event) event.preventDefault();
+        alert(message)
+        document.getElementById("ask1").value = ''
+        document.getElementById("ask2").value = ''
+        document.getElementById("ask3").value = ''
+        document.getElementById("ask4").value = ''
+        document.getElementById("ask5").value = ''
+      }
 
 
 		},

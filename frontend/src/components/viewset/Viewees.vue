@@ -1,6 +1,5 @@
 <template>
   <div id="viewees">
-    현재 채용공고 번호 : {{ recruitItem.reSeq }}
     <v-toolbar dark color="blue-grey darken-1 font-weight-bold black--text">
       <v-toolbar-title></v-toolbar-title>
 
@@ -22,7 +21,7 @@
       <thead>
         <tr>
           <th class="text-center">No</th>
-          <th class="text-center">직군부류</th>
+          <th class="text-center">직군</th>
           <th class="text-center">이름</th>
           <th class="text-center">연락처</th>
           <th class="text-center">생년월일</th>

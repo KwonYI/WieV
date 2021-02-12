@@ -1,15 +1,13 @@
 <template>
   <div id="progress">
-    현재 채용공고 번호 : {{ recruitItem.reSeq }}
-
-
-    <div class="d-flex justify-end">
-     
-
+      <v-toolbar dark color="blue-grey darken-1 font-weight-bold black--text">
+      <v-toolbar-title></v-toolbar-title>
+      <div class="d-flex justify-end">
       <v-btn class="m-2" v-on:click="applicantSendMail()"><v-icon left>mdi-email-send-outline</v-icon>지원자 안내메일 전송</v-btn>
       <v-btn class="m-2" v-on:click="interviewerSendMail()"><v-icon left>mdi-email-send-outline</v-icon>면접관 안내메일 전송</v-btn>
       <v-btn class="m-2" v-on:click="deleteGroupAll()"><v-icon left>mdi-trash-can-outline</v-icon>면접일정 초기화</v-btn>
     </div>
+    </v-toolbar>
 
 
     <hr>
@@ -152,7 +150,7 @@
               width: '5%'
             },
             {
-              text: '직무',
+              text: '직군',
               align: 'center',
               value: 'schGroupCareer',
               width: '5%'
@@ -199,9 +197,9 @@
           .then(res => {
             console.log(res)
             alert("지원자 메일 전송 성공")
-            this.$router.push({
-              name: "Home"
-            })
+            // this.$router.push({
+            //   name: "Home"
+            // })
           })
           .catch((err) => {
             console.log(err)
@@ -214,9 +212,9 @@
           .then(res => {
             console.log(res)
             alert("면접관 메일 전송 성공")
-            this.$router.push({
-              name: "Home"
-            })
+            // this.$router.push({
+            //   name: "Home"
+            // })
           })
           .catch((err) => {
             console.log(err)

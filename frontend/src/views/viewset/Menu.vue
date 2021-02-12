@@ -1,6 +1,6 @@
 <template>
-  <div class="Menu">
-    <v-container>
+  <div id="Menu">
+    <v-container fluid>
       <v-row>
         <div>
           <v-card class="mx-auto mt-5 rounded-b-lg d-flex justify-space-between align-center">
@@ -150,7 +150,8 @@
     left: 0;
     /* position: fixed; */
     /* height: 100%; */
-    height: 100vh;
-    width: 12vw;
+    height: 80vh;
+    /* width: 12vw; */
   }
+
 </style>
