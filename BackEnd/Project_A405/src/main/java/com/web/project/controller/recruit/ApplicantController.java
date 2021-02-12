@@ -713,7 +713,7 @@ public class ApplicantController {
 		
 		try {
 			List<Applicant> applicantList = new ArrayList<Applicant>();
-			applicantList=applicantDao.findAllApplicantByRecruitReSeq(reSeq);
+			applicantList=applicantDao.findAllApplicantByRecruitReSeqAndApplyAssigned(reSeq,1);
 			
 			Recruit recruit = recruitDao.findRecruitByReSeq(reSeq);
 			Company company = companyDao.findCompanyByComSeq(recruit.getCompanyComSeq());

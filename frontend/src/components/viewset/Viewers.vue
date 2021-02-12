@@ -1,6 +1,5 @@
 <template>
   <div id="viewers">
-    현재 채용공고 번호 : {{ recruitItem.reSeq }}
     <v-toolbar dark color="brown lighten-1 font-weight-bold black--text">
     <!-- <v-toolbar dark color="brown darken-1 black--text"> -->
       <v-toolbar-title></v-toolbar-title>
@@ -25,7 +24,6 @@
           <th class="text-center">이메일</th>
           <th class="text-center">연락처</th>
           <th class="text-center">비밀번호</th>
-          <th class="text-center">관리</th>
           <th class="text-center">상태</th>
         </tr>
       </thead>
@@ -38,9 +36,6 @@
           <td>{{ viewer.viewPassword }}</td>
           <td v-if="viewer.viewAssigned === 1" class="blue--text">배정완료</td>
             <td v-else class="red--text">미배정</td>
-          <td>
-            <v-btn>삭제</v-btn>
-          </td>
         </tr>
       </tbody>
     </v-simple-table>

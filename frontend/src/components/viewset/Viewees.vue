@@ -1,6 +1,5 @@
 <template>
   <div id="viewees">
-    현재 채용공고 번호 : {{ recruitItem.reSeq }}
     <v-toolbar dark color="blue-grey darken-1 font-weight-bold black--text">
       <v-toolbar-title></v-toolbar-title>
 

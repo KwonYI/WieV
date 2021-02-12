@@ -209,6 +209,7 @@ public class GroupAllController {
 							Interviewer interviewer=interviewerDao.findInterviewerByViewSeq(typeInterviewer.getInterviewerViewSeq());
 							interviewer.setViewAssigned(0);
 							interviewerDao.save(interviewer);
+							System.out.println("면접관"+interviewer.getViewName()+"0으로 바꿔줌");
 						}
 					}
 					System.out.println(groupAll.getGroupSeq() + "삭제");
@@ -220,6 +221,7 @@ public class GroupAllController {
 					Applicant applicant=applicantList.get(i);
 					applicant.setApplyAssigned(0);
 					applicantDao.save(applicant);
+					System.out.println("지원자"+applicant.getApplyName()+"0으로 바꿔줌");
 				}
 				
 				//면접관 assign 0으로 바꿔주기
