@@ -3,8 +3,10 @@
       <v-toolbar dark color="blue-grey darken-1 font-weight-bold black--text">
       <v-toolbar-title></v-toolbar-title>
       <div class="d-flex justify-end">
-      <v-btn class="m-2" v-on:click="applicantSendMail()"><v-icon left>mdi-email-send-outline</v-icon>지원자 안내메일 전송</v-btn>
-      <v-btn class="m-2" v-on:click="interviewerSendMail()"><v-icon left>mdi-email-send-outline</v-icon>면접관 안내메일 전송</v-btn>
+        <v-btn class="m-2" :loading="loading" :disabled="loading" 
+          @click="[loader = 'loading', applicantSendMail()]">지원자 안내메일 전송</v-btn>
+        <v-btn class="m-2" :loading="loading2" :disabled="loading2" 
+          @click="[loader2 = 'loading2', interviewerSendMail()]">면접관 안내메일 전송</v-btn>          
       <v-btn class="m-2" v-on:click="deleteGroupAll()"><v-icon left>mdi-trash-can-outline</v-icon>면접일정 초기화</v-btn>
     </div>
     </v-toolbar>
@@ -183,6 +185,11 @@
 
         },
 
+        loader: null,
+        loading: false,
+
+        loader2:null,
+        loading2:false,
 
       }
     },
@@ -192,34 +199,44 @@
     },
     methods: {
       applicantSendMail: function () {
+        this.loading=true
         console.log(this.recruitItem.reSeq)
         axios.post(`${SERVER_URL}/applicant/send/` + this.recruitItem.reSeq)
           .then(res => {
-            console.log(res)
+            this.loading=false
+            console.log(res.data.message)
+            if(res.data.message==="지원자 존재하지 않음")
+            alert("면접 일정이 존재하지 않습니다.")
+            else{
             alert("지원자 메일 전송 성공")
-            // this.$router.push({
-            //   name: "Home"
-            // })
+            }
           })
           .catch((err) => {
+            this.loading=false
             console.log(err)
             alert("지원자 메일 전송 실패")
           })
+          setTimeout(() =>{this.loading=false}, 3000000)
       },
       interviewerSendMail: function () {
+        this.loading2=true
         console.log(this.recruitItem.reSeq)
         axios.post(`${SERVER_URL}/interviewer/send/` + this.recruitItem.reSeq)
           .then(res => {
+            this.loading2=false
             console.log(res)
+            if(res.data.message==="면접관 존재하지 않음")
+            alert("면접 일정이 존재하지 않습니다.")
+            else{
             alert("면접관 메일 전송 성공")
-            // this.$router.push({
-            //   name: "Home"
-            // })
+            }
           })
           .catch((err) => {
+            this.loading2=false
             console.log(err)
             alert("면접관 메일 전송 실패")
           })
+          setTimeout(() =>{this.loading2=false}, 3000000)
       },
       deleteGroupAll: function () {
         if (confirm('모든 면접 일정을 삭제하시겠습니까?') == true) {
@@ -244,10 +261,24 @@
       clicked: function (value) {
         this.schGroupTable.expanded.push(value)
       },
+    watch: {
+      loader() {
+        const l = this.loader
+        this[l] = !this[l]
 
+        setTimeout(() => (this[l] = false), 3000)
 
+        this.loader = null
+      },
+      loader2() {
+        const k  = this.loader2
+        this[k] = !this[k]
 
+        setTimeout(() => (this[k] = false), 3000)
 
+        this.loader2 = null
+      },      
+    },
     },
     computed: {
       ...mapState(["recruitList", "recruitProgressList", "selectedRecruitNo"]),

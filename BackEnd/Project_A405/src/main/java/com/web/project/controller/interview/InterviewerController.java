@@ -723,10 +723,14 @@ public class InterviewerController {
 						}
 					}
 				}
-
+				status = HttpStatus.OK;
+				resultMap.put("message", "이메일 전송 성공");
 			}
-			status = HttpStatus.OK;
-			resultMap.put("message", "이메일 전송 성공");
+			else {
+				status = HttpStatus.OK;
+				resultMap.put("message", "면접관 존재하지 않음");
+				
+			}
 		} catch (RuntimeException e) {
 			logger.error("이메일 전송 실패", e);
 			resultMap.put("message", e.getMessage());
