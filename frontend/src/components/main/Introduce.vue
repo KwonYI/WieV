@@ -35,12 +35,15 @@
     </v-row>
 
     <!-- What we deliver -->
-    <div class="text-h4 text-center">What We Deliver</div>
+    <div class="text-h4 text-center mt-10 mb-10 font-weight-black">What We Deliver</div>
     <v-carousel cycle height="300" hide-delimiter-background show-arrows-on-hover>
       <v-carousel-item v-for="(item, i) in carousel" :src="item.src" :key="i" active-class="crs-img">
-        <v-sheet class="crs-content d-flex justify-center align-center" height="100%">
-          <div class="text-h4">
-            {{ item.content }}
+        <v-sheet class="crs-content d-flex flex-column justify-center align-center" height="100%">
+          <div class="text-h4 m-5">
+            " {{ item.content }} "
+          </div>
+          <div class="text-h6">
+            {{ item.subcontent }}
           </div>
         </v-sheet>
       </v-carousel-item>
@@ -393,15 +396,19 @@
 
         carousel: [{
             src: require('@/assets/images/5-start-simple-slider.jpg'),
-            content: '1번 캐로우셀'
+            content: "WieV는 '기업'에 초점을 맞춘 최고의 화상면접 플랫폼입니다.",
+            subcontent:"실무자들이 면접의 목적인 지원자의 평가와 선발에 집중할 수 있도록 간편하고 효율적인 시스템을 제공합니다."
+
           },
           {
             src: require('@/assets/images/6-start-simple-slider.jpg'),
-            content: '2번 캐로우셀'
+            content: "WieV는 성공적인 비즈니스를 운영할 수 있는 파트너입니다.",
+            subcontent:"여러분이 오직 채용에만 집중할 수 있도록 모든 면접 일정을 생성 및 관리하겠습니다."
           },
           {
             src: require('@/assets/images/7-start-simple-slider.jpg'),
-            content: '3번 캐로우셀'
+            content: "WieV는 언제 어디서나 면접을 진행하고 관리할 수 있습니다.",
+            subcontent:"화상면접을 통해 지원자, 면접관을 쉽게 연결하며 채용에 대한 비용을 최소화합니다.",
           },
         ],
       }
