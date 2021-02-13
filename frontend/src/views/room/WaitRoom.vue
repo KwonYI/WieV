@@ -40,7 +40,7 @@
             </v-col>
             <!-- 면접실 이동 안내 -->
             <v-col cols="3">
-              <v-card color="#304B61" elevation="2" style="height: 100%" dark>
+              <v-card v-if="!isViewee" color="#304B61" elevation="2" style="height: 100%" dark>
                 <v-card-title class="justify-center py-2">
                   <div class="text-center text-subtitle-1">면접실 이동</div>
                   <input class="btn" type="button" v-if="moving_viewee.length" @click="sendSignal" value="면접실 보내기" />
@@ -79,7 +79,7 @@
               </v-card>
             </v-col>
           </v-row>
-
+          <!-- 면접관 -->
           <v-row style="height: 87%">
             <v-col cols="4" class="d-flex flex-column justify-center align-center">
               <span v-for="sub in viewers" :key="sub.stream.connection.connectionId">
@@ -99,26 +99,6 @@
                 />
               </span>
             </v-col>
-            <!-- 면접관 -->
-            <!-- <v-col cols="4" class="d-flex flex-column justify-center align-center">
-              <span v-for="sub in subscribers" :key="sub.stream.connection.connectionId">
-                <user-video
-                  v-if="JSON.parse(sub.stream.connection.data.split('%/%')[0])['type'] !== 'viewee'"
-                  :stream-manager="sub" 
-                  @click.native="updateMainVideoStreamManager(sub)"
-                />
-              </span>
-            </v-col> -->
-            <!-- 지원자 -->
-            <!-- <v-col cols="8" class="d-flex flex-wrap justify-center align-center">
-              <span v-for="sub in subscribers" :key="sub.stream.connection.connectionId">
-                <user-video
-                  v-if="JSON.parse(sub.stream.connection.data.split('%/%')[0])['type'] === 'viewee'"
-                  :stream-manager="sub" 
-                  @click.native="updateMainVideoStreamManager(sub)"
-                />
-              </span>
-            </v-col> -->
           </v-row>
         </v-col>
 
@@ -150,6 +130,13 @@
             <v-sheet color="white" height="100%" elevation="3">
               <div class="text-h6 text-center pt-1">면접 안내</div>
               <v-divider class="my-1"></v-divider>
+<!-- 권영일 추가 interview_messages 값 확인 --> 
+              <v-list class="pa-0" v-auto-bottom="interview_messages">
+                <div v-for="(msg, index) in interview_messages" :key="index">
+                  {{ getCurrentTime() }} - {{ msg }}
+                </div>
+<!-- 권영일 추가 --> 
+              </v-list>
             </v-sheet>
           </div>
           <!-- FAQ -->
@@ -207,6 +194,7 @@
                 v-model="text"
                 label="메세지를 입력하세요."
                 class="pa-0 ma-0 mx-1"
+                single-line
                 hide-details
                 dense
                 @keyup.13="sendMessage"
@@ -269,7 +257,7 @@ export default {
       session: undefined,
       mainStreamManager: undefined, // 메인 비디오
       publisher: undefined, // 연결 객체
-      subscribers: [],
+      // subscribers: [],
 
       // 면접관, 지원자들만 담아두는 리스트
       viewers : [],
@@ -311,6 +299,7 @@ export default {
       moving_viewee: [],
 
       // 면접 안내
+      interview_messages : [],
 
       // FAQ
       faq_dialog: false,
@@ -331,6 +320,12 @@ export default {
 
     for (const data of user_data) {
       this[data] = this.$route.query[data]
+    }
+
+    if(this.type === 'viewee'){
+      this.isViewee = true;
+    }else{
+      this.isViewee = false;
     }
   },
 
@@ -438,7 +433,17 @@ export default {
 
     this.session.on("signal:answer", (event) => {
       if(this.type === 'manager'){
-        alert(event.from.data.split('":"')[1].slice(0, -7) + " 님이 면접실 이동을 하지않았습니다.")
+        let message = event.from.data.split('":"')[1].slice(0, -7)
+
+        if(event.data === "No"){
+          message = message + " 입장 보류"
+        }else if(event.data === "Yes"){
+          message = message + " 입장"
+        }else{
+          message = message + " 입장 실패"
+        }
+        
+        this.interview_messages.push(message)
       }
     })
 
@@ -552,12 +557,25 @@ export default {
       this.visible = true
     },
 
-    sendSignal() {
-      if(this.type !== 'manager'){
-        return
+    getCurrentTime(){
+      let time
+      const today = new Date();
+      let hour = today.getHours()
+      if(hour >= 12) {
+        if(hour > 12) hour = hour - 12
+        time = "오후 " + hour + " : "
+      }else{
+        time = "오전 " + hour + " : "
       }
+      let minute = today.getMinutes();
+      if(minute % 10 === 0) time = time + '0'
 
+      return time + minute
+    },
+
+    sendSignal() {
       let connectionIds = [];
+      let message = this.moving_viewee.join(", ")
       this.moving_viewee.forEach(name => {
         this.viewees.forEach(stream =>{
           if(JSON.parse(stream.stream.connection.data.split('%/%')[0])['name'] === name){
@@ -565,8 +583,11 @@ export default {
           }
         })
       })
-      console.log("난 얘들을 보낼거야", connectionIds)
-      this.session.signal({ data: "signal", to: connectionIds, type: "signal" })
+
+      message += " 에게 입장 메세지 전송"
+      this.interview_messages.push(message)
+
+      this.session.signal({ data: "", to: connectionIds, type: "signal" })
         .then()
         .catch(err => console.error(err))
       this.moving_viewee = []
@@ -580,7 +601,10 @@ export default {
           sessionName: this.interviewSession,
         },
       }).then(res => {
-          console.log(res);
+          this.session.signal({ data: "Yes", to: [], type: "answer" })
+          .then()
+          .catch(err => console.error(err))
+
           let routeData = this.$router.resolve({
             name: "ViewRoom",
             query: {
@@ -601,6 +625,9 @@ export default {
         .catch(err => {
           alert("방이 아직 개설되지 않았습니다.")
           console.log(err)
+          this.session.signal({ data: "Fail", to: [], type: "answer" })
+          .then()
+          .catch(err => console.error(err))
         })
       }
   },
