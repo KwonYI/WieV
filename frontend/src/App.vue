@@ -17,7 +17,7 @@
 
         <!-- 왼쪽 상단 위치 -->
         <v-toolbar-items v-if="isNotRoom" class="srv-btn">
-          <v-btn v-if="isHome" plain style="font-size: 1rem" href="#work">플랫폼 소개</v-btn>
+          <v-btn v-if="isHome" plain style="font-size: 1rem"  href="#work">플랫폼 소개</v-btn>
           <v-btn v-if="isHome" plain style="font-size: 1rem" href="#contact">문의하기</v-btn>
           <!-- <v-btn plain style="font-size: 1rem" @click="$vuetify.goTo(target, options)">문의하기</v-btn> -->
         </v-toolbar-items>
@@ -153,28 +153,16 @@
 
 
       <!-- Contents -->
-      <v-sheet id="scrolling-techniques-7" class="overflow-y-auto" max-height="100vh" style="height: 100%">
-        <v-container class="p-0 m-0 pt-16" :class="[!accessToken || isHome ? 'main-bg-navy-img' : '']"
-          style="min-height: 100vh; max-width: initial; height: 100%">
+      
+      <v-responsive id="scrolling-techniques-7" class="overflow-y-auto" max-height="100vh">
+        <v-container class="p-0 m-0 pt-16" style="max-width: initial">
           <div id="top"></div>
-          <router-view />
-
+          <router-view transition transition-mode="out-in" />
         </v-container>
 
-        <div id="work">
-          aaa
-        </div>
-        <Introduce v-if="isHome"/>
-        <Ask v-if="isHome"/>
-
+        <!-- <Introduce v-if="isHome"/>
+        <Ask v-if="isHome"/> -->
         
-        <!-- <v-parallax
-          dark
-          class="mt-16"
-          :src="require('@/assets/bg_image.png')"
-          style="min-height: 100vh"
-        >
-        </v-parallax> -->
         
         <footer class="bg-dark py-4 mt-5 tf-footer">
           <div class="container text-light">
@@ -185,11 +173,7 @@
             </div>
           </div>
         </footer>
-
-
-
-      </v-sheet>
-
+      </v-responsive>
     </v-card>
 
 
@@ -213,8 +197,8 @@
 <script>
 import { mapGetters, mapState } from "vuex"
 import axios from "axios"
-import Ask from '@/components/main/Ask'
-import Introduce from '@/components/main/Introduce'
+// import Ask from '@/components/main/Ask'
+// import Introduce from '@/components/main/Introduce'
 const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
 // import Router from 'vue-router'
@@ -223,7 +207,7 @@ const SERVER_URL = process.env.VUE_APP_SERVER_URL
 export default {
   name: "App",
   components: {
-    Ask, Introduce
+    // Ask, Introduce
   },
   data: function () {
     return {
@@ -361,7 +345,6 @@ export default {
 }
 </script>
 
-
 <style>
   @import url(https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@1.0/nanumsquare.css);
   @import "./assets/css/weivmain.css";
@@ -383,6 +366,14 @@ export default {
 
   .v-parallax__content {
     padding: 0 !important;
+  }
+
+  .v-transition {
+    transition: opacity .1s ease-out;
+  }
+    
+  .v-enter, .v-leave {
+    opacity: 0;
   }
 </style>
 

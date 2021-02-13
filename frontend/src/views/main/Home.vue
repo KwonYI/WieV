@@ -1,16 +1,16 @@
 <template>
   <div id="home">
-    <div class="container">
-    <v-row justify="center" class="pt-10" no-gutters>
+    
+    <v-row justify="center" class="pt-10 main-bg-navy-img" style="height: 100vh" no-gutters>
       <v-col cols="8" class="main-box text-center">
         <div class="d-flex flex-column justify-center align-center text-white">
           <v-col class="wiev-box">
-            <v-col :class="[getAccessToken ? '' : 'text-h5']"
-              >View Everywhere</v-col
-            >
-            <v-col v-if="!getAccessToken" class="mt-3"
-              >비대면 화상면접 플랫폼</v-col
-            >
+            <v-col :class="[getAccessToken ? '' : 'text-h5']">
+              View Everywhere
+            </v-col>
+            <v-col v-if="!getAccessToken" class="mt-3">
+              비대면 화상면접 플랫폼
+            </v-col>
             <span :class="[getAccessToken ? 'text-h4' : 'text-h3']">WieV</span>
           </v-col>
 
@@ -29,30 +29,34 @@
         </div>
       </v-col>
     </v-row>
-
     
 
-    </div>
+    <!-- <v-parallax
+      dark
+      :src="require('@/assets/images/bg_image_dark_61.png')"
+      height="700"
+    >
+    </v-parallax> -->
 
-<!--여기서는 플랫폼소개를 보여준다. -->
-
-
-      
-
-
+    <Introduce />
+    <Ask />
   </div>
 
 </template>
+
+
 
 <script>
 import { mapGetters } from "vuex";
 
 import Schedule from "@/components/main/Schedule";
+import Ask from '@/components/main/Ask'
+import Introduce from '@/components/main/Introduce'
 
 export default {
   name: "Home",
   components: {
-    Schedule,
+    Schedule, Ask, Introduce
   },
   data: () => ({
     message: "",

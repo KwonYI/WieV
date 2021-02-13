@@ -1,56 +1,140 @@
 <template>
 	<div id="introduce">
+		<!-- What is VieW -->
+		<div>WieV는 비대면 면접에 최적화된 솔루션을 제공하는 플랫폼입니다.</div>
+		<!-- What we serve -->
+		<v-container>
+			<v-col>
+				<div class="text-h4 text-center">What We Serve</div>
+				<v-row no-gutters>
+					<v-col class="d-flex flex-column align-center">
+						<div class="text-h5">For Recruiter</div>
+						<span>비대면 면접을 편리하게 관리할 수 있는 가치를 제공합니다.</span>
+					</v-col>
+					<v-col class="d-flex justify-center">
+						<div class="text-h5">For Viewer</div>
+						
+					</v-col>
+					<v-col class="d-flex justify-center">
+						<div class="text-h5">For Viewee</div>
+						
+					</v-col>
+				</v-row>
+			</v-col>
+		</v-container>
 
+		<!-- What we support -->
+		<div class="text-h4 text-center">What We Support</div>
+		<v-row class="ma-0" no-gutters>
+			<v-col v-for="(sup, i) in support" :key="i" cols="4" class="pa-0">
+				<v-card color="grey" tile dark>
+					<v-card-title class="headline">{{ sup.title }}</v-card-title>
+					<v-card-subtitle>{{ sup.content }}</v-card-subtitle>
+				</v-card>
+			</v-col>
+		</v-row>
 
-			<div class="container" id="work">
-				<h2 class="h3 text-center">"View Easy, View Everywhere"</h2>
-			</div>
-			<div class="container">
-				<div class="row ">
-					<div class="col-md-4 col-sm-12 pt-2  d-flex justify-content-center">
-						<div class="card cardsize">
-							<img class="img-fluid card-img-top cardimg" src="@/assets/images/2-start-simple.jpg"
-								alt="2-start-simple" />
-							<div class="card-body">
-								<h3 class="h4">면접 유형에 따른 템플릿 제공</h3>
-								<p class="text-muted">1:1 면접부터 그룹,PT 면접 등 면접 유형에 맞는 템플릿을 제공</p>
-								<p>자기소개서, 이력서 보기를 통해 면접관에게 최적화된 면접 진행 가능</p>
-							</div>
+		<!-- What we deliver -->
+		<div class="text-h4 text-center">What We Deliver</div>
+		<v-carousel
+			cycle
+			height="300"
+			hide-delimiter-background
+			show-arrows-on-hover
+		>
+			<v-carousel-item v-for="(item, i) in carousel" :src="item.src" :key="i" active-class="crs-img">
+				<v-sheet class="crs-content d-flex justify-center align-center" height="100%">
+						<div class="text-h4">
+							{{ item.content }}
 						</div>
-					</div>
+				</v-sheet>
+			</v-carousel-item>
+		</v-carousel>
 
-					<div class="col-md-4 col-sm-12 pt-2 d-flex justify-content-center">
-						<div class="card cardsize"><img class="img-fluid card-img-top cardimg" src="@/assets/images/unnamed2.jpg"
-								alt="3-start-simple" />
-							<div class="card-body">
-								<h3 class="h4">면접 자동화 관리 시스템</h3>
-								<p class="text-muted">면접 일정부터 면접 대상자 설정까지 자동으로 생성하는 ADMIN 페이지 제공</p>
-								<p>
-									엑셀 파일을 이용해 채용 데이터 저장 가능</p>
-								<p>
-									채용 담당자가 전체 면접 현황을 간편하게 관리
-								</p>
+		<!-- Our Team -->
+		<v-container>
+			<v-col>
+				<div class="text-h4 text-center">Our Team</div>
+			</v-col>
+		</v-container>
+
+		<!-- Contact -->
+		<v-col>
+			<div class="text-h4 text-center">Contact</div>
+		</v-col>
+
+
+		<div class="container" id="work">
+			<h2 class="text-h4 text-center">Our Service</h2>
+		</div>
+
+		<div class="container">
+			<div class="row">
+				<div class="col-md-4 col-sm-12 pt-2  d-flex justify-content-center">
+
+					<v-card
+						class="mx-auto my-12"
+						max-width="374"
+					>
+						<v-img
+							height="250"
+							src="@/assets/images/2-start-simple.jpg"
+						></v-img>
+
+						<v-card-title class="justify-center">Cafe Badilico</v-card-title>
+
+						<v-card-text>
+
+							<div class="my-4 subtitle-1">
+								$ • Italian, Cafe
 							</div>
-						</div>
-					</div>
 
-					<div class="col-md-4 col-sm-12 pt-2 d-flex justify-content-center">
-						<div class="card cardsize"><img class="img-fluid card-img-top cardimg" src="@/assets/images/img4.png"
-								alt="4-start-simple" />
-							<div class="card-body">
-								<h3 class="h4">화상 면접에 최적화된 환경 제공</h3>
-								<p class="text-muted">별도의 설치 없이 웹 브라우저를 통해 사용</p>
-								<p>시간과 장소의 제약없이 면접에만 집중 가능</p>
-							</div>
-						</div>
-					</div>
+							<div>Small plates, salads & sandwiches - an intimate setting with 12 indoor seats plus patio seating.</div>
+						</v-card-text>
 
+						<v-divider class="mx-4"></v-divider>
 
+					</v-card>
+					
 				</div>
+				<!-- <div class="card cardsize">
+					<img class="img-fluid card-img-top cardimg" src="@/assets/images/2-start-simple.jpg"
+						alt="2-start-simple" />
+					<div class="card-body">
+						<h3 class="h4">면접 유형에 따른 템플릿 제공</h3>
+						<p class="text-muted">1:1 면접부터 그룹,PT 면접 등 면접 유형에 맞는 템플릿을 제공</p>
+						<p>자기소개서, 이력서 보기를 통해 면접관에게 최적화된 면접 진행 가능</p>
+					</div>
+				</div> -->
+
+				<!-- <div class="col-md-4 col-sm-12 pt-2 d-flex justify-content-center">
+					<div class="card cardsize"><img class="img-fluid card-img-top cardimg" src="@/assets/images/unnamed2.jpg"
+							alt="3-start-simple" />
+						<div class="card-body">
+							<h3 class="h4">면접 자동화 관리 시스템</h3>
+							<p class="text-muted">면접 일정부터 면접 대상자 설정까지 자동으로 생성하는 ADMIN 페이지 제공</p>
+							<p>
+								엑셀 파일을 이용해 채용 데이터 저장 가능</p>
+							<p>
+								채용 담당자가 전체 면접 현황을 간편하게 관리
+							</p>
+						</div>
+					</div>
+				</div> -->
+
+				<!-- <div class="col-md-4 col-sm-12 pt-2 d-flex justify-content-center">
+					<div class="card cardsize"><img class="img-fluid card-img-top cardimg" src="@/assets/images/img4.png"
+							alt="4-start-simple" />
+						<div class="card-body">
+							<h3 class="h4">화상 면접에 최적화된 환경 제공</h3>
+							<p class="text-muted">별도의 설치 없이 웹 브라우저를 통해 사용</p>
+							<p>시간과 장소의 제약없이 면접에만 집중 가능</p>
+						</div>
+					</div>
+				</div> -->
+
 			</div>
-
-
-
+		</div>
 
 		<section class="page-section mb-10" id="services">
 			<div class="container my-5">
@@ -86,7 +170,6 @@
 				</div>
 			</div>
 		</section>
-
 
 
 
@@ -148,7 +231,44 @@
 		name: "Introduce",
 		data: function () {
 			return {
+				support: [
+					{
+						title: '1번',
+						content: '1번 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다.',
+						detail: ''
+					},
+					{
+						title: '2번',
+						content: '2번 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다.',
+						detail: ''
+					},
+					{
+						title: '3번',
+						content: '3번 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다.',
+						detail: ''
+					},
+					{
+						title: '4번',
+						content: '4번 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다.',
+						detail: ''
+					},
+					{
+						title: '5번',
+						content: '5번 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다.',
+						detail: ''
+					},
+					{
+						title: '6번',
+						content: '6번 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다.',
+						detail: ''
+					}
+				],
 
+				carousel: [
+					{ src: require('@/assets/images/5-start-simple-slider.jpg'), content: '1번 캐로우셀' },
+					{ src: require('@/assets/images/6-start-simple-slider.jpg'), content: '2번 캐로우셀' },
+					{ src: require('@/assets/images/7-start-simple-slider.jpg'), content: '3번 캐로우셀' },
+				],
 			}
 		},
 
@@ -169,6 +289,19 @@
 </script>
 
 <style scoped>
-
+.crs-content {
+	background-color: transparent;
+}
+.crs-content::after {
+	width: 100%;
+	height: 100%;
+	content: '';
+	background-color: black;
+	opacity: 0.5;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: -1;
+}
 
 </style>
