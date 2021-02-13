@@ -1,135 +1,149 @@
 <template>
-  <div id="createset" class="mt-12 mx-14">
-    <div class="h4 text-center">
-      [ {{ user.userComName }} {{ recruitItem.reYear }}년 {{ recruitItem.reFlag }} {{ recruitItem.reStatus }} ] 신규 면접 스케줄 생성
-      <br><br>
-      {{ recruitItem.reStartDate }} ~ {{ recruitItem.reEndDate }} 
-      <br><br>
-      <div class="h6">
-        <router-link :to="{ name: 'Menu' }">
-         면접 현황으로 돌아가기
-        </router-link>
-      </div>
-    </div>
-    <!-- 스케줄생성 Form -->
-    <v-row justify="center" no-gutters>
-      <v-col cols="10" class="mt-10">
-        <!-- 스케줄 자동생성 입력 -->
-        <v-card class="mx-auto mt-10 rounded-b-lg">
-          <v-card-title>
-            <div class="h5" style="margin: 10px">면접 그룹 생성기</div>
-            <!-- <v-col cols="3" class="d-flex justify-center align-center"> -->
-              <v-btn class="mr-5" :loading="loading" :disabled="loading" color="secondary"
-                @click="[loader = 'loading', addSchedule()]">
-                면접일정 추가
-              </v-btn>
-            <!-- </v-col> -->
-          </v-card-title>
-          <!-- <hr style="margin: 0px auto"> -->
-          <v-row class="brd" no-gutters>
-            <v-col v-for="(item, index) in groupForm" :key="index" :cols="item.col" class="d-flex">
-              <v-col class="d-flex justify-center align-center pa-0">
-                <span class="subtitle-1">{{ item.name }}</span>
-              </v-col>
-              <v-col v-if="index === 0" cols="8" class="d-flex align-center">
-                <v-autocomplete v-model="formData[item.value]" :items="item.data" :label="item.name" solo
-                  :multiple="item.multiple" @change="partChange($event)" hide-details dense></v-autocomplete>
-              </v-col>
-              <v-col v-if="index === 1 || index === 2" cols="8" class="d-flex align-center">
-                <v-autocomplete v-model="formData[item.value]" :items="item.data" :label="item.name" solo
-                  :multiple="item.multiple" hide-details dense></v-autocomplete>
-              </v-col>
-              <!-- <v-col v-if="index === 3" cols="6" class="d-flex align-center">
-                <a-date-picker @change="change"  v-model="formData[item.value]"/>
-              </v-col> -->
-              <!-- <v-col v-if="index === 3 || index === 4" cols="6" class="d-flex align-center">
-                <a-time-picker format="HH" v-model="formData[item.value]"/>
-              </v-col> -->
-              <v-col v-if="index > 2" cols="6" class="d-flex align-center">
-                <v-text-field :label="item.name" :type="item.type" v-model="formData[item.value]" single-line></v-text-field>
-              </v-col>
-            </v-col>
-          </v-row>
-        </v-card>
-
-        <hr>
-        <!-- 스케줄 테이블 -->
-        <!-- <v-data-table :headers="schGroupTable.headers" :items="schGroupTable.schGroups" -->
-        <v-data-table
-          :headers="schGroupTable.headers" :items="getProgressListCurrentRecruit"
-          :expanded.sync="schGroupTable.expanded"
-          single-expand
-          item-key="groupSeq"
-          @click:row="(item, slot) => slot.expand(!slot.isExpanded)"
-        >
-          <!-- 스케줄 row -->
-          <template v-slot:item="{ item, expand, isExpanded }">
-            <tr @click="expand(!isExpanded)">
-              <td>{{ item.groupSeq }}</td>
-              <td>{{ item.groupDate }}</td>
-              <td>{{ item.groupStartTime }}</td>
-              <td>{{ item.groupCareerName }}</td>
-              <td>
-                <span v-for="(view, i) in item.interviewTypeList" :key="i">{{ view }} </span>
-              </td>
-              <td>
-                <span v-for="(viewee, i) in slicedViewee(item.groupApplicantList)" :key="i">{{ viewee }} </span>
-              </td>
-              <td>
-                <span v-for="(guide, i) in slicedGuide(item.waitInterviewerList)" :key="i">{{ guide.interviewerName }} </span>
-              </td>
-              <td>
-                <span v-for="(viewer, i) in slicedViewer(item.interviewerList)" :key="i">{{ viewer.interviewerName }} </span>
-              </td>
-            </tr>
-          </template>
-
-          <!-- 세부그룹 확장 패널 -->
-          <template v-slot:expanded-item="{ headers, item: groupItem }" id="detailTable">
-            <td :colspan="headers.length" class="pa-0">
-              <!-- 세부그룹 테이블 -->
-              <v-data-table :headers="schGroupTable.headers" :items="groupItem.groupDetailList"
-                item-key="schSmallGroupNo" hide-default-footer>
-                <!-- <template v-slot:header="{ headers }">
-                  <thead>
-                    <tr :colspan="headers.length">
-                    </tr>
-                  </thead>
-                </template> -->
-
-                <template v-slot:body="{ items }">
-                  <tbody>
-                    <tr v-for="(item, i) in items" :key="i">
-                      <td>{{ item.groupDetailSeq }}</td>
-                      <td>{{ groupItem.groupDate }}</td>
-                      <td>{{ groupItem.groupStartTime }}</td>
-                      <td>{{ groupItem.groupCareerName }}</td>
-                      <td>
-                        <span v-for="(view, i) in item.detailOrder" :key="i">{{ view }} </span>
-                      </td>
-                      <td>
-                        <span v-for="(viewee, i) in slicedViewee(item.groupDetailApplicant)" :key="i">{{ viewee }}
-                        </span>
-                      </td>
-                      <td>
-                        <span v-for="(guide, i) in slicedGuide(groupItem.waitInterviewerList)" :key="i">{{ guide.interviewerName }}
-                        </span>
-                      </td>
-                      <td>
-                        <span v-for="(viewer, i) in slicedViewer(groupItem.interviewerList)" :key="i">{{ viewer.interviewerName }}
-                        </span>
-                      </td>
-                    </tr>
-                  </tbody>
+  <div id="createset">
+    <v-container>
+      <v-row>
+        <div>
+          <v-card class="mx-auto mt-10 rounded-b-lg d-flex justify-space-between align-center">
+            <div class="d-flex">
+              <v-icon large color="blue-grey darken-3" class="ml-5">mdi-calendar-multiple</v-icon>
+              <v-card-title>
+                [ {{recruitItem.reYear}}년도 {{recruitItem.reFlag}} {{recruitItem.reStatus}} ] 면접스케줄 목록
+              </v-card-title>
+            </div>
+            <div>
+              <v-dialog v-model="dialog" width="650" @click:outside="clickOutside">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn rounded class="mr-5" color="blue lighten-1" outlined v-bind="attrs" v-on="on">
+                    <v-icon left>mdi-plus-box-multiple</v-icon>면접그룹 생성
+                  </v-btn>
                 </template>
-              </v-data-table>
-            </td>
-          </template>
 
-        </v-data-table>
-      </v-col>
-    </v-row>
+                <v-card @keyup.enter="addSchedule()">
+                  <v-card-title class="headline main-bg-navy lighten-2">
+                    <div>면접그룹 생성기 ( {{ recruitItem.reStartDate }} ~ {{ recruitItem.reEndDate }} )</div>
+                    <v-spacer></v-spacer>
+                    <v-btn rounded class="mr-5" color="#b0c4de" :loading="loading" :disabled="loading" @click="[loader = 'loading', addSchedule()]">
+                      생성
+                    </v-btn>
+                  </v-card-title>
+
+                  <v-card-text>
+                    <v-container class="d-flex flex-column" fluid>
+                      <v-form ref="form" lazy-validation>
+                        <v-simple-table fixed-header class="d-flex flex-column" style="overflow-y: hidden">
+                          <template v-slot:default>
+                            <v-row class="brd" no-gutters>
+                              <v-col v-for="(item, index) in groupForm" :key="index" :cols="item.col" class="d-flex">
+                                <v-col  :cols="item.titleCol" class="d-flex justify-center align-center pa-0">
+                                  <span class="subtitle-1">{{ item.name }}</span>
+                                </v-col>
+                                <v-col v-if="index === 0 || index === 1" :cols="item.inputCol" class="d-flex align-center">
+                                  <v-autocomplete v-model="formData[item.value]" :items="item.data" :label="item.name" solo
+                                    :multiple="item.multiple" @change="partChange($event)" hide-details dense></v-autocomplete>
+                                </v-col>
+                                <v-col v-if="index === 2" :cols="item.inputCol" class="d-flex align-center">
+                                  <v-autocomplete v-model="formData[item.value]" :items="item.data" :label="item.name" solo
+                                    :multiple="item.multiple" hide-details dense></v-autocomplete>
+                                </v-col>
+                                <v-col v-if="index > 2" :cols="item.inputCol" class="d-flex align-center">
+                                  <v-text-field :label="item.name" :type="item.type" v-model="formData[item.value]" single-line></v-text-field>
+                                </v-col>
+                              </v-col>
+                            </v-row>
+                          </template>
+                      </v-simple-table>
+                    </v-form>
+                    </v-container>
+                  </v-card-text>
+
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+            <v-btn text class="mr-5" color="green lighten-1" :to="{ name: 'Menu' }">
+              <v-icon left>mdi-application-export</v-icon>면접현황으로
+            </v-btn>
+            </div>
+          </v-card>
+
+          <v-card class="mx-auto mt-10 rounded-b-lg">
+            <!-- 스케줄 테이블 -->
+            <v-data-table
+              :headers="schGroupTable.headers" 
+              :items="getProgressListCurrentRecruit"
+              :expanded.sync="schGroupTable.expanded"
+              single-expand
+              item-key="groupSeq"
+              @click:row="(item, slot) => slot.expand(!slot.isExpanded)"
+            >
+              <!-- 스케줄 row -->
+              <template v-slot:item="{ item, expand, isExpanded }">
+                <tr @click="expand(!isExpanded)">
+                  <td>{{ item.groupSeq }}</td>
+                  <td>{{ item.groupDate }}</td>
+                  <td>{{ item.groupStartTime }} : 00</td>
+                  <td>{{ item.groupCareerName }}</td>
+                  <td>
+                    <span v-for="(view, i) in item.interviewTypeList" :key="i">{{ view }} </span>
+                  </td>
+                  <td>
+                    <div>
+                      <span v-for="(viewee, i) in slicedViewee(item.groupApplicantList)" :key="i">{{ viewee }} </span>
+                      <br>
+                      외 {{ item.groupApplicantList.length - 3 }}명
+                    </div>
+                  </td>
+                  <td>
+                    <span v-for="(guide, i) in slicedGuide(item.waitInterviewerList)" :key="i">{{ guide.interviewerName }} </span>
+                  </td>
+                  <td>
+                    <span v-for="(viewer, i) in slicedViewer(item.interviewerList)" :key="i">{{ viewer.interviewerName }} </span>
+                  </td>
+                </tr>
+              </template>
+
+              <!-- 세부그룹 확장 패널 -->
+              <template v-slot:expanded-item="{ headers, item: groupItem }" id="detailTable">
+                <td :colspan="headers.length" class="pa-0">
+                  <!-- 세부그룹 테이블 -->
+                  <v-data-table :headers="schGroupTable.headers" :items="groupItem.groupDetailList"
+                    item-key="schSmallGroupNo" hide-default-footer style="background-color:lightgrey;">
+                    <template v-slot:body="{ items }">
+                      <tbody>
+                        <tr v-for="(item, i) in items" :key="i" style="background-color:ivory;">
+                          <td>{{ item.groupDetailSeq }}</td>
+                          <td>{{ groupItem.groupDate }}</td>
+                          <td>{{ groupItem.groupStartTime }}</td>
+                          <td>{{ groupItem.groupCareerName }}</td>
+                          <td>
+                            <span v-for="(view, i) in item.detailOrder" :key="i">{{ view }} </span>
+                          </td>
+                          <td>
+                            <span v-for="(viewee, i) in slicedViewee(item.groupDetailApplicant)" :key="i">{{ viewee }} </span>
+                          </td>
+                          <td>
+                            <span v-for="(guide, i) in slicedGuide(groupItem.waitInterviewerList)" :key="i">{{ guide.interviewerName }} </span>
+                          </td>
+                          <td>
+                            <span v-for="(viewer, i) in slicedViewer(groupItem.interviewerList)" :key="i">{{ viewer.interviewerName }} </span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td v-for="(item, i) in 8" :key="i"></td>
+                        </tr>
+                      </tbody>
+                    </template>
+                  </v-data-table>
+                </td>
+              </template>
+            </v-data-table>
+          </v-card>
+        </div>
+      </v-row>
+    </v-container>
   </div>
+
 </template>
 
 <script>
@@ -137,7 +151,6 @@
   import _ from "lodash"
   import { mapGetters, mapState } from "vuex"
 
-  // const SERVER_URL = "https://localhost:8080"
   const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
   export default {
@@ -154,21 +167,27 @@
         groupForm: [{
             name: "부서",
             data: [],
-            col: 4,
+            col: 6,
+            titleCol: 6,
+            inputCol: 6,
             multiple: false,
             value: 'part'
           },
           {
             name: "직군",
             data: [],
-            col: 4,
+            col: 6,
+            titleCol: 6,
+            inputCol: 6,
             multiple: false,
             value: 'career'
           },
           {
             name: "면접 유형",
             data: ["인성", "직무", "PT", "토론"],
-            col: 4,
+            col: 12,
+            titleCol: 3,
+            inputCol: 9,
             multiple: true,
             value: 'viewTypes'
           },
@@ -180,37 +199,49 @@
           {
             name: "시작 시간",
             type: "text",
-            col: 4,
+            col: 6,
+            titleCol: 6,
+            inputCol: 6,
             value: 'startTime'
           },
           {
             name: "종료 시간",
             type: "text",
-            col: 4,
+            col: 6,
+            titleCol: 6,
+            inputCol: 6,
             value: 'endTime'
           },
           {
             name: "소요 시간",
             type: "number",
-            col: 4,
+            col: 6,
+            titleCol: 6,
+            inputCol: 6,
             value: 'duration'
           },
           {
             name: "면접관 수",
             type: "number",
-            col: 4,
+            col: 6,
+            titleCol: 6,
+            inputCol: 6,
             value: 'viewerNum'
           },
           {
             name: "지원자 수",
             type: "number",
-            col: 4,
+            col: 6,
+            titleCol: 6,
+            inputCol: 6,
             value: 'vieweeNum'
           },
           {
             name: "세부 그룹 지원자 수",
             type: "number",
-            col: 4,
+            col: 6,
+            titleCol: 6,
+            inputCol: 6,
             value: 'vieweePerGroup'
           },
 
@@ -224,7 +255,7 @@
           // 면접 유형
           interviewTypeList: [],
           // 시작 날짜, 7/10
-          startDate: '',
+          // startDate: '',
           // 시작 시간
           startTime: '',
           // 종료 날짜(안 써도 됨)
@@ -264,13 +295,13 @@
               text: '날짜',
               align: 'center',
               value: 'schGroupDate',
-              width: '5%'
+              width: '6%'
             },
             {
-              text: '시간',
+              text: '시작 시간',
               align: 'center',
               value: 'schGroupTime',
-              width: '5%'
+              width: '7%'
             },
             {
               text: '직무',
@@ -288,7 +319,7 @@
               text: '지원자',
               align: 'center',
               value: 'schGroupViewee',
-              width: '20%'
+              width: '10%'
             },
             {
               text: '대기실',
@@ -300,12 +331,10 @@
               text: '면접실',
               align: 'center',
               value: 'schGroupViewer',
-              width: '15%'
+              width: '10%'
             },
           ],
-          
         },
-
         loader: null,
         loading: false,
       }
@@ -313,12 +342,11 @@
     methods: {
       // 면접 스케줄 추가
       addSchedule: function () {
-
         let groupData = {
           part: this.formData.part,
           career: this.formData.career,
           interviewTypeList: this.formData.viewTypes,
-          startDate: this.formData.startDate,
+          // startDate: this.formData.startDate,
           startTime: this.formData.startTime,
           endTime: this.formData.endTime,
           divideInterviewer: this.formData.viewerNum,
@@ -326,16 +354,29 @@
           divideTime: this.formData.duration,
           divideDetailNum: this.formData.vieweePerGroup
         }
+
         console.log("보내질groupData", groupData)
         axios.post(`${SERVER_URL}/groupAll/divide/` + this.recruitItem.reSeq, groupData)
           .then(res => {
             console.log("추가된면접일정", res.data)
+            this.dialog = false
           })
-          .catch(err => console.log(err))
+          .catch(err => {
+            console.log(err)
+          })
 
         setTimeout(() =>this.$store.dispatch("GET_PROGRESS_LIST", this.getUserComSeq), 2000)
 
-
+        this.formData.part = ""
+        this.formData.career = ""
+        this.formData.viewTypes = []
+        // this.formData.startDate = ""
+        this.formData.startTime = ""
+        this.formData.endTime = ""
+        this.formData.viewerNum = 0
+        this.formData.vieweeNum = 0
+        this.formData.duration = 0
+        this.formData.vieweePerGroup = 0
       },
       clicked: function (value) {
         this.schGroupTable.expanded.push(value)
@@ -347,6 +388,20 @@
             this.groupForm[1].data = element.careerName
           }
         }
+      },
+      clickOutside: function() {
+        this.formData.part = ""
+        this.formData.career = ""
+        this.formData.viewTypes = []
+        // this.formData.startDate = ""
+        this.formData.startTime = ""
+        this.formData.endTime = ""
+        this.formData.viewerNum = 0
+        this.formData.vieweeNum = 0
+        this.formData.duration = 0
+        this.formData.vieweePerGroup = 0
+
+        this.dialog = false
       }
     },
     watch: {
@@ -378,7 +433,7 @@
       },
       slicedViewee() {
         return (Viewee) => {
-          return _.slice(Viewee, 0, 5)
+          return _.slice(Viewee, 0, 3)
         }
       },
       slicedGuide() {
@@ -419,10 +474,19 @@
     color: black;
   } */
 
-
+/* .td {
+  padding: 0px;
+  margin: 0px;
+} */
 
   td {
     text-align: center;
+  }
+
+
+  #createset{
+    background-color: aliceblue;
+    height: 100%;
   }
 
   /* table.table {
