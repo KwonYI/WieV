@@ -2,6 +2,7 @@
 	<div id="introduce">
 		<!-- What is VieW -->
 		<div>WieV는 비대면 면접에 최적화된 솔루션을 제공하는 플랫폼입니다.</div>
+		
 		<!-- What we serve -->
 		<v-container>
 			<v-col>
@@ -27,12 +28,84 @@
 		<div class="text-h4 text-center">What We Support</div>
 		<v-row class="ma-0" no-gutters>
 			<v-col v-for="(sup, i) in support" :key="i" cols="4" class="pa-0">
-				<v-card color="grey" tile dark>
-					<v-card-title class="headline">{{ sup.title }}</v-card-title>
-					<v-card-subtitle>{{ sup.content }}</v-card-subtitle>
+
+				<!-- <v-hover v-slot="{ hover }">
+
+				<v-card :class="{ 'on-hover': hover }" class="support" tile dark>
+					<v-img :src="sup.src" gradient="to top, rgba(255, 255, 255, .5), rgba(255, 255, 255, .5)">
+						<v-card-title class="headline">{{ sup.title }}</v-card-title>
+						<v-card-subtitle>{{ sup.content }}</v-card-subtitle>
+					</v-img>
 				</v-card>
+
+				</v-hover> -->
+
+				<v-hover v-slot="{ hover }">
+				<v-card :class="{'on-hover': hover}" :dark="!hover" tile>
+					<v-img :src="sup.src" class="support">
+						<v-card-title class="headline">{{ sup.title }}</v-card-title>
+						<v-card-subtitle>{{ sup.content }}</v-card-subtitle>
+					</v-img>
+				</v-card>
+				</v-hover>
+
 			</v-col>
 		</v-row>
+
+  <v-container class="pa-4 text-center">
+    <v-row
+      class="fill-height"
+      align="center"
+      justify="center"
+    >
+      <template v-for="(item, i) in items">
+        <v-col :key="i" cols="12" md="4">
+          <v-hover v-slot="{ hover }">
+            <v-card :elevation="hover ? 12 : 2" :class="{ 'on-hover': hover }" class="support">
+              <v-img :src="item.img" height="225px">
+                <v-card-title class="title white--text">
+                  <v-row
+                    class="fill-height flex-column"
+                    justify="space-between"
+                  >
+                    <p class="mt-4 subheading text-left">
+                      {{ item.title }}
+                    </p>
+
+                    <div>
+                      <p class="ma-0 body-1 font-weight-bold font-italic text-left">
+                        {{ item.text }}
+                      </p>
+                      <p class="caption font-weight-medium font-italic text-left">
+                        {{ item.subtext }}
+                      </p>
+                    </div>
+
+                    <div class="align-self-center">
+                      <v-btn
+                        v-for="(icon, index) in icons"
+                        :key="index"
+                        :class="{ 'show-btns': hover }"
+                        :color="transparent"
+                        icon
+                      >
+                        <v-icon
+                          :class="{ 'show-btns': hover }"
+                          :color="transparent"
+                        >
+                          {{ icon }}
+                        </v-icon>
+                      </v-btn>
+                    </div>
+                  </v-row>
+                </v-card-title>
+              </v-img>
+            </v-card>
+          </v-hover>
+        </v-col>
+      </template>
+    </v-row>
+  </v-container>
 
 		<!-- What we deliver -->
 		<div class="text-h4 text-center">What We Deliver</div>
@@ -235,32 +308,38 @@
 					{
 						title: '1번',
 						content: '1번 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다.',
-						detail: ''
+						detail: '',
+						src: require('@/assets/images/support_img1.jpg')
 					},
 					{
 						title: '2번',
 						content: '2번 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다.',
-						detail: ''
+						detail: '',
+						src: require('@/assets/images/support_img1.jpg')
 					},
 					{
 						title: '3번',
 						content: '3번 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다.',
-						detail: ''
+						detail: '',
+						src: require('@/assets/images/support_img1.jpg')
 					},
 					{
 						title: '4번',
 						content: '4번 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다.',
-						detail: ''
+						detail: '',
+						src: require('@/assets/images/support_img1.jpg')
 					},
 					{
 						title: '5번',
 						content: '5번 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다.',
-						detail: ''
+						detail: '',
+						src: require('@/assets/images/support_img1.jpg')
 					},
 					{
 						title: '6번',
 						content: '6번 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다.',
-						detail: ''
+						detail: '',
+						src: require('@/assets/images/support_img1.jpg')
 					}
 				],
 
@@ -269,6 +348,29 @@
 					{ src: require('@/assets/images/6-start-simple-slider.jpg'), content: '2번 캐로우셀' },
 					{ src: require('@/assets/images/7-start-simple-slider.jpg'), content: '3번 캐로우셀' },
 				],
+
+				icons: ['mdi-rewind', 'mdi-play', 'mdi-fast-forward'],
+				items: [
+					{
+						title: 'New Releases',
+						text: `It's New Release Friday`,
+						subtext: 'Newly released songs. Updated daily.',
+						img: require('@/assets/images/5-start-simple-slider.jpg'),
+					},
+					{
+						title: 'Rock',
+						text: 'Greatest Rock Hits',
+						subtext: 'Lose yourself in rock tunes.',
+						img: 'https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2100&q=80',
+					},
+					{
+						title: 'Mellow Moods',
+						text: 'Ambient Bass',
+						subtext: 'Chill beats to mellow you out.',
+						img: require('@/assets/images/5-start-simple-slider.jpg'),
+					},
+				],
+				transparent: 'rgba(255, 255, 255, 0)',
 			}
 		},
 
@@ -304,4 +406,32 @@
 	z-index: -1;
 }
 
+.support::after {
+  transition: background .3s ease-in-out;
+	width: 100%;
+	height: 100%;
+	content: '';
+	background-color: black;
+	opacity: 0.8;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: -1;
+}
+.support:hover::after {
+	transition: background .3s ease-in-out;
+	background-color: #FFF1C3;
+  opacity: 0.8;
+}
+
+
+.nothover-gradient {
+	background-image: linear-gradient(to top, rgba(0, 0, 0, .9), rgba(0, 0, 0, .9));
+}
+.hover-gradient {
+	background-image: linear-gradient(to top, rgba(255, 255, 255, .9), rgba(255, 255, 255, .9));
+}
+.show-btns {
+  color: rgba(255, 255, 255, 1) !important;
+}
 </style>
