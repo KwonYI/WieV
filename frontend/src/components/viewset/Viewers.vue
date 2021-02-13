@@ -1,6 +1,6 @@
 <template>
   <div id="viewers">
-    <v-toolbar dark color="brown lighten-1 font-weight-bold black--text">
+    <v-toolbar dark color="#b0c4de" class="font-weight-bold black--text d-flex justify-content-end">
     <!-- <v-toolbar dark color="brown darken-1 black--text"> -->
       <v-toolbar-title></v-toolbar-title>
      
@@ -13,7 +13,7 @@
         multiple />
       <v-btn class="m-3" v-on:click="submitFile()"><v-icon left>mdi-table-arrow-up</v-icon>엑셀 업로드</v-btn>
       <v-btn class="m-3" @click="exportExcel"><v-icon left>mdi-download-box</v-icon>엑셀 양식 다운로드</v-btn>
-      <v-btn class="m-2" @click="updateViewerDB"><v-icon left>mdi-refresh</v-icon>목록 업데이트 </v-btn>
+      <v-btn class="m-2" @click="updateViewerDB" color="green"><v-icon left>mdi-refresh</v-icon>목록 업데이트 </v-btn>
 
     </v-toolbar>
     <v-simple-table fixed-header  height="500px" class="mt-5">

@@ -1,6 +1,6 @@
 <template>
   <div id="viewees">
-    <v-toolbar dark color="blue-grey darken-1 font-weight-bold black--text">
+    <v-toolbar dark color="#b0c4de" class="font-weight-bold black--text d-flex justify-content-end">
       <v-toolbar-title></v-toolbar-title>
 
       <span class="m-2 text-subtitle-1">File:</span>
@@ -13,7 +13,7 @@
       <v-btn class="m-2" @click="exportExcel">
         <v-icon left>mdi-download-box</v-icon>엑셀 양식 다운로드
       </v-btn>
-      <v-btn class="m-2" @click="updateVieweeDB">
+      <v-btn class="m-2" @click="updateVieweeDB" color="green">
         <v-icon left>mdi-refresh</v-icon>목록 업데이트
       </v-btn>
     </v-toolbar>
