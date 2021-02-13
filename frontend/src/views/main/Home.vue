@@ -8,10 +8,11 @@
             <v-col :class="[getAccessToken ? '' : 'text-h5']">
               View Everywhere
             </v-col>
-            <v-col v-if="!getAccessToken" class="mt-3">
+            <v-col v-if="!getAccessToken">
               비대면 화상면접 플랫폼
             </v-col>
-            <span :class="[getAccessToken ? 'text-h4' : 'text-h3']">WieV</span>
+            <p :class="[getAccessToken ? 'text-h4' : 'text-h3']">WieV</p>
+            <img v-if="!getAccessToken" :src="images.logo" width="300"  alt="logo">
           </v-col>
 
           <!-- 로그인 시, 면접스케줄 현황 -->
@@ -60,6 +61,9 @@ export default {
   },
   data: () => ({
     message: "",
+    images: {
+        logo: require('@/assets/images/logo.png')
+      },
   }),
   computed: {
     ...mapGetters(["getUser", "getAccessToken", "getUserViewWait"]),
