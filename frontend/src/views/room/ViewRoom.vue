@@ -7,15 +7,41 @@
     <div class="brd" style="width: 640px; height: 360px"></div>
     <div class="brd" style="width: 960px; height: 540px"></div> -->
 
+<!-- 여기부터 준희형이 만든 UI -->
     <!-- 면접 유형에 따른 구분 -->
-    <v-container class="room">
+    <!-- <v-container class="room"> -->
       <!-- 그룹형 면접실 -->
-      <GrView v-if="roomType === 'gr'" />
+      <!-- <GrView v-if="roomType === 'gr'" /> -->
       <!-- PT형 면접실 -->
-      <PTView v-else-if="roomType === 'pt'" />
+      <!-- <PTView v-else-if="roomType === 'pt'" /> -->
       <!-- 일반형 면접실 -->
-      <CaView v-else />
+      <!-- <CaView v-else /> -->
+    <!-- </v-container> -->
+<!-- 여기까지가 준희형이 만든 UI -->
+
+<!-- 이게 테스트 UI -->
+    <v-container class="room">
+      <v-col cols="9" class="main-box">
+        <v-col cols="4" class="d-flex flex-column justify-center align-center">
+          <span v-for="sub in viewers" :key="sub.stream.connection.connectionId">
+            <user-video
+              :id = "sub.stream.connection.connectionId"
+              :stream-manager="sub" 
+            />
+          </span>
+        </v-col>
+        <v-col cols="8" class="d-flex flex-wrap justify-center align-center">
+          <span v-for="sub in viewees" :key="sub.stream.connection.connectionId">
+            <user-video
+              :stream-manager="sub" 
+              :id = "sub.stream.connection.connectionId"
+              @click.native="updateMainVideoStreamManager(sub)"
+            />
+          </span>
+        </v-col>
+      </v-col>
     </v-container>
+<!-- 여기까지 테스트 UI -->
 
     <!-- 화면 공유 기능(미구현) -->
     <!-- <div id="screen"></div> -->
@@ -37,10 +63,10 @@
 
 <script>
 import { OpenVidu } from "openvidu-browser"
-// import UserVideo from "@/components/room/UserVideo"
-import CaView from "@/components/room/CaView"
-import PTView from "@/components/room/PTView"
-import GrView from "@/components/room/GrView"
+import UserVideo from "@/components/room/UserVideo"
+// import CaView from "@/components/room/CaView"
+// import PTView from "@/components/room/PTView"
+// import GrView from "@/components/room/GrView"
 import axios from "axios"
 
 
@@ -49,10 +75,10 @@ const SERVER_URL = process.env.VUE_APP_SERVER_URL
 export default {
   name: "ViewRoom",
   components: {
-    // UserVideo,
-    CaView,
-    PTView,
-    GrView
+    UserVideo,
+    // CaView,
+    // PTView,
+    // GrView
   },
   data: function () {
     return {
@@ -91,7 +117,6 @@ export default {
       re_year: undefined,
       re_flag: undefined,
       re_status: undefined,
-
       userSeq : undefined,
       
       //지원자 리스트
@@ -102,8 +127,8 @@ export default {
 
       // 면접 이동
       visible: false,
-      viewee_list: ['김일번', '박이번', '신삼번', '강사번', '류오번', '이육번'],
-      moving_viewee: [],
+      // viewee_list: ['김일번', '박이번', '신삼번', '강사번', '류오번', '이육번'],
+      // moving_viewee: [],
 
       // 면접 안내
 
@@ -119,7 +144,7 @@ export default {
     window.addEventListener("beforeunload", this.leaveSession)
     window.addEventListener("backbutton", this.leaveSession)
 
-    let user_data = ['comName', 're_year', 're_flag', 're_status', 'sessionName', 'token', 'userName', 'type', 'userSeq']
+    let user_data = ['comName', 're_year', 're_flag', 're_status', 'token', 'userName', 'userSeq', 'type', 'sessionName']
 
     for (const data of user_data) {
       this[data] = this.$route.query[data]
@@ -155,6 +180,7 @@ export default {
 
       if(info['type'] === 'viewee'){
         this.viewees.push(subscriber)
+        // this.viewee_list.push(info['name'])
       }else{
         this.viewers.push(subscriber)
       }
@@ -166,13 +192,17 @@ export default {
 
       let info = JSON.parse(stream.connection.data.split('%/%')[0])
 
-
-
       if(info['type'] === 'viewee'){
         const index = this.viewees.indexOf(stream.streamManager, 0);
         if (index >= 0) {
           this.viewees.splice(index, 1);
         }
+
+        // const idx = this.viewee_list.indexOf(info['name'], 0);
+        // if (idx >= 0) {
+        //   this.viewee_list.splice(idx, 1);
+        // }
+
       }else{
         const index = this.viewers.indexOf(stream.streamManager, 0);
         if (index >= 0) {
@@ -185,6 +215,34 @@ export default {
       // if (index >= 0) {
       //   this.subscribers.splice(index, 1);
       // }
+    })
+
+    this.session.on('publisherStartSpeaking', (event) => {
+      let id = event.connection.connectionId
+      this.viewers.forEach(viewer => {
+        if(viewer !== this.mainStreamManager && viewer.stream.connection.connectionId === id){
+          document.getElementById(id).classList.add("speaking");
+        }
+      })
+      this.viewees.forEach(viewee => {
+        if(viewee !== this.mainStreamManager && viewee.stream.connection.connectionId === id){
+          document.getElementById(id).classList.add("speaking");
+        }
+      })
+    })
+
+    this.session.on('publisherStopSpeaking', (event) => {
+      let id = event.connection.connectionId
+      this.viewers.forEach(viewer => {
+        if(viewer !== this.mainStreamManager && viewer.stream.connection.connectionId === id){
+          document.getElementById(id).classList.remove("speaking");
+        }
+      })
+      this.viewees.forEach(viewee => {
+        if(viewee !== this.mainStreamManager && viewee.stream.connection.connectionId === id){
+          document.getElementById(id).classList.remove("speaking");
+        }
+      })
     });
 
     // 채팅 기능 -> 세션 동기화
@@ -196,15 +254,14 @@ export default {
       this.messages.push(message)
     })
 
-    this.session
-      .connect(this.token, { name: this.userName, type : this.type, userSeq : this.userSeq})
+    this.session.connect(this.token, { name: this.userName, type : this.type, userSeq : this.userSeq})
       .then(() => {
         let publisher = this.OV.initPublisher(undefined, {
           audioSource: undefined, // The source of audio. If undefined default microphone
           videoSource: undefined, // The source of video. If undefined default webcam
           publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
           publishVideo: true, // Whether you want to start publishing with your video enabled or not
-          resolution: "1280x720", // The resolution of your video
+          resolution: "272x153", // The resolution of your video
           frameRate: 30, // The frame rate of your video
           insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
           mirror: false, // Whether to mirror your local video or not
@@ -220,6 +277,7 @@ export default {
 
         if(this.type === 'viewee'){
           this.viewees.push(this.publisher)
+          // this.viewee_list.push(info['name'])
         }else{
           this.viewers.push(this.publisher)
         }
@@ -264,7 +322,7 @@ export default {
             this.OV = undefined;
           }
 
-          window.close();
+          // window.close();
         })
         .catch((err) => {
           console.log(err);
@@ -309,15 +367,15 @@ export default {
       this.publisher.publishVideo(this.videoOn)
     },
 
-    handling(e) {
-      if (this.moving_viewee.includes(e.key)) {
-        this.moving_viewee.splice(this.moving_viewee.indexOf(e.key), 1)
-      } else {
-        this.moving_viewee.push(e.key)
-      }
+    // handling(e) {
+    //   if (this.moving_viewee.includes(e.key)) {
+    //     this.moving_viewee.splice(this.moving_viewee.indexOf(e.key), 1)
+    //   } else {
+    //     this.moving_viewee.push(e.key)
+    //   }
 
-      this.visible = true
-    }
+    //   this.visible = true
+    // }
   },
 
   computed: {
