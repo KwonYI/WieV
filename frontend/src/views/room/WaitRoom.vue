@@ -246,9 +246,6 @@ import UserVideo from "@/components/room/UserVideo"
 // import GrView from "@/components/room/GrView"
 import axios from "axios"
 
-// import Stomp from 'webstomp-client'
-// import SockJS from 'sockjs-client'
-
 const SERVER_URL = process.env.VUE_APP_SERVER_URL
 // import ManagerList from "@/components/room/ManagerList.vue"
 // import VieweeList from "@/components/room/VieweeList.vue"
@@ -427,7 +424,25 @@ export default {
       this.messages.push(message)
     })
 
-    this.session.connect(this.token, { name: this.userName, type : this.type, userSeq : this.userSeq, interviewSession : this.interviewSession})
+    this.session.on("signal:signal", () => {
+      if(this.type === 'viewee'){
+        if(confirm("이동하시겠습니까?")){
+          this.goInterview();
+        }else{
+          this.session.signal({ data: "No", to: [], type: "answer" })
+          .then()
+          .catch(err => console.error(err))
+        }
+      }
+    })
+
+    this.session.on("signal:answer", (event) => {
+      if(this.type === 'manager'){
+        alert(event.from.data.split('":"')[1].slice(0, -7) + " 님이 면접실 이동을 하지않았습니다.")
+      }
+    })
+
+    this.session.connect(this.token, { name: this.userName, type : this.type, userSeq : this.userSeq})
       .then(() => {
         let publisher = this.OV.initPublisher(undefined, {
           audioSource: undefined, // The source of audio. If undefined default microphone
@@ -484,15 +499,6 @@ export default {
         },
       })
       .then(() => {
-          // if (this.stompClient && this.stompClient.connected) {
-          //   const msg = {
-          //     name : '',
-          //     message : '',
-          //     target : [],
-          //     signal : false,
-          //   };
-          //   this.stompClient.send("/receiveInWaitSession", JSON.stringify(msg), {});
-          // }
 
           if (this.session) {
             this.session.disconnect()
@@ -546,93 +552,26 @@ export default {
       this.visible = true
     },
 
-    // // 관리자가 지원자에게
-    // sendSignal() {
-    //   if (this.stompClient && this.stompClient.connected) {
-    //     const msg = {
-    //       name : this.userName,
-    //       message : '',
-    //       target : this.moving_viewee,
-    //       signal : true,
-    //     };
-    //     this.stompClient.send("/receiveViewerToViewee", JSON.stringify(msg), {});
-    //   }
-    //   this.moving_viewee = []
-    // },
-    
-    // // 지원자가 관리자에게
-    // answerSignal(flag) {
-    //   if (this.stompClient && this.stompClient.connected) {
-    //     const msg = {
-    //       name : this.userName,
-    //       message : '',
-    //       target : [],
-    //       signal : flag,
-    //     };
-    //     this.stompClient.send("/receiveVieweeToViewer", JSON.stringify(msg), {});
-    //   }
-    // },
+    sendSignal() {
+      if(this.type !== 'manager'){
+        return
+      }
 
-    // // 대기방과 면접방 소통
-    // sendToInterview() {
-    //   if (this.stompClient && this.stompClient.connected) {
-    //     const msg = {
-    //       name : this.userName,
-    //       message : '', // this.message
-    //       target : [],
-    //       signal : true,
-    //     };
-    //     this.stompClient.send("/receiveViewerToViewer", JSON.stringify(msg), {});
-    //   }
-    // },
+      let connectionIds = [];
+      this.moving_viewee.forEach(name => {
+        this.viewees.forEach(stream =>{
+          if(JSON.parse(stream.stream.connection.data.split('%/%')[0])['name'] === name){
+            connectionIds.push(stream.stream.connection.connectionId)
+          }
+        })
+      })
+      console.log("난 얘들을 보낼거야", connectionIds)
+      this.session.signal({ data: "signal", to: connectionIds, type: "signal" })
+        .then()
+        .catch(err => console.error(err))
+      this.moving_viewee = []
+    },
 
-    // connect() {
-    //   let socket = new SockJS("https://i4a405.p.ssafy.io:8080");
-    //   this.stompClient = Stomp.over(socket);
-    //   this.stompClient.connect(
-    //     {},
-    //     frame => {
-    //       // 소켓 연결 성공
-    //       this.connected = true;
-    //       console.log('소켓 연결 성공', frame);
-
-    //       if(this.type == 'viewee'){
-    //         this.stompClient.subscribe("/sendViewerToViewee", res => {
-    //           let target = JSON.parse(res.body)['target']
-    //           target.forEach(name => {
-    //             if(name === this.userName){
-    //               if(confirm("OK??") === true){
-    //                 this.answerSignal(true)
-    //                 this.goInterview();
-    //               }else{
-    //                 console.log("No누름")
-    //                 this.answerSignal(false)
-    //               }
-    //             }
-    //           });
-    //         });
-    //       }else{
-    //         this.stompClient.subscribe("/sendVieweeToViewer", res => {
-    //           let answer = JSON.parse(res.body)
-    //           if(answer['signal'] === true){
-    //             console.log(answer['name'], " 간다")
-    //           }else{
-    //             console.log(answer['name'], ' 안 간다')
-    //           }
-    //         });
-
-    //         this.stompClient.subscribe("/sendViewerToViewer", res => {
-    //           // 대기방과 면접방 소통
-    //           console.log(res)
-    //         });
-    //       }
-    //     },
-    //     error => {
-    //       console.log('소켓 연결 실패', error);
-    //       this.connected = false;
-    //     }
-    //   );        
-    // },
 
     goInterview(){
       axios.get(`${SERVER_URL}/session/join`, {

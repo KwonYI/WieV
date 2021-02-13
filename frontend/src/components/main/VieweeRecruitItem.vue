@@ -126,7 +126,6 @@ export default {
       //   { type_name: "그룹면접", check_terminate: "면접 미완료" },
       // ],
       applicantName: "",
-      // inWait : false,
     };
   },
   created: function () {  },
@@ -160,7 +159,6 @@ export default {
               interviewSession : interviewSession,
             },
           });
-          // this.inWait = true;
           window.open(routeData.href, "_blank");
         })
         .catch((err) => {
