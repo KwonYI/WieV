@@ -426,6 +426,7 @@
 <style scoped>
   .crs-content {
     background-color: transparent;
+    /* background-color: ; */
   }
 
   .crs-content::after {
