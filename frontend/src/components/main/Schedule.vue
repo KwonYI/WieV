@@ -100,6 +100,7 @@
             <th class="rec-header">시즌</th>
             <th class="rec-header">분류</th>
             <th class="rec-header">기간</th>
+            <th class="rec-header">관리</th>
           </tr>
         </thead>
               <tbody >
@@ -111,6 +112,7 @@
                 <td class="blurEffect">{{ recruit.reYear }} {{ recruit.reFlag }}</td>
                 <td class="blurEffect">{{ recruit.reStatus }}</td>
                 <td class="blurEffect">{{ recruit.reStartDate }} ~ {{recruit.reEndDate }}</td>         
+                <td class="blurEffect"><v-btn light rounded color="amber lighten-4">관리하기</v-btn></td>         
               <!-- <td> -->
                 <!-- <v-btn :to="{ name: 'Progress', params: { recruitNo: recruit.reSeq } }" >관리하기</v-btn> -->
                 <!-- <v-btn @click="goToProgress(recruit)">관리하기</v-btn> -->

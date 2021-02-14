@@ -16,7 +16,7 @@
           </v-col>
 
           <!-- 로그인 시, 면접스케줄 현황 -->
-          <v-col v-if="getAccessToken" class="mt-10">
+          <v-col v-if="getAccessToken" class="mt-3">
             <!-- 로그인 완료 -->
             <div v-if="getUserViewWait === -1">
               <Schedule />
@@ -62,7 +62,7 @@ export default {
   data: () => ({
     message: "",
     images: {
-        logo: require('@/assets/images/logo.png')
+        logo: require('@/assets/images/new_logo_shadow.png')
       },
   }),
   computed: {
