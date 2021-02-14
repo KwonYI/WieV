@@ -108,7 +108,7 @@
           <div :class="isViewee ? 'hidden' : ''" class="pb-2 mb-2 centering justify-space-between" style="height: 10%">
             <!-- 메시지 보내기 -->
             <a-popover title="Message" trigger="click">
-              <v-btn color="#757575" elevation="3" height="100%" width="35%" dark>메시지 보내기</v-btn>
+              <v-btn @click="sendToSession" color="#757575" elevation="3" height="100%" width="35%" dark>메시지 보내기</v-btn>
               <template slot="content">
                 <v-textarea
                   solo
@@ -234,6 +234,9 @@ import UserVideo from "@/components/room/UserVideo"
 // import GrView from "@/components/room/GrView"
 import axios from "axios"
 
+import Stomp from 'webstomp-client'
+import SockJS from 'sockjs-client'
+
 const SERVER_URL = process.env.VUE_APP_SERVER_URL
 // import ManagerList from "@/components/room/ManagerList.vue"
 // import VieweeList from "@/components/room/VieweeList.vue"
@@ -288,6 +291,7 @@ export default {
       re_status: undefined,
       interviewSession: undefined,
       userSeq : undefined,
+      interviewType : undefined,
 
       // 배너
       banner_dialog: false,
@@ -311,12 +315,12 @@ export default {
   },
   created: function () {
     //소켓 연결 시도
-    // this.connect()
+    this.connect()
 
     window.addEventListener("beforeunload", this.leaveSession)
     window.addEventListener("backbutton", this.leaveSession)
 
-    let user_data = ['comName', 're_year', 're_flag', 're_status', 'token', 'userName', 'userSeq', 'type', 'sessionName', 'interviewSession']
+    let user_data = ['comName', 're_year', 're_flag', 're_status', 'token', 'userName', 'userSeq', 'type', 'sessionName', 'interviewSession', 'interviewType']
 
     for (const data of user_data) {
       this[data] = this.$route.query[data]
@@ -591,6 +595,37 @@ export default {
         .then()
         .catch(err => console.error(err))
       this.moving_viewee = []
+    },
+
+    connect() {
+      let socket = new SockJS(`${SERVER_URL}/ws-stomp`);
+      this.stompClient = Stomp.over(socket);
+      console.log(`소켓 연결 시도`)
+      this.stompClient.connect(
+        {},
+        frame => {
+          this.connected = true;
+          console.log('소켓 연결 성공', frame);
+          this.stompClient.subscribe("/send", res => {
+            console.log('구독으로 받은 메시지 입니다.', JSON.parse(res.body));
+          });
+        },
+        error => {
+          // 소켓 연결 실패
+          console.log('소켓 연결 실패', error);
+          this.connected = false;
+        }
+      );        
+    },
+    sendToSession() {
+      console.log("잘 가고 있나요");
+      if (this.stompClient && this.stompClient.connected) {
+        const msg = { 
+          name: this.userName,
+          message: this.interviewSession 
+        };
+        this.stompClient.send("/receive", JSON.stringify(msg), {});
+      }
     },
 
 

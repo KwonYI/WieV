@@ -69,6 +69,8 @@ import UserVideo from "@/components/room/UserVideo"
 // import GrView from "@/components/room/GrView"
 import axios from "axios"
 
+import Stomp from 'webstomp-client'
+import SockJS from 'sockjs-client'
 
 const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
@@ -141,6 +143,8 @@ export default {
     }
   },
   created: function () {
+    this.connect()
+    
     window.addEventListener("beforeunload", this.leaveSession)
     window.addEventListener("backbutton", this.leaveSession)
 
@@ -365,6 +369,37 @@ export default {
       // else this.videoMsg = "화면 On";
 
       this.publisher.publishVideo(this.videoOn)
+    },
+
+    connect() {
+      let socket = new SockJS(`${SERVER_URL}/ws-stomp`);
+      this.stompClient = Stomp.over(socket);
+      console.log(`소켓 연결 시도`)
+      this.stompClient.connect(
+        {},
+        frame => {
+          this.connected = true;
+          console.log('소켓 연결 성공', frame);
+          this.stompClient.subscribe("/send", res => {
+            console.log('구독으로 받은 메시지 입니다.', JSON.parse(res.body));
+          });
+        },
+        error => {
+          // 소켓 연결 실패
+          console.log('소켓 연결 실패', error);
+          this.connected = false;
+        }
+      );        
+    },
+    sendToSession() {
+      console.log("잘 가고 있나요");
+      if (this.stompClient && this.stompClient.connected) {
+        const msg = { 
+          name: this.userName,
+          message: this.interviewSession 
+        };
+        this.stompClient.send("/receive", JSON.stringify(msg), {});
+      }
     },
 
     // handling(e) {
