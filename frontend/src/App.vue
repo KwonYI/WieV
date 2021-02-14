@@ -164,7 +164,7 @@
         <Ask v-if="isHome"/> -->
         
         
-        <footer class="bg-dark py-4 mt-5 tf-footer">
+        <footer class="bg-dark py-4">
           <div class="container text-light">
             <div class="row">
               <div class="col-md-6 col-sm-12">&copy; Wiev. All rights reserved.</div>

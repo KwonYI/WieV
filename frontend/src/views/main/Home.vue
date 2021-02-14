@@ -2,16 +2,17 @@
   <div id="home">
     
     <v-row justify="center" class="pt-10 main-bg-navy-img" style="height: 100vh" no-gutters>
-      <v-col cols="8" class="main-box text-center">
+      <v-col cols="8" class="main-box text-center" style="z-index:1">
         <div class="d-flex flex-column justify-center align-center text-white">
           <v-col class="wiev-box">
             <v-col :class="[getAccessToken ? '' : 'text-h5']">
               View Everywhere
             </v-col>
-            <v-col v-if="!getAccessToken" class="mt-3">
+            <v-col v-if="!getAccessToken">
               비대면 화상면접 플랫폼
             </v-col>
-            <span :class="[getAccessToken ? 'text-h4' : 'text-h3']">WieV</span>
+            <p :class="[getAccessToken ? 'text-h4' : 'text-h3']">WieV</p>
+            <img v-if="!getAccessToken" :src="images.logo" width="300"  alt="logo">
           </v-col>
 
           <!-- 로그인 시, 면접스케줄 현황 -->
@@ -60,6 +61,9 @@ export default {
   },
   data: () => ({
     message: "",
+    images: {
+        logo: require('@/assets/images/logo.png')
+      },
   }),
   computed: {
     ...mapGetters(["getUser", "getAccessToken", "getUserViewWait"]),

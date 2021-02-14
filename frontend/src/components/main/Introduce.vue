@@ -1,33 +1,58 @@
 <template>
 	<div id="introduce">
 		<!-- What is VieW -->
-		<div>WieV는 비대면 면접에 최적화된 솔루션을 제공하는 플랫폼입니다.</div>
+		<div style="margin-bottom: 10rem">WieV는 비대면 면접에 최적화된 솔루션을 제공하는 플랫폼입니다.</div>
+
+		<v-lazy
+        v-model="isActive"
+        :options="{
+          threshold: .5
+        }"
+        min-height="200"
+      >
+				<v-expand-x-transition>
+					<v-card
+						class="mx-auto"
+						max-width="336"
+					>
+						<v-card-title>Card title</v-card-title>
+
+						<v-card-text>
+							Phasellus magna. Quisque rutrum. Nunc egestas, augue at pellentesque laoreet, felis eros vehicula leo, at malesuada velit leo quis pede. Aliquam lobortis. Quisque libero metus, condimentum nec, tempor a, commodo mollis, magna.
+
+							In turpis. In dui magna, posuere eget, vestibulum et, tempor auctor, justo. In turpis. Pellentesque dapibus hendrerit tortor. Ut varius tincidunt libero.
+						</v-card-text>
+					</v-card>
+				</v-expand-x-transition>
+      </v-lazy>
 		
 		<!-- What we serve -->
-		<v-container>
-			<v-col>
-				<div class="text-h4 text-center">What We Serve</div>
-				<v-row no-gutters>
-					<v-col class="serve-content">
-						<div class="text-h5">For Enterprise</div>
-						<span>효율적인 언택트 채용으로 면접 전형에서 발생하는 비용을 절감할 수 있습니다.</span>
-					</v-col>
-					<v-col class="serve-content">
-						<div class="text-h5">For Recruiter</div>
-						<span>비대면 면접스케줄을 통합 데이터로 관리하고 트래킹할 수 있습니다.</span>
-					</v-col>
-					<v-col class="serve-content">
-						<v-icon>mdi-responsive</v-icon>
-						<div class="text-h5">For Viewer</div>
-						<span>간편한 화면 구성과 핵심적인 기능들로 면접 자체에 집중할 수 있는 환경을 제공합니다.</span>
-					</v-col>
-				</v-row>
-			</v-col>
+		<v-container style="margin-bottom: 10rem">
+			<v-row no-gutters>
+				<div class="text-h4 text-center font-weight-black" style="margin-bottom: 5rem">What We Serve</div>
+				<v-col v-for="(item, i) in serve" :key="i" class="serve-content">
+					<v-card class="mx-auto my-12" max-width="374" elevation="0">
+
+						<v-card-title class="text-h5 justify-center">{{ item.title }}</v-card-title>
+
+						<div style="height: 300px"></div>
+
+						<v-card-text>
+							<div class="body-2 text-dark font-weight-medium">
+								{{ item.content }}
+							</div>
+						</v-card-text>
+
+						<!-- <v-divider class="mx-4"></v-divider> -->
+
+					</v-card>
+				</v-col>
+			</v-row>
 		</v-container>
 
 		<!-- What we support -->
-		<div class="text-h4 text-center">What We Support</div>
-		<v-row class="ma-0" no-gutters>
+		<div class="text-h4 text-center font-weight-black" style="margin-bottom: 7rem">What We Support</div>
+		<v-row style="margin-bottom: 10rem" no-gutters>
 			<v-col v-for="(sup, i) in support" :key="i" cols="4" class="pa-0">
 				<v-hover v-slot="{ hover }">
 					<v-card :class="{'on-hover': hover}" :dark="!hover" tile>
@@ -41,195 +66,103 @@
 		</v-row>
 
 		<!-- What we deliver -->
-		<div class="text-h4 text-center">What We Deliver</div>
+		<div class="text-h4 text-center font-weight-black" style="margin-bottom: 7rem">What We Deliver</div>
 		<v-carousel
 			cycle
 			height="300"
 			hide-delimiter-background
 			show-arrows-on-hover
+			style="margin-bottom: 10rem"
 		>
 			<v-carousel-item v-for="(item, i) in carousel" :src="item.src" :key="i" active-class="crs-img">
-				<v-sheet class="crs-content d-flex justify-center align-center" height="100%">
-						<div class="text-h4">
-							{{ item.content }}
-						</div>
-				</v-sheet>
+				<v-sheet class="crs-content d-flex flex-column justify-center align-center" height="100%">
+          <div class="text-h4 m-5">
+            " {{ item.content }} "
+          </div>
+          <div class="text-h6">
+            {{ item.subcontent }}
+          </div>
+        </v-sheet>
 			</v-carousel-item>
 		</v-carousel>
 
 		<!-- Our Team -->
-		<v-container>
-			<v-col>
-				<div class="text-h4 text-center">Our Team</div>
-			</v-col>
-		</v-container>
+		<div class="text-h4 text-center font-weight-black" style="margin-bottom: 7rem">Our Team</div>
+    <v-container style="margin-bottom: 10rem">
+      <v-row class="mt-10">
+        <v-col cols="12 d-flex justify-space-around">
+          <div v-for="(member, i) in team" :key="i">
+            <v-avatar size="200" class="avatarImg">
+              <img alt="user" :src="member.img">
+            </v-avatar>
+
+            <p class="text-center h3 font-weight-black mt-3">{{ member.name }}</p>
+            <p class="text-center h6 font-weight-black">{{ member.position }}</p>
+
+            <div class="d-flex justify-center">
+							<v-btn class="mx-2" fab dark small color="secondary" :href="member.github" target="_blank">
+								<v-icon style="color:white">
+									mdi-github
+								</v-icon>
+							</v-btn>
+							<v-btn class="mx-2" fab dark small color="blue" :href="member.facebook" target="_blank">
+								<v-icon style="color:white">
+									mdi-facebook
+								</v-icon>
+							</v-btn>
+							<v-btn class="mx-2" fab dark small color="pink" :href="member.instagram" target="_blank">
+								<v-icon style="color:white">
+									mdi-instagram
+								</v-icon>
+							</v-btn>
+            </div>
+          </div>
+        </v-col>
+      </v-row>
+    </v-container>
 
 		<!-- Contact -->
 		<v-col>
-			<div class="text-h4 text-center">Contact</div>
+			<div class="text-h4 text-center font-weight-black">Contact</div>
 		</v-col>
 
 
-		<div class="container" id="work">
-			<h2 class="text-h4 text-center">Our Service</h2>
-		</div>
+    <!-- <section class="page-section mb-10" id="services">
+      <div class="container my-5">
+        <h3 class="h3 text-center">자동 채용 관리 시스템 & 실시간 화상 면접 을 통해</h3>
+        <h3 class="h3 text-center">
+          채용 편의성을 높이고 비즈니스에 집중할 수 있습니다.</h3>
+      </div>
+      <hr class="divider my-4" />
+      <div class="container">
+        <div class="row d-flex justify-content-center">
+          <div class="col-lg-3 col-md-6 text-center">
+            <div class="mt-5">
+              <img src="@/assets/images/interview.png" width="150">
+              <h3 class="h4 m-2">면접을 진행하고 싶은 사람이 있나요?</h3>
+              <p class="text-muted mb-0">언제 어디서든 면접을 진행하세요.</p>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 text-center">
+            <div class="mt-5">
+              <img src="@/assets/images/money-bag.png" width="150">
+              <h3 class="h4 m-2">면접에 대한 비용을 절약하고 싶나요?</h3>
+              <p class="text-muted mb-0">장소 대관에 들이는 시간 및 비용을 절약하세요.
+                WieV가 알아서 제공해드립니다.</p>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 text-center">
+            <div class="mt-5">
+              <img src="@/assets/images/calendar.png" width="150">
+              <h3 class="h4 m-2">면접 일정을 쉽게 만들고 싶나요?</h3>
+              <p class="text-muted mb-0">사내 채용 관련 데이터를 등록하면 자동으로 면접일정을 생성해 드립니다.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section> -->
 
-		<div class="container">
-			<div class="row">
-				<div class="col-md-4 col-sm-12 pt-2  d-flex justify-content-center">
-
-					<v-card
-						class="mx-auto my-12"
-						max-width="374"
-					>
-						<v-img
-							height="250"
-							src="@/assets/images/2-start-simple.jpg"
-						></v-img>
-
-						<v-card-title class="justify-center">Cafe Badilico</v-card-title>
-
-						<v-card-text>
-
-							<div class="my-4 subtitle-1">
-								$ • Italian, Cafe
-							</div>
-
-							<div>Small plates, salads & sandwiches - an intimate setting with 12 indoor seats plus patio seating.</div>
-						</v-card-text>
-
-						<v-divider class="mx-4"></v-divider>
-
-					</v-card>
-					
-				</div>
-				<!-- <div class="card cardsize">
-					<img class="img-fluid card-img-top cardimg" src="@/assets/images/2-start-simple.jpg"
-						alt="2-start-simple" />
-					<div class="card-body">
-						<h3 class="h4">면접 유형에 따른 템플릿 제공</h3>
-						<p class="text-muted">1:1 면접부터 그룹,PT 면접 등 면접 유형에 맞는 템플릿을 제공</p>
-						<p>자기소개서, 이력서 보기를 통해 면접관에게 최적화된 면접 진행 가능</p>
-					</div>
-				</div> -->
-
-				<!-- <div class="col-md-4 col-sm-12 pt-2 d-flex justify-content-center">
-					<div class="card cardsize"><img class="img-fluid card-img-top cardimg" src="@/assets/images/unnamed2.jpg"
-							alt="3-start-simple" />
-						<div class="card-body">
-							<h3 class="h4">면접 자동화 관리 시스템</h3>
-							<p class="text-muted">면접 일정부터 면접 대상자 설정까지 자동으로 생성하는 ADMIN 페이지 제공</p>
-							<p>
-								엑셀 파일을 이용해 채용 데이터 저장 가능</p>
-							<p>
-								채용 담당자가 전체 면접 현황을 간편하게 관리
-							</p>
-						</div>
-					</div>
-				</div> -->
-
-				<!-- <div class="col-md-4 col-sm-12 pt-2 d-flex justify-content-center">
-					<div class="card cardsize"><img class="img-fluid card-img-top cardimg" src="@/assets/images/img4.png"
-							alt="4-start-simple" />
-						<div class="card-body">
-							<h3 class="h4">화상 면접에 최적화된 환경 제공</h3>
-							<p class="text-muted">별도의 설치 없이 웹 브라우저를 통해 사용</p>
-							<p>시간과 장소의 제약없이 면접에만 집중 가능</p>
-						</div>
-					</div>
-				</div> -->
-
-			</div>
-		</div>
-
-		<section class="page-section mb-10" id="services">
-			<div class="container my-5">
-				<h3 class="h3 text-center">자동 채용 관리 시스템 & 실시간 화상 면접 을 통해</h3>
-				<h3 class="h3 text-center">
-					채용 편의성을 높이고 비즈니스에 집중할 수 있습니다.</h3>
-			</div>
-			<hr class="divider my-4" />
-			<div class="container">
-				<div class="row d-flex justify-content-center">
-					<div class="col-lg-3 col-md-6 text-center">
-						<div class="mt-5">
-							<img src="@/assets/images/interview.png" width="150">
-							<h3 class="h4 m-2">면접을 진행하고 싶은 사람이 있나요?</h3>
-							<p class="text-muted mb-0">언제 어디서든 면접을 진행하세요.</p>
-						</div>
-					</div>
-					<div class="col-lg-3 col-md-6 text-center">
-						<div class="mt-5">
-							<img src="@/assets/images/money-bag.png" width="150">
-							<h3 class="h4 m-2">면접에 대한 비용을 절약하고 싶나요?</h3>
-							<p class="text-muted mb-0">장소 대관에 들이는 시간 및 비용을 절약하세요.
-								WieV가 알아서 제공해드립니다.</p>
-						</div>
-					</div>
-					<div class="col-lg-3 col-md-6 text-center">
-						<div class="mt-5">
-							<img src="@/assets/images/calendar.png" width="150">
-							<h3 class="h4 m-2">면접 일정을 쉽게 만들고 싶나요?</h3>
-							<p class="text-muted mb-0">사내 채용 관련 데이터를 등록하면 자동으로 면접일정을 생성해 드립니다.</p>
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
-
-
-
-		<div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
-			<ol class="carousel-indicators d-flex">
-				<li data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-label="Slide 1">
-				</li>
-				<li data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" class="active" aria-label="Slide 2">
-				</li>
-				<li data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" class="active" aria-label="Slide 3">
-				</li>
-				<!-- <button class="active" data-target="#carouselExampleCaptions" data-slide-to="0"></button>
-          <button data-target="#carouselExampleCaptions" data-slide-to="1"></button>
-          <button data-target="#carouselExampleCaptions" data-slide-to="2"></button> -->
-			</ol>
-			<div class="carousel-inner">
-				<div class="carousel-item active">
-					<img src="@/assets/images/5-start-simple-slider.jpg" class="d-block w-100 darkimg" alt="...">
-					<div class="carousel-caption d-none d-md-block mb-10">
-						<p class="text-h5">"WieV는 '기업'에 초점을 맞춘 최고의 화상면접 플랫폼입니다."</p>
-						<p>실무자들이 면접의 목적인 지원자의 평가와 선발에 집중할 수 있도록 간편하고 효율적인 시스템을 제공합니다.</p>
-					</div>
-				</div>
-				<div class="carousel-item">
-					<img src="@/assets/images/6-start-simple-slider.jpg" class="d-block w-100 darkimg" alt="...">
-					<div class="carousel-caption d-none d-md-block mb-10">
-						<p class="text-h5">"WieV는 성공적인 비즈니스를 운영할 수 있는 파트너입니다."</p>
-						<p>여러분이 오직 채용에만 집중할 수 있도록 모든 면접 일정을 생성 및 관리하겠습니다.</p>
-					</div>
-				</div>
-				<div class="carousel-item">
-					<img src="@/assets/images/7-start-simple-slider.jpg" class="d-block w-100 darkimg" alt="...">
-					<div class="carousel-caption d-none d-md-block mb-10">
-						<p class="text-h5">"WieV는 언제 어디서나 면접을 진행하고 관리할 수 있습니다."</p>
-						<p>화상면접을 통해 지원자, 면접관을 쉽게 연결하며 채용에 대한 비용을 최소화합니다.</p>
-					</div>
-				</div>
-			</div>
-			<button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions"
-				data-bs-slide="prev">
-				<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-				<span class="visually-hidden">Previous</span>
-			</button>
-			<button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions"
-				data-bs-slide="next">
-				<span class="carousel-control-next-icon" aria-hidden="true"></span>
-				<span class="visually-hidden">Next</span>
-			</button>
-		</div>
-
-
-
-	</div>
-
+  </div>
 </template>
 
 <script>
@@ -237,86 +170,133 @@
 		name: "Introduce",
 		data: function () {
 			return {
-				serve: [
+				isActive: false,
 
+				serve: [
+					{
+						title: 'For Enterprise',
+						icon: '',
+						content: '효율적인 언택트 채용으로 면접 전형에서 발생하는 비용을 절감할 수 있습니다.'
+					},
+					{
+						title: 'For Recruiter',
+						icon: '',
+						content: '비대면 면접스케줄을 통합 데이터로 관리하고 트래킹할 수 있습니다.'
+					},
+					{
+						title: 'For Viewer',
+						icon: '',
+						content: '간편한 화면 구성과 핵심적인 기능들로 면접 자체에 집중할 수 있는 환경을 제공합니다.'
+					},
 				],
 
 				support: [
 					{
-						title: '1번',
-						content: '1번 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다.',
+						title: '유연한 데이터베이스',
+						content: '엑셀 업로드',
 						detail: '',
 						src: require('@/assets/images/support_img1.jpg')
 					},
 					{
-						title: '2번',
-						content: '2번 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다.',
+						title: '통합 관리 시스템',
+						content: '이메일 발송, 진행 중 면접',
 						detail: '',
 						src: require('@/assets/images/support_img1.jpg')
 					},
 					{
-						title: '3번',
-						content: '3번 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다.',
+						title: '면접실 커스커마이징',
+						content: '유형별, 데이터별 템플릿 활용',
 						detail: '',
 						src: require('@/assets/images/support_img1.jpg')
 					},
 					{
-						title: '4번',
-						content: '4번 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다.',
+						title: '면접스케줄 자동화',
+						content: '스케줄-면접실 연결',
 						detail: '',
 						src: require('@/assets/images/support_img1.jpg')
 					},
 					{
-						title: '5번',
-						content: '5번 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다.',
+						title: '다양한 부가기능',
+						content: '자기소개서, 공지 배너',
 						detail: '',
 						src: require('@/assets/images/support_img1.jpg')
 					},
 					{
-						title: '6번',
-						content: '6번 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다. 내용입니다.',
+						title: '',
+						content: '웹 기반, 언제 어디서나',
 						detail: '',
 						src: require('@/assets/images/support_img1.jpg')
 					}
 				],
 
 				carousel: [
-					{ src: require('@/assets/images/5-start-simple-slider.jpg'), content: '1번 캐로우셀' },
-					{ src: require('@/assets/images/6-start-simple-slider.jpg'), content: '2번 캐로우셀' },
-					{ src: require('@/assets/images/7-start-simple-slider.jpg'), content: '3번 캐로우셀' },
+					{
+            src: require('@/assets/images/5-start-simple-slider.jpg'),
+            content: "WieV는 '기업'에 초점을 맞춘 최고의 화상면접 플랫폼입니다.",
+            subcontent:"실무자들이 면접의 목적인 지원자의 평가와 선발에 집중할 수 있도록 간편하고 효율적인 시스템을 제공합니다."
+          },
+          {
+            src: require('@/assets/images/6-start-simple-slider.jpg'),
+            content: "WieV는 성공적인 비즈니스를 운영할 수 있는 파트너입니다.",
+            subcontent:"여러분이 오직 채용에만 집중할 수 있도록 모든 면접 일정을 생성 및 관리하겠습니다."
+          },
+          {
+            src: require('@/assets/images/7-start-simple-slider.jpg'),
+            content: "WieV는 언제 어디서나 면접을 진행하고 관리할 수 있습니다.",
+            subcontent:"화상면접을 통해 지원자, 면접관을 쉽게 연결하며 채용에 대한 비용을 최소화합니다.",
+          },
+        ],
+
+				team: [
+					{
+						img: require('@/assets/images/img5.jpg'),
+						name: '정일규',
+						position: 'Back',
+						github: '',
+						facebook: '',
+						instagram: ''
+					},
+					{
+						img: require('@/assets/images/img5.jpg'),
+						name: '권영일',
+						position: 'Back',
+						github: '',
+						facebook: '',
+						instagram: ''
+					},
+					{
+						img: require('@/assets/images/img5.jpg'),
+						name: '김민정',
+						position: 'Front',
+						github: '',
+						facebook: '',
+						instagram: ''
+					},
+					{
+						img: require('@/assets/images/img5.jpg'),
+						name: '김윤지',
+						position: 'Back',
+						github: '',
+						facebook: '',
+						instagram: ''
+					},
+					{
+						img: require('@/assets/images/img5.jpg'),
+						name: '이준희',
+						position: 'Front',
+						github: '',
+						facebook: '',
+						instagram: ''
+					}
 				],
 
-				icons: ['mdi-rewind', 'mdi-play', 'mdi-fast-forward'],
-				items: [
-					{
-						title: 'New Releases',
-						text: `It's New Release Friday`,
-						subtext: 'Newly released songs. Updated daily.',
-						img: require('@/assets/images/5-start-simple-slider.jpg'),
-					},
-					{
-						title: 'Rock',
-						text: 'Greatest Rock Hits',
-						subtext: 'Lose yourself in rock tunes.',
-						img: 'https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2100&q=80',
-					},
-					{
-						title: 'Mellow Moods',
-						text: 'Ambient Bass',
-						subtext: 'Chill beats to mellow you out.',
-						img: require('@/assets/images/5-start-simple-slider.jpg'),
-					},
-				],
 				transparent: 'rgba(255, 255, 255, 0)',
 			}
 		},
 
 		methods: {
 
-
 		},
-
-
 
 		created: function () {
 
@@ -332,6 +312,8 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	justify-content: center;
+	height: 30rem;
 }
 
 .crs-content {
@@ -364,6 +346,7 @@
 .support:hover::after {
 	transition: background .3s ease-in-out;
 	background-color: #FFF1C3;
+	font-weight: 400 !important;
   opacity: 0.8;
 }
 
@@ -376,5 +359,9 @@
 }
 .show-btns {
   color: rgba(255, 255, 255, 1) !important;
+}
+
+.avatarImg {
+	border: 10px solid aliceblue;
 }
 </style>
