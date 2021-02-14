@@ -8,7 +8,6 @@ export default {
 
   data() {
     return {
-      isViewee : false,
     }
   },
 
@@ -17,10 +16,7 @@ export default {
 	},
 
 	mounted () {
-    let type = JSON.parse(this.streamManager.stream.connection.data.split('%/%')[0]).type
-		if(type == 'viewee'){
-      this.isViewee = true
-    }
+    console.log("이게 문젠가?", this.$el)
     this.streamManager.addVideoElement(this.$el);
 	},
 };
@@ -34,10 +30,6 @@ video.viewer {
   width: 350px;
   height: auto;
 } */
-.speaking{
-  border-color: red;
-  border-style: solid;
-}
 .video {
   height: inherit;
 }

@@ -17,6 +17,9 @@
         :viewees = 'viewees' 
         :viewers = 'viewers'
         :currentApplicantList = 'currentApplicantList'
+        :publisher = 'publisher'
+        :mainStreamManager = 'mainStreamManager'
+        @updateMain="updateMain"
       />
       <!-- PT형 면접실 -->
       <PTView 
@@ -26,6 +29,9 @@
         :viewees = 'viewees' 
         :viewers = 'viewers'
         :currentApplicantList = 'currentApplicantList'
+        :publisher = 'publisher'
+        :mainStreamManager = 'mainStreamManager'
+        @updateMain="updateMain"
       />
       <!-- 일반형 면접실 -->
       <CaView 
@@ -35,6 +41,9 @@
         :viewees = 'viewees' 
         :viewers = 'viewers'
         :currentApplicantList = 'currentApplicantList'
+        :publisher = 'publisher'
+        :mainStreamManager = 'mainStreamManager'
+        @updateMain="updateMain"
       />
     </v-container>
 
@@ -81,7 +90,7 @@ export default {
       session: undefined,
       mainStreamManager: undefined, // 내 비디오
       publisher: undefined, // 연결 객체
-      subscribers: [],
+      
 
       // 면접관, 지원자들만 담아두는 리스트
       viewers : [],
@@ -182,6 +191,7 @@ export default {
 
       if(info['type'] === 'viewee'){
         this.viewees.push(subscriber)
+        this.mainStreamManager = subscriber
 
         for (const apply of this.allApplicantList) {
           if(apply["apply-Seq"]==info["userSeq"]){
@@ -233,36 +243,42 @@ export default {
         }
       }
 
+      if(this.viewees.length !== 0){
+        this.mainStreamManager = this.viewees[0]
+      }else{
+        this.mainStreamManager = null
+      }
+
       console.log("viewee : ",this.viewees, " viewer : ", this.viewers)
     })
 
-    this.session.on('publisherStartSpeaking', (event) => {
-      let id = event.connection.connectionId
-      this.viewers.forEach(viewer => {
-        if(viewer !== this.mainStreamManager && viewer.stream.connection.connectionId === id){
-          document.getElementById(id).classList.add("speaking");
-        }
-      })
-      this.viewees.forEach(viewee => {
-        if(viewee !== this.mainStreamManager && viewee.stream.connection.connectionId === id){
-          document.getElementById(id).classList.add("speaking");
-        }
-      })
-    })
+    // this.session.on('publisherStartSpeaking', (event) => {
+    //   let id = event.connection.connectionId
+    //   this.viewers.forEach(viewer => {
+    //     if(viewer !== this.mainStreamManager && viewer.stream.connection.connectionId === id){
+    //       document.getElementById(id).classList.add("speaking");
+    //     }
+    //   })
+    //   this.viewees.forEach(viewee => {
+    //     if(viewee !== this.mainStreamManager && viewee.stream.connection.connectionId === id){
+    //       document.getElementById(id).classList.add("speaking");
+    //     }
+    //   })
+    // })
 
-    this.session.on('publisherStopSpeaking', (event) => {
-      let id = event.connection.connectionId
-      this.viewers.forEach(viewer => {
-        if(viewer !== this.mainStreamManager && viewer.stream.connection.connectionId === id){
-          document.getElementById(id).classList.remove("speaking");
-        }
-      })
-      this.viewees.forEach(viewee => {
-        if(viewee !== this.mainStreamManager && viewee.stream.connection.connectionId === id){
-          document.getElementById(id).classList.remove("speaking");
-        }
-      })
-    });
+    // this.session.on('publisherStopSpeaking', (event) => {
+    //   let id = event.connection.connectionId
+    //   this.viewers.forEach(viewer => {
+    //     if(viewer !== this.mainStreamManager && viewer.stream.connection.connectionId === id){
+    //       document.getElementById(id).classList.remove("speaking");
+    //     }
+    //   })
+    //   this.viewees.forEach(viewee => {
+    //     if(viewee !== this.mainStreamManager && viewee.stream.connection.connectionId === id){
+    //       document.getElementById(id).classList.remove("speaking");
+    //     }
+    //   })
+    // });
 
     // 채팅 기능 -> 세션 동기화
     this.session.on("signal:my-chat", (event) => {
@@ -287,7 +303,7 @@ export default {
           mirror: false, // Whether to mirror your local video or not
         })
 
-        this.mainStreamManager = publisher
+        // this.mainStreamManager = publisher
         this.publisher = publisher
 
         this.session.publish(this.publisher);
@@ -295,11 +311,11 @@ export default {
         let info = JSON.parse(this.publisher.stream.connection.data.split('%/%')[0])
         console.log("내 이름은 ", info['name'], " 이고", info['type'], "야")
 
-        if(this.type === 'viewee'){
-          this.viewees.push(this.publisher)
-        }else{
-          this.viewers.push(this.publisher)
-        }
+        // if(this.type === 'viewee'){
+        //   this.viewees.push(this.publisher)
+        // }else{
+        //   this.viewers.push(this.publisher)
+        // }
       })
       .catch((error) => {
         console.log(
@@ -335,7 +351,8 @@ export default {
             this.session = undefined;
             this.mainStreamManager = undefined;
             this.publisher = undefined;
-            this.subscribers = [];
+            this.viewers = [],
+            this.viewees = [],
             this.OV = undefined;
           }
 
@@ -358,15 +375,10 @@ export default {
       this.publisher.publishVideo(this.videoOn)
     },
 
-    // handling(e) {
-    //   if (this.moving_viewee.includes(e.key)) {
-    //     this.moving_viewee.splice(this.moving_viewee.indexOf(e.key), 1)
-    //   } else {
-    //     this.moving_viewee.push(e.key)
-    //   }
-
-    //   this.visible = true
-    // }
+    updateMain(stream){
+      this.mainStreamManager = stream;
+      console.log("에밋 메세지 옴")
+    }
   },
 
   computed: {
@@ -386,13 +398,13 @@ export default {
   align-items: center;
   max-width: 95%;
 }
-.screen-res {
-  width: 272px;
-  height: 153px;
-}
 .screen-res-sm {
   width: 288px;
   height: 162px;
+}
+.screen-res {
+  width: 240px;
+  height: 135px;
 }
 .screen-res-md {
   width: 640px;

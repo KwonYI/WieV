@@ -68,34 +68,41 @@
           </v-col>
         </v-row>
 
+        <!-- 메인 위 - 지원자들 화면, 클릭하면 큰 화면으로 보기 -->
+        <v-row>
+          <div v-if="!isViewee" class='d-flex justify-center'>
+            <user-video v-for="sub in viewees" :key="sub.stream.connection.connectionId"
+              class= 'screen-res'
+              :stream-manager="sub" 
+              :id = "sub.stream.connection.connectionId"
+              @click.native="updateMain(sub)"
+            />
+          </div>
+        </v-row>
+
         <!-- 메인 중앙 - 면접관, 지원자 화면 -->
         <v-row class="main-screen">
           <!-- 면접관 -->
           <v-col cols="4" class="viewer-box centering flex-column">
-            <!-- <div v-for="i in viewer" :key="i" class="brd screen-res-sm">면접관 {{i}}</div> -->
+            <span v-if="!isViewee">
+              <user-video :streamManager="publisher" class="screen-res-sm"/>
+            </span>
             <span v-for="sub in viewers" :key="sub.stream.connection.connectionId">
               <user-video
                 class="screen-res-sm"
-                :stream-manager="sub"
-                :id = "sub.stream.connection.connectionId"
+                :stream-manager="sub" 
               />
             </span>
           </v-col>
           <!-- 지원자 -->
-          <v-col v-if="!isViewee" cols="8" class="viewee-box centering flex-wrap">
-            <!-- <div v-for="i in viewee" :key="i" :class="[viewee === 1 ? `screen-res-md` : `screen-res-sm`, 'brd']">지원자 {{i}}</div> -->
-            <span v-for="sub in viewees" :key="sub.stream.connection.connectionId">
-              <user-video
-                :class="viewees.length === 1 ? 'screen-res-md' : 'screen-res-sm'"
-                :stream-manager="sub" 
-                :id = "sub.stream.connection.connectionId"
-                @click.native="updateMainVideoStreamManager(sub)"
-              />
+          <v-col cols="8" class="viewee-box centering flex-wrap">
+            <span v-if="isViewee">
+              <user-video :streamManager="publisher" class="screen-res-md"/>
+            </span>
+            <span v-else>
+              <user-video :streamManager="mainStreamManager" class="screen-res-md"/>
             </span>
           </v-col>
-          <!-- <v-col v-else cols="8" class="viewee-box centering flex-wrap">
-            <div class="screen-res-md brd">나</div>
-          </v-col> -->
         </v-row>
       </v-col>
 
@@ -208,6 +215,12 @@ export default {
     currentApplicantList: {
       type: Object,
     },
+    publisher: {
+      type: Object,
+    },
+    mainStreamManager :{
+      type : Object
+    }
   },
   data: function () {
     return {
@@ -235,7 +248,6 @@ export default {
       edit: false,
       
       clickedSeq : '',
-      clickedVieweeStream : undefined,
 
       // questionList: [],
       // 탭
@@ -262,15 +274,6 @@ export default {
   },
 
   methods: {
-    handling(e) {
-      if (this.moving_viewee.includes(e.key)) {
-        this.moving_viewee.splice(this.moving_viewee.indexOf(e.key), 1)
-      } else {
-        this.moving_viewee.push(e.key)
-      }
-
-      this.visible = true
-    },
 
     startTimer: function() {
       //1000ms = 1 second
@@ -327,9 +330,12 @@ export default {
       }
       this.messageToSession = '';
     },
-    updateMainVideoStreamManager(stream) {
-      this.clickedVieweeStream = stream
+
+    updateMain(stream) {
       this.clickedSeq = JSON.parse(stream.stream.connection.data.split('%/%')[0])['userSeq']
+      console.log("에밋 실행전")
+      this.$emit("updateMain", stream)
+      console.log("에밋 실행후", stream)
     },
   },
 
@@ -462,6 +468,10 @@ export default {
 .screen-res-sm {
   width: 288px;
   height: 162px;
+}
+.screen-res {
+  width: 240px;
+  height: 135px;
 }
 .screen-res-md {
   width: 640px;

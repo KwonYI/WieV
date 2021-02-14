@@ -82,7 +82,8 @@
             </span>
           </v-col>
           <!-- 지원자 -->
-          <v-col v-if="!isViewee" cols="8" class="viewee-box centering flex-wrap">
+          <!-- v-if="!isViewee" 이거 뻈다 -->
+          <v-col cols="8" class="viewee-box centering flex-wrap">
             <span v-for="sub in viewees" :key="sub.stream.connection.connectionId">
               <user-video
                 :class="viewees.length === 1 ? 'screen-res-md' : 'screen-res-sm'"
@@ -202,6 +203,9 @@ export default {
     currentApplicantList: {
       type: Object,
     },
+    publisher: {
+      type: Object,
+    },
   },
   data: function () {
     return {
@@ -258,15 +262,6 @@ export default {
   },
 
   methods: {
-    handling(e) {
-      if (this.moving_viewee.includes(e.key)) {
-        this.moving_viewee.splice(this.moving_viewee.indexOf(e.key), 1)
-      } else {
-        this.moving_viewee.push(e.key)
-      }
-
-      this.visible = true
-    },
 
     startTimer: function() {
       //1000ms = 1 second
