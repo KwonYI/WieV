@@ -119,7 +119,7 @@ export default {
                 type: res.data.type,
                 sessionName: res.data.sessionName,
                 interviewSession : this.interview.interviewSessionName,
-                interviewType : interview.interviewType
+                interviewType : this.interview.interviewType
               },
             })
             window.open(routeData.href, "_blank")
@@ -156,7 +156,7 @@ export default {
                 userSeq : this.user.userSeq,
                 type: res.data.type,
                 sessionName: res.data.sessionName,
-                interviewType : interview.interviewType
+                interviewType : this.interview.interviewType
               },
             })
             window.open(routeData.href, "_blank")

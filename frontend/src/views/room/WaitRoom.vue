@@ -108,7 +108,7 @@
           <div :class="isViewee ? 'hidden' : ''" class="pb-2 mb-2 centering justify-space-between" style="height: 10%">
             <!-- 메시지 보내기 -->
             <a-popover title="Message" trigger="click">
-              <v-btn @click="sendToSession" color="#757575" elevation="3" height="100%" width="35%" dark>메시지 보내기</v-btn>
+              <v-btn color="#757575" elevation="3" height="100%" width="35%" dark>메시지 보내기</v-btn>
               <template slot="content">
                 <v-textarea
                   solo
@@ -116,13 +116,15 @@
                   clearable
                   no-resize
                   hide-details
+                  v-model="messageToSession"
                 ></v-textarea>
-                <v-btn text color="secondary">Send</v-btn>
+                <v-btn  @click="sendToSession" text color="secondary">Send</v-btn>
               </template>
             </a-popover>
             <!-- 메시지 출력 -->
             <v-sheet color="white" height="100%" width="60%" elevation="3" class="d-flex justify-center align-center">
-              <div>면접 준비 완료</div>
+              <!-- <div>면접 준비 완료</div> -->
+              <div>{{messageFromSession}}</div>
             </v-sheet>
           </div>
           <!-- 면접 안내 -->
@@ -305,6 +307,10 @@ export default {
       // 면접 안내
       interview_messages : [],
 
+      // 세션간 통신
+      messageToSession : '',
+      messageFromSession : '',
+
       // FAQ
       faq_dialog: false,
       questions: [
@@ -330,6 +336,14 @@ export default {
       this.isViewee = true;
     }else{
       this.isViewee = false;
+    }
+
+    if(this.interviewType === 'PT'){
+      this.roomType = 'pt';
+    }else if(this.interviewType === '토론'){
+      this.roomType = 'gr';
+    }else{
+      this.roomType = 'ca';
     }
   },
 
@@ -600,32 +614,33 @@ export default {
     connect() {
       let socket = new SockJS(`${SERVER_URL}/ws-stomp`);
       this.stompClient = Stomp.over(socket);
-      console.log(`소켓 연결 시도`)
       this.stompClient.connect(
         {},
         frame => {
           this.connected = true;
           console.log('소켓 연결 성공', frame);
           this.stompClient.subscribe("/send", res => {
-            console.log('구독으로 받은 메시지 입니다.', JSON.parse(res.body));
+            // let message = JSON.parse(res.body)
+            // if(message['name'] === this.userName) return
+            this.messageFromSession = JSON.parse(res.body)['message']
           });
         },
         error => {
-          // 소켓 연결 실패
           console.log('소켓 연결 실패', error);
           this.connected = false;
         }
       );        
     },
+
     sendToSession() {
-      console.log("잘 가고 있나요");
       if (this.stompClient && this.stompClient.connected) {
         const msg = { 
           name: this.userName,
-          message: this.interviewSession 
+          message: this.messageToSession 
         };
         this.stompClient.send("/receive", JSON.stringify(msg), {});
       }
+      this.messageToSession = '';
     },
 
 
@@ -651,7 +666,8 @@ export default {
               type: res.data.type,
               token: res.data.token,
               sessionName: res.data.sessionName,
-              userSeq : this.userSeq
+              userSeq : this.userSeq,
+              interviewType : this.interviewType
             },
           })
           this.leaveSession();

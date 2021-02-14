@@ -7,20 +7,32 @@
     <div class="brd" style="width: 640px; height: 360px"></div>
     <div class="brd" style="width: 960px; height: 540px"></div> -->
 
-<!-- 여기부터 준희형이 만든 UI -->
     <!-- 면접 유형에 따른 구분 -->
-    <!-- <v-container class="room"> -->
+    <v-container class="room">
       <!-- 그룹형 면접실 -->
-      <!-- <GrView v-if="roomType === 'gr'" /> -->
+      <GrView 
+              v-if="roomType === 'gr'" 
+              :isViewee = 'isViewee' 
+              :viewees = 'viewees' 
+              :viewers = 'viewers'
+      />
       <!-- PT형 면접실 -->
-      <!-- <PTView v-else-if="roomType === 'pt'" /> -->
+      <PTView 
+              v-else-if="roomType === 'pt'" 
+              :isViewee = 'isViewee' 
+              :viewees = 'viewees' 
+              :viewers = 'viewers'
+      />
       <!-- 일반형 면접실 -->
-      <!-- <CaView v-else /> -->
-    <!-- </v-container> -->
-<!-- 여기까지가 준희형이 만든 UI -->
+      <CaView 
+              v-else :isViewee = 'isViewee' 
+              :viewees = 'viewees' 
+              :viewers = 'viewers'
+      />
+    </v-container>
 
 <!-- 이게 테스트 UI -->
-    <v-container class="room">
+    <!-- <v-container class="room">
       <v-col cols="9" class="main-box">
         <v-col cols="4" class="d-flex flex-column justify-center align-center">
           <span v-for="sub in viewers" :key="sub.stream.connection.connectionId">
@@ -40,7 +52,7 @@
           </span>
         </v-col>
       </v-col>
-    </v-container>
+    </v-container> -->
 <!-- 여기까지 테스트 UI -->
 
     <!-- 화면 공유 기능(미구현) -->
@@ -63,27 +75,28 @@
 
 <script>
 import { OpenVidu } from "openvidu-browser"
-import UserVideo from "@/components/room/UserVideo"
-// import CaView from "@/components/room/CaView"
-// import PTView from "@/components/room/PTView"
-// import GrView from "@/components/room/GrView"
+// import UserVideo from "@/components/room/UserVideo"
+import CaView from "@/components/room/CaView"
+import PTView from "@/components/room/PTView"
+import GrView from "@/components/room/GrView"
 import axios from "axios"
 
-import Stomp from 'webstomp-client'
-import SockJS from 'sockjs-client'
+// import Stomp from 'webstomp-client'
+// import SockJS from 'sockjs-client'
 
 const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
 export default {
   name: "ViewRoom",
   components: {
-    UserVideo,
-    // CaView,
-    // PTView,
-    // GrView
+    // UserVideo,
+    CaView,
+    PTView,
+    GrView
   },
   data: function () {
     return {
+      isViewee: false,
       roomType: '',
 
       OV: undefined,
@@ -120,6 +133,7 @@ export default {
       re_flag: undefined,
       re_status: undefined,
       userSeq : undefined,
+      interviewType : undefined,
       
       //지원자 리스트
       applicantList:[],
@@ -134,6 +148,10 @@ export default {
 
       // 면접 안내
 
+      // 세션간 통신
+      // messageToSession : '',
+      // messageFromSession : '',
+
       // FAQ
       faq_dialog: false,
       questions: [
@@ -143,15 +161,29 @@ export default {
     }
   },
   created: function () {
-    this.connect()
+    // this.connect()
     
     window.addEventListener("beforeunload", this.leaveSession)
     window.addEventListener("backbutton", this.leaveSession)
 
-    let user_data = ['comName', 're_year', 're_flag', 're_status', 'token', 'userName', 'userSeq', 'type', 'sessionName']
+    let user_data = ['comName', 're_year', 're_flag', 're_status', 'token', 'userName', 'userSeq', 'type', 'sessionName', 'interviewType']
 
     for (const data of user_data) {
       this[data] = this.$route.query[data]
+    }
+
+    if(this.type === 'viewee'){
+      this.isViewee = true;
+    }else{
+      this.isViewee = false;
+    }
+
+    if(this.interviewType === 'PT'){
+      this.roomType = 'pt';
+    }else if(this.interviewType === '토론'){
+      this.roomType = 'gr';
+    }else{
+      this.roomType = 'ca';
     }
 
     //면접방에 해당하는 지원자 갖고오기
@@ -164,7 +196,7 @@ export default {
     .catch((err) => {
         console.log(err)
         alert("세션 이름에 따른 지원자 갖고오기 실패")
-      })
+    })
   },
 
   beforeDestroy() {
@@ -326,7 +358,7 @@ export default {
             this.OV = undefined;
           }
 
-          // window.close();
+          window.close();
         })
         .catch((err) => {
           console.log(err);
@@ -371,36 +403,35 @@ export default {
       this.publisher.publishVideo(this.videoOn)
     },
 
-    connect() {
-      let socket = new SockJS(`${SERVER_URL}/ws-stomp`);
-      this.stompClient = Stomp.over(socket);
-      console.log(`소켓 연결 시도`)
-      this.stompClient.connect(
-        {},
-        frame => {
-          this.connected = true;
-          console.log('소켓 연결 성공', frame);
-          this.stompClient.subscribe("/send", res => {
-            console.log('구독으로 받은 메시지 입니다.', JSON.parse(res.body));
-          });
-        },
-        error => {
-          // 소켓 연결 실패
-          console.log('소켓 연결 실패', error);
-          this.connected = false;
-        }
-      );        
-    },
-    sendToSession() {
-      console.log("잘 가고 있나요");
-      if (this.stompClient && this.stompClient.connected) {
-        const msg = { 
-          name: this.userName,
-          message: this.interviewSession 
-        };
-        this.stompClient.send("/receive", JSON.stringify(msg), {});
-      }
-    },
+    // connect() {
+    //   let socket = new SockJS(`${SERVER_URL}/ws-stomp`);
+    //   this.stompClient = Stomp.over(socket);
+    //   this.stompClient.connect(
+    //     {},
+    //     frame => {
+    //       this.connected = true;
+    //       console.log('소켓 연결 성공', frame);
+    //       this.stompClient.subscribe("/send", res => {
+    //         this.messagesFromSession.push(JSON.parse(res.body))
+    //       });
+    //     },
+    //     error => {
+    //       // 소켓 연결 실패
+    //       console.log('소켓 연결 실패', error);
+    //       this.connected = false;
+    //     }
+    //   );        
+    // },
+    // sendToSession() {
+    //   if (this.stompClient && this.stompClient.connected) {
+    //     const msg = { 
+    //       name: this.userName,
+    //       message: this.messageToSession 
+    //     };
+    //     this.stompClient.send("/receive", JSON.stringify(msg), {});
+    //   }
+    //   this.messageToSession = '';
+    // },
 
     // handling(e) {
     //   if (this.moving_viewee.includes(e.key)) {
