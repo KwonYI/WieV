@@ -12,6 +12,7 @@
       <!-- 그룹형 면접실 -->
       <GrView 
               v-if="roomType === 'gr'" 
+              :groupTypeSeq = 'groupTypeSeq'
               :isViewee = 'isViewee' 
               :viewees = 'viewees' 
               :viewers = 'viewers'
@@ -19,6 +20,7 @@
       <!-- PT형 면접실 -->
       <PTView 
               v-else-if="roomType === 'pt'" 
+              :groupTypeSeq = 'groupTypeSeq'
               :isViewee = 'isViewee' 
               :viewees = 'viewees' 
               :viewers = 'viewers'
@@ -26,6 +28,7 @@
       <!-- 일반형 면접실 -->
       <CaView 
               v-else :isViewee = 'isViewee' 
+              :groupTypeSeq = 'groupTypeSeq'
               :viewees = 'viewees' 
               :viewers = 'viewers'
       />
@@ -134,6 +137,7 @@ export default {
       re_status: undefined,
       userSeq : undefined,
       interviewType : undefined,
+      groupTypeSeq : undefined,
       
       //지원자 리스트
       applicantList:[],
@@ -166,7 +170,7 @@ export default {
     window.addEventListener("beforeunload", this.leaveSession)
     window.addEventListener("backbutton", this.leaveSession)
 
-    let user_data = ['comName', 're_year', 're_flag', 're_status', 'token', 'userName', 'userSeq', 'type', 'sessionName', 'interviewType']
+    let user_data = ['comName', 're_year', 're_flag', 're_status', 'token', 'userName', 'userSeq', 'type', 'sessionName', 'interviewType', 'groupTypeSeq']
 
     for (const data of user_data) {
       this[data] = this.$route.query[data]

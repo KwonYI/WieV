@@ -294,6 +294,7 @@ export default {
       interviewSession: undefined,
       userSeq : undefined,
       interviewType : undefined,
+      groupTypeSeq : undefined,
 
       // 배너
       banner_dialog: false,
@@ -320,13 +321,10 @@ export default {
     }
   },
   created: function () {
-    //소켓 연결 시도
-    this.connect()
-
     window.addEventListener("beforeunload", this.leaveSession)
     window.addEventListener("backbutton", this.leaveSession)
 
-    let user_data = ['comName', 're_year', 're_flag', 're_status', 'token', 'userName', 'userSeq', 'type', 'sessionName', 'interviewSession', 'interviewType']
+    let user_data = ['comName', 're_year', 're_flag', 're_status', 'token', 'userName', 'userSeq', 'type', 'sessionName', 'interviewSession', 'interviewType', 'groupTypeSeq']
 
     for (const data of user_data) {
       this[data] = this.$route.query[data]
@@ -336,6 +334,7 @@ export default {
       this.isViewee = true;
     }else{
       this.isViewee = false;
+      this.connect()
     }
 
     if(this.interviewType === 'PT'){
@@ -619,7 +618,7 @@ export default {
         frame => {
           this.connected = true;
           console.log('소켓 연결 성공', frame);
-          this.stompClient.subscribe("/send", res => {
+          this.stompClient.subscribe("/send/"+this.groupTypeSeq, res => {
             // let message = JSON.parse(res.body)
             // if(message['name'] === this.userName) return
             this.messageFromSession = JSON.parse(res.body)['message']
@@ -638,7 +637,7 @@ export default {
           name: this.userName,
           message: this.messageToSession 
         };
-        this.stompClient.send("/receive", JSON.stringify(msg), {});
+        this.stompClient.send("/receive/"+this.groupTypeSeq, JSON.stringify(msg), {});
       }
       this.messageToSession = '';
     },

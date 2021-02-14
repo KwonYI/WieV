@@ -197,6 +197,9 @@ export default {
     viewers: {
       type: Array,
     },
+    groupTypeSeq :{
+      type : String
+    }
   },
   data: function () {
     return {
@@ -285,7 +288,9 @@ export default {
     }
   },
   created: function () {
-    this.connect()
+    if(!this.isViewee){
+      this.connect()
+    }
 
     window.addEventListener("beforeunload", this.leaveSession)
     window.addEventListener("backbutton", this.leaveSession)
@@ -454,7 +459,7 @@ export default {
         frame => {
           this.connected = true;
           console.log('소켓 연결 성공', frame);
-          this.stompClient.subscribe("/send", res => {
+          this.stompClient.subscribe("/send/"+this.groupTypeSeq, res => {
             this.messageFromSession = JSON.parse(res.body)['message']
           });
         },
@@ -471,7 +476,7 @@ export default {
           name: '',
           message: this.messageToSession 
         };
-        this.stompClient.send("/receive", JSON.stringify(msg), {});
+        this.stompClient.send("/receive/"+this.groupTypeSeq, JSON.stringify(msg), {});
       }
       this.messageToSession = '';
     },

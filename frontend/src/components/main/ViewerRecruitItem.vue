@@ -43,7 +43,6 @@
                     {{ interview.interviewType }} 면접
                   </div>
                   <v-btn
-                    v-if="user.userViewWait === 0"
                     color="blue-grey darken-1"
                     @click="goWaitSession"
                   >
@@ -83,6 +82,9 @@ export default {
     user: {
       type: Object,
     },
+    groupTypeSeq :{
+      type: Number
+    }
   },
   data: function () {
     return {
@@ -119,7 +121,8 @@ export default {
                 type: res.data.type,
                 sessionName: res.data.sessionName,
                 interviewSession : this.interview.interviewSessionName,
-                interviewType : this.interview.interviewType
+                interviewType : this.interview.interviewType,
+                groupTypeSeq : this.groupTypeSeq
               },
             })
             window.open(routeData.href, "_blank")
@@ -156,7 +159,8 @@ export default {
                 userSeq : this.user.userSeq,
                 type: res.data.type,
                 sessionName: res.data.sessionName,
-                interviewType : this.interview.interviewType
+                interviewType : this.interview.interviewType,
+                groupTypeSeq : this.groupTypeSeq
               },
             })
             window.open(routeData.href, "_blank")

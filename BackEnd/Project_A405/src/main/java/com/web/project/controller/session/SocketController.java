@@ -10,8 +10,8 @@ import com.web.project.model.SocketVO;
 public class SocketController {
 
 	// 면접방 대기방 통신
-	@MessageMapping("/receive")
-	@SendTo("/send")
+	@MessageMapping("/receive/{groupTypeSeq}")
+	@SendTo("/send/{groupTypeSeq}")
 	public SocketVO viewerToViewee(SocketVO socketVo) {
 		String name = socketVo.getName();
 		String message = socketVo.getMessage();
