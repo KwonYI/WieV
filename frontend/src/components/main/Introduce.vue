@@ -3,52 +3,62 @@
 		<!-- What is VieW -->
 		<div style="margin-bottom: 10rem">WieV는 비대면 면접에 최적화된 솔루션을 제공하는 플랫폼입니다.</div>
 
-		<v-lazy
-        v-model="isActive"
-        :options="{
-          threshold: .5
-        }"
-        min-height="200"
-      >
-				<v-expand-x-transition>
-					<v-card
-						class="mx-auto"
-						max-width="336"
-					>
-						<v-card-title>Card title</v-card-title>
+		<!-- <v-lazy
+			v-model="isActive"
+			:options="{
+				threshold: .5
+			}"
+			min-height="200"
+		>
+			<v-expand-x-transition>
+				<v-card
+					class="mx-auto"
+					max-width="336"
+				>
+					<v-card-title>Card title</v-card-title>
 
-						<v-card-text>
-							Phasellus magna. Quisque rutrum. Nunc egestas, augue at pellentesque laoreet, felis eros vehicula leo, at malesuada velit leo quis pede. Aliquam lobortis. Quisque libero metus, condimentum nec, tempor a, commodo mollis, magna.
+					<v-card-text>
+						Phasellus magna. Quisque rutrum. Nunc egestas, augue at pellentesque laoreet, felis eros vehicula leo, at malesuada velit leo quis pede. Aliquam lobortis. Quisque libero metus, condimentum nec, tempor a, commodo mollis, magna.
 
-							In turpis. In dui magna, posuere eget, vestibulum et, tempor auctor, justo. In turpis. Pellentesque dapibus hendrerit tortor. Ut varius tincidunt libero.
-						</v-card-text>
-					</v-card>
-				</v-expand-x-transition>
-      </v-lazy>
+						In turpis. In dui magna, posuere eget, vestibulum et, tempor auctor, justo. In turpis. Pellentesque dapibus hendrerit tortor. Ut varius tincidunt libero.
+					</v-card-text>
+				</v-card>
+			</v-expand-x-transition>
+		</v-lazy> -->
 		
 		<!-- What we serve -->
-		<v-container style="margin-bottom: 10rem">
-			<v-row no-gutters>
-				<div class="text-h4 text-center font-weight-black" style="margin-bottom: 5rem">What We Serve</div>
-				<v-col v-for="(item, i) in serve" :key="i" class="serve-content">
-					<v-card class="mx-auto my-12" max-width="374" elevation="0">
+		<v-lazy
+			v-model="isActive"
+			:options="{
+				threshold: 0.9
+			}"
+			min-height="200"
+		>
+			<v-expand-x-transition>
+				<v-container style="margin-bottom: 10rem">
+					<v-row no-gutters>
+						<div class="text-h4 text-center font-weight-black" style="margin-bottom: 5rem">What We Serve</div>
+						<v-col v-for="(item, i) in serve" :key="i" class="serve-content">
+							<v-card class="mx-auto my-12" max-width="374" elevation="0">
 
-						<v-card-title class="text-h5 justify-center">{{ item.title }}</v-card-title>
+								<v-card-title class="text-h4 justify-center">{{ item.title }}</v-card-title>
 
-						<div style="height: 300px"></div>
+								<v-icon size="90" color="#0277BD" style="margin: 3.5rem 0; width: 100%"> mdi-{{ item.icon }} </v-icon>
 
-						<v-card-text>
-							<div class="body-2 text-dark font-weight-medium">
-								{{ item.content }}
-							</div>
-						</v-card-text>
+								<v-card-text>
+									<div class="body-2 text-dark font-weight-medium">
+										{{ item.content }}
+									</div>
+								</v-card-text>
 
-						<!-- <v-divider class="mx-4"></v-divider> -->
+								<!-- <v-divider class="mx-4"></v-divider> -->
 
-					</v-card>
-				</v-col>
-			</v-row>
-		</v-container>
+							</v-card>
+						</v-col>
+					</v-row>
+				</v-container>
+			</v-expand-x-transition>
+		</v-lazy>
 
 		<!-- What we support -->
 		<div class="text-h4 text-center font-weight-black" style="margin-bottom: 7rem">What We Support</div>
@@ -175,7 +185,7 @@
 				serve: [
 					{
 						title: 'For Enterprise',
-						icon: '',
+						icon: 'rotate-orbit',
 						content: '효율적인 언택트 채용으로 면접 전형에서 발생하는 비용을 절감할 수 있습니다.'
 					},
 					{

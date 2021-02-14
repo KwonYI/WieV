@@ -14,7 +14,6 @@ html {
   color: white;
   background-image: url("../images/bg_image_dark_43.png");
   background-size: cover;
-  z-index: -2;
   /* filter: brightness(50%); */
 }
 

@@ -1,7 +1,7 @@
 <template>
   <div id="home">
     
-    <v-row justify="center" class="pt-10 main-bg-navy-img" style="height: 100vh" no-gutters>
+    <v-row justify="center" class="pt-10 main-bg-navy-img" style="height: 100vh; position: relative" no-gutters>
       <v-col cols="8" class="main-box text-center" style="z-index:1">
         <div class="d-flex flex-column justify-center align-center text-white">
           <v-col class="wiev-box">
