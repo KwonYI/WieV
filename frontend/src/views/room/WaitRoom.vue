@@ -36,11 +36,15 @@
                 solo
                 hide-details
                 height="100%"
+                :readonly = 'isViewee'
+                class = "notice"
+                v-model="banner_message"
+                @keyup.13="noticeBanner"
               ></v-text-field>
             </v-col>
             <!-- 면접실 이동 안내 -->
             <v-col cols="3">
-              <v-card color="#304B61" elevation="2" style="height: 100%" dark>
+              <v-card v-if="!isViewee" color="#304B61" elevation="2" style="height: 100%" dark>
                 <v-card-title class="justify-center py-2">
                   <div class="text-center text-subtitle-1">면접실 이동</div>
                   <input class="btn" type="button" v-if="moving_viewee.length" @click="sendSignal" value="면접실 보내기" />
@@ -79,11 +83,12 @@
               </v-card>
             </v-col>
           </v-row>
-
+          <!-- 면접관 -->
           <v-row style="height: 87%">
             <v-col cols="4" class="d-flex flex-column justify-center align-center">
               <span v-for="sub in viewers" :key="sub.stream.connection.connectionId">
                 <user-video
+                  class="screen-res-sm"
                   :id = "sub.stream.connection.connectionId"
                   :stream-manager="sub" 
                 />
@@ -93,32 +98,13 @@
             <v-col cols="8" class="d-flex flex-wrap justify-center align-center">
               <span v-for="sub in viewees" :key="sub.stream.connection.connectionId">
                 <user-video
+                  :class="viewees.length === 1 ? 'screen-res-md' : 'screen-res-sm'"
                   :stream-manager="sub" 
                   :id = "sub.stream.connection.connectionId"
                   @click.native="updateMainVideoStreamManager(sub)"
                 />
               </span>
             </v-col>
-            <!-- 면접관 -->
-            <!-- <v-col cols="4" class="d-flex flex-column justify-center align-center">
-              <span v-for="sub in subscribers" :key="sub.stream.connection.connectionId">
-                <user-video
-                  v-if="JSON.parse(sub.stream.connection.data.split('%/%')[0])['type'] !== 'viewee'"
-                  :stream-manager="sub" 
-                  @click.native="updateMainVideoStreamManager(sub)"
-                />
-              </span>
-            </v-col> -->
-            <!-- 지원자 -->
-            <!-- <v-col cols="8" class="d-flex flex-wrap justify-center align-center">
-              <span v-for="sub in subscribers" :key="sub.stream.connection.connectionId">
-                <user-video
-                  v-if="JSON.parse(sub.stream.connection.data.split('%/%')[0])['type'] === 'viewee'"
-                  :stream-manager="sub" 
-                  @click.native="updateMainVideoStreamManager(sub)"
-                />
-              </span>
-            </v-col> -->
           </v-row>
         </v-col>
 
@@ -136,13 +122,15 @@
                   clearable
                   no-resize
                   hide-details
+                  v-model="messageToSession"
                 ></v-textarea>
-                <v-btn text color="secondary">Send</v-btn>
+                <v-btn  @click="sendToSession" text color="secondary">Send</v-btn>
               </template>
             </a-popover>
             <!-- 메시지 출력 -->
             <v-sheet color="white" height="100%" width="60%" elevation="3" class="d-flex justify-center align-center">
-              <div>면접 준비 완료</div>
+              <!-- <div>면접 준비 완료</div> -->
+              <div>{{messageFromSession}}</div>
             </v-sheet>
           </div>
           <!-- 면접 안내 -->
@@ -150,6 +138,13 @@
             <v-sheet color="white" height="100%" elevation="3">
               <div class="text-h6 text-center pt-1">면접 안내</div>
               <v-divider class="my-1"></v-divider>
+<!-- 권영일 추가 interview_messages 값 확인 --> 
+              <v-list class="pa-0" v-auto-bottom="interview_messages">
+                <div v-for="(msg, index) in interview_messages" :key="index">
+                  {{ getCurrentTime() }} - {{ msg }}
+                </div>
+<!-- 권영일 추가 --> 
+              </v-list>
             </v-sheet>
           </div>
           <!-- FAQ -->
@@ -207,6 +202,7 @@
                 v-model="text"
                 label="메세지를 입력하세요."
                 class="pa-0 ma-0 mx-1"
+                single-line
                 hide-details
                 dense
                 @keyup.13="sendMessage"
@@ -246,8 +242,8 @@ import UserVideo from "@/components/room/UserVideo"
 // import GrView from "@/components/room/GrView"
 import axios from "axios"
 
-// import Stomp from 'webstomp-client'
-// import SockJS from 'sockjs-client'
+import Stomp from 'webstomp-client'
+import SockJS from 'sockjs-client'
 
 const SERVER_URL = process.env.VUE_APP_SERVER_URL
 // import ManagerList from "@/components/room/ManagerList.vue"
@@ -272,7 +268,7 @@ export default {
       session: undefined,
       mainStreamManager: undefined, // 메인 비디오
       publisher: undefined, // 연결 객체
-      subscribers: [],
+      // subscribers: [],
 
       // 면접관, 지원자들만 담아두는 리스트
       viewers : [],
@@ -303,9 +299,12 @@ export default {
       re_status: undefined,
       interviewSession: undefined,
       userSeq : undefined,
+      interviewType : undefined,
+      groupTypeSeq : undefined,
 
       // 배너
       banner_dialog: false,
+      banner_message : '',
 
       // 면접 이동
       visible: false,
@@ -314,6 +313,11 @@ export default {
       moving_viewee: [],
 
       // 면접 안내
+      interview_messages : [],
+
+      // 세션간 통신
+      messageToSession : '',
+      messageFromSession : '',
 
       // FAQ
       faq_dialog: false,
@@ -324,16 +328,28 @@ export default {
     }
   },
   created: function () {
-    //소켓 연결 시도
-    // this.connect()
-
     window.addEventListener("beforeunload", this.leaveSession)
     window.addEventListener("backbutton", this.leaveSession)
 
-    let user_data = ['comName', 're_year', 're_flag', 're_status', 'token', 'userName', 'userSeq', 'type', 'sessionName', 'interviewSession']
+    let user_data = ['comName', 're_year', 're_flag', 're_status', 'token', 'userName', 'userSeq', 'type', 'sessionName', 'interviewSession', 'interviewType', 'groupTypeSeq']
 
     for (const data of user_data) {
       this[data] = this.$route.query[data]
+    }
+
+    if(this.type === 'viewee'){
+      this.isViewee = true;
+    }else{
+      this.isViewee = false;
+      this.connect()
+    }
+
+    if(this.interviewType === 'PT'){
+      this.roomType = 'pt';
+    }else if(this.interviewType === '토론'){
+      this.roomType = 'gr';
+    }else{
+      this.roomType = 'ca';
     }
   },
 
@@ -427,14 +443,47 @@ export default {
       this.messages.push(message)
     })
 
-    this.session.connect(this.token, { name: this.userName, type : this.type, userSeq : this.userSeq, interviewSession : this.interviewSession})
+    this.session.on("signal:signal", () => {
+      if(this.type === 'viewee'){
+        if(confirm("이동하시겠습니까?")){
+          this.goInterview();
+        }else{
+          this.session.signal({ data: "No", to: [], type: "answer" })
+          .then()
+          .catch(err => console.error(err))
+        }
+      }
+    })
+
+    this.session.on("signal:notice", (event) => {
+      this.banner_message = event.data
+    })
+
+    this.session.on("signal:answer", (event) => {
+      if(this.type === 'manager'){
+        let message = event.from.data.split('":"')[1].slice(0, -7)
+
+        if(event.data === "No"){
+          message = message + " 입장 보류"
+        }else if(event.data === "Yes"){
+          message = message + " 입장"
+        }else{
+          message = message + " 입장 실패"
+        }
+        
+        this.interview_messages.push(message)
+      }
+    })
+
+    this.session.connect(this.token, { name: this.userName, type : this.type, userSeq : this.userSeq})
       .then(() => {
         let publisher = this.OV.initPublisher(undefined, {
           audioSource: undefined, // The source of audio. If undefined default microphone
           videoSource: undefined, // The source of video. If undefined default webcam
           publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
           publishVideo: true, // Whether you want to start publishing with your video enabled or not
-          resolution: "272x153", // The resolution of your video
+          // resolution: "272x153", // The resolution of your video
+          resolution: "1280x720", // The resolution of your video
           frameRate: 30, // The frame rate of your video
           insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
           mirror: false, // Whether to mirror your local video or not
@@ -484,15 +533,6 @@ export default {
         },
       })
       .then(() => {
-          // if (this.stompClient && this.stompClient.connected) {
-          //   const msg = {
-          //     name : '',
-          //     message : '',
-          //     target : [],
-          //     signal : false,
-          //   };
-          //   this.stompClient.send("/receiveInWaitSession", JSON.stringify(msg), {});
-          // }
 
           if (this.session) {
             this.session.disconnect()
@@ -546,93 +586,80 @@ export default {
       this.visible = true
     },
 
-    // // 관리자가 지원자에게
-    // sendSignal() {
-    //   if (this.stompClient && this.stompClient.connected) {
-    //     const msg = {
-    //       name : this.userName,
-    //       message : '',
-    //       target : this.moving_viewee,
-    //       signal : true,
-    //     };
-    //     this.stompClient.send("/receiveViewerToViewee", JSON.stringify(msg), {});
-    //   }
-    //   this.moving_viewee = []
-    // },
-    
-    // // 지원자가 관리자에게
-    // answerSignal(flag) {
-    //   if (this.stompClient && this.stompClient.connected) {
-    //     const msg = {
-    //       name : this.userName,
-    //       message : '',
-    //       target : [],
-    //       signal : flag,
-    //     };
-    //     this.stompClient.send("/receiveVieweeToViewer", JSON.stringify(msg), {});
-    //   }
-    // },
+    getCurrentTime(){
+      let time
+      const today = new Date();
+      let hour = today.getHours()
+      if(hour >= 12) {
+        if(hour > 12) hour = hour - 12
+        time = "오후 " + hour + " : "
+      }else{
+        time = "오전 " + hour + " : "
+      }
+      let minute = today.getMinutes();
+      if(minute % 10 === 0) time = time + '0'
 
-    // // 대기방과 면접방 소통
-    // sendToInterview() {
-    //   if (this.stompClient && this.stompClient.connected) {
-    //     const msg = {
-    //       name : this.userName,
-    //       message : '', // this.message
-    //       target : [],
-    //       signal : true,
-    //     };
-    //     this.stompClient.send("/receiveViewerToViewer", JSON.stringify(msg), {});
-    //   }
-    // },
+      return time + minute
+    },
 
-    // connect() {
-    //   let socket = new SockJS("https://i4a405.p.ssafy.io:8080");
-    //   this.stompClient = Stomp.over(socket);
-    //   this.stompClient.connect(
-    //     {},
-    //     frame => {
-    //       // 소켓 연결 성공
-    //       this.connected = true;
-    //       console.log('소켓 연결 성공', frame);
+    sendSignal() {
+      let connectionIds = [];
+      let message = this.moving_viewee.join(", ")
+      this.moving_viewee.forEach(name => {
+        this.viewees.forEach(stream =>{
+          if(JSON.parse(stream.stream.connection.data.split('%/%')[0])['name'] === name){
+            connectionIds.push(stream.stream.connection.connectionId)
+          }
+        })
+      })
 
-    //       if(this.type == 'viewee'){
-    //         this.stompClient.subscribe("/sendViewerToViewee", res => {
-    //           let target = JSON.parse(res.body)['target']
-    //           target.forEach(name => {
-    //             if(name === this.userName){
-    //               if(confirm("OK??") === true){
-    //                 this.answerSignal(true)
-    //                 this.goInterview();
-    //               }else{
-    //                 console.log("No누름")
-    //                 this.answerSignal(false)
-    //               }
-    //             }
-    //           });
-    //         });
-    //       }else{
-    //         this.stompClient.subscribe("/sendVieweeToViewer", res => {
-    //           let answer = JSON.parse(res.body)
-    //           if(answer['signal'] === true){
-    //             console.log(answer['name'], " 간다")
-    //           }else{
-    //             console.log(answer['name'], ' 안 간다')
-    //           }
-    //         });
+      message += " 에게 입장 메세지 전송"
+      this.interview_messages.push(message)
 
-    //         this.stompClient.subscribe("/sendViewerToViewer", res => {
-    //           // 대기방과 면접방 소통
-    //           console.log(res)
-    //         });
-    //       }
-    //     },
-    //     error => {
-    //       console.log('소켓 연결 실패', error);
-    //       this.connected = false;
-    //     }
-    //   );        
-    // },
+      this.session.signal({ data: "", to: connectionIds, type: "signal" })
+        .then()
+        .catch(err => console.error(err))
+      this.moving_viewee = []
+    },
+
+    connect() {
+      let socket = new SockJS(`${SERVER_URL}/ws-stomp`);
+      this.stompClient = Stomp.over(socket);
+      this.stompClient.connect(
+        {},
+        frame => {
+          this.connected = true;
+          console.log('소켓 연결 성공', frame);
+          this.stompClient.subscribe("/send/"+this.groupTypeSeq, res => {
+            // let message = JSON.parse(res.body)
+            // if(message['name'] === this.userName) return
+            this.messageFromSession = JSON.parse(res.body)['message']
+          });
+        },
+        error => {
+          console.log('소켓 연결 실패', error);
+          this.connected = false;
+        }
+      );        
+    },
+
+    sendToSession() {
+      if (this.stompClient && this.stompClient.connected) {
+        const msg = { 
+          name: this.userName,
+          message: this.messageToSession 
+        };
+        this.stompClient.send("/receive/"+this.groupTypeSeq, JSON.stringify(msg), {});
+      }
+      this.messageToSession = '';
+    },
+
+    noticeBanner(){
+      this.session.signal({ data: this.banner_message, to: [], type: "notice" })
+          .then()
+          .catch(err => console.error(err))
+      this.banner_message = ''
+    },
 
     goInterview(){
       axios.get(`${SERVER_URL}/session/join`, {
@@ -641,7 +668,10 @@ export default {
           sessionName: this.interviewSession,
         },
       }).then(res => {
-          console.log(res);
+          this.session.signal({ data: "Yes", to: [], type: "answer" })
+          .then()
+          .catch(err => console.error(err))
+
           let routeData = this.$router.resolve({
             name: "ViewRoom",
             query: {
@@ -653,7 +683,8 @@ export default {
               type: res.data.type,
               token: res.data.token,
               sessionName: res.data.sessionName,
-              userSeq : this.userSeq
+              userSeq : this.userSeq,
+              interviewType : this.interviewType
             },
           })
           this.leaveSession();
@@ -662,6 +693,9 @@ export default {
         .catch(err => {
           alert("방이 아직 개설되지 않았습니다.")
           console.log(err)
+          this.session.signal({ data: "Fail", to: [], type: "answer" })
+          .then()
+          .catch(err => console.error(err))
         })
       }
   },
@@ -732,5 +766,16 @@ export default {
 .screen-res {
   width: 272px;
   height: 153px;
+}
+.screen-res-sm {
+  width: 288px;
+  height: 162px;
+}
+.screen-res-md {
+  width: 640px;
+  height: 360px;
+}
+.notice {
+  color: red
 }
 </style>

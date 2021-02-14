@@ -43,14 +43,10 @@
                     {{ interview.interviewType }} 면접
                   </div>
                   <v-btn
-                    v-if="user.userViewWait === 0"
                     color="blue-grey darken-1"
                     @click="goWaitSession"
                   >
                     <span style="color: #FFF1C3">대기실 입장</span>
-                  </v-btn>
-                  <v-btn>
-                    면접실 세팅
                   </v-btn>
                   <v-btn
                     color="blue-grey darken-1"
@@ -76,9 +72,6 @@
 import axios from "axios";
 const SERVER_URL = process.env.VUE_APP_SERVER_URL;
 
-// import Stomp from 'webstomp-client'
-// import SockJS from 'sockjs-client'
-
 export default {
   name: "ViewerRecruitItem",
   props: {
@@ -88,16 +81,16 @@ export default {
     user: {
       type: Object,
     },
+    groupTypeSeq :{
+      type: Number
+    }
   },
   data: function () {
     return {
-      // inWait: false,
-      // inInterview: false,
     };
   },
   created() {
     console.log("현재 유저를 보여줍니다(ViewerRecruit)", this.user)
-    // this.connect()
   },
   methods: {
     goWaitSession() {
@@ -127,9 +120,10 @@ export default {
                 type: res.data.type,
                 sessionName: res.data.sessionName,
                 interviewSession : this.interview.interviewSessionName,
+                interviewType : this.interview.interviewType,
+                groupTypeSeq : this.groupTypeSeq
               },
             })
-            // this.inWait = true;
             window.open(routeData.href, "_blank")
           })
           .catch(err => {
@@ -164,9 +158,10 @@ export default {
                 userSeq : this.user.userSeq,
                 type: res.data.type,
                 sessionName: res.data.sessionName,
+                interviewType : this.interview.interviewType,
+                groupTypeSeq : this.groupTypeSeq
               },
             })
-            // this.inInterview = true;
             window.open(routeData.href, "_blank")
           })
           .catch(err => {
@@ -178,30 +173,6 @@ export default {
             }
           })
     },
-
-    // connect() {
-    //   let socket = new SockJS("https://i4a405.p.ssafy.io:8080");
-    //   this.stompClient = Stomp.over(socket);
-    //   this.stompClient.connect(
-    //     {},
-    //     frame => {
-    //       // 소켓 연결 성공
-    //       this.connected = true;
-    //       console.log('소켓 연결 성공', frame);
-    //       this.stompClient.subscribe("/sendInWaitSession", res => {
-    //         this.inWait = JSON.parse(res.body)['signal']
-    //       });
-
-    //       this.stompClient.subscribe("/sendInInterviewSession", res => {
-    //         this.inInterview = JSON.parse(res.body)['signal']
-    //       });
-    //     },
-    //     error => {
-    //       console.log('소켓 연결 실패', error);
-    //       this.connected = false;
-    //     }
-    //   );        
-    // },
   },
   computed: {
   },

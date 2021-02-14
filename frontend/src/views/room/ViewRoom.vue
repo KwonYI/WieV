@@ -10,12 +10,54 @@
     <!-- 면접 유형에 따른 구분 -->
     <v-container class="room">
       <!-- 그룹형 면접실 -->
-      <GrView v-if="roomType === 'gr'" />
+      <GrView 
+        v-if="roomType === 'gr'" 
+        :groupTypeSeq = 'groupTypeSeq'
+        :isViewee = 'isViewee' 
+        :viewees = 'viewees' 
+        :viewers = 'viewers'
+      />
       <!-- PT형 면접실 -->
-      <PTView v-else-if="roomType === 'pt'" />
+      <PTView 
+        v-else-if="roomType === 'pt'" 
+        :groupTypeSeq = 'groupTypeSeq'
+        :isViewee = 'isViewee' 
+        :viewees = 'viewees' 
+        :viewers = 'viewers'
+      />
       <!-- 일반형 면접실 -->
-      <CaView v-else />
+      <CaView 
+        v-else
+        :isViewee = 'isViewee' 
+        :groupTypeSeq = 'groupTypeSeq'
+        :viewees = 'viewees' 
+        :viewers = 'viewers'
+      />
     </v-container>
+
+<!-- 이게 테스트 UI -->
+    <!-- <v-container class="room">
+      <v-col cols="9" class="main-box">
+        <v-col cols="4" class="d-flex flex-column justify-center align-center">
+          <span v-for="sub in viewers" :key="sub.stream.connection.connectionId">
+            <user-video
+              :id = "sub.stream.connection.connectionId"
+              :stream-manager="sub" 
+            />
+          </span>
+        </v-col>
+        <v-col cols="8" class="d-flex flex-wrap justify-center align-center">
+          <span v-for="sub in viewees" :key="sub.stream.connection.connectionId">
+            <user-video
+              :stream-manager="sub" 
+              :id = "sub.stream.connection.connectionId"
+              @click.native="updateMainVideoStreamManager(sub)"
+            />
+          </span>
+        </v-col>
+      </v-col>
+    </v-container> -->
+<!-- 여기까지 테스트 UI -->
 
     <!-- 화면 공유 기능(미구현) -->
     <!-- <div id="screen"></div> -->
@@ -43,6 +85,8 @@ import PTView from "@/components/room/PTView"
 import GrView from "@/components/room/GrView"
 import axios from "axios"
 
+// import Stomp from 'webstomp-client'
+// import SockJS from 'sockjs-client'
 
 const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
@@ -56,6 +100,7 @@ export default {
   },
   data: function () {
     return {
+      isViewee: false,
       roomType: '',
 
       OV: undefined,
@@ -91,8 +136,9 @@ export default {
       re_year: undefined,
       re_flag: undefined,
       re_status: undefined,
-
       userSeq : undefined,
+      interviewType : undefined,
+      groupTypeSeq : undefined,
       
       //지원자 리스트
       applicantList:[],
@@ -102,10 +148,14 @@ export default {
 
       // 면접 이동
       visible: false,
-      viewee_list: ['김일번', '박이번', '신삼번', '강사번', '류오번', '이육번'],
-      moving_viewee: [],
+      // viewee_list: ['김일번', '박이번', '신삼번', '강사번', '류오번', '이육번'],
+      // moving_viewee: [],
 
       // 면접 안내
+
+      // 세션간 통신
+      // messageToSession : '',
+      // messageFromSession : '',
 
       // FAQ
       faq_dialog: false,
@@ -116,13 +166,29 @@ export default {
     }
   },
   created: function () {
+    // this.connect()
+    
     window.addEventListener("beforeunload", this.leaveSession)
     window.addEventListener("backbutton", this.leaveSession)
 
-    let user_data = ['comName', 're_year', 're_flag', 're_status', 'sessionName', 'token', 'userName', 'type', 'userSeq']
+    let user_data = ['comName', 're_year', 're_flag', 're_status', 'token', 'userName', 'userSeq', 'type', 'sessionName', 'interviewType', 'groupTypeSeq']
 
     for (const data of user_data) {
       this[data] = this.$route.query[data]
+    }
+
+    if(this.type === 'viewee'){
+      this.isViewee = true;
+    }else{
+      this.isViewee = false;
+    }
+
+    if(this.interviewType === 'PT'){
+      this.roomType = 'pt';
+    }else if(this.interviewType === '토론'){
+      this.roomType = 'gr';
+    }else{
+      this.roomType = 'ca';
     }
 
     //면접방에 해당하는 지원자 갖고오기
@@ -135,7 +201,7 @@ export default {
     .catch((err) => {
         console.log(err)
         alert("세션 이름에 따른 지원자 갖고오기 실패")
-      })
+    })
   },
 
   beforeDestroy() {
@@ -155,6 +221,7 @@ export default {
 
       if(info['type'] === 'viewee'){
         this.viewees.push(subscriber)
+        // this.viewee_list.push(info['name'])
       }else{
         this.viewers.push(subscriber)
       }
@@ -166,13 +233,17 @@ export default {
 
       let info = JSON.parse(stream.connection.data.split('%/%')[0])
 
-
-
       if(info['type'] === 'viewee'){
         const index = this.viewees.indexOf(stream.streamManager, 0);
         if (index >= 0) {
           this.viewees.splice(index, 1);
         }
+
+        // const idx = this.viewee_list.indexOf(info['name'], 0);
+        // if (idx >= 0) {
+        //   this.viewee_list.splice(idx, 1);
+        // }
+
       }else{
         const index = this.viewers.indexOf(stream.streamManager, 0);
         if (index >= 0) {
@@ -185,6 +256,34 @@ export default {
       // if (index >= 0) {
       //   this.subscribers.splice(index, 1);
       // }
+    })
+
+    this.session.on('publisherStartSpeaking', (event) => {
+      let id = event.connection.connectionId
+      this.viewers.forEach(viewer => {
+        if(viewer !== this.mainStreamManager && viewer.stream.connection.connectionId === id){
+          document.getElementById(id).classList.add("speaking");
+        }
+      })
+      this.viewees.forEach(viewee => {
+        if(viewee !== this.mainStreamManager && viewee.stream.connection.connectionId === id){
+          document.getElementById(id).classList.add("speaking");
+        }
+      })
+    })
+
+    this.session.on('publisherStopSpeaking', (event) => {
+      let id = event.connection.connectionId
+      this.viewers.forEach(viewer => {
+        if(viewer !== this.mainStreamManager && viewer.stream.connection.connectionId === id){
+          document.getElementById(id).classList.remove("speaking");
+        }
+      })
+      this.viewees.forEach(viewee => {
+        if(viewee !== this.mainStreamManager && viewee.stream.connection.connectionId === id){
+          document.getElementById(id).classList.remove("speaking");
+        }
+      })
     });
 
     // 채팅 기능 -> 세션 동기화
@@ -196,14 +295,14 @@ export default {
       this.messages.push(message)
     })
 
-    this.session
-      .connect(this.token, { name: this.userName, type : this.type, userSeq : this.userSeq})
+    this.session.connect(this.token, { name: this.userName, type : this.type, userSeq : this.userSeq})
       .then(() => {
         let publisher = this.OV.initPublisher(undefined, {
           audioSource: undefined, // The source of audio. If undefined default microphone
           videoSource: undefined, // The source of video. If undefined default webcam
           publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
           publishVideo: true, // Whether you want to start publishing with your video enabled or not
+          // resolution: "272x153", // The resolution of your video
           resolution: "1280x720", // The resolution of your video
           frameRate: 30, // The frame rate of your video
           insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
@@ -220,6 +319,7 @@ export default {
 
         if(this.type === 'viewee'){
           this.viewees.push(this.publisher)
+          // this.viewee_list.push(info['name'])
         }else{
           this.viewers.push(this.publisher)
         }
@@ -309,15 +409,45 @@ export default {
       this.publisher.publishVideo(this.videoOn)
     },
 
-    handling(e) {
-      if (this.moving_viewee.includes(e.key)) {
-        this.moving_viewee.splice(this.moving_viewee.indexOf(e.key), 1)
-      } else {
-        this.moving_viewee.push(e.key)
-      }
+    // connect() {
+    //   let socket = new SockJS(`${SERVER_URL}/ws-stomp`);
+    //   this.stompClient = Stomp.over(socket);
+    //   this.stompClient.connect(
+    //     {},
+    //     frame => {
+    //       this.connected = true;
+    //       console.log('소켓 연결 성공', frame);
+    //       this.stompClient.subscribe("/send", res => {
+    //         this.messagesFromSession.push(JSON.parse(res.body))
+    //       });
+    //     },
+    //     error => {
+    //       // 소켓 연결 실패
+    //       console.log('소켓 연결 실패', error);
+    //       this.connected = false;
+    //     }
+    //   );        
+    // },
+    // sendToSession() {
+    //   if (this.stompClient && this.stompClient.connected) {
+    //     const msg = { 
+    //       name: this.userName,
+    //       message: this.messageToSession 
+    //     };
+    //     this.stompClient.send("/receive", JSON.stringify(msg), {});
+    //   }
+    //   this.messageToSession = '';
+    // },
 
-      this.visible = true
-    }
+    // handling(e) {
+    //   if (this.moving_viewee.includes(e.key)) {
+    //     this.moving_viewee.splice(this.moving_viewee.indexOf(e.key), 1)
+    //   } else {
+    //     this.moving_viewee.push(e.key)
+    //   }
+
+    //   this.visible = true
+    // }
   },
 
   computed: {

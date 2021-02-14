@@ -1,5 +1,5 @@
 <template>
-	<video :class="{viewee: isViewee, viewer:!isViewee}" autoplay/>
+	<video class="video" autoplay/>
 </template>
 
 <script>
@@ -26,16 +26,19 @@ export default {
 };
 </script>
 <style>
-video.viewee {
-width: 350px; /* 여기 값 바꿔줘야된다 */ 
-height: auto;
+/* video.viewee {
+  width: 350px;
+  height: auto;
 }
 video.viewer {
-width: 350px; /* 여기 값 바꿔줘야된다 */ 
-height: auto;
-}
+  width: 350px;
+  height: auto;
+} */
 .speaking{
   border-color: red;
   border-style: solid;
+}
+.video {
+  height: inherit;
 }
 </style>

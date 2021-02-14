@@ -69,7 +69,7 @@
                   </div> -->
                   <v-btn
                     color="blue lighten-3 yellow--text"
-                    @click="goSession(interview.waitSessionName, interview.interviewSessionName)"
+                    @click="goSession(interview.waitSessionName, interview.interviewSessionName, interview.interviewType)"
                   >
                     대기실 입장
                   </v-btn>
@@ -126,12 +126,11 @@ export default {
       //   { type_name: "그룹면접", check_terminate: "면접 미완료" },
       // ],
       applicantName: "",
-      // inWait : false,
     };
   },
   created: function () {  },
   methods: {
-    goSession(waitSession, interviewSession) {
+    goSession(waitSession, interviewSession, interviewType) {
       axios
         .get(`${SERVER_URL}/session/join`, {
           params: {
@@ -158,9 +157,9 @@ export default {
               type: res.data.type,
               sessionName: waitSession,
               interviewSession : interviewSession,
+              interviewType : interviewType,
             },
           });
-          // this.inWait = true;
           window.open(routeData.href, "_blank");
         })
         .catch((err) => {
