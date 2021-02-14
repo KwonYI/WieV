@@ -8,17 +8,18 @@
 			<v-col>
 				<div class="text-h4 text-center">What We Serve</div>
 				<v-row no-gutters>
-					<v-col class="d-flex flex-column align-center">
+					<v-col class="serve-content">
+						<div class="text-h5">For Enterprise</div>
+						<span>효율적인 언택트 채용으로 면접 전형에서 발생하는 비용을 절감할 수 있습니다.</span>
+					</v-col>
+					<v-col class="serve-content">
 						<div class="text-h5">For Recruiter</div>
-						<span>비대면 면접을 편리하게 관리할 수 있는 가치를 제공합니다.</span>
+						<span>비대면 면접스케줄을 통합 데이터로 관리하고 트래킹할 수 있습니다.</span>
 					</v-col>
-					<v-col class="d-flex justify-center">
+					<v-col class="serve-content">
+						<v-icon>mdi-responsive</v-icon>
 						<div class="text-h5">For Viewer</div>
-						
-					</v-col>
-					<v-col class="d-flex justify-center">
-						<div class="text-h5">For Viewee</div>
-						
+						<span>간편한 화면 구성과 핵심적인 기능들로 면접 자체에 집중할 수 있는 환경을 제공합니다.</span>
 					</v-col>
 				</v-row>
 			</v-col>
@@ -28,84 +29,16 @@
 		<div class="text-h4 text-center">What We Support</div>
 		<v-row class="ma-0" no-gutters>
 			<v-col v-for="(sup, i) in support" :key="i" cols="4" class="pa-0">
-
-				<!-- <v-hover v-slot="{ hover }">
-
-				<v-card :class="{ 'on-hover': hover }" class="support" tile dark>
-					<v-img :src="sup.src" gradient="to top, rgba(255, 255, 255, .5), rgba(255, 255, 255, .5)">
-						<v-card-title class="headline">{{ sup.title }}</v-card-title>
-						<v-card-subtitle>{{ sup.content }}</v-card-subtitle>
-					</v-img>
-				</v-card>
-
-				</v-hover> -->
-
 				<v-hover v-slot="{ hover }">
-				<v-card :class="{'on-hover': hover}" :dark="!hover" tile>
-					<v-img :src="sup.src" class="support">
-						<v-card-title class="headline">{{ sup.title }}</v-card-title>
-						<v-card-subtitle>{{ sup.content }}</v-card-subtitle>
-					</v-img>
-				</v-card>
+					<v-card :class="{'on-hover': hover}" :dark="!hover" tile>
+						<v-img :src="sup.src" class="support">
+							<v-card-title class="headline">{{ sup.title }}</v-card-title>
+							<v-card-subtitle>{{ sup.content }}</v-card-subtitle>
+						</v-img>
+					</v-card>
 				</v-hover>
-
 			</v-col>
 		</v-row>
-
-  <v-container class="pa-4 text-center">
-    <v-row
-      class="fill-height"
-      align="center"
-      justify="center"
-    >
-      <template v-for="(item, i) in items">
-        <v-col :key="i" cols="12" md="4">
-          <v-hover v-slot="{ hover }">
-            <v-card :elevation="hover ? 12 : 2" :class="{ 'on-hover': hover }" class="support">
-              <v-img :src="item.img" height="225px">
-                <v-card-title class="title white--text">
-                  <v-row
-                    class="fill-height flex-column"
-                    justify="space-between"
-                  >
-                    <p class="mt-4 subheading text-left">
-                      {{ item.title }}
-                    </p>
-
-                    <div>
-                      <p class="ma-0 body-1 font-weight-bold font-italic text-left">
-                        {{ item.text }}
-                      </p>
-                      <p class="caption font-weight-medium font-italic text-left">
-                        {{ item.subtext }}
-                      </p>
-                    </div>
-
-                    <div class="align-self-center">
-                      <v-btn
-                        v-for="(icon, index) in icons"
-                        :key="index"
-                        :class="{ 'show-btns': hover }"
-                        :color="transparent"
-                        icon
-                      >
-                        <v-icon
-                          :class="{ 'show-btns': hover }"
-                          :color="transparent"
-                        >
-                          {{ icon }}
-                        </v-icon>
-                      </v-btn>
-                    </div>
-                  </v-row>
-                </v-card-title>
-              </v-img>
-            </v-card>
-          </v-hover>
-        </v-col>
-      </template>
-    </v-row>
-  </v-container>
 
 		<!-- What we deliver -->
 		<div class="text-h4 text-center">What We Deliver</div>
@@ -304,6 +237,10 @@
 		name: "Introduce",
 		data: function () {
 			return {
+				serve: [
+
+				],
+
 				support: [
 					{
 						title: '1번',
@@ -391,6 +328,12 @@
 </script>
 
 <style scoped>
+.serve-content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
 .crs-content {
 	background-color: transparent;
 }
