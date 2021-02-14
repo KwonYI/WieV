@@ -36,6 +36,10 @@
                 solo
                 hide-details
                 height="100%"
+                :readonly = 'isViewee'
+                class = "notice"
+                v-model="banner_message"
+                @keyup.13="noticeBanner"
               ></v-text-field>
             </v-col>
             <!-- 면접실 이동 안내 -->
@@ -298,6 +302,7 @@ export default {
 
       // 배너
       banner_dialog: false,
+      banner_message : '',
 
       // 면접 이동
       visible: false,
@@ -446,6 +451,10 @@ export default {
           .catch(err => console.error(err))
         }
       }
+    })
+
+    this.session.on("signal:notice", (event) => {
+      this.banner_message = event.data
     })
 
     this.session.on("signal:answer", (event) => {
@@ -642,6 +651,12 @@ export default {
       this.messageToSession = '';
     },
 
+    noticeBanner(){
+      this.session.signal({ data: this.banner_message, to: [], type: "notice" })
+          .then()
+          .catch(err => console.error(err))
+      this.banner_message = ''
+    },
 
     goInterview(){
       axios.get(`${SERVER_URL}/session/join`, {
@@ -748,5 +763,8 @@ export default {
 .screen-res {
   width: 272px;
   height: 153px;
+}
+.notice {
+  color: red
 }
 </style>
