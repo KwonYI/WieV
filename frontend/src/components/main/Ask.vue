@@ -31,9 +31,10 @@
 
 					<div class="row d-flex justify-center my-10">
 						<v-btn x-large
-              color="success"
-              dark type="submit"
+              color="amber lighten-4"
+               type="submit"
 							style="width:200px"
+							class="font-weight-black"
 							@click="askForm('문의가 접수되었습니다. \n최대한 빠른 시일 내로 이메일 답변 드리겠습니다.\n감사합니다.',$event)">도입 문의</v-btn>
 					</div>
 

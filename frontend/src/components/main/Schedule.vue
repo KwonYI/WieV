@@ -7,7 +7,7 @@
     <!-- <div> -->
       <v-dialog v-model="dialog" persistent max-width="600px" @click:outside="onClickOutside">
         <template v-slot:activator="{ on, attrs }">
-          <v-btn dark v-bind="attrs" v-on="on">
+          <v-btn large v-bind="attrs" rounded v-on="on" class="amber lighten-3 font-weight-black">
             <v-icon left>mdi-calendar-plus</v-icon>공고 추가하기
           </v-btn>
         </template>
@@ -93,7 +93,7 @@
         최근 등록된 순으로 보여집니다. 
       </div>
       
-      <v-simple-table fixed-header dark height="300px" class="rec-list mt-5">
+      <v-simple-table fixed-header dark height="300px" class="rec-list mt-5 ">
         <thead>
           <tr>
             <th class="rec-header">No</th>
@@ -105,14 +105,14 @@
         </thead>
               <tbody >
             <!-- reSeq 내림차순으로 정렬된 상태입니다.(최근 만든 순으로 보여줌)  -->
-            <tr v-for="(recruit, index) in getRecruitListLately" :key="index" class="text-center" @click="goToProgress(recruit, index)">
+            <tr v-for="(recruit, index) in getRecruitListLately" :key="index" class="text-center  font-weight-bold" @click="goToProgress(recruit, index)">
               
                 <td class="blurEffect">{{ getRecruitListCount - index }}</td>
                 <!-- <td>{{ recruit.reSeq }}</td> -->
                 <td class="blurEffect">{{ recruit.reYear }} {{ recruit.reFlag }}</td>
                 <td class="blurEffect">{{ recruit.reStatus }}</td>
                 <td class="blurEffect">{{ recruit.reStartDate }} ~ {{recruit.reEndDate }}</td>         
-                <td class="blurEffect"><v-btn light rounded color="amber lighten-4">관리하기</v-btn></td>         
+                <td class="blurEffect"><v-btn light rounded color="indigo lighten-3" class=" font-weight-bold">관리하기</v-btn></td>         
               <!-- <td> -->
                 <!-- <v-btn :to="{ name: 'Progress', params: { recruitNo: recruit.reSeq } }" >관리하기</v-btn> -->
                 <!-- <v-btn @click="goToProgress(recruit)">관리하기</v-btn> -->
