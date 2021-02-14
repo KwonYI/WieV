@@ -443,8 +443,8 @@ export default {
       this.messages.push(message)
     })
 
-    this.session.on("signal:signal", () => {
-      if(this.type === 'viewee'){
+    this.session.on("signal:signal", (event) => {
+      if(this.type === 'viewee' && this.userName === event.data){
         if(confirm("이동하시겠습니까?")){
           this.goInterview();
         }else{
@@ -603,22 +603,18 @@ export default {
     },
 
     sendSignal() {
-      let connectionIds = [];
       let message = this.moving_viewee.join(", ")
       this.moving_viewee.forEach(name => {
         this.viewees.forEach(stream =>{
           if(JSON.parse(stream.stream.connection.data.split('%/%')[0])['name'] === name){
-            connectionIds.push(stream.stream.connection.connectionId)
+            this.session.signal({ data: name, to: [stream.stream.connection.connectionId], type: "signal" })
+                .then()
+                .catch(err => console.error(err))
           }
         })
       })
-
       message += " 에게 입장 메세지 전송"
       this.interview_messages.push(message)
-
-      this.session.signal({ data: "", to: connectionIds, type: "signal" })
-        .then()
-        .catch(err => console.error(err))
       this.moving_viewee = []
     },
 

@@ -72,29 +72,28 @@
         <v-row class="main-screen">
           <!-- 면접관 -->
           <v-col cols="4" class="viewer-box centering flex-column">
-            <div v-for="i in viewer" :key="i" class="brd screen-res-sm">면접관 {{i}}</div>
             <span v-for="sub in subscribers" :key="sub.stream.connection.connectionId">
               <user-video
-                :stream-manager="sub" 
+                class="screen-res-sm"
+                :stream-manager="sub"
+                :id = "sub.stream.connection.connectionId" 
               />
             </span>
           </v-col>
           <!-- 지원자 -->
           <v-col v-if="!isViewee" cols="8" class="viewee-box centering flex-wrap">
-            <div v-for="i in viewee" :key="i" :class="[viewee === 1 ? `screen-res-md` : `screen-res-sm`, 'brd']">지원자 {{i}}</div>
             <span v-for="sub in viewees" :key="sub.stream.connection.connectionId">
-            <div v-if="!isViewee">
-              
-            </div>
               <user-video
+                :class="viewees.length === 1 ? 'screen-res-md' : 'screen-res-sm'"
                 :stream-manager="sub" 
+                :id = "sub.stream.connection.connectionId"
                 @click.native="updateMainVideoStreamManager(sub)"
               />
             </span>
           </v-col>
-          <v-col v-else cols="8" class="viewee-box centering flex-wrap">
+          <!-- <v-col v-else cols="8" class="viewee-box centering flex-wrap">
             <div class="screen-res-md brd">나</div>
-          </v-col>
+          </v-col> -->
         </v-row>
       </v-col>
 
@@ -173,7 +172,6 @@
 
 
 <script>
-// import { OpenVidu } from "openvidu-browser"
 import UserVideo from "@/components/room/UserVideo"
 // import axios from "axios"
 
@@ -188,6 +186,9 @@ export default {
     UserVideo,
   },
   props: {
+    groupTypeSeq :{
+      type : String
+    },
     isViewee: {
       type: Boolean,
     },
@@ -197,44 +198,12 @@ export default {
     viewers: {
       type: Array,
     },
-    groupTypeSeq :{
-      type: String
-    }
+    currentApplicantList: {
+      type: Object,
+    },
   },
   data: function () {
     return {
-      // isViewee: false,
-
-      // OV: undefined,
-      // session: undefined,
-      // mainStreamManager: undefined, // 메인 비디오
-      // publisher: undefined, // 연결 객체
-      // subscribers: [],
-
-      // // 채팅
-      // text: "",
-      // messages: [],
-
-      // // 화면, 소리, 화면 공유
-      // audioOn: true,
-      // audioMsg: "소리 Off",
-      // videoOn: true,
-      // videoMsg: "화면 Off",
-      // // shareOn: false,
-      // // shareMsg: "공유 Off",
-
-      // // From SessionController
-      // sessionName: undefined,
-      // token: undefined,
-      // userName: "",
-      // type: undefined, // 대기실 관리자(manager) / 면접관(viewer) / 면접자(viewee)
-
-      // // From Main.vue
-      // comName: undefined,
-      // re_year: undefined,
-      // re_flag: undefined,
-      // re_status: undefined,
-
       // 인원 수 
       viewer: 2,
       viewee: 4,
@@ -258,29 +227,11 @@ export default {
       resetButton: false,
       edit: false,
 
+      clickedSeq : '',
+      clickedVieweeStream : undefined,
+
+      // questionList: [],
       // 탭
-      letterList: [
-        {
-          'quest' : '애국가',
-          'answer' : '동해 물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라 만세. 무궁화 삼천리 화려 강산. 대한 사람, 대한으로 길이 보전하세.'
-        },
-        {
-          'quest' : '미국 국가',
-          'answer' : 'O say, can you see, by the dawn’s early light, What so proudly we hailed at the twilight’s last gleaming, Whose broad stripes and bright stars, through the perilous fight, O’er the ramparts we watched, were so gallantly streaming? And the rockets’ red glare, the bombs bursting in air, Gave proof through the night that our flag was still there. O say, does that star-spangled banner yet wave. O’er the land of the free and the home of the brave?'
-        },
-        {
-          'quest' : '몽골 국가',
-          'answer' : 'Дархан манай тусгаар улс, Даяар Монголын ариун голомт. Далай их дээдсийн гэгээн үйлс, Дандаа энхжиж, үүрд мөнхөжинө. Хамаг дэлхийн шударга улстай. Хамтран нэгдсэн эвээ бэхжүүлж. Хатан зориг, бүхий л чадлаараа. Хайртай Монгол орноо мандуулъя. Өндөр төрийн минь сүлд ивээж. Өргөн түмний минь заяа түшиж. Үндэс язгуур, хэл соёлоо. Үрийн үрдээ өвлөн бадраая'
-        },
-        {
-          'quest' : '원주율 1000자리',
-          'answer' : '3.14159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214808651328230664709384460955058223172535940812848111745028410270193852110555964462294895493038196442881097566593344612847564823378678316527120190914564856692346034861045432664821339360726024914127372458700660631558817488152092096282925409171536436789259036001133053054882046652138414695194151160943305727036575959195309218611738193261179310511854807446237996274956735188575272489122793818301194912'
-        },
-        {
-          'quest' : '1차 공통 프로젝트 우승팀은?',
-          'answer' : 'WieV! WieV!'
-        },
-      ],
       length: 5,
       letterTab: null,
       
@@ -295,12 +246,6 @@ export default {
 
     window.addEventListener("beforeunload", this.leaveSession)
     window.addEventListener("backbutton", this.leaveSession)
-
-    let user_data = ['comName', 're_year', 're_flag', 're_status', 'sessionName', 'token', 'userName', 'type']
-
-    for (const data of user_data) {
-      this[data] = this.$route.query[data]
-    }
   },
 
   beforeDestroy() {
@@ -309,113 +254,10 @@ export default {
   },
 
   mounted() {
-    // this.OV = new OpenVidu()
-    // this.session = this.OV.initSession()
-
-    // // 신규 생성된 Stream 동기화
-    // this.session.on("streamCreated", ({ stream }) => {
-    //   const subscriber = this.session.subscribe(stream)
-    //   this.subscribers.push(subscriber)
-    // })
-
-    // // Stream 삭제
-    // this.session.on("streamDestroyed", ({ stream }) => {
-    //   const index = this.subscribers.indexOf(stream.streamManager, 0)
-    //   if (index >= 0) {
-    //     this.subscribers.splice(index, 1)
-    //   }
-    // })
-
-    // // 채팅 기능 -> 세션 동기화
-    // this.session.on("signal:my-chat", (event) => {
-    //   let message = { from: "", text: "" }
-    //   message.from = event.from.data.split('":"')[1].slice(0, -7)
-    //   message.text = event.data
-
-    //   this.messages.push(message)
-    // })
-
-    // // 신규 Stream 생성 및 퍼블리싱
-    // this.session.connect(this.token, { name: this.userName, type : this.type})
-    //   .then(() => {
-    //     let publisher = this.OV.initPublisher(undefined, {
-    //       audioSource: undefined, // The source of audio. If undefined default microphone
-    //       videoSource: undefined, // The source of video. If undefined default webcam
-    //       publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
-    //       publishVideo: true, // Whether you want to start publishing with your video enabled or not
-    //       resolution: "272x153", // The resolution of your video
-    //       frameRate: 30, // The frame rate of your video
-    //       insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
-    //       mirror: false, // Whether to mirror your local video or not
-    //     })
-
-    //     this.mainStreamManager = publisher
-    //     this.publisher = publisher
-
-    //     this.session.publish(this.publisher)
-    //     this.subscribers.push(this.publisher)
-    //   })
-    //   .catch(err => {
-    //     console.log("There was an error connecting to the session:", err.code, err.message)
-    //   })
-
     window.addEventListener("beforeunload", this.leaveSession)
   },
 
   methods: {
-    // // 채팅 메시지 전송
-    // sendMessage() {
-    //   if (this.text === "") return
-
-    //   this.session.signal({ data: this.text, to: [], type: "my-chat" })
-    //     .then()
-    //     .catch(err => console.error(err))
-
-    //   this.text = ""
-    // },
-
-    // leaveSession() {
-    //   axios.get(`${SERVER_URL}/session/leaveSession`, {
-    //     params: {
-    //       sessionName: this.sessionName,
-    //       token: this.token,
-    //     },
-    //   })
-    //     .then(res => {
-    //       console.log(res)
-    //       if (this.session) this.session.disconnect()
-    //       this.session = undefined
-    //       this.mainStreamManager = undefined
-    //       this.publisher = undefined
-    //       this.subscribers = []
-    //       this.OV = undefined
-    //       window.close()
-    //     })
-    //     .catch(err => console.log(err))
-    // },
-
-    // updateMainVideoStreamManager(stream) {
-    //   if (this.mainStreamManager === stream) {
-    //     return this.mainStreamManager = stream
-    //   }
-    // },
-
-    // audioOnOOff() {
-    //   this.audioOn = !this.audioOn
-    //   if (this.audioOn === true) this.audioMsg = "소리 Off"
-    //   else this.audioMsg = "소리 On"
-
-    //   this.publisher.publishAudio(this.audioOn)
-    // },
-
-    // videoOnOOff() {
-    //   this.videoOn = !this.videoOn
-    //   if (this.videoOn === true) this.videoMsg = "화면 Off"
-    //   else this.videoMsg = "화면 On"
-
-    //   this.publisher.publishVideo(this.videoOn)
-    // },
-
     handling(e) {
       if (this.moving_viewee.includes(e.key)) {
         this.moving_viewee.splice(this.moving_viewee.indexOf(e.key), 1)
@@ -480,6 +322,11 @@ export default {
         this.stompClient.send("/receive/"+this.groupTypeSeq, JSON.stringify(msg), {});
       }
       this.messageToSession = '';
+    },
+
+    updateMainVideoStreamManager(stream) {
+      this.clickedVieweeStream = stream
+      this.clickedSeq = JSON.parse(stream.stream.connection.data.split('%/%')[0])['userSeq']
     },
   },
 

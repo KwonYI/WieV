@@ -75,7 +75,9 @@
             <!-- <div v-for="i in viewer" :key="i" class="brd screen-res-sm">면접관 {{i}}</div> -->
             <span v-for="sub in viewers" :key="sub.stream.connection.connectionId">
               <user-video
-                :stream-manager="sub" 
+                class="screen-res-sm"
+                :stream-manager="sub"
+                :id = "sub.stream.connection.connectionId"
               />
             </span>
           </v-col>
@@ -84,14 +86,16 @@
             <!-- <div v-for="i in viewee" :key="i" :class="[viewee === 1 ? `screen-res-md` : `screen-res-sm`, 'brd']">지원자 {{i}}</div> -->
             <span v-for="sub in viewees" :key="sub.stream.connection.connectionId">
               <user-video
+                :class="viewees.length === 1 ? 'screen-res-md' : 'screen-res-sm'"
                 :stream-manager="sub" 
+                :id = "sub.stream.connection.connectionId"
                 @click.native="updateMainVideoStreamManager(sub)"
               />
             </span>
           </v-col>
-          <v-col v-else cols="8" class="viewee-box centering flex-wrap">
+          <!-- <v-col v-else cols="8" class="viewee-box centering flex-wrap">
             <div class="screen-res-md brd">나</div>
-          </v-col>
+          </v-col> -->
         </v-row>
       </v-col>
 
@@ -129,7 +133,7 @@
             center-active
           >
             <v-tab
-              v-for="(item, i) in letterList[current_viewee]"
+              v-for="(item, i) in currentApplicantList[clickedSeq]"
               :key="i"
             >
               <span v-if="item.quest !== '자기소개서'">
@@ -142,8 +146,8 @@
           </v-tabs>
           <v-card-text class="">
             <v-tabs-items v-model="letterTab">
-              <v-tab-item v-for="(item, i) in letterList[current_viewee]" :key="i">
-                {{ i+1 }}. {{ item.quest }} // {{current_viewee}}번 지원자
+              <v-tab-item v-for="(item, i) in currentApplicantList[clickedSeq]" :key="i">
+                {{ i+1 }}. {{ item.quest }} // {{clickedSeq}}번 지원자
                 <v-divider></v-divider>
                 <v-virtual-scroll
                   item-height="250"
@@ -175,7 +179,6 @@
 
 
 <script>
-// import { OpenVidu } from "openvidu-browser"
 import UserVideo from "@/components/room/UserVideo"
 // import axios from "axios"
 
@@ -190,6 +193,9 @@ export default {
     UserVideo,
   },
   props: {
+    groupTypeSeq :{
+      type : String
+    },
     isViewee: {
       type: Boolean,
     },
@@ -199,44 +205,12 @@ export default {
     viewers: {
       type: Array,
     },
-    groupTypeSeq :{
-      type : String
-    }
+    currentApplicantList: {
+      type: Object,
+    },
   },
   data: function () {
     return {
-      // isViewee: false,
-
-      // OV: undefined,
-      // session: undefined,
-      // mainStreamManager: undefined, // 메인 비디오
-      // publisher: undefined, // 연결 객체
-      // subscribers: [],
-
-      // // 채팅
-      // text: "",
-      // messages: [],
-
-      // // 화면, 소리, 화면 공유
-      // audioOn: true,
-      // audioMsg: "소리 Off",
-      // videoOn: true,
-      // videoMsg: "화면 Off",
-      // // shareOn: false,
-      // // shareMsg: "공유 Off",
-
-      // // From SessionController
-      // sessionName: undefined,
-      // token: undefined,
-      // userName: "",
-      // type: undefined, // 대기실 관리자(manager) / 면접관(viewer) / 면접자(viewee)
-
-      // // From Main.vue
-      // comName: undefined,
-      // re_year: undefined,
-      // re_flag: undefined,
-      // re_status: undefined,
-
       // 인원 수 
       viewer: 2,
       viewee: 4,
@@ -259,70 +233,14 @@ export default {
       time: 0,
       resetButton: false,
       edit: false,
+      
+      clickedSeq : '',
+      clickedVieweeStream : undefined,
 
-      current_viewee: 1,
-
-      questionList: [],
-
+      // questionList: [],
       // 탭
-      letterList: {
-        1: [
-          {
-            'quest' : '애국가',
-            'answer' : '동해 물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라 만세. 무궁화 삼천리 화려 강산. 대한 사람, 대한으로 길이 보전하세.'
-          },
-          {
-            'quest' : '미국 국가',
-            'answer' : 'O say, can you see, by the dawn’s early light, What so proudly we hailed at the twilight’s last gleaming, Whose broad stripes and bright stars, through the perilous fight, O’er the ramparts we watched, were so gallantly streaming? And the rockets’ red glare, the bombs bursting in air, Gave proof through the night that our flag was still there. O say, does that star-spangled banner yet wave. O’er the land of the free and the home of the brave?'
-          },
-          {
-            'quest' : '몽골 국가',
-            'answer' : 'Дархан манай тусгаар улс, Даяар Монголын ариун голомт. Далай их дээдсийн гэгээн үйлс, Дандаа энхжиж, үүрд мөнхөжинө. Хамаг дэлхийн шударга улстай. Хамтран нэгдсэн эвээ бэхжүүлж. Хатан зориг, бүхий л чадлаараа. Хайртай Монгол орноо мандуулъя. Өндөр төрийн минь сүлд ивээж. Өргөн түмний минь заяа түшиж. Үндэс язгуур, хэл соёлоо. Үрийн үрдээ өвлөн бадраая'
-          },
-          {
-            'quest' : '원주율 1000자리',
-            'answer' : '3.14159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214808651328230664709384460955058223172535940812848111745028410270193852110555964462294895493038196442881097566593344612847564823378678316527120190914564856692346034861045432664821339360726024914127372458700660631558817488152092096282925409171536436789259036001133053054882046652138414695194151160943305727036575959195309218611738193261179310511854807446237996274956735188575272489122793818301194912'
-          },
-          {
-            'quest' : '1차 공통 프로젝트 우승팀은?',
-            'answer' : 'WieV! WieV!'
-          },
-          {
-            'quest' : '자기소개서',
-            'answer' : 'WieV! WieV!'
-          }
-        ],
-        2: [
-          {
-            'quest' : '애국가',
-            'answer' : '동해 물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라 만세. 무궁화 삼천리 화려 강산. 대한 사람, 대한으로 길이 보전하세.'
-          },
-          {
-            'quest' : '미국 국가',
-            'answer' : 'O say, can you see, by the dawn’s early light, What so proudly we hailed at the twilight’s last gleaming, Whose broad stripes and bright stars, through the perilous fight, O’er the ramparts we watched, were so gallantly streaming? And the rockets’ red glare, the bombs bursting in air, Gave proof through the night that our flag was still there. O say, does that star-spangled banner yet wave. O’er the land of the free and the home of the brave?'
-          },
-          {
-            'quest' : '몽골 국가',
-            'answer' : 'Дархан манай тусгаар улс, Даяар Монголын ариун голомт. Далай их дээдсийн гэгээн үйлс, Дандаа энхжиж, үүрд мөнхөжинө. Хамаг дэлхийн шударга улстай. Хамтран нэгдсэн эвээ бэхжүүлж. Хатан зориг, бүхий л чадлаараа. Хайртай Монгол орноо мандуулъя. Өндөр төрийн минь сүлд ивээж. Өргөн түмний минь заяа түшиж. Үндэс язгуур, хэл соёлоо. Үрийн үрдээ өвлөн бадраая'
-          },
-          {
-            'quest' : '원주율 1000자리',
-            'answer' : '3.14159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214808651328230664709384460955058223172535940812848111745028410270193852110555964462294895493038196442881097566593344612847564823378678316527120190914564856692346034861045432664821339360726024914127372458700660631558817488152092096282925409171536436789259036001133053054882046652138414695194151160943305727036575959195309218611738193261179310511854807446237996274956735188575272489122793818301194912'
-          },
-          {
-            'quest' : '1차 공통 프로젝트 우승팀은?',
-            'answer' : 'WieV! WieV!'
-          },
-          {
-            'quest' : '자기소개서',
-            'answer' : 'WieV! WieV!'
-          }
-        ],
-      },
       length: 5,
       letterTab: null,
-      
-
     }
   },
   created: function () {
@@ -332,12 +250,6 @@ export default {
 
     window.addEventListener("beforeunload", this.leaveSession)
     window.addEventListener("backbutton", this.leaveSession)
-
-    let user_data = ['comName', 're_year', 're_flag', 're_status', 'sessionName', 'token', 'userName', 'type']
-
-    for (const data of user_data) {
-      this[data] = this.$route.query[data]
-    }
   },
 
   beforeDestroy() {
@@ -414,6 +326,10 @@ export default {
         this.stompClient.send("/receive/"+this.groupTypeSeq, JSON.stringify(msg), {});
       }
       this.messageToSession = '';
+    },
+    updateMainVideoStreamManager(stream) {
+      this.clickedVieweeStream = stream
+      this.clickedSeq = JSON.parse(stream.stream.connection.data.split('%/%')[0])['userSeq']
     },
   },
 

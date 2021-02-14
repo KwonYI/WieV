@@ -16,6 +16,7 @@
         :isViewee = 'isViewee' 
         :viewees = 'viewees' 
         :viewers = 'viewers'
+        :currentApplicantList = 'currentApplicantList'
       />
       <!-- PT형 면접실 -->
       <PTView 
@@ -24,40 +25,18 @@
         :isViewee = 'isViewee' 
         :viewees = 'viewees' 
         :viewers = 'viewers'
+        :currentApplicantList = 'currentApplicantList'
       />
       <!-- 일반형 면접실 -->
       <CaView 
         v-else
-        :isViewee = 'isViewee' 
         :groupTypeSeq = 'groupTypeSeq'
+        :isViewee = 'isViewee' 
         :viewees = 'viewees' 
         :viewers = 'viewers'
+        :currentApplicantList = 'currentApplicantList'
       />
     </v-container>
-
-<!-- 이게 테스트 UI -->
-    <!-- <v-container class="room">
-      <v-col cols="9" class="main-box">
-        <v-col cols="4" class="d-flex flex-column justify-center align-center">
-          <span v-for="sub in viewers" :key="sub.stream.connection.connectionId">
-            <user-video
-              :id = "sub.stream.connection.connectionId"
-              :stream-manager="sub" 
-            />
-          </span>
-        </v-col>
-        <v-col cols="8" class="d-flex flex-wrap justify-center align-center">
-          <span v-for="sub in viewees" :key="sub.stream.connection.connectionId">
-            <user-video
-              :stream-manager="sub" 
-              :id = "sub.stream.connection.connectionId"
-              @click.native="updateMainVideoStreamManager(sub)"
-            />
-          </span>
-        </v-col>
-      </v-col>
-    </v-container> -->
-<!-- 여기까지 테스트 UI -->
 
     <!-- 화면 공유 기능(미구현) -->
     <!-- <div id="screen"></div> -->
@@ -79,21 +58,16 @@
 
 <script>
 import { OpenVidu } from "openvidu-browser"
-// import UserVideo from "@/components/room/UserVideo"
 import CaView from "@/components/room/CaView"
 import PTView from "@/components/room/PTView"
 import GrView from "@/components/room/GrView"
 import axios from "axios"
-
-// import Stomp from 'webstomp-client'
-// import SockJS from 'sockjs-client'
 
 const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
 export default {
   name: "ViewRoom",
   components: {
-    // UserVideo,
     CaView,
     PTView,
     GrView
@@ -105,7 +79,7 @@ export default {
 
       OV: undefined,
       session: undefined,
-      mainStreamManager: undefined, // 메인 비디오
+      mainStreamManager: undefined, // 내 비디오
       publisher: undefined, // 연결 객체
       subscribers: [],
 
@@ -119,11 +93,7 @@ export default {
 
       // 화면, 소리, 화면 공유
       audioOn: true,
-      // audioMsg: "소리 Off",
       videoOn: true,
-      // videoMsg: "화면 Off",
-      // shareOn: false,
-      // shareMsg: "공유 Off",
 
       // From SessionController
       sessionName: undefined,
@@ -140,22 +110,15 @@ export default {
       interviewType : undefined,
       groupTypeSeq : undefined,
       
-      //지원자 리스트
-      applicantList:[],
+      // 전체 지원자 리스트, 방에 들어온 지원자 리스트
+      allApplicantList:[],
+      currentApplicantList : {},      
 
       // 배너
       banner_dialog: false,
 
       // 면접 이동
       visible: false,
-      // viewee_list: ['김일번', '박이번', '신삼번', '강사번', '류오번', '이육번'],
-      // moving_viewee: [],
-
-      // 면접 안내
-
-      // 세션간 통신
-      // messageToSession : '',
-      // messageFromSession : '',
 
       // FAQ
       faq_dialog: false,
@@ -166,7 +129,6 @@ export default {
     }
   },
   created: function () {
-    // this.connect()
     
     window.addEventListener("beforeunload", this.leaveSession)
     window.addEventListener("backbutton", this.leaveSession)
@@ -195,8 +157,8 @@ export default {
     axios
     .get(`${SERVER_URL}/applicant/getListBySessionName/` + this.sessionName)
     .then(res => {
-      this.applicantList=res.data
-      console.log("지원자 정보를 출력중(ViewRoom)", this.applicantList)
+      this.allApplicantList=res.data
+      console.log("지원자 정보를 출력중(ViewRoom)", this.allApplicantList)
     })
     .catch((err) => {
         console.log(err)
@@ -213,7 +175,6 @@ export default {
     this.OV = new OpenVidu()
     this.session = this.OV.initSession()
 
-    // 신규 생성된 Stream 동기화
     this.session.on("streamCreated", ({ stream }) => {
       const subscriber = this.session.subscribe(stream);
 
@@ -221,11 +182,35 @@ export default {
 
       if(info['type'] === 'viewee'){
         this.viewees.push(subscriber)
-        // this.viewee_list.push(info['name'])
+
+        for (const apply of this.allApplicantList) {
+          if(apply["apply-Seq"]==info["userSeq"]){
+            
+            this.currentApplicantList[info["userSeq"]] = [
+              {
+                'quest' : '자기소개서1',
+                'answer' : apply["apply-Resume1"]
+              },
+              {
+                'quest' : '자기소개서2',
+                'answer' : apply["apply-Resume2"]
+              },
+              {
+                'quest' : '자기소개서3',
+                'answer' : apply["apply-Resume3"]
+              },
+              {
+                'quest' : '자기소개서4',
+                'answer' : apply["apply-Resume4"]
+              },
+            ]
+          }
+        }
+
+        console.log("현재 방에 존재하는 지원자들의 자소서들", this.currentApplicantList)
       }else{
         this.viewers.push(subscriber)
       }
-      // this.subscribers.push(subscriber);
     });
 
     // Stream 삭제
@@ -239,10 +224,7 @@ export default {
           this.viewees.splice(index, 1);
         }
 
-        // const idx = this.viewee_list.indexOf(info['name'], 0);
-        // if (idx >= 0) {
-        //   this.viewee_list.splice(idx, 1);
-        // }
+        delete this.currentApplicantList[info["userSeq"]] 
 
       }else{
         const index = this.viewers.indexOf(stream.streamManager, 0);
@@ -252,10 +234,6 @@ export default {
       }
 
       console.log("viewee : ",this.viewees, " viewer : ", this.viewers)
-      // const index = this.subscribers.indexOf(stream.streamManager, 0);
-      // if (index >= 0) {
-      //   this.subscribers.splice(index, 1);
-      // }
     })
 
     this.session.on('publisherStartSpeaking', (event) => {
@@ -319,11 +297,9 @@ export default {
 
         if(this.type === 'viewee'){
           this.viewees.push(this.publisher)
-          // this.viewee_list.push(info['name'])
         }else{
           this.viewers.push(this.publisher)
         }
-        // this.subscribers.push(this.publisher);
       })
       .catch((error) => {
         console.log(
@@ -335,7 +311,6 @@ export default {
   },
 
   methods: {
-    // 채팅 메시지 전송
     sendMessage() {
       if (this.text === "") return
 
@@ -371,73 +346,17 @@ export default {
         });
     },
 
-    updateMainVideoStreamManager(stream) {
-      let info = JSON.parse(stream.stream.connection.data.split('%/%')[0])
-      if (this.mainStreamManager === stream){
-        console.log("자기 자신입니다.")
-      }
-      else if(info["type"]==="viewee"){
-        //지원자면
-        for (const apply of this.applicantList) {
-          if(apply["apply-Seq"]==info["userSeq"]){
-            console.log(info["userSeq"])
-            console.log(apply["apply-Resume1"])
-            console.log(apply["apply-Resume2"])
-            console.log(apply["apply-Resume3"])
-            console.log(apply["apply-Resume4"])
-          }
-        }
-      }
-      else {
-        console.log("지원자가 아닙니다.")
-      }
-    },
-
     audioOnOOff() {
       this.audioOn = !this.audioOn;
-      // if (this.audioOn === true) this.audioMsg = "소리 Off";
-      // else this.audioMsg = "소리 On";
 
       this.publisher.publishAudio(this.audioOn)
     },
 
     videoOnOOff() {
       this.videoOn = !this.videoOn;
-      // if (this.videoOn === true) this.videoMsg = "화면 Off";
-      // else this.videoMsg = "화면 On";
 
       this.publisher.publishVideo(this.videoOn)
     },
-
-    // connect() {
-    //   let socket = new SockJS(`${SERVER_URL}/ws-stomp`);
-    //   this.stompClient = Stomp.over(socket);
-    //   this.stompClient.connect(
-    //     {},
-    //     frame => {
-    //       this.connected = true;
-    //       console.log('소켓 연결 성공', frame);
-    //       this.stompClient.subscribe("/send", res => {
-    //         this.messagesFromSession.push(JSON.parse(res.body))
-    //       });
-    //     },
-    //     error => {
-    //       // 소켓 연결 실패
-    //       console.log('소켓 연결 실패', error);
-    //       this.connected = false;
-    //     }
-    //   );        
-    // },
-    // sendToSession() {
-    //   if (this.stompClient && this.stompClient.connected) {
-    //     const msg = { 
-    //       name: this.userName,
-    //       message: this.messageToSession 
-    //     };
-    //     this.stompClient.send("/receive", JSON.stringify(msg), {});
-    //   }
-    //   this.messageToSession = '';
-    // },
 
     // handling(e) {
     //   if (this.moving_viewee.includes(e.key)) {
@@ -466,5 +385,17 @@ export default {
   flex: 1;
   align-items: center;
   max-width: 95%;
+}
+.screen-res {
+  width: 272px;
+  height: 153px;
+}
+.screen-res-sm {
+  width: 288px;
+  height: 162px;
+}
+.screen-res-md {
+  width: 640px;
+  height: 360px;
 }
 </style>
