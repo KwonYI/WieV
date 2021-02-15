@@ -204,33 +204,33 @@ import 'aos/dist/aos.css'
 						img: require('@/assets/images/team_ig.jpg'),
 						name: '정일규',
 						position: 'Back',
-						github: '',
+						github: 'https://github.com/jig6795',
 						facebook: '',
-						instagram: ''
+						instagram: 'https://www.instagram.com/zzung_19/'
 					},
-					{
+					{	
 						img: require('@/assets/images/team_yi.png'),
 						name: '권영일',
 						position: 'Back',
-						github: '',
-						facebook: '',
-						instagram: ''
+						github: 'https://github.com/KwonYI',
+						facebook: 'https://www.facebook.com/profile.php?id=100007782181467',
+						instagram: 'kkwinwin01@gmail.com'
 					},
 					{
 						img: require('@/assets/images/team_mj.png'),
 						name: '김민정',
 						position: 'Front',
-						github: '',
+						github: 'https://github.com/snowcuphea',
 						facebook: '',
-						instagram: ''
+						instagram: 'https://www.instagram.com/minjung0915/'
 					},
 					{
 						img: require('@/assets/images/team_yj.png'),
 						name: '김윤지',
 						position: 'Back',
-						github: '',
-						facebook: '',
-						instagram: ''
+						github: 'https://github.com/YooooonJi',
+						facebook: 'dooly7183@gmail.com',
+						instagram: 'https://www.instagram.com/yooooongdi/'
 					},
 					{
 						img: require('@/assets/images/team_jh.png'),

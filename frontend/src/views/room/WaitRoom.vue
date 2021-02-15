@@ -7,7 +7,7 @@
         {{ re_year }}
         {{ re_flag }}
         {{ re_status }}
-        
+
       </v-toolbar-title>
     </v-app-bar>
     <!-- 
@@ -24,15 +24,8 @@
           <v-row class="main-banner">
             <!-- 공지 배너 -->
             <v-col cols="9" class="banner">
-              <v-text-field
-                solo
-                hide-details
-                height="100%"
-                :readonly = 'isViewee'
-                class = "notice"
-                v-model="banner_message"
-                @keyup.13="noticeBanner"
-              ></v-text-field>
+              <v-text-field solo hide-details height="100%" :readonly='isViewee' class="notice" v-model="banner_message"
+                @keyup.13="noticeBanner"></v-text-field>
             </v-col>
 
             <!-- 면접실 이동 안내 -->
@@ -55,14 +48,9 @@
                       &nbsp;
                       <a-icon type="down" />
                     </a>
-                    
-                    <a-menu
-                      slot="overlay"
-                      v-model="moving_viewee"
-                      multiple
-                      :default-selected-keys="[]"
-                      @click="handling"
-                    >
+
+                    <a-menu slot="overlay" v-model="moving_viewee" multiple :default-selected-keys="[]"
+                      @click="handling">
                       <a-menu-item v-for="name in viewee_list" :key="name">
                         {{ name }}
                       </a-menu-item>
@@ -79,82 +67,38 @@
 
           <v-row>
             <!--스크롤 면접관-->
-            <v-col cols="4" class="d-flex flex-column justify-center align-center">
-              <div>
-                <v-responsive
-                  max-width="400"
-                  class="mx-auto mb-4"
-                >
-                <v-text-field
-                  v-model="benched"
-                  type="number"
-                  min="0"
-                  max="10"
-                ></v-text-field>
-                </v-responsive>
-
-                <v-card
-                  elevation="16"
-                  max-width="400"
-                  class="mx-auto"
-                >
-                  <v-virtual-scroll
-                    :bench="benched"
-                    :items="items"
-                    height="300"
-                    item-height="64"
-                  >
-                        
-                    <span v-if="!isViewee">
-                      <user-video :streamManager="publisher" class="screen-res-sm"/>
-                    </span>
-                    <span v-for="sub in viewers" :key="sub.stream.connection.connectionId">
-                      <user-video
-                        class="screen-res-sm"
-                        :stream-manager="sub" 
-                      />
-                    </span>
-                    <v-list-item :key="item">
-                    </v-list-item>
-                    <v-divider></v-divider> 
-                  </v-virtual-scroll>
-                </v-card>
-                </div>
+            <v-col cols="4" class="d-flex flex-column justify-center align-center no-gutters" style="">
+              <div class="overflow-y-auto pr-2" style="height:70vh">
+                <span v-if="!isViewee">
+                  <user-video :streamManager="publisher" class="screen-res-sm" />
+                </span>
+                <span v-for="sub in viewers" :key="sub.stream.connection.connectionId">
+                  <user-video class="screen-res-sm" :stream-manager="sub" />
+                </span>
+              </div>
             </v-col>
 
-            <!--면접관
-            <v-col cols="4" class="d-flex flex-column justify-center align-center">
-              <span v-if="!isViewee">
-                <user-video :streamManager="publisher" class="screen-res-sm"/>
-              </span>
-              <span v-for="sub in viewers" :key="sub.stream.connection.connectionId">
-                <user-video
-                  class="screen-res-sm"
-                  :stream-manager="sub" 
-                />
-              </span>
-            </v-col>-->
             <v-col cols="8" class='d-flex flex-column align-center'>
               <!--지원자 여러명-->
-              <v-row>
-                <div v-if="!isViewee" class='d-flex justify-center'>
-                  <user-video v-for="sub in viewees" :key="sub.stream.connection.connectionId"
-                    class= 'screen-res'
-                    :stream-manager="sub" 
-                    :id = "sub.stream.connection.connectionId"
-                    @click.native="updateMainVideoStreamManager(sub)"
-                  />
-                </div>
+              <v-row v-if="!isViewee" style=" height:18vh; width:100% ">
+                <v-col cols="12" class="overflow-x-auto" style="width:100%;">
+
+                  <div class='d-flex'>
+                    <user-video v-for="sub in viewees" :key="sub.stream.connection.connectionId"
+                      class='screen-res  mx-2' :stream-manager="sub" :id="sub.stream.connection.connectionId"
+                      @click.native="updateMainVideoStreamManager(sub)" />
+                  </div>
+                </v-col>
               </v-row>
               <!--지원자 1명-->
-              <v-row class="d-flex flex-wrap justify-center align-center">
+              <v-row class="d-flex flex-wrap justify-center align-center pt-5" style="">
                 <span v-if="isViewee">
-                  <user-video :stream-manager="publisher" class="screen-res-md"/>
+                  <user-video :stream-manager="publisher" class="screen-res-md" />
                 </span>
                 <span v-else>
-                  <user-video v-if="mainStreamManager" :stream-manager="mainStreamManager" class="screen-res-md"/>
+                  <user-video v-if="mainStreamManager" :stream-manager="mainStreamManager" class="screen-res-md" />
                 </span>
-              </v-row>              
+              </v-row>
             </v-col>
           </v-row>
           <!--맨위 오른쪽 지원자들-->
@@ -207,15 +151,9 @@
             <a-popover title="Message" trigger="click">
               <v-btn color="#757575" elevation="3" height="100%" width="35%" dark>메시지 보내기</v-btn>
               <template slot="content">
-                <v-textarea
-                  solo
-                  height="100px"
-                  clearable
-                  no-resize
-                  hide-details
-                  v-model="messageToSession"
-                ></v-textarea>
-                <v-btn  @click="sendToSession" text color="secondary">Send</v-btn>
+                <v-textarea solo height="100px" clearable no-resize hide-details v-model="messageToSession">
+                </v-textarea>
+                <v-btn @click="sendToSession" text color="secondary">Send</v-btn>
               </template>
             </a-popover>
             <!-- 메시지 출력 -->
@@ -229,34 +167,22 @@
             <v-sheet color="white" height="100%" elevation="3">
               <div class="text-h6 text-center pt-1">면접 안내</div>
               <v-divider class="my-1"></v-divider>
-<!-- 권영일 추가 interview_messages 값 확인 --> 
+              <!-- 권영일 추가 interview_messages 값 확인 -->
               <v-list class="pa-0" v-auto-bottom="interview_messages">
                 <div v-for="(msg, index) in interview_messages" :key="index">
                   {{ getCurrentTime() }} - {{ msg }}
                 </div>
-<!-- 권영일 추가 --> 
+                <!-- 권영일 추가 -->
               </v-list>
             </v-sheet>
           </div>
           <!-- FAQ -->
           <div style="height: 10%">
             <v-sheet color="white" height="100%" elevation="3">
-              <v-dialog
-                v-model="faq_dialog"
-                scrollable
-                max-width="500px"
-              > 
+              <v-dialog v-model="faq_dialog" scrollable max-width="500px">
                 <!-- FAQ 버튼 -->
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                    color="#757575"
-                    dark
-                    block
-                    tile
-                    v-bind="attrs"
-                    v-on="on"
-                    height="100%"
-                  >
+                  <v-btn color="#757575" dark block tile v-bind="attrs" v-on="on" height="100%">
                     FAQ
                   </v-btn>
                 </template>
@@ -266,10 +192,7 @@
                   <v-divider class="mt-2 mb-3"></v-divider>
                   <v-card-text style="height: 300px">
                     <v-expansion-panels accordion focusable>
-                      <v-expansion-panel
-                        v-for="(item, i) in questions"
-                        :key="i"
-                      >
+                      <v-expansion-panel v-for="(item, i) in questions" :key="i">
                         <v-expansion-panel-header>{{ item.title }}</v-expansion-panel-header>
                         <v-expansion-panel-content>
                           <div class="mt-5">{{ item.answer }}</div>
@@ -289,33 +212,26 @@
                   {{ msg.from }} : {{ msg.text }}
                 </div>
               </v-list>
-              <v-text-field
-                v-model="text"
-                label="메세지를 입력하세요."
-                class="pa-0 ma-0 mx-1"
-                single-line
-                hide-details
-                dense
-                @keyup.13="sendMessage"
-              ></v-text-field>
+              <v-text-field v-model="text" label="메세지를 입력하세요." class="pa-0 ma-0 mx-1" single-line hide-details dense
+                @keyup.13="sendMessage"></v-text-field>
             </v-sheet>
           </div>
         </v-col>
-    </v-row>
+      </v-row>
     </v-container>
 
     <!-- 화면 공유 기능(미구현) -->
     <!-- <div id="screen"></div> -->
-    
+
     <!-- 메인 하단 - 환경설정 -->
     <v-bottom-navigation dark class="main-bg-navy">
       <v-btn @click="audioOnOOff">
         <v-icon v-if="audioOn === true">mdi-volume-high</v-icon>
-        <v-icon v-if="audioOn === false">mdi-volume-off</v-icon> 
+        <v-icon v-if="audioOn === false">mdi-volume-off</v-icon>
       </v-btn>
       <v-btn @click="videoOnOOff">
         <v-icon v-if="videoOn === true">mdi-video</v-icon>
-        <v-icon v-if="videoOn === false">mdi-video-off</v-icon> 
+        <v-icon v-if="videoOn === false">mdi-video-off</v-icon>
       </v-btn>
       <v-btn @click="leaveSession">방 나가기</v-btn>
     </v-bottom-navigation>
@@ -798,77 +714,117 @@ export default {
 </script>
 
 <style scoped>
-#waitroom {
-  /* height: 100%; */
-  height: 91vh;
-  display: flex;
-  flex-direction: column;
-  background-color: #ECEFF1;
-}
-.room {
-  flex: 1;
-  align-items: center;
-  max-width: 95%;
-}
-.col {
-  padding: 0.5rem;
-}
-.row {
-  margin: 0;
-  --bs-gutter-x: initial;
-}
-.main-box {
-  padding: 0;
-}
-.main-banner {
-  height: 14%;
-}
-.main-screen {
-  height: 86%;
-}
-.v-list {
-  height: 85%;
-  width: 100%;
-  overflow-y: auto;
-}
-.v-dialog__content {
-  position: absolute;
-}
-::v-deep .banner .v-input, ::v-deep .banner .v-input__control {
-  height: 100%;
-}
-::v-deep .ant-popover-inner .ant-popover-inner-content {
-  padding-bottom: 0;
-}
-.brd {
-  border: 0.1px solid grey;
-  background-color: darkgrey;
-  color: white;
-  font-size: 1.5rem;
-  padding-top: 60px;
-  text-align: center;
-}
-.centering {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.hidden {
-  visibility: hidden;
-}
-.screen-res {
-  width: 160px;
-  height: 90px;
-}
-.screen-res-sm {
-  width: 288px;
-  height: 162px;
-}
-.screen-res-md {
-  width: 640px;
-  height: 360px;
-}
-.notice {
-  color: red
-}
+  #waitroom {
+    /* height: 100%; */
+    height: 91vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #ECEFF1;
+  }
+
+  .room {
+    flex: 1;
+    align-items: center;
+    max-width: 95%;
+  }
+
+  .col {
+    padding: 0.5rem;
+  }
+
+  .row {
+    margin: 0;
+    --bs-gutter-x: initial;
+  }
+
+  .main-box {
+    padding: 0;
+  }
+
+  .main-banner {
+    height: 14%;
+  }
+
+  .main-screen {
+    height: 86%;
+  }
+
+  .v-list {
+    height: 85%;
+    width: 100%;
+    overflow-y: auto;
+  }
+
+  .v-dialog__content {
+    position: absolute;
+  }
+
+  ::v-deep .banner .v-input,
+  ::v-deep .banner .v-input__control {
+    height: 100%;
+  }
+
+  ::v-deep .ant-popover-inner .ant-popover-inner-content {
+    padding-bottom: 0;
+  }
+
+  .brd {
+    border: 0.1px solid grey;
+    background-color: darkgrey;
+    color: white;
+    font-size: 1.5rem;
+    padding-top: 60px;
+    text-align: center;
+  }
+
+  .centering {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .hidden {
+    visibility: hidden;
+  }
+
+  .screen-res {
+    width: 160px;
+    height: 90px;
+  }
+
+  .screen-res-sm {
+    width: 288px;
+    height: 162px;
+  }
+
+  .screen-res-md {
+    width: 640px;
+    height: 360px;
+  }
+
+  .notice {
+    color: red
+  }
+
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  /*  / 스크롤 바 밑의 배경 / */
+  ::-webkit-scrollbar-track {
+    background-color: grey;
+    opacity: 0.2;
+  }
+
+  /* / 실질적 스크롤 바 / */
+  ::-webkit-scrollbar-thumb {
+    background: aliceblue;
+    border-radius: 10px;
+  }
+
+  /* / 스크롤 바 상 하단 버튼 */
+  ::-webkit-scrollbar-button {
+    display: none;
+  }
 </style>
