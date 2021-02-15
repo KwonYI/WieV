@@ -57,10 +57,12 @@
                                 <v-text-field
                                   :label="item.label"
                                   :type="item.type"
+                                  :rules="item.label === '비밀번호 확인' ? passwordConfirmation : item.rule"
+                                  :class="item.longmsg"
                                   v-model="updateCredentials[item.value]"
                                 ></v-text-field>
                               </td>
-                              <v-btn v-if="index === 2" @click="password_certified">비밀번호 확인</v-btn>
+                              <!-- <v-btn v-if="index === 2" @click="password_certified">비밀번호 확인</v-btn> -->
                             </tr>
                           </tbody>
                         </template>
@@ -142,14 +144,42 @@ export default {
       dialogDelete: false,
 
       updateUserInfo: [
-        { label: "이름", type: "text", value: "hrName" },
-        { label: "비밀번호", type: "password", value: "hrPassword" },
+        { 
+          label: "이름", 
+          type: "text", 
+          rule: [
+            value => !!value || '이름은 필수 항목입니다.',
+          ],
+          value: "hrName",
+          longmsg: ''
+        },
+        { 
+          label: "비밀번호", 
+          type: "password",
+          rule: [
+            value => !!value || '비밀번호는 필수 항목입니다.',
+            value => /^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/.test(value) || '비밀번호는 반드시 1개 이상의 문자, 숫자, 특수문자를 포함해야 합니다.'
+          ],
+          value: "hrPassword",
+          longmsg: 'longmsg'
+        },
         {
           label: "비밀번호 확인",
           type: "password",
+          rule: [],
           value: "hrPasswordConfirmation",
+          longmsg: ''
         },
-        { label: "연락처", type: "text", value: "hrPhone" },
+        { 
+          label: "연락처", 
+          type: "text", 
+          rule: [
+            value => !!value || '연락처는 필수 항목입니다.',
+            value => /^\d{3}-\d{3,4}-\d{4}$/.test(value) || '연락처 형식이 유효하지 않습니다.'
+          ],
+          value: "hrPhone",
+          longmsg: ''
+        },
       ],
       updateCredentials: {
         hrName: "",
@@ -160,7 +190,11 @@ export default {
       isPasswordCertified:false,
 
       deleteUserInfo: [
-        { label: "비밀번호", type: "password", value: "hrPassword" },
+        { 
+          label: "비밀번호", 
+          type: "password",
+          value: "hrPassword",
+        },
       ],
       deleteCredentials: {
         hrPassword: "",
@@ -171,6 +205,11 @@ export default {
   },
   computed: {
     ...mapState(['user']),
+    passwordConfirmation() {
+      return [
+        value => value === this.updateCredentials.hrPassword || '비밀번호가 일치하지 않습니다.' 
+      ]
+    }
   },
   methods: {
     //비밀번호 같은지 다른지 확인
@@ -267,5 +306,9 @@ export default {
 
 h2 {
   margin-bottom: 0px;
+}
+
+::v-deep .longmsg > .v-input__control {
+  width: min-content;
 }
 </style>
