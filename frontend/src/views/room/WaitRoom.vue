@@ -76,18 +76,56 @@
               </v-card>
             </v-col>
           </v-row>
+
           <v-row>
-            <div v-if="!isViewee" class='d-flex justify-center'>
-              <user-video v-for="sub in viewees" :key="sub.stream.connection.connectionId"
-                class= 'screen-res'
+          <!--스크롤 면접관-->
+         <v-col cols="4" class="d-flex flex-column justify-center align-center">
+          <div>
+              <v-responsive
+                max-width="400"
+                class="mx-auto mb-4"
+              >
+              <v-text-field
+                v-model="benched"
+                type="number"
+                min="0"
+                max="10"
+              ></v-text-field>
+            </v-responsive>
+
+            <v-card
+              elevation="16"
+              max-width="400"
+              class="mx-auto"
+            >
+              <v-virtual-scroll
+                :bench="benched"
+                :items="items"
+                height="300"
+                item-height="64"
+              >
+                  
+            <span v-if="!isViewee">
+              <user-video :streamManager="publisher" class="screen-res-sm"/>
+            </span>
+            <span v-for="sub in viewers" :key="sub.stream.connection.connectionId">
+              <user-video
+                class="screen-res-sm"
                 :stream-manager="sub" 
-                :id = "sub.stream.connection.connectionId"
-                @click.native="updateMainVideoStreamManager(sub)"
               />
+            </span>
+                <v-list-item :key="item">
+
+                    </v-list-item>
+
+                    <v-divider></v-divider>
+                 
+                </v-virtual-scroll>
+              </v-card>
             </div>
-          </v-row>
-          <!-- 면접관 -->
-          <v-row style="height: 87%">
+          </v-col>
+
+            <!--면접관
             <v-col cols="4" class="d-flex flex-column justify-center align-center">
               <span v-if="!isViewee">
                 <user-video :streamManager="publisher" class="screen-res-sm"/>
@@ -98,9 +136,56 @@
                   :stream-manager="sub" 
                 />
               </span>
+            </v-col>-->
+            <v-col cols="8" class='d-flex flex-column align-center'>
+              <!--지원자 여러명-->
+              <v-row>
+                <div v-if="!isViewee" class='d-flex justify-center'>
+                  <user-video v-for="sub in viewees" :key="sub.stream.connection.connectionId"
+                    class= 'screen-res'
+                    :stream-manager="sub" 
+                    :id = "sub.stream.connection.connectionId"
+                    @click.native="updateMainVideoStreamManager(sub)"
+                  />
+                </div>
+              </v-row>
+              <!--지원자 1명-->
+              <v-row class="d-flex flex-wrap justify-center align-center">
+                <span v-if="isViewee">
+                  <user-video :streamManager="publisher" class="screen-res-md"/>
+                </span>
+                <span v-else>
+                  <user-video v-if="mainStreamManager" :streamManager="mainStreamManager" class="screen-res-md"/>
+                </span>
+              </v-row>              
             </v-col>
+          </v-row>
+          <!--맨위 오른쪽 지원자들-->
+          <!-- <v-row>
+            <div v-if="!isViewee" class='d-flex justify-center'>
+              <user-video v-for="sub in viewees" :key="sub.stream.connection.connectionId"
+                class= 'screen-res'
+                :stream-manager="sub" 
+                :id = "sub.stream.connection.connectionId"
+                @click.native="updateMainVideoStreamManager(sub)"
+              />
+            </div>
+          </v-row> -->
+          <!-- 면접관 -->
+          <!-- <v-row style="height: 87%">
+            <v-col cols="4" class="d-flex flex-column justify-center align-center">
+              <span v-if="!isViewee">
+                <user-video :streamManager="publisher" class="screen-res-sm"/>
+              </span>
+              <span v-for="sub in viewers" :key="sub.stream.connection.connectionId">
+                <user-video
+                  class="screen-res-sm"
+                  :stream-manager="sub" 
+                />
+              </span>
+            </v-col> -->
             <!-- 지원자 -->
-            <v-col cols="8" class="d-flex flex-wrap justify-center align-center">
+            <!-- <v-col cols="8" class="d-flex flex-wrap justify-center align-center">
               <span v-if="isViewee">
                 <user-video :streamManager="publisher" class="screen-res-md"/>
               </span>
@@ -108,7 +193,7 @@
                 <user-video v-if="mainStreamManager" :streamManager="mainStreamManager" class="screen-res-md"/>
               </span>
             </v-col>
-          </v-row>
+          </v-row> -->
         </v-col>
 
         <!-- 우측 중앙 - 기능 탭 -->
@@ -310,7 +395,10 @@ export default {
       questions: [
         { title: '면접 시간은 어떻게 되나요?', answer: '안 알랴줌' },
         { title: '뭐야 내 면접 돌려줘요', answer: '안 돼 안 바꿔줘 바꿀 생각 없어 빨리 돌아가' },
-      ]
+      ],
+
+      //스크롤
+      benched: 0,
     }
   },
   created: function () {
@@ -681,13 +769,20 @@ export default {
   },
 
   computed: {
+    items () {
+        return Array.from({ length: this.length }, (k, v) => v + 1)
+      },
+      length () {
+        return 7000
+      },
   },
 }
 </script>
 
 <style scoped>
 #waitroom {
-  height: 100%;
+  /* height: 100%; */
+  height: 91vh;
   display: flex;
   flex-direction: column;
   background-color: #ECEFF1;
