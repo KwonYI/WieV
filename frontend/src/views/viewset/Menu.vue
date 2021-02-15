@@ -3,17 +3,20 @@
     <v-container fluid>
       <v-row>
         <div>
-          <v-card class="mx-auto mt-5 rounded-b-lg d-flex justify-space-between align-center">
-              <div class="d-flex">
-                <v-icon large color="blue-grey darken-3" class="ml-5">mdi-calendar-multiple</v-icon>
+          <v-card class="mx-auto mt-2 rounded-b-lg d-flex justify-space-between align-center">
             <v-card-title>
-              [ {{recruitItem.reYear}}년도 {{recruitItem.reFlag}} {{recruitItem.reStatus}} ] 공고 현황
+              <v-icon large color="blue-grey darken-3" class="ml-5" left>mdi-calendar-multiple</v-icon>
+               [ {{recruitItem.reYear}}년도 {{recruitItem.reFlag}} {{recruitItem.reStatus}} ] 공고 현황
             </v-card-title>
 
-              </div>
-
-            <v-btn rounded class="mr-5" color="red lighten-1" outlined @click="deleteRecruit(recruitItem.reSeq)"><v-icon left>mdi-trash-can</v-icon>공고 삭제</v-btn>
-            <!-- <v-card-subtitle></v-card-subtitle> -->
+            <div>
+              <v-btn rounded class="mr-5" color="blue-grey darken-3" outlined :to="{ name: 'CreateSet', params: { recruitItem: recruitItem }}">
+                <v-icon left>mdi-calendar-plus</v-icon> 면접스케줄 생성
+              </v-btn>
+              <v-btn rounded class="mr-5" color="red lighten-1" outlined @click="deleteRecruit(recruitItem.reSeq)">
+                <v-icon left>mdi-trash-can</v-icon>공고 삭제
+              </v-btn>
+            </div>
           </v-card>
         </div>
         <v-col cols="2">
@@ -151,8 +154,13 @@
     left: 0;
     /* position: fixed; */
     /* height: 100%; */
-    height: 80vh;
+    height: 77vh;
     /* width: 12vw; */
   }
+
+  #Menu {
+    height: 91vh;
+  }
+
 
 </style>
