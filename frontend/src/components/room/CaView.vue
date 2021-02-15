@@ -68,29 +68,29 @@
         </v-row>
 
           <v-row>
-            <!--면접관-->
-            <v-col cols="4" class="d-flex flex-column justify-center align-center">
-              <span v-if="!isViewee">
-                <user-video :streamManager="publisher" class="screen-res-sm"/>
-              </span>
-              <span v-for="sub in viewers" :key="sub.stream.connection.connectionId">
-                <user-video
-                  class="screen-res-sm"
-                  :stream-manager="sub" 
-                />
-              </span>
+            <!--스크롤 면접관-->
+            <v-col cols="4" class="d-flex flex-column justify-center align-center no-gutters" style="">
+              <div class="overflow-y-auto pr-2" style="height:70vh">
+                <span v-if="!isViewee">
+                  <user-video :streamManager="publisher" class="screen-res-sm" />
+                </span>
+                <span v-for="sub in viewers" :key="sub.stream.connection.connectionId">
+                  <user-video class="screen-res-sm" :stream-manager="sub" />
+                </span>
+              </div>
             </v-col>
+
             <v-col cols="8" class='d-flex flex-column align-center'>
               <!--지원자 여러명-->
-              <v-row>
-                <div v-if="!isViewee" class='d-flex justify-center'>
-                  <user-video v-for="sub in viewees" :key="sub.stream.connection.connectionId"
-                    class= 'screen-res'
-                    :stream-manager="sub" 
-                    :id = "sub.stream.connection.connectionId"
-                    @click.native="updateMain(sub)"
-                  />
-                </div>
+              <v-row v-if="!isViewee" style=" height:18vh; width:100% ">
+                <v-col cols="12" class="overflow-x-auto" style="width:100%;">
+
+                  <div class='d-flex'>
+                    <user-video v-for="sub in viewees" :key="sub.stream.connection.connectionId"
+                      class='screen-res  mx-2' :stream-manager="sub" :id="sub.stream.connection.connectionId"
+                      @click.native="updateMain(sub)" />
+                  </div>
+                </v-col>
               </v-row>
               <!--지원자 1명-->
               <v-row class="d-flex flex-wrap justify-center align-center">
@@ -181,9 +181,9 @@
               <span v-if="item.quest !== '자기소개서'">
                 질문 {{ i+1 }}
               </span>
-              <span v-else>
-                자기소개서
-              </span>
+            </v-tab>
+            <v-tab>
+              채팅
             </v-tab>
           </v-tabs>
           <v-card-text class="">
@@ -198,6 +198,27 @@
                   {{ item.answer }}
                 </v-virtual-scroll>
               </v-tab-item>
+              
+              <!--채팅기능-->
+              <v-tab-item>
+                <v-sheet color="white" height="100%" elevation="3">
+                  <v-list class="pa-0" v-auto-bottom="messages">
+                    <div v-for="(msg, index) in messages" :key="index">
+                      {{ msg.from }} : {{ msg.text }}
+                    </div>
+                  </v-list>
+                  <v-text-field
+                    v-model="text"
+                    label="메세지를 입력하세요."
+                    class="pa-0 ma-0 mx-1"
+                    single-line
+                    hide-details
+                    dense
+                    @keyup.13="sendMessage"
+                  ></v-text-field>
+                </v-sheet>                
+              </v-tab-item>
+              
             </v-tabs-items>
             <!-- <v-textarea
               label="Memo"
