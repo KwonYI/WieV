@@ -57,10 +57,12 @@
                                 <v-text-field
                                   :label="item.label"
                                   :type="item.type"
+                                  :rules="item.label === '비밀번호 확인' ? passwordConfirmation : item.rule"
+                                  :class="item.longmsg"
                                   v-model="updateCredentials[item.value]"
                                 ></v-text-field>
                               </td>
-                              <v-btn v-if="index === 2" @click="password_certified">비밀번호 확인</v-btn>
+                              <!-- <v-btn v-if="index === 2" @click="password_certified">비밀번호 확인</v-btn> -->
                             </tr>
                           </tbody>
                         </template>
@@ -80,18 +82,19 @@
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn class="ma-3" text color="red lighten-2" v-bind="attrs" v-on="on">
                   <div>
-                    <v-icon>mdi-delete</v-icon> 회원정보 탈퇴
+                    <v-icon>mdi-delete</v-icon> 회원탈퇴
                   </div>
                 </v-btn>
                 </template>
     
                 <v-card>
                   <v-card-title class="headline main-bg-navy lighten-2">
-                    <div>회원정보 탈퇴</div>
+                    <div>회원탈퇴</div>
                   </v-card-title>
           
                   <v-card-text>
                     <v-container class="d-flex flex-column" fluid>
+                      <div>회원탈퇴를 위해 비밀번호를 입력해주세요.</div>
                       <v-simple-table fixed-header class="d-flex flex-column" style="overflow-y: hidden">
                         <template v-slot:default>
                           <tbody>
@@ -141,14 +144,42 @@ export default {
       dialogDelete: false,
 
       updateUserInfo: [
-        { label: "이름", type: "text", value: "hrName" },
-        { label: "비밀번호", type: "password", value: "hrPassword" },
+        { 
+          label: "이름", 
+          type: "text", 
+          rule: [
+            value => !!value || '이름은 필수 항목입니다.',
+          ],
+          value: "hrName",
+          longmsg: ''
+        },
+        { 
+          label: "비밀번호", 
+          type: "password",
+          rule: [
+            value => !!value || '비밀번호는 필수 항목입니다.',
+            value => /^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/.test(value) || '비밀번호는 반드시 1개 이상의 문자, 숫자, 특수문자를 포함해야 합니다.'
+          ],
+          value: "hrPassword",
+          longmsg: 'longmsg'
+        },
         {
           label: "비밀번호 확인",
           type: "password",
+          rule: [],
           value: "hrPasswordConfirmation",
+          longmsg: ''
         },
-        { label: "연락처", type: "text", value: "hrPhone" },
+        { 
+          label: "연락처", 
+          type: "text", 
+          rule: [
+            value => !!value || '연락처는 필수 항목입니다.',
+            value => /^\d{3}-\d{3,4}-\d{4}$/.test(value) || '연락처 형식이 유효하지 않습니다.'
+          ],
+          value: "hrPhone",
+          longmsg: ''
+        },
       ],
       updateCredentials: {
         hrName: "",
@@ -159,7 +190,11 @@ export default {
       isPasswordCertified:false,
 
       deleteUserInfo: [
-        { label: "비밀번호", type: "password", value: "hrPassword" },
+        { 
+          label: "비밀번호", 
+          type: "password",
+          value: "hrPassword",
+        },
       ],
       deleteCredentials: {
         hrPassword: "",
@@ -170,6 +205,11 @@ export default {
   },
   computed: {
     ...mapState(['user']),
+    passwordConfirmation() {
+      return [
+        value => value === this.updateCredentials.hrPassword || '비밀번호가 일치하지 않습니다.' 
+      ]
+    }
   },
   methods: {
     //비밀번호 같은지 다른지 확인
@@ -257,10 +297,18 @@ export default {
 <style scoped>
 #profile{
   background-color: aliceblue;
-  height: 100%;
+  height: 91vh;
 }
 
 #profileRow {
   height: 30vh;
+}
+
+h2 {
+  margin-bottom: 0px;
+}
+
+::v-deep .longmsg > .v-input__control {
+  width: min-content;
 }
 </style>

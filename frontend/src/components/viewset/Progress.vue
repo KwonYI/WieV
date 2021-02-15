@@ -26,10 +26,13 @@
             <span v-for="(view, i) in item.interviewTypeList" :key="i">{{ view }} </span>
           </td>
           <td>
-            <div>
+            <div v-if="item.groupApplicantList.length > 3">
               <span v-for="(viewee, i) in slicedViewee(item.groupApplicantList)" :key="i">{{ viewee }} </span>
               <br>
               외 {{ item.groupApplicantList.length - 3 }}명
+            </div>
+            <div v-else>
+              <span v-for="(viewee, i) in slicedViewee(item.groupApplicantList)" :key="i">{{ viewee }} </span>
             </div>
           </td>
           <td>

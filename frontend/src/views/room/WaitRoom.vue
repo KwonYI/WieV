@@ -78,52 +78,49 @@
           </v-row>
 
           <v-row>
-          <!--스크롤 면접관-->
-         <v-col cols="4" class="d-flex flex-column justify-center align-center">
-          <div>
-              <v-responsive
-                max-width="400"
-                class="mx-auto mb-4"
-              >
-              <v-text-field
-                v-model="benched"
-                type="number"
-                min="0"
-                max="10"
-              ></v-text-field>
-            </v-responsive>
+            <!--스크롤 면접관-->
+            <v-col cols="4" class="d-flex flex-column justify-center align-center">
+              <div>
+                <v-responsive
+                  max-width="400"
+                  class="mx-auto mb-4"
+                >
+                <v-text-field
+                  v-model="benched"
+                  type="number"
+                  min="0"
+                  max="10"
+                ></v-text-field>
+                </v-responsive>
 
-            <v-card
-              elevation="16"
-              max-width="400"
-              class="mx-auto"
-            >
-              <v-virtual-scroll
-                :bench="benched"
-                :items="items"
-                height="300"
-                item-height="64"
-              >
-                  
-            <span v-if="!isViewee">
-              <user-video :streamManager="publisher" class="screen-res-sm"/>
-            </span>
-            <span v-for="sub in viewers" :key="sub.stream.connection.connectionId">
-              <user-video
-                class="screen-res-sm"
-                :stream-manager="sub" 
-              />
-            </span>
-                <v-list-item :key="item">
-
+                <v-card
+                  elevation="16"
+                  max-width="400"
+                  class="mx-auto"
+                >
+                  <v-virtual-scroll
+                    :bench="benched"
+                    :items="items"
+                    height="300"
+                    item-height="64"
+                  >
+                        
+                    <span v-if="!isViewee">
+                      <user-video :streamManager="publisher" class="screen-res-sm"/>
+                    </span>
+                    <span v-for="sub in viewers" :key="sub.stream.connection.connectionId">
+                      <user-video
+                        class="screen-res-sm"
+                        :stream-manager="sub" 
+                      />
+                    </span>
+                    <v-list-item :key="item">
                     </v-list-item>
-
-                    <v-divider></v-divider>
-                 
-                </v-virtual-scroll>
-              </v-card>
-            </div>
-          </v-col>
+                    <v-divider></v-divider> 
+                  </v-virtual-scroll>
+                </v-card>
+                </div>
+            </v-col>
 
             <!--면접관
             <v-col cols="4" class="d-flex flex-column justify-center align-center">
@@ -174,23 +171,29 @@
           <!-- 면접관 -->
           <!-- <v-row style="height: 87%">
             <v-col cols="4" class="d-flex flex-column justify-center align-center">
+               지원자가 아니면 this.publisher는 면접관(대기관)이므로 col 4에 출력
               <span v-if="!isViewee">
                 <user-video :streamManager="publisher" class="screen-res-sm"/>
               </span>
+               나(this.publisher)를 제외한 모든 면접관
               <span v-for="sub in viewers" :key="sub.stream.connection.connectionId">
                 <user-video
                   class="screen-res-sm"
-                  :stream-manager="sub" 
+                  :stream-manager="sub"
                 />
               </span>
-            </v-col> -->
-            <!-- 지원자 -->
-            <!-- <v-col cols="8" class="d-flex flex-wrap justify-center align-center">
+            </v-col>
+             지원자 한명의 화면
+            <v-col cols="8" class="d-flex flex-wrap justify-center align-center">
+               지원자면 나(this.publisher)를 col 8에 출력
               <span v-if="isViewee">
-                <user-video :streamManager="publisher" class="screen-res-md"/>
+                <user-video :stream-manager="publisher" class="screen-res-md"/>
               </span>
+               지원자가 아니면 위의 지원자들 화면에서 클릭한 사람을 보여준다 
+              this.mainStreamManager 면접관 입장에서 클릭한 지원자의 계정이 들어있다 
+              user-video에서 :stream-manager 이 값은 필수 
               <span v-else>
-                <user-video v-if="mainStreamManager" :streamManager="mainStreamManager" class="screen-res-md"/>
+                <user-video v-if="mainStreamManager" :stream-manager="mainStreamManager" class="screen-res-md"/>
               </span>
             </v-col>
           </v-row> -->
@@ -633,7 +636,10 @@ export default {
     },
 
     updateMainVideoStreamManager(stream) {
+      console.log("클릭한 세션", stream)
+      console.log("클릭 전 메인 스트림", this.mainStreamManager)
       this.mainStreamManager = stream
+      console.log("클릭 후 메인 스트림", this.mainStreamManager)
     },
 
     audioOnOOff() {

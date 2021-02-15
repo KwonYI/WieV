@@ -259,7 +259,7 @@
 
 				team: [
 					{
-						img: require('@/assets/images/img5.jpg'),
+						img: require('@/assets/images/team_ig.jpg'),
 						name: '정일규',
 						position: 'Back',
 						github: '',
@@ -267,7 +267,7 @@
 						instagram: ''
 					},
 					{
-						img: require('@/assets/images/img5.jpg'),
+						img: require('@/assets/images/team_yi.png'),
 						name: '권영일',
 						position: 'Back',
 						github: '',
@@ -275,7 +275,7 @@
 						instagram: ''
 					},
 					{
-						img: require('@/assets/images/img5.jpg'),
+						img: require('@/assets/images/team_mj.png'),
 						name: '김민정',
 						position: 'Front',
 						github: '',
@@ -283,7 +283,7 @@
 						instagram: ''
 					},
 					{
-						img: require('@/assets/images/img5.jpg'),
+						img: require('@/assets/images/team_yj.png'),
 						name: '김윤지',
 						position: 'Back',
 						github: '',
@@ -291,7 +291,7 @@
 						instagram: ''
 					},
 					{
-						img: require('@/assets/images/img5.jpg'),
+						img: require('@/assets/images/team_jh.png'),
 						name: '이준희',
 						position: 'Front',
 						github: '',

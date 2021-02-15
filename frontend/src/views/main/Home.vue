@@ -11,10 +11,10 @@
             <v-col v-if="!getAccessToken">
               비대면 화상면접 플랫폼
             </v-col>
-            <p :class="[getAccessToken ? 'text-h4' : 'text-h3']">WieV</p>
+            <img class="mt-3" v-if="!getAccessToken" :src="images.logo" width="200" alt="logo">
+            <p :class="[getAccessToken ? 'text-h4' : 'text-h3']" class="mt-3">WieV</p>
             
 
-            <img v-if="!getAccessToken" :src="images.logo" width="300" alt="logo">
           </v-col>
 
           <!-- 로그인 시, 면접스케줄 현황 -->

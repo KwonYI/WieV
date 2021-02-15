@@ -88,10 +88,13 @@
                     <span v-for="(view, i) in item.interviewTypeList" :key="i">{{ view }} </span>
                   </td>
                   <td>
-                    <div>
+                    <div v-if="item.groupApplicantList.length > 3">
                       <span v-for="(viewee, i) in slicedViewee(item.groupApplicantList)" :key="i">{{ viewee }} </span>
                       <br>
                       외 {{ item.groupApplicantList.length - 3 }}명
+                    </div>
+                    <div v-else>
+                      <span v-for="(viewee, i) in slicedViewee(item.groupApplicantList)" :key="i">{{ viewee }} </span>
                     </div>
                   </td>
                   <td>
@@ -114,13 +117,13 @@
                         <tr v-for="(item, i) in items" :key="i" style="background-color:ivory;">
                           <td>{{ item.groupDetailSeq }}</td>
                           <td>{{ groupItem.groupDate }}</td>
-                          <td>{{ groupItem.groupStartTime }}</td>
+                          <td>{{ groupItem.groupStartTime }} : 00</td>
                           <td>{{ groupItem.groupCareerName }}</td>
                           <td>
-                            <span v-for="(view, i) in item.detailOrder" :key="i">{{ view }} </span>
+                            <span v-for="(view, i) in item.detailOrder" :key="i">{{ i+1 }}.{{ view }} </span>
                           </td>
                           <td>
-                            <span v-for="(viewee, i) in slicedViewee(item.groupDetailApplicant)" :key="i">{{ viewee }} </span>
+                            <span v-for="(viewee, i) in item.groupDetailApplicant" :key="i">{{ viewee }} </span>
                           </td>
                           <td>
                             <span v-for="(guide, i) in slicedGuide(groupItem.waitInterviewerList)" :key="i">{{ guide.interviewerName }} </span>
@@ -486,7 +489,7 @@
 
   #createset{
     background-color: aliceblue;
-    height: 100%;
+    height: 91vh;
   }
 
   /* table.table {

@@ -21,6 +21,7 @@
       <thead>
         <tr>
           <th class="text-center">No</th>
+          <th class="text-center">부서</th>
           <th class="text-center">직군</th>
           <th class="text-center">이름</th>
           <th class="text-center">연락처</th>
@@ -36,6 +37,7 @@
           <tbody>
             <tr v-for="(viewee, index) in getVieweeListCurrentRecruit" :key="viewee.index" class="text-center">
               <td>{{ index + 1 }}</td>
+              <td>{{ viewee.applyPartName }}</td>
               <td>{{ viewee.applyCareerName }}</td>
               <td>{{ viewee.applyName }}</td>
               <td>{{ viewee.applyPhone }}</td>

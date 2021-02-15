@@ -40,6 +40,24 @@ let vieweeInfo = {
   applyResume1: 'apply-Resume1',
   applyResume2: 'apply-Resume2',
   applyResume3: 'apply-Resume3',
+  applyPartName: 'apply-Part-Name',
+}
+
+let viewerInfo = {
+
+  interviewerAssigned: 'interviewer-Assigned',
+  interviewerCareerName: 'interviewer-Career-Name',
+  interviewerCareerSeq: 'interviewer-Career-Seq',
+  interviewerCompanyName: 'interviewer-Company-Name',
+  interviewerCompanySeq: 'interviewer-Company-Seq',
+  interviewerEmail: 'interviewer-Email',
+  interviewerName: 'interviewer-Name',
+  interviewerPartName: 'interviewer-Part-Name',
+  interviewerPartSeq: 'interviewer-Part-Seq',
+  interviewerPassword: 'interviewer-Password',
+  interviewerPhone: 'interviewer-Phone',
+  interviewerSeq: 'interviewer-Seq',
+  interviewerWait: 'interviewer-Wait',
 
 }
 
@@ -83,6 +101,7 @@ export default new Vuex.Store({
       applyResume1: '',
       applyResume2: '',
       applyResume3: '',
+      applyPartName: '',
     },
 
     //채용담당자가 선택한 현재 공고 :
@@ -94,7 +113,7 @@ export default new Vuex.Store({
     whoLogin: "viewer", //Manager, viewer, viewee
 
     companyNameList: [],
-    
+
 
     companyList: [{
       comSeq: 0,
@@ -115,11 +134,11 @@ export default new Vuex.Store({
     }, ],
 
     // 부서와 직군 정보
-    partCareer:{
-        partSeq: 0,
-        partName: '',
-        careerName: [],
-      },
+    partCareer: {
+      partSeq: 0,
+      partName: '',
+      careerName: [],
+    },
 
     partCareerList: [],
 
@@ -231,7 +250,7 @@ export default new Vuex.Store({
     getComViewerList(state) {
       return state.user.comViewerList
     },
-    
+
 
     getParticipants(state) {
       // console.log("게터 실행, 모든 연결 참가자 정보 수")
@@ -330,7 +349,7 @@ export default new Vuex.Store({
       // console.log("mutaions의 INSERT_RECRUIT", res)
       state.recruitList.push(res)
     },
-    DELETE_RECRUIT(state, reSeq){
+    DELETE_RECRUIT(state, reSeq) {
       state.recruitList.splice(state.recruitList.findIndex(r => r.reSeq == reSeq), 1)
     },
 
@@ -341,10 +360,7 @@ export default new Vuex.Store({
     //   state.recruitVieweeList = res
     //   state.comVieweeList.push(res)
     // },
-    // 면접관 리스트 state에 저장
-    GET_VIEWER_LIST(state, res) {
-      state.comViewerList = res
-    },
+   
     addParticipants(state, data) {
       // console.log("뮤테이션 실행 밑에 있는 데이터 넣을 예정")
       // console.log(data)
@@ -393,6 +409,7 @@ export default new Vuex.Store({
     // 지원자 리스트 state에 저장
     GET_VIEWEE_LIST(state, res) {
       state.comVieweeList = []
+      console.log("GET_VIEWEE_LIST", res)
       for (var i = 0; i < res.length; i++) {
         // console.log(res[i])
         state.viewee = {}
@@ -405,10 +422,31 @@ export default new Vuex.Store({
       }
     },
 
+     // 면접관 리스트 state에 저장
+     GET_VIEWER_LIST(state, res) {
+      state.comViewerList = []
+      console.log("GET_VIEWER_LIST", res)
+      for (var i = 0; i < res.length; i++) {
+        // console.log(res[i])
+        state.viewer = {}
+        for (const key in viewerInfo) {
+          state.viewer[key] = res[i][viewerInfo[key]]
+          
+        }
+        state.comViewerList.push(state.viewer)
+      }
+    },
+
+     // 면접관 리스트 state에 저장
+    //  GET_VIEWER_LIST(state, res) {
+    //   console.log("GET_VIEWER_LIST", res)
+    //   state.comViewerList = res
+    // },
+
     GET_PART_CAREER_LIST(state, res) {
       for (var i = 0; i < res.length; i++) {
         const element = res[i];
-        
+
         state.partCareer = {}
         state.partCareer.partSeq = element["part-Seq"]
         state.partCareer.partName = element["part-Name"]
@@ -484,9 +522,10 @@ export default new Vuex.Store({
     // 공고 삭제하기
     DELETE_RECRUIT(context, reSeq) {
       axios.delete(`${SERVER_URL}/recruit/delete/` + reSeq)
-        .then(() => {alert("공고가 삭제되었습니다!")
-          context.commit("DELETE_RECRUIT", reSeq)}
-        )
+        .then(() => {
+          alert("공고가 삭제되었습니다!")
+          context.commit("DELETE_RECRUIT", reSeq)
+        })
     },
     // 지원자를 엑셀로 업데이트하기
     UPDATE_VIEWEE_LIST(context, recruitNo) {
@@ -523,7 +562,7 @@ export default new Vuex.Store({
         .catch(err => console.log(err))
     },
 
-    GET_PART_CAREER_LIST(context, comSeq){
+    GET_PART_CAREER_LIST(context, comSeq) {
       axios.get(`${SERVER_URL}/recruit/partAndCareerList/` + comSeq)
         .then(res => {
           context.commit("GET_PART_CAREER_LIST", res.data)

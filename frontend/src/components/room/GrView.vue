@@ -85,7 +85,7 @@
           <!-- 면접관 -->
           <v-col cols="4" class="viewer-box centering flex-column">
             <span v-if="!isViewee">
-              <user-video :streamManager="publisher" class="screen-res-sm"/>
+              <user-video :stream-manager="publisher" class="screen-res-sm"/>
             </span>
             <span v-for="sub in viewers" :key="sub.stream.connection.connectionId">
               <user-video
@@ -97,10 +97,10 @@
           <!-- 지원자 -->
           <v-col cols="8" class="viewee-box centering flex-wrap">
             <span v-if="isViewee">
-              <user-video :streamManager="publisher" class="screen-res-md"/>
+              <user-video :stream-manager="publisher" class="screen-res-md"/>
             </span>
             <span v-else>
-              <user-video :streamManager="mainStreamManager" class="screen-res-md"/>
+              <user-video :stream-manager="mainStreamManager" class="screen-res-md"/>
             </span>
           </v-col>
         </v-row>

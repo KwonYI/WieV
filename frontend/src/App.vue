@@ -320,6 +320,13 @@ export default {
       }
 
     },
+    findPasswordOutside: function() {
+      this.credentials.hrName = ""
+      this.credentials.hrEmail = ""
+      this.credentials.hrPhone = ""
+      this.dialogPassword = false
+    },
+
     login: function () {
       this.$store.dispatch("LOGIN", this.userCredentials)
         .then(() => {
@@ -333,6 +340,12 @@ export default {
 
       this.dialogLogin = false
     },
+    loginOutside: function() {
+      this.dialogLogin = false
+      this.userCredentials.userEmail = ''
+      this.userCredentials.userPassword = ''
+    },
+
     logout: function () {
       this.$store.dispatch("LOGOUT")
         .then(() => this.$router.replace({
