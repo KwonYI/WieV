@@ -9,9 +9,8 @@
           <v-col cols="2" class="d-flex align-center">
             <h5 class="mb-0 font-weight-bold">직무 면접실</h5>
           </v-col>
-          <v-col cols="3"></v-col>
           <!-- 타이머 -->
-          <v-col cols="7" class="centering justify-start">
+          <!-- <v-col cols="7" class="centering justify-start">
             <v-card
               elevation="3"
               height="70%"
@@ -21,13 +20,13 @@
             >
               <span class="subtitle-1 px-4">
                 남은 시간 {{ minutes }} : {{ seconds }}
-              </span>
+              </span> -->
               <!-- <span v-for="(item, i) in timerBtn" :key="i">
                 <v-btn v-if="item.if" color="#757575" height="100%" tile dark @click="item.click">
                   {{ item.name }}
                 </v-btn>
               </span> -->
-              <v-btn v-if="!timer" color="#757575" height="100%" tile dark @click="startTimer">
+              <!-- <v-btn v-if="!timer" color="#757575" height="100%" tile dark @click="startTimer">
                 시작
               </v-btn>
               <v-btn v-else color="#757575" height="100%" tile dark @click="stopTimer">
@@ -65,11 +64,47 @@
                 hide-details
               ></v-text-field>
             </v-col>
-          </v-col>
+          </v-col>  -->
         </v-row>
 
+          <v-row>
+            <!--면접관-->
+            <v-col cols="4" class="d-flex flex-column justify-center align-center">
+              <span v-if="!isViewee">
+                <user-video :streamManager="publisher" class="screen-res-sm"/>
+              </span>
+              <span v-for="sub in viewers" :key="sub.stream.connection.connectionId">
+                <user-video
+                  class="screen-res-sm"
+                  :stream-manager="sub" 
+                />
+              </span>
+            </v-col>
+            <v-col cols="8" class='d-flex flex-column align-center'>
+              <!--지원자 여러명-->
+              <v-row>
+                <div v-if="!isViewee" class='d-flex justify-center'>
+                  <user-video v-for="sub in viewees" :key="sub.stream.connection.connectionId"
+                    class= 'screen-res'
+                    :stream-manager="sub" 
+                    :id = "sub.stream.connection.connectionId"
+                    @click.native="updateMainVideoStreamManager(sub)"
+                  />
+                </div>
+              </v-row>
+              <!--지원자 1명-->
+              <v-row class="d-flex flex-wrap justify-center align-center">
+                <span v-if="isViewee">
+                  <user-video :stream-manager="publisher" class="screen-res-md"/>
+                </span>
+                <span v-else>
+                  <user-video v-if="mainStreamManager" :stream-manager="mainStreamManager" class="screen-res-md"/>
+                </span>
+              </v-row>              
+            </v-col>
+          </v-row>
         <!-- 메인 위 - 지원자들 화면, 클릭하면 큰 화면으로 보기 -->
-        <v-row>
+        <!-- <v-row>
           <div v-if="!isViewee" class='d-flex justify-center'>
             <user-video v-for="sub in viewees" :key="sub.stream.connection.connectionId"
               class= 'screen-res'
@@ -78,12 +113,12 @@
               @click.native="updateMain(sub)"
             />
           </div>
-        </v-row>
+        </v-row> -->
 
         <!-- 메인 중앙 - 면접관, 지원자 화면 -->
-        <v-row class="main-screen">
+        <!-- <v-row class="main-screen"> -->
           <!-- 면접관 -->
-          <v-col cols="4" class="viewer-box centering flex-column">
+          <!-- <v-col cols="4" class="viewer-box centering flex-column">
             <span v-if="!isViewee">
               <user-video :stream-manager="publisher" class="screen-res-sm"/>
             </span>
@@ -93,9 +128,9 @@
                 :stream-manager="sub" 
               />
             </span>
-          </v-col>
+          </v-col> -->
           <!-- 지원자 -->
-          <v-col cols="8" class="viewee-box centering flex-wrap">
+          <!-- <v-col cols="8" class="viewee-box centering flex-wrap">
             <span v-if="isViewee">
               <user-video :stream-manager="publisher" class="screen-res-lr"/>
             </span>
@@ -103,7 +138,7 @@
               <user-video :stream-manager="mainStreamManager" class="screen-res-md"/>
             </span>
           </v-col>
-        </v-row>
+        </v-row> -->
       </v-col>
 
       <!-- 우측 중앙 - 기능 탭 -->
@@ -132,7 +167,7 @@
           </v-sheet>
         </div>
         <!-- 자기소개서 -->
-        <v-card v-if="!isViewee" style="height: 90%">
+        <v-card v-if="!isViewee" style="height: 82%">
           <v-tabs
             v-model="letterTab"
             slider-color="#304B61"
@@ -164,7 +199,7 @@
                 </v-virtual-scroll>
               </v-tab-item>
             </v-tabs-items>
-            <v-textarea
+            <!-- <v-textarea
               label="Memo"
               outlined
               rows="2"
@@ -172,12 +207,66 @@
               style="margin-top: .5rem;"
               no-resize
               hide-details
-            ></v-textarea>
+            ></v-textarea> -->
           </v-card-text>
+      
         </v-card>
+        <!--타이머-->
+          <v-card v-if="!isViewee" style="height: 8%">
+            <v-card 
+              elevation="3"
+              height="100%"
+              class="centering"
+              :class="isViewee ? 'd-none' : ''"
+              tile
+            >
+              <span class="subtitle-1 px-4 text-center">
+                타이머 {{ minutes }}:{{ seconds }}
+              </span>
+              <!-- <span v-for="(item, i) in timerBtn" :key="i">
+                <v-btn v-if="item.if" color="#757575" height="100%" tile dark @click="item.click">
+                  {{ item.name }}
+                </v-btn>
+              </span> -->
+              <v-btn v-if="!timer" color="#757575" height="100%" tile dark @click="startTimer">
+                시작
+              </v-btn>
+              <v-btn v-else color="#757575" height="100%" tile dark @click="stopTimer">
+                정지
+              </v-btn>
+              <v-btn v-if="resetButton" color="#757575" height="100%" tile dark @click="resetTimer">
+                리셋
+              </v-btn>
+              <v-btn v-if="!timer" color="#757575" height="100%" tile dark @click="editTimer">
+                설정
+              </v-btn>
+              <v-col v-if="edit" cols="4" class="d-flex pa-0" style="height: 100%">
+                <v-text-field
+                  v-model="inputMin"
+                  solo
+                  height="100%"
+                  max-width="70px"
+                  type="number"
+                  label="분"
+                  class="time-input"
+                  tile
+                  hide-details
+                ></v-text-field>
+                <v-text-field
+                  v-model="inputSec"
+                  solo
+                  height="100%"
+                  max-width="70px"
+                  type="number"
+                  label="초"
+                  class="time-input"
+                  tile
+                  hide-details
+                ></v-text-field>
+              </v-col>              
+            </v-card>
+          </v-card>
         <v-card v-else style="height: 90%"></v-card>
-        <!-- 평가 -->
-
       </v-col>
 
     </v-row>
