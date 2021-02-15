@@ -478,40 +478,7 @@ export default {
       }
     })
 
-    this.session.connect(this.token, { name: this.userName, type : this.type, userSeq : this.userSeq})
-      .then(() => {
-        let publisher = this.OV.initPublisher(undefined, {
-          audioSource: undefined, // The source of audio. If undefined default microphone
-          videoSource: undefined, // The source of video. If undefined default webcam
-          publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
-          publishVideo: true, // Whether you want to start publishing with your video enabled or not
-          // resolution: "272x153", // The resolution of your video
-          resolution: "1280x720", // The resolution of your video
-          frameRate: 30, // The frame rate of your video
-          insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
-          mirror: false, // Whether to mirror your local video or not
-        })
-
-        // this.mainStreamManager = publisher
-        this.publisher = publisher
-
-        this.session.publish(this.publisher)
-
-        this.myConnectionId = this.publisher.stream.connection.connectionId
-
-        let info = JSON.parse(this.publisher.stream.connection.data.split('%/%')[0])
-        console.log("내 이름은 ", info['name'], " 이고", info['type'], "야")
-
-        // if(this.type === 'viewee'){
-        //   this.viewees.push(this.publisher)
-        //   this.viewee_list.push(info['name'])
-        // }else{
-        //   this.viewers.push(this.publisher)
-        // }
-      })
-      .catch(err => {
-        console.log("There was an error connecting to the session:", err.code, err.message)
-      })
+    this.connectSession();
 
     window.addEventListener("beforeunload", this.leaveSession)
     window.addEventListener("backbutton", this.leaveSession)
@@ -553,10 +520,7 @@ export default {
     },
 
     updateMainVideoStreamManager(stream) {
-      console.log("클릭한 세션", stream)
-      console.log("클릭 전 메인 스트림", this.mainStreamManager)
       this.mainStreamManager = stream
-      console.log("클릭 후 메인 스트림", this.mainStreamManager)
     },
 
     audioOnOOff() {
@@ -631,7 +595,7 @@ export default {
           console.log('소켓 연결 실패', error);
           this.connected = false;
         }
-      );        
+      );      
     },
 
     sendToSession() {
@@ -688,11 +652,59 @@ export default {
           .then()
           .catch(err => console.error(err))
         })
+      },
+
+      getNewToken(){
+        axios.get(`${SERVER_URL}/session/getToken`, {
+        params: {
+          sessionName: this.sessionName,
+          name: this.userName,
+          type: this.type,
+        }})
+        .then(res => {
+          this.token = res.data.token
+        })
+        .catch(err => {
+          console.log("토큰 재생성에서 에러 발생", err)
+        })
+      },
+
+      connectSession(){
+        this.session.connect(this.token, { name: this.userName, type : this.type, userSeq : this.userSeq})
+        .then(() => {
+          let publisher = this.OV.initPublisher(undefined, {
+            audioSource: undefined, // The source of audio. If undefined default microphone
+            videoSource: undefined, // The source of video. If undefined default webcam
+            publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
+            publishVideo: true, // Whether you want to start publishing with your video enabled or not
+            // resolution: "272x153", // The resolution of your video
+            resolution: "1280x720", // The resolution of your video
+            frameRate: 30, // The frame rate of your video
+            insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
+            mirror: false, // Whether to mirror your local video or not
+          })
+
+          // this.mainStreamManager = publisher
+          this.publisher = publisher
+
+          this.session.publish(this.publisher)
+
+          this.myConnectionId = this.publisher.stream.connection.connectionId
+
+          let info = JSON.parse(this.publisher.stream.connection.data.split('%/%')[0])
+          console.log("내 이름은 ", info['name'], " 이고", info['type'], "야")
+        })
+        .catch(err => {
+          console.log("There was an error connecting to the session:", err.code, err.message)
+        })
       }
   },
 
   computed: {
   },
+  watch : {
+
+  }
 }
 </script>
 
