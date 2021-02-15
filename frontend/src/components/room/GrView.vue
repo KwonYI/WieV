@@ -175,7 +175,24 @@
             ></v-textarea>
           </v-card-text>
         </v-card>
-        <v-card v-else style="height: 90%"></v-card>
+        <v-card style="height: 100px">
+          <v-sheet color="white" height="100%" elevation="3">
+            <v-list class="pa-0" v-auto-bottom="messages">
+              <div v-for="(msg, index) in messages" :key="index">
+                {{ msg.from }} : {{ msg.text }}
+              </div>
+            </v-list>
+            <v-text-field
+              v-model="text"
+              label="메세지를 입력하세요."
+              class="pa-0 ma-0 mx-1"
+              single-line
+              hide-details
+              dense
+              @keyup.13="sendMessage"
+            ></v-text-field>
+          </v-sheet>
+        </v-card>
         <!-- 평가 -->
 
       </v-col>
@@ -220,6 +237,9 @@ export default {
     },
     mainStreamManager :{
       type : Object
+    },
+    messages :{
+      type : Array
     }
   },
   data: function () {
@@ -248,6 +268,9 @@ export default {
       edit: false,
 
       clickedSeq : '',
+
+      // 채팅
+      text : '',
 
       // questionList: [],
       // 탭
@@ -333,6 +356,12 @@ export default {
     updateMain(stream) {
       this.clickedSeq = JSON.parse(stream.stream.connection.data.split('%/%')[0])['userSeq']
       this.$emit("updateMain", stream)
+    },
+
+    sendMessage() {
+      if (this.text === "") return
+      this.$emit("sendMessage", this.text)
+      this.text = ''
     },
   },
 
