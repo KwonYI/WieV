@@ -107,7 +107,7 @@
       </v-col>
 
       <!-- 우측 중앙 - 기능 탭 -->
-      <v-col v-if="!isViewee" cols="3" class="sub-box">
+      <v-col cols="3" class="sub-box">
         <!-- 대기실 - 면접실 메신저 -->
         <div :class="isViewee ? 'hidden' : ''" class="pb-2 mb-2 centering justify-space-between" style="height: 10%">
           <!-- 메시지 보내기 -->
@@ -157,7 +157,7 @@
                 {{ i+1 }}. {{ item.quest }} // {{clickedSeq}}번 지원자
                 <v-divider></v-divider>
                 <v-virtual-scroll
-                  item-height="250"
+                  item-height="400"
                   :items="[item]"
                 >
                   {{ item.answer }}

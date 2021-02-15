@@ -165,8 +165,7 @@ export default {
     axios
     .get(`${SERVER_URL}/applicant/getListBySessionName/` + this.sessionName)
     .then(res => {
-      this.allApplicantList=res.data
-      console.log("지원자 정보를 출력중(ViewRoom)", this.allApplicantList)
+      this.allApplicantList = res.data
     })
     .catch((err) => {
         console.log(err)
@@ -189,6 +188,8 @@ export default {
       let info = JSON.parse(subscriber.stream.connection.data.split('%/%')[0])
 
       if(info['type'] === 'viewee'){
+        console.log(info['type'], " 지원자 잡았다")
+        
         this.viewees.push(subscriber)
 
         if(!this.mainStreamManager){
@@ -197,6 +198,8 @@ export default {
 
         for (const apply of this.allApplicantList) {
           if(apply["apply-Seq"]==info["userSeq"]){
+
+            console.log("잡았다 요놈", apply["apply-Seq"])
             
             this.currentApplicantList[info["userSeq"]] = [
               {

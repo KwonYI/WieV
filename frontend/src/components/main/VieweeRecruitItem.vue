@@ -70,6 +70,13 @@
                   >
                     대기실 입장
                   </v-btn>
+                  <!-- 테스트용 -->
+                  <v-btn
+                    color="blue lighten-3 yellow--text"
+                    @click="goInterviewSession(interview.interviewSessionName, interview.interviewType)"
+                  >
+                    면접실 입장
+                  </v-btn>
                 </v-card-text>
               </v-card>
             </div>
@@ -131,6 +138,40 @@ export default {
           alert("방이 아직 개설되지 않았습니다.");
         });
     },
+
+    // 테스트용
+    goInterviewSession(interviewSessionName, interviewType) {
+      axios
+      .get(`${SERVER_URL}/session/join`, {
+        params: {
+          applicantName: this.intervieweeData.user.applyName,
+          sessionName: interviewSessionName,
+        },
+      })
+      .then((res) => {
+        console.log(res);
+        let routeData = this.$router.resolve({
+          name: "ViewRoom",
+          query: {
+            comName: this.intervieweeData.company.comName,
+            re_year: this.intervieweeData.recruit.reYear,
+            re_flag: this.intervieweeData.recruit.reFlag,
+            re_status: this.intervieweeData.recruit.reStatus,
+            token: res.data.token,
+            userName: res.data.applicantName,
+            userSeq : this.intervieweeData.user.applySeq,
+            type: res.data.type,
+            sessionName: interviewSessionName,
+            interviewType : interviewType,
+          },
+        });
+        window.open(routeData.href, "_blank");
+      })
+      .catch((err) => {
+        console.log(err);
+        alert("방이 아직 개설되지 않았습니다.");
+      });
+    }
   },
 };
 </script>
