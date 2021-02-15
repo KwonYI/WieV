@@ -80,18 +80,19 @@
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn class="ma-3" text color="red lighten-2" v-bind="attrs" v-on="on">
                   <div>
-                    <v-icon>mdi-delete</v-icon> 회원정보 탈퇴
+                    <v-icon>mdi-delete</v-icon> 회원탈퇴
                   </div>
                 </v-btn>
                 </template>
     
                 <v-card>
                   <v-card-title class="headline main-bg-navy lighten-2">
-                    <div>회원정보 탈퇴</div>
+                    <div>회원탈퇴</div>
                   </v-card-title>
           
                   <v-card-text>
                     <v-container class="d-flex flex-column" fluid>
+                      <div>회원탈퇴를 위해 비밀번호를 입력해주세요.</div>
                       <v-simple-table fixed-header class="d-flex flex-column" style="overflow-y: hidden">
                         <template v-slot:default>
                           <tbody>
@@ -257,10 +258,14 @@ export default {
 <style scoped>
 #profile{
   background-color: aliceblue;
-  height: 100%;
+  height: 91vh;
 }
 
 #profileRow {
   height: 30vh;
+}
+
+h2 {
+  margin-bottom: 0px;
 }
 </style>
