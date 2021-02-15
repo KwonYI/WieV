@@ -186,6 +186,8 @@ public class ApplicantController {
 				resultMap.put("apply-Assigned", applicant.getApplyAssigned());
 				// 지원자 직무 이름
 				resultMap.put("apply-Career-Name", careerDao.findCareerByCaSeq(applicant.getCareerCaSeq()).getCaName());
+				// 지원자 부서 이름
+				resultMap.put("apply-Part-Name", partDao.findPartByPartSeq(careerDao.findCareerByCaSeq(applicant.getCareerCaSeq()).getPartPartSeq()).getPartName());
 				// 지원자 공고 seq
 				resultMap.put("apply-Recruit-Seq", applicant.getRecruitReSeq());
 
@@ -247,6 +249,8 @@ public class ApplicantController {
 					// 지원자 직무 이름
 					resultMap.put("apply-Career-Name",
 							careerDao.findCareerByCaSeq(applicant.getCareerCaSeq()).getCaName());
+					// 지원자 부서 이름
+					resultMap.put("apply-Part-Name", partDao.findPartByPartSeq(careerDao.findCareerByCaSeq(applicant.getCareerCaSeq()).getPartPartSeq()).getPartName());
 					// 지원자 공고 seq
 					resultMap.put("apply-Recruit-Seq", applicant.getRecruitReSeq());
 
