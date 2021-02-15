@@ -112,13 +112,66 @@ public class InterviewerController {
 	EmailService emailService;
 
 	public static final Logger logger = LoggerFactory.getLogger(HrController.class);
-
+	
 	@GetMapping("/getList/{comSeq}")
-	@ApiOperation(value = "회사에 따른 면접관리스트 모두 가져오기")
-	public ResponseEntity<List<Interviewer>> getInterviewerList(@PathVariable("comSeq") int comSeq) {
-		List<Interviewer> interviewerList = interviewerDao.findAllInterviewerByCompanyComSeq(comSeq);
-		return new ResponseEntity<List<Interviewer>>(interviewerList, HttpStatus.OK);
+	@ApiOperation(value = "회사에 따른 면접관 리스트 모두 가져오기")
+	public ResponseEntity<List<Map<String, Object>>> getInterviewerListByRecruit(@PathVariable("comSeq") int comSeq){
+		List<Map<String, Object>> interviewerList = new ArrayList<Map<String, Object>>();
+		HttpStatus status = null;
+		
+		try {
+			List<Interviewer> interviewerTempList = interviewerDao.findAllInterviewerByCompanyComSeq(comSeq);
+
+			for (int i = 0; i < interviewerTempList.size(); i++) {
+				Interviewer interviewer = interviewerTempList.get(i);
+				
+				Map<String, Object> resultMap = new HashMap<String, Object>();
+				
+				// 면접관 seq
+				resultMap.put("interviewer-Seq", interviewer.getViewSeq());
+				// 면접관 이름
+				resultMap.put("interviewer-Name", interviewer.getViewName());
+				// 면접관 email
+				resultMap.put("interviewer-Email", interviewer.getViewEmail());
+				// 면접관 비밀번호
+				resultMap.put("interviewer-Password", interviewer.getViewPassword());
+				// 면접관 핸드폰 번호
+				resultMap.put("interviewer-Phone", interviewer.getViewPhone());
+				// 면접관 대기관 여부
+				resultMap.put("interviewer-Wait", interviewer.getViewWait());
+				// 면접관 할당 여부
+				resultMap.put("interviewer-Assigned", interviewer.getViewAssigned());
+				// 면접관 회사 정보
+				resultMap.put("interviewer-Company-Seq", interviewer.getCompanyComSeq());
+				// 면접관 회사 이름
+				resultMap.put("interviewer-Company-Name",companyDao.findCompanyByComSeq(interviewer.getCompanyComSeq()).getComName());
+				// 면접관 부서 seq
+				resultMap.put("interviewer-Part-Seq", interviewer.getCareerPartPartSeq());
+				// 면접관 부서 이름
+				resultMap.put("interviewer-Part-Name", partDao.findPartByPartSeq(interviewer.getCareerPartPartSeq()).getPartName());
+				// 면접관 직무 seq
+				resultMap.put("interviewer-Career-Seq", interviewer.getCareerCaSeq());
+				// 면접관 직무 이름
+				resultMap.put("interviewer-Career-Name", careerDao.findCareerByCaSeq(interviewer.getCareerCaSeq()).getCaName());
+				
+				interviewerList.add(resultMap);
+			}
+			
+			status = HttpStatus.OK;
+		} catch (RuntimeException e) {
+			logger.error("공고의 면접관 리스트 가져오기 실패", e);
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		
+		return new ResponseEntity<List<Map<String, Object>>>(interviewerList, status);
 	}
+
+//	@GetMapping("/getList/{comSeq}")
+//	@ApiOperation(value = "회사에 따른 면접관리스트 모두 가져오기")
+//	public ResponseEntity<List<Interviewer>> getInterviewerList(@PathVariable("comSeq") int comSeq) {
+//		List<Interviewer> interviewerList = interviewerDao.findAllInterviewerByCompanyComSeq(comSeq);
+//		return new ResponseEntity<List<Interviewer>>(interviewerList, HttpStatus.OK);
+//	}
 
 	@DeleteMapping("/delete/{comSeq}")
 	@ApiOperation(value = "공고에 따른 지원자 전체 삭제하기")
