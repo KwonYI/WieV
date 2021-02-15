@@ -371,14 +371,11 @@ public class ApplicantController {
 		return new ResponseEntity<>(resultMap, status);
 	}
 
-//	@PostMapping("/assign/{groupSeq}")
-//	@ApiOperation(value = "지원자 자동 배정")
+
 	public void applicantAssign(int groupSeq) {
-//		HttpStatus status = null;
 		List<Applicant> applicantList = new ArrayList<Applicant>();
 		List<GroupDetail> groupDetailList = new ArrayList<GroupDetail>();
 
-//		try {
 
 		GroupAll nowGroupAll = groupAllDao.findGroupAllByGroupSeq(groupSeq);
 
@@ -438,12 +435,6 @@ public class ApplicantController {
 			}
 
 		}
-//			status = HttpStatus.OK;
-//		} catch (RuntimeException e) {
-//			logger.error("지원자 자동 배정 실패", e);
-//			status = HttpStatus.INTERNAL_SERVER_ERROR;
-//		}
-//		return new ResponseEntity<>("지원자 자동 배정 완료", status);
 	}
 
 	@GetMapping("/mypage/{Id}")
@@ -536,11 +527,6 @@ public class ApplicantController {
 		// 웹상에서 업로드 되어 MultipartFile인 경우 바로 InputStream으로 변경하여 사용.
 		InputStream inputStream = new ByteArrayInputStream(files.getBytes());
 
-		// String filePath = "C:\\example.xlsx"; // xlsx 형식
-		// String filePath = "D:\\applicant.xls"; // xls 형식
-
-		// InputStream inputStream = new FileInputStream(filePath);
-
 		// 엑셀 로드
 		Workbook workbook = WorkbookFactory.create(inputStream);
 
@@ -573,9 +559,6 @@ public class ApplicantController {
 
 					switch (index) {
 					case 0:
-						// 인덱스
-						// applicant.setApplySeq(((Double) getValueFromCell(cell)).intValue());
-						// 셀이 숫자형인 경우 Double형으로 변환 후 int형으로 변환
 						break;
 					case 1:
 						// 성명
@@ -659,9 +642,6 @@ public class ApplicantController {
 
 				// 아직 면접 일정 배정 안함
 				applicant.setApplyAssigned(0);
-
-				// insert문
-				// applicantDao.save(applicant);
 
 				applicantList.add(applicant);
 			}
@@ -875,7 +855,7 @@ public class ApplicantController {
 									+ "      <td style=\"overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:'Open Sans',sans-serif;\" align=\"left\">\r\n"
 									+ "        \r\n" + "<div align=\"center\">\r\n"
 									+ "  <!--[if mso]><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-spacing: 0; border-collapse: collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;font-family:'Open Sans',sans-serif;\"><tr><td style=\"font-family:'Open Sans',sans-serif;\" align=\"center\"><v:roundrect xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:w=\"urn:schemas-microsoft-com:office:word\" href=\"\" style=\"height:47px; v-text-anchor:middle; width:167px;\" arcsize=\"87%\" stroke=\"f\" fillcolor=\"#466b8c\"><w:anchorlock/><center style=\"color:#FFFFFF;font-family:'Open Sans',sans-serif;\"><![endif]-->\r\n"
-									+ "    <a href=\"http://localhost:3000/applicant/mypage?Id="
+									+ "    <a href=\"https://i4a405.p.ssafy.io:8000/main?Id="
 									+ applicant.getApplyId()
 									+ "\" target=\"_blank\" style=\"box-sizing: border-box;display: inline-block;font-family:'Open Sans',sans-serif;text-decoration: none;-webkit-text-size-adjust: none;text-align: center;color: #FFFFFF; background-color: #466b8c; border-radius: 41px; -webkit-border-radius: 41px; -moz-border-radius: 41px; width:auto; max-width:100%; overflow-wrap: break-word; word-break: break-word; word-wrap:break-word; mso-border-alt: none;\">\r\n"
 									+ "      <span style=\"display:block;padding:15px 33px;line-height:120%;\"><strong>사이트 바로가기</strong></span>\r\n"
@@ -935,8 +915,7 @@ public class ApplicantController {
 				}
 				status = HttpStatus.OK;
 				resultMap.put("message", "이메일 전송 성공");
-			}
-			else {
+			} else {
 				status = HttpStatus.OK;
 				resultMap.put("message", "지원자 존재하지 않음");
 			}

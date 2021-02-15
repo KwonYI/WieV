@@ -256,12 +256,6 @@ public class InterviewerController {
 			}
 
 		}
-//			status = HttpStatus.OK;
-//		} catch (RuntimeException e) {
-//			logger.error("면접관 자동 배정 실패", e);
-//			status = HttpStatus.INTERNAL_SERVER_ERROR;
-//		}
-//		return new ResponseEntity<>("면접관 자동 배정 완료", status);
 	}
 
 	@PostMapping("/register/{reSeq}")
@@ -437,6 +431,7 @@ public class InterviewerController {
 
 				String waitSessionName = groupeType.getWaitSessionName(); // 대기방세션이름
 				String interviewSessionName = groupeType.getInterviewSessionName(); // 면접방세션이름
+				int groupTypeSeq = groupeType.getGroupTypeSeq();
 
 				GroupAll groupAll = groupAllDao.findGroupAllByGroupSeq(groupeType.getGroupGroupSeq());
 				Recruit recruit = recruitDao.findRecruitByReSeq(groupAll.getRecruitReSeq()); // 공고 정보
@@ -457,6 +452,7 @@ public class InterviewerController {
 				interviewInfo.setInterviewSessionName(interviewSessionName);
 
 				resultMap.put("interview", interviewInfo);
+				resultMap.put("groupTypeSeq", groupTypeSeq);
 
 				result.status = true;
 				result.data = "success";
