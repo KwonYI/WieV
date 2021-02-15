@@ -67,8 +67,7 @@
 
           <v-row>
             <!--스크롤 면접관-->
-            <v-col cols="4" class="d-flex flex-column justify-center align-center no-gutters"
-              style="">
+            <v-col cols="4" class="d-flex flex-column justify-center align-center no-gutters" style="">
               <div class="overflow-y-auto pr-2" style="height:70vh">
                 <span v-if="!isViewee">
                   <user-video :streamManager="publisher" class="screen-res-sm" />
@@ -83,12 +82,12 @@
               <!--지원자 여러명-->
               <v-row v-if="!isViewee" style=" height:18vh; width:100% ">
                 <v-col cols="12" class="overflow-x-auto" style="width:100%;">
-                 
-                <div class='d-flex'>
-                  <user-video v-for="sub in viewees" :key="sub.stream.connection.connectionId" class='screen-res  mx-2'
-                    :stream-manager="sub" :id="sub.stream.connection.connectionId"
-                    @click.native="updateMainVideoStreamManager(sub)" />
-                </div>
+
+                  <div class='d-flex'>
+                    <user-video v-for="sub in viewees" :key="sub.stream.connection.connectionId"
+                      class='screen-res  mx-2' :stream-manager="sub" :id="sub.stream.connection.connectionId"
+                      @click.native="updateMainVideoStreamManager(sub)" />
+                  </div>
                 </v-col>
               </v-row>
               <!--지원자 1명-->
@@ -263,29 +262,29 @@
 
         OV: undefined,
         session: undefined,
-        mainStreamManager: undefined, // 메인 비디오 <- 가장 큰 비디오
-        publisher: undefined, // 연결 객체
+        mainStreamManager: undefined, // 메인 비디오 <- 가장 큰 비디오
+        publisher: undefined, // 연결 객체
         myConnectionId: undefined,
 
-        // 면접관, 지원자들만 담아두는 리스트
+        // 면접관, 지원자들만 담아두는 리스트
         viewers: [],
         viewees: [],
 
-        // 채팅
+        // 채팅
         text: "",
         messages: [],
 
-        // 화면, 소리, 화면 공유
+        // 화면, 소리, 화면 공유
         audioOn: true,
         videoOn: true,
 
-        // From SessionController
-        sessionName: undefined, // 대기방 세션
+        // From SessionController
+        sessionName: undefined, // 대기방 세션
         token: undefined,
         userName: "",
-        type: undefined, // 대기실 관리자(manager) / 면접관(viewer) / 면접자(viewee)
+        type: undefined, // 대기실 관리자(manager) / 면접관(viewer) / 면접자(viewee)
 
-        // From Main.vue
+        // From Main.vue
         comName: undefined,
         re_year: undefined,
         re_flag: undefined,
@@ -295,32 +294,32 @@
         interviewType: undefined,
         groupTypeSeq: undefined,
 
-        // 배너
+        // 배너
         banner_dialog: false,
         banner_message: '',
 
-        // 면접 이동
+        // 면접 이동
         visible: false,
-        // viewee_list: ['김일번', '박이번', '신삼번', '강사번', '류오번', '이육번'],
+        // viewee_list: ['김일번', '박이번', '신삼번', '강사번', '류오번', '이육번'],
         viewee_list: [],
         moving_viewee: [],
 
-        // 면접 안내
+        // 면접 안내
         interview_messages: [],
 
-        // 세션간 통신
+        // 세션간 통신
         messageToSession: '',
         messageFromSession: '',
 
-        // FAQ
+        // FAQ
         faq_dialog: false,
         questions: [{
-            title: '면접 시간은 어떻게 되나요?',
-            answer: '안 알랴줌'
+            title: '면접 시간은 어떻게 되나요?',
+            answer: '안 알랴줌'
           },
           {
-            title: '뭐야 내 면접 돌려줘요',
-            answer: '안 돼 안 바꿔줘 바꿀 생각 없어 빨리 돌아가'
+            title: '뭐야 내 면접 돌려줘요',
+            answer: '안 돼 안 바꿔줘 바꿀 생각 없어 빨리 돌아가'
           },
         ],
 
@@ -365,7 +364,7 @@
       this.OV = new OpenVidu()
       this.session = this.OV.initSession()
 
-      // 신규 생성된 Stream 동기화
+      // 신규 생성된 Stream 동기화
       this.session.on("streamCreated", ({
         stream
       }) => {
@@ -384,10 +383,10 @@
         } else {
           this.viewers.push(subscriber)
         }
-        console.log("viewee : ", this.viewees, " viewer : ", this.viewers)
+        console.log("viewee : ", this.viewees, " viewer : ", this.viewers)
       })
 
-      // Stream 삭제
+      // Stream 삭제
       this.session.on("streamDestroyed", ({
         stream
       }) => {
@@ -419,37 +418,37 @@
           }
         }
 
-        console.log("viewee : ", this.viewees, " viewer : ", this.viewers)
+        console.log("viewee : ", this.viewees, " viewer : ", this.viewers)
       })
 
-      // this.session.on('publisherStartSpeaking', (event) => {
-      //   let id = event.connection.connectionId
-      //   this.viewers.forEach(viewer => {
-      //     if(viewer !== this.mainStreamManager && viewer.stream.connection.connectionId === id){
-      //       document.getElementById(id).classList.add("speaking");
-      //     }
-      //   })
-      //   this.viewees.forEach(viewee => {
-      //     if(viewee !== this.mainStreamManager && viewee.stream.connection.connectionId === id){
-      //       document.getElementById(id).classList.add("speaking");
-      //     }
-      //   })
-      // });
+      // this.session.on('publisherStartSpeaking', (event) => {
+      //   let id = event.connection.connectionId
+      //   this.viewers.forEach(viewer => {
+      //     if(viewer !== this.mainStreamManager && viewer.stream.connection.connectionId === id){
+      //       document.getElementById(id).classList.add("speaking");
+      //     }
+      //   })
+      //   this.viewees.forEach(viewee => {
+      //     if(viewee !== this.mainStreamManager && viewee.stream.connection.connectionId === id){
+      //       document.getElementById(id).classList.add("speaking");
+      //     }
+      //   })
+      // });
 
-      // this.session.on('publisherStopSpeaking', (event) => {
-      //   let id = event.connection.connectionId
+      // this.session.on('publisherStopSpeaking', (event) => {
+      //   let id = event.connection.connectionId
 
-      //   this.viewers.forEach(viewer => {
-      //     if(viewer !== this.mainStreamManager && viewer.stream.connection.connectionId === id){
-      //       document.getElementById(id).classList.remove("speaking");
-      //     }
-      //   })
-      //   this.viewees.forEach(viewee => {
-      //     if(viewee !== this.mainStreamManager && viewee.stream.connection.connectionId === id){
-      //       document.getElementById(id).classList.remove("speaking");
-      //     }
-      //   })
-      // });
+      //   this.viewers.forEach(viewer => {
+      //     if(viewer !== this.mainStreamManager && viewer.stream.connection.connectionId === id){
+      //       document.getElementById(id).classList.remove("speaking");
+      //     }
+      //   })
+      //   this.viewees.forEach(viewee => {
+      //     if(viewee !== this.mainStreamManager && viewee.stream.connection.connectionId === id){
+      //       document.getElementById(id).classList.remove("speaking");
+      //     }
+      //   })
+      // });
 
       this.session.on("signal:my-chat", (event) => {
         let message = {
@@ -487,62 +486,25 @@
           let message = event.from.data.split('":"')[1].slice(0, -7)
 
           if (event.data === "No") {
-            message = message + " 입장 보류"
+            message = message + " 입장 보류"
           } else if (event.data === "Yes") {
-            message = message + " 입장"
+            message = message + " 입장"
           } else {
-            message = message + " 입장 실패"
+            message = message + " 입장 실패"
           }
 
           this.interview_messages.push(message)
         }
       })
 
-      this.session.connect(this.token, {
-          name: this.userName,
-          type: this.type,
-          userSeq: this.userSeq
-        })
-        .then(() => {
-          let publisher = this.OV.initPublisher(undefined, {
-            audioSource: undefined, // The source of audio. If undefined default microphone
-            videoSource: undefined, // The source of video. If undefined default webcam
-            publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
-            publishVideo: true, // Whether you want to start publishing with your video enabled or not
-            // resolution: "272x153", // The resolution of your video
-            resolution: "1280x720", // The resolution of your video
-            frameRate: 30, // The frame rate of your video
-            insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
-            mirror: false, // Whether to mirror your local video or not
-          })
-
-          // this.mainStreamManager = publisher
-          this.publisher = publisher
-
-          this.session.publish(this.publisher)
-
-          this.myConnectionId = this.publisher.stream.connection.connectionId
-
-          let info = JSON.parse(this.publisher.stream.connection.data.split('%/%')[0])
-          console.log("내 이름은 ", info['name'], " 이고", info['type'], "야")
-
-          // if(this.type === 'viewee'){
-          //   this.viewees.push(this.publisher)
-          //   this.viewee_list.push(info['name'])
-          // }else{
-          //   this.viewers.push(this.publisher)
-          // }
-        })
-        .catch(err => {
-          console.log("There was an error connecting to the session:", err.code, err.message)
-        })
+      this.connectSession();
 
       window.addEventListener("beforeunload", this.leaveSession)
       window.addEventListener("backbutton", this.leaveSession)
     },
 
     methods: {
-      // 채팅 메시지 전송
+      // 채팅 메시지 전송
       sendMessage() {
         if (this.text === "") return
 
@@ -581,10 +543,7 @@
       },
 
       updateMainVideoStreamManager(stream) {
-        console.log("클릭한 세션", stream)
-        console.log("클릭 전 메인 스트림", this.mainStreamManager)
         this.mainStreamManager = stream
-        console.log("클릭 후 메인 스트림", this.mainStreamManager)
       },
 
       audioOnOOff() {
@@ -615,9 +574,9 @@
         let hour = today.getHours()
         if (hour >= 12) {
           if (hour > 12) hour = hour - 12
-          time = "오후 " + hour + " : "
+          time = "오후 " + hour + " : "
         } else {
-          time = "오전 " + hour + " : "
+          time = "오전 " + hour + " : "
         }
         let minute = today.getMinutes();
         if (minute % 10 === 0) time = time + '0'
@@ -626,7 +585,7 @@
       },
 
       sendSignal() {
-        let message = this.moving_viewee.join(", ")
+        let message = this.moving_viewee.join(", ")
         this.moving_viewee.forEach(name => {
           this.viewees.forEach(stream => {
             if (JSON.parse(stream.stream.connection.data.split('%/%')[0])['name'] === name) {
@@ -640,7 +599,7 @@
             }
           })
         })
-        message += " 에게 입장 메세지 전송"
+        message += " 에게 입장 메세지 전송"
         this.interview_messages.push(message)
         this.moving_viewee = []
       },
@@ -651,15 +610,15 @@
         this.stompClient.connect({},
           frame => {
             this.connected = true;
-            console.log('소켓 연결 성공', frame);
+            console.log('소켓 연결 성공', frame);
             this.stompClient.subscribe("/send/" + this.groupTypeSeq, res => {
-              // let message = JSON.parse(res.body)
-              // if(message['name'] === this.userName) return
+              // let message = JSON.parse(res.body)
+              // if(message['name'] === this.userName) return
               this.messageFromSession = JSON.parse(res.body)['message']
             });
           },
           error => {
-            console.log('소켓 연결 실패', error);
+            console.log('소켓 연결 실패', error);
             this.connected = false;
           }
         );
@@ -721,7 +680,7 @@
             window.open(routeData.href, "_blank")
           })
           .catch(err => {
-            alert("방이 아직 개설되지 않았습니다.")
+            alert("방이 아직 개설되지 않았습니다.")
             console.log(err)
             this.session.signal({
                 data: "Fail",
@@ -730,6 +689,56 @@
               })
               .then()
               .catch(err => console.error(err))
+          })
+      },
+
+      getNewToken() {
+        axios.get(`${SERVER_URL}/session/getToken`, {
+            params: {
+              sessionName: this.sessionName,
+              name: this.userName,
+              type: this.type,
+            }
+          })
+          .then(res => {
+            this.token = res.data.token
+          })
+          .catch(err => {
+            console.log("토큰 재생성에서 에러 발생", err)
+          })
+      },
+
+      connectSession() {
+        this.session.connect(this.token, {
+            name: this.userName,
+            type: this.type,
+            userSeq: this.userSeq
+          })
+          .then(() => {
+            let publisher = this.OV.initPublisher(undefined, {
+              audioSource: undefined, // The source of audio. If undefined default microphone
+              videoSource: undefined, // The source of video. If undefined default webcam
+              publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
+              publishVideo: true, // Whether you want to start publishing with your video enabled or not
+              // resolution: "272x153", // The resolution of your video
+              resolution: "1280x720", // The resolution of your video
+              frameRate: 30, // The frame rate of your video
+              insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
+              mirror: false, // Whether to mirror your local video or not
+            })
+
+            // this.mainStreamManager = publisher
+            this.publisher = publisher
+
+            this.session.publish(this.publisher)
+
+            this.myConnectionId = this.publisher.stream.connection.connectionId
+
+            let info = JSON.parse(this.publisher.stream.connection.data.split('%/%')[0])
+            console.log("내 이름은 ", info['name'], " 이고", info['type'], "야")
+          })
+          .catch(err => {
+            console.log("There was an error connecting to the session:", err.code, err.message)
           })
       }
     },
@@ -744,6 +753,9 @@
         return 7000
       },
     },
+    watch: {
+
+    }
   }
 </script>
 

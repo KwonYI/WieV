@@ -29,7 +29,8 @@
               <div class="text-subtitle-1 px-5 py-1" style="border: 1px solid">현재 면접자 수 : 8명</div>
             </v-col>
             <v-col class="d-flex justify-center align-center">
-              <div class="text-subtitle-1 px-5 py-1" style="border: 1px solid">현재 시각 : 7/10(월) 오후 5:23</div>
+              <div class="text-subtitle-1 px-5 py-1" style="border: 1px solid">현재 시각:<a id="clock"></a>
+              </div>
             </v-col>
           </v-row>
         </v-toolbar-items>
@@ -263,6 +264,8 @@ export default {
         hrEmail: "",
         hrPhone: "",
       },
+
+ 
     }
   },
   computed: {
@@ -360,6 +363,18 @@ export default {
   created: function () {
     this.Manager = this.$store.state.Manager
     console.log("this.", this.$route.name)
+
+  setInterval(function(){
+             
+            var timer = new Date();
+            var month=timer.getMonth()+1;
+            var day=timer.getDate();
+            var h = timer.getHours();
+            var m = timer.getMinutes();
+            var s = timer.getSeconds();
+            console.log(month)
+            document.getElementById('clock').innerHTML = month +"/"+ day +" "+ h + ":" + m + ":" + s;
+        },1000);
   },
     
 }

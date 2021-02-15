@@ -18,6 +18,14 @@ export default {
 	mounted () {
     this.streamManager.addVideoElement(this.$el);
 	},
+  watch : {
+    'streamManager' : 'changeDetect'
+  },
+  methods: {
+    changeDetect(){
+      this.streamManager.addVideoElement(this.$el);
+    }
+  },
 };
 </script>
 <style>
