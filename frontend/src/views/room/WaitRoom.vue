@@ -70,7 +70,7 @@
             <v-col cols="4" class="d-flex flex-column justify-center align-center no-gutters" style="">
               <div class="overflow-y-auto pr-2" style="height:70vh">
                 <span v-if="!isViewee">
-                  <user-video :streamManager="publisher" class="screen-res-sm" />
+                  <user-video :stream-manager="publisher" class="screen-res-sm" />
                 </span>
                 <span v-for="sub in viewers" :key="sub.stream.connection.connectionId">
                   <user-video class="screen-res-sm" :stream-manager="sub" />
