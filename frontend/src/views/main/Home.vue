@@ -43,6 +43,24 @@
 
     <Introduce />
     <Ask />
+
+    <v-fab-transition>
+      <v-btn
+        bottom
+        right
+        fixed
+        fab
+        dark
+        small
+        v-show="btnShow"
+        @click="$vuetify.goTo(0)"
+        style="display: initial"
+      >
+        <!-- <v-icon>fas fa-angle-double-up</v-icon> -->
+        눌러
+      </v-btn>
+    </v-fab-transition>
+    <div style="cursor:pointer;" @click="$vuetify.goTo(0)">또 눌러</div>
   </div>
 
 </template>
@@ -84,7 +102,15 @@ AOS.init()
       ...mapGetters(["getUser", "getAccessToken", "getUserViewWait"]),
     },
     methods: {
-
+      handleScroll() {
+        this.btnShow = window.scrollY > 400
+      }
+    },
+    beforeMount() {
+      window.addEventListener('scroll', this.handleScroll)
+    },
+    beforeDestroy() {
+      window.addEventListener('scroll', this.handleScroll)
     },
     created: {
 

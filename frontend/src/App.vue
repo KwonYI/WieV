@@ -15,8 +15,8 @@
 
         <!-- 왼쪽 상단 위치 -->
         <v-toolbar-items v-if="isNotRoom" class="srv-btn">
-          <v-btn v-if="isHome" plain style="font-size: 1rem"  href="#work">플랫폼 소개</v-btn>
-          <v-btn v-if="isHome" plain style="font-size: 1rem" href="#contact">문의하기</v-btn>
+          <v-btn v-if="isHome" plain style="font-size: 1rem" @click="$vuetify.goTo('#introduce')">플랫폼 소개</v-btn>
+          <v-btn v-if="isHome" plain style="font-size: 1rem" @click="$vuetify.goTo('#contact')">문의하기</v-btn>
           <!-- <v-btn plain style="font-size: 1rem" @click="$vuetify.goTo(target, options)">문의하기</v-btn> -->
         </v-toolbar-items>
 
@@ -166,7 +166,7 @@
         <footer v-if="isFooterView" class="bg-dark py-4">
           <div class="container text-light">
             <div class="row">
-              <div class="col-md-6 col-sm-12">&copy; Wiev. All rights reserved.</div>
+              <div class="col-md-6 col-sm-12">&copy; WieV Inc. 2021 All rights reserved.</div>
               <div class="col-md-6 col-sm-12 text-right tf-design">Design - <a href="https://templateflip.com"
                   target="_blank">SSAFY A405</a></div>
             </div>

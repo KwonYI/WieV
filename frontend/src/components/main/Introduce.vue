@@ -115,8 +115,6 @@
 </template>
 
 <script>
-import AOS from 'aos'
-import 'aos/dist/aos.css'
 
 	export default {
 		name: "Introduce",
@@ -251,12 +249,9 @@ import 'aos/dist/aos.css'
 		},
 
 		created: function () {
-			AOS.init({
-				offset: 200,
-				delay: 150
-			})
 		},
 		mounted() {
+			// AOS.refresh()
 		},
 		computed: {
 
