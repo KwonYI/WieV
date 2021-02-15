@@ -41,7 +41,7 @@
     >
     </v-parallax> -->
 
-    <Introduce style="margin-top: 5rem" />
+    <Introduce />
     <Ask />
   </div>
 
