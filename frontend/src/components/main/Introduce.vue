@@ -1,6 +1,6 @@
 <template>
 	<div id="introduce">
-
+		<div data-aos="fade">WieV Inc.</div>
 
 			<div class="container" id="work">
 				<h2 class="h3 text-center">"View Easy, View Everywhere"</h2>
@@ -144,6 +144,9 @@
 </template>
 
 <script>
+import AOS from 'aos'
+import "aos/dist/aos.css"
+
 	export default {
 		name: "Introduce",
 		data: function () {
@@ -160,7 +163,7 @@
 
 
 		created: function () {
-
+			AOS.init()
 		},
 		computed: {
 
