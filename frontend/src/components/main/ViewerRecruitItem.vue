@@ -103,10 +103,6 @@ export default {
         })
           .then(res => {
             console.log(res)
-            // this.$router.push({
-            //   name: "WaitRoom",
-            //   params: { interview: this.interview, interviewer: res.data },
-            // });
             let routeData = this.$router.resolve({
               name: "WaitRoom",
               query: {
@@ -129,7 +125,18 @@ export default {
           .catch(err => {
             if (this.user.userViewWait == 0) {
               console.log(err)
-              alert("방 입장 실패")
+              axios.get(`${SERVER_URL}/session/removeSession`, {
+                params: {
+                  sessionName: this.interview.waitSessionName,
+                },
+              })
+              .then((res) => {
+                console.log("세션 정보 삭제 완료", res)
+                alert("방 입장에 실패하였습니다. 방을 다시 생성해보세요")
+              })
+              .catch((err) => {
+                console.log("세션 정보 삭제 실패", err);
+              });
             } else {
               alert("방이 아직 개설되지 않았습니다.")
             }
@@ -167,7 +174,18 @@ export default {
           .catch(err => {
             if (this.user.userViewWait == 0) {
               console.log(err)
-              alert("방 입장 실패")
+              axios.get(`${SERVER_URL}/session/removeSession`, {
+                params: {
+                  sessionName: this.interview.interviewSessionName,
+                },
+              })
+              .then((res) => {
+                console.log("세션 정보 삭제 완료", res)
+                alert("방 입장에 실패하였습니다. 방을 다시 생성해보세요")
+              })
+              .catch((err) => {
+                console.log("세션 정보 삭제 실패", err);
+              });
             } else {
               alert("방이 아직 개설되지 않았습니다.")
             }

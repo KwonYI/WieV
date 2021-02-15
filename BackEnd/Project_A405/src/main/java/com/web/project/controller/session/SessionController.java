@@ -12,8 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,8 +23,6 @@ import com.web.project.dao.interview.TypeInterviewerDao;
 import com.web.project.dao.recruit.ApplicantDao;
 import com.web.project.dao.recruit.ApplicantGroupDao;
 import com.web.project.model.BasicResponse;
-import com.web.project.model.group.GroupType;
-import com.web.project.model.recruit.Applicant;
 
 import io.openvidu.java.client.ConnectionProperties;
 import io.openvidu.java.client.ConnectionType;
@@ -91,13 +87,13 @@ public class SessionController {
 
 		Session session = null;
 		ConnectionProperties connectionProperties = null;
-		OpenViduRole role = OpenViduRole.MODERATOR; // 기본 세팅은 관리자
-		String type = "manager"; // 면접관, 대기실 관리자, 면접자 구분
+		OpenViduRole role = OpenViduRole.MODERATOR;
+		String type = "manager";
 		String token = null;
 
-		if (this.sessions.get(sessionName) != null) { // 존재한다
+		if (this.sessions.get(sessionName) != null) {
 			try {
-				if (interviewerWait == 1) { // 1이면 면접관
+				if (interviewerWait == 1) {
 					type = "viewer";
 					role = OpenViduRole.PUBLISHER;
 				}
@@ -135,9 +131,9 @@ public class SessionController {
 				resultMap.put("message", e.getMessage());
 				status = HttpStatus.INTERNAL_SERVER_ERROR;
 			}
-		} else { // 없다
+		} else {
 			try {
-				if (interviewerWait == 0) { // 대기관리자
+				if (interviewerWait == 0) {
 					try {
 						session = this.openVidu.createSession();
 						connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC).role(role)
@@ -168,7 +164,7 @@ public class SessionController {
 						resultMap.put("message", e.getMessage());
 						status = HttpStatus.INTERNAL_SERVER_ERROR;
 					}
-				} else { // 면접관
+				} else {
 					logger.error("방이 아직 존재하지않습니다.");
 					resultMap.put("message", "방이 아직 존재하지않습니다");
 					status = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -180,14 +176,14 @@ public class SessionController {
 			}
 		}
 
-		printMap(); // 방 정보 출력
+		printMap();
 		return new ResponseEntity<>(resultMap, status);
 	}
 
 	@GetMapping("/join")
 	@ApiOperation(value = "지원자 세션 입장")
 	public Object enterSession(@RequestParam String applicantName, @RequestParam String sessionName) {
-		
+
 		System.out.println(sessionName);
 		final BasicResponse result = new BasicResponse();
 		Map<String, Object> resultMap = new HashMap<>();
@@ -204,7 +200,7 @@ public class SessionController {
 
 			try {
 				token = session.createConnection(connectionProperties).getToken();
-				
+
 				this.tokensInSession.get(sessionName).put(token, OpenViduRole.PUBLISHER);
 
 				resultMap.put("token", token);
@@ -236,6 +232,111 @@ public class SessionController {
 		return new ResponseEntity<>(resultMap, status);
 	}
 
+	@GetMapping("/getToken")
+	@ApiOperation(value = "토큰 다시 받기")
+	public Object getToken(@RequestParam(name = "sessionName") String sessionName,
+			@RequestParam(name = "name") String name, @RequestParam(name = "type") String type) {
+
+		final BasicResponse result = new BasicResponse();
+		Map<String, Object> resultMap = new HashMap<>();
+		HttpStatus status = null;
+
+		Session session = null;
+		ConnectionProperties connectionProperties = null;
+		String token = null;
+
+		if (sessions.get(sessionName) != null) {
+			session = this.sessions.get(sessionName);
+			connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC)
+					.role(OpenViduRole.PUBLISHER).data(name).build();
+
+			try {
+				token = session.createConnection(connectionProperties).getToken();
+
+				resultMap.put("token", token);
+				resultMap.put("type", type);
+				resultMap.put("sessionName", sessionName);
+				resultMap.put("name", name);
+
+				result.status = true;
+				result.data = "success";
+				result.object = resultMap;
+
+				status = HttpStatus.OK;
+			} catch (OpenViduJavaClientException e) {
+				logger.error("서버 오류", e.getMessage());
+				resultMap.put("message", e.getMessage());
+				status = HttpStatus.INTERNAL_SERVER_ERROR;
+			} catch (OpenViduHttpException e) {
+				logger.error("토큰 생성 실패", e.getMessage());
+				resultMap.put("message", e.getMessage());
+				status = HttpStatus.INTERNAL_SERVER_ERROR;
+			}
+		} else {
+			logger.error("방이 존재하지않습니다.");
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+
+		return new ResponseEntity<>(resultMap, status);
+	}
+
+	@GetMapping("/removeAllSession")
+	@ApiOperation(value = "세션 전부 초기화")
+	public Object removeAllSession() {
+		sessions.clear();
+		tokensInSession.clear();
+		
+		final BasicResponse result = new BasicResponse();
+		HttpStatus status = null;
+
+		if (this.sessions.isEmpty() && this.tokensInSession.isEmpty()) {
+			result.status = true;
+			result.data = "success";
+			result.object = "성공";
+			status = HttpStatus.OK;
+		} else {
+			logger.error("세션 정보 삭제 실패");
+			result.status = false;
+			result.object = "실패";
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		
+		printMap();
+
+		return new ResponseEntity<>(result, status);
+	}
+	
+	@GetMapping("/removeSession")
+	@ApiOperation(value = "해당 세션 초기화")
+	public Object removeSession(@RequestParam(name = "sessionName") String sessionName) {
+		final BasicResponse result = new BasicResponse();
+		HttpStatus status = null;
+		
+		if(this.sessions.remove(sessionName) != null) {
+			if(this.tokensInSession.remove(sessionName) != null) {
+				result.status = true;
+				result.data = "success";
+				result.object = "성공";
+				status = HttpStatus.OK;
+			}else {
+				logger.error("세션안의 토큰이 비어있습니다.");
+				status = HttpStatus.INTERNAL_SERVER_ERROR;
+			}
+		}else {
+			if(this.tokensInSession.remove(sessionName) != null) {
+				logger.error("세션안의 토큰이 비어있습니다.");
+				status = HttpStatus.INTERNAL_SERVER_ERROR;
+			}else {
+				logger.error("해당 세션이 존재하지않습니다.");
+				status = HttpStatus.INTERNAL_SERVER_ERROR;
+			}
+		}
+		
+		printMap();
+
+		return new ResponseEntity<>(result, status);
+	}
+
 	@GetMapping("/leaveSession")
 	@ApiOperation(value = "세션 나가기")
 	public Object removeUser(@RequestParam(name = "sessionName") String sessionName,
@@ -243,14 +344,14 @@ public class SessionController {
 
 		String msg = null;
 		HttpStatus status = null;
-		
-		if (this.sessions.get(sessionName) != null && this.tokensInSession.get(sessionName) != null) { // 방이 존재하는지
 
-			if (this.tokensInSession.get(sessionName).remove(token) != null) { // 입력으로 들어온 토큰 제거
+		if (this.sessions.get(sessionName) != null && this.tokensInSession.get(sessionName) != null) {
+
+			if (this.tokensInSession.get(sessionName).remove(token) != null) {
 				msg = "토큰 제거";
 				status = HttpStatus.OK;
 
-				if (this.tokensInSession.get(sessionName).isEmpty()) { // 제거 후 방이 빈다면
+				if (this.tokensInSession.get(sessionName).isEmpty()) {
 
 					if (this.sessions.remove(sessionName) != null && this.tokensInSession.remove(sessionName) != null) {
 						logger.trace(sessionName + " 방에 아무도 존재하지않아 제거하였습니다.");
@@ -260,20 +361,7 @@ public class SessionController {
 						status = HttpStatus.INTERNAL_SERVER_ERROR;
 					}
 				}
-//				else {
-//					if (!checkRemainAdmin(sessionName)) { // 비지않았지만 관리자가 없다면 방 제거
-//
-//						if (this.tokensInSession.remove(sessionName) != null
-//								&& this.sessions.remove(sessionName) != null) {
-//							msg = "관리자 토큰 전부 제거"; // 이때 클라이언트에서 처리 필요
-//							logger.trace("관리자가 나와 방을 제거하였습니다.");
-//						} else {
-//							logger.error("에러가 발생했습니다.");
-//							status = HttpStatus.INTERNAL_SERVER_ERROR;
-//						}
-//					}
-//				}
-			} else { // 유효하지않은 토큰
+			} else {
 				logger.error("존재하지 않는 토큰입니다.");
 				msg = "존재하지 않는 토큰입니다.";
 				status = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -289,15 +377,7 @@ public class SessionController {
 		return new ResponseEntity<>(msg, status);
 	}
 
-	public boolean checkRemainAdmin(String sessionName) { // 방에 관리자가 남아있는지 확인, 남은 관리자가 있다면 true
-		for (OpenViduRole role : this.tokensInSession.get(sessionName).values()) {
-			if (role == OpenViduRole.MODERATOR)
-				return true;
-		}
-		return false;
-	}
-
-	public void printMap() { // 모든 방과 방에 있는 사람 정보 출력
+	public void printMap() {
 		System.out.println("모든 세션 출력중....");
 		sessions.forEach((sessionName, session) -> {
 			System.out.println("세션 UUID : " + sessionName);

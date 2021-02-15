@@ -1,5 +1,5 @@
 <template>
-	<video class="video" autoplay/>
+	<video class="myClass" autoplay/>
 </template>
 
 <script>
@@ -16,7 +16,6 @@ export default {
 	},
 
 	mounted () {
-    console.log("이게 문젠가?", this.$el)
     this.streamManager.addVideoElement(this.$el);
 	},
 };
@@ -30,7 +29,7 @@ video.viewer {
   width: 350px;
   height: auto;
 } */
-.video {
+.myClass {
   height: inherit;
 }
 </style>
