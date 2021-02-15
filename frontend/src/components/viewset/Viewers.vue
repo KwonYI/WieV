@@ -20,6 +20,8 @@
       <thead>
         <tr>
           <th class="text-center">No</th>
+          <th class="text-center">부서</th>
+          <th class="text-center">직군</th>
           <th class="text-center">이름</th>
           <th class="text-center">포지션</th>
           <th class="text-center">이메일</th>
@@ -30,14 +32,16 @@
       </thead>
       <tbody>
         <tr v-for="viewer in comViewerList" :key="viewer.no" class="text-center">
-          <td>{{ viewer.viewSeq }}</td>
-          <td>{{ viewer.viewName }}</td>
-          <td v-if="viewer.viewWait === 1">대기관</td>
+          <td>{{ viewer.interviewerSeq }}</td>
+          <td>{{ viewer.interviewerPartName }}</td>
+          <td>{{ viewer.interviewerCareerName }}</td>
+          <td>{{ viewer.interviewerName }}</td>
+          <td v-if="viewer.interviewerWait === 1">대기관</td>
           <td v-else>면접관</td>
-          <td>{{ viewer.viewEmail }}</td>
-          <td>{{ viewer.viewPhone }}</td>
-          <td>{{ viewer.viewPassword }}</td>
-          <td v-if="viewer.viewAssigned === 1" class="blue--text">배정완료</td>
+          <td>{{ viewer.interviewerEmail }}</td>
+          <td>{{ viewer.interviewerPhone }}</td>
+          <td>{{ viewer.interviewerPassword }}</td>
+          <td v-if="viewer.interviewerAssigned === 1" class="blue--text">배정완료</td>
             <td v-else class="red--text">미배정</td>
         </tr>
       </tbody>
