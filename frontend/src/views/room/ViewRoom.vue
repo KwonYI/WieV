@@ -19,7 +19,9 @@
         :currentApplicantList = 'currentApplicantList'
         :publisher = 'publisher'
         :mainStreamManager = 'mainStreamManager'
+        :messages = 'messages'
         @updateMain="updateMain"
+        @sendMessage="sendMessage"
       />
       <!-- PT형 면접실 -->
       <PTView 
@@ -31,7 +33,9 @@
         :currentApplicantList = 'currentApplicantList'
         :publisher = 'publisher'
         :mainStreamManager = 'mainStreamManager'
+        :messages = 'messages'
         @updateMain="updateMain"
+        @sendMessage="sendMessage"
       />
       <!-- 일반형 면접실 -->
       <CaView 
@@ -43,7 +47,9 @@
         :currentApplicantList = 'currentApplicantList'
         :publisher = 'publisher'
         :mainStreamManager = 'mainStreamManager'
+        :messages = 'messages'
         @updateMain="updateMain"
+        @sendMessage="sendMessage"
       />
     </v-container>
 
@@ -160,17 +166,6 @@ export default {
     }else{
       this.roomType = 'ca';
     }
-
-    //면접방에 해당하는 지원자 갖고오기
-    axios
-    .get(`${SERVER_URL}/applicant/getListBySessionName/` + this.sessionName)
-    .then(res => {
-      this.allApplicantList = res.data
-    })
-    .catch((err) => {
-        console.log(err)
-        alert("세션 이름에 따른 지원자 갖고오기 실패")
-    })
   },
 
   beforeDestroy() {
@@ -183,49 +178,54 @@ export default {
     this.session = this.OV.initSession()
 
     this.session.on("streamCreated", ({ stream }) => {
-      const subscriber = this.session.subscribe(stream);
 
-      let info = JSON.parse(subscriber.stream.connection.data.split('%/%')[0])
+      //면접방에 해당하는 지원자 갖고오기
+      axios
+      .get(`${SERVER_URL}/applicant/getListBySessionName/` + this.sessionName)
+      .then(res => {
+        this.allApplicantList = res.data
 
-      if(info['type'] === 'viewee'){
-        console.log(info['type'], " 지원자 잡았다")
-        
-        this.viewees.push(subscriber)
+        const subscriber = this.session.subscribe(stream);
+        let info = JSON.parse(subscriber.stream.connection.data.split('%/%')[0])
 
-        if(!this.mainStreamManager){
-          this.mainStreamManager = subscriber
-        }
+        if(info['type'] === 'viewee'){
+          this.viewees.push(subscriber)
 
-        for (const apply of this.allApplicantList) {
-          if(apply["apply-Seq"]==info["userSeq"]){
-
-            console.log("잡았다 요놈", apply["apply-Seq"])
-            
-            this.currentApplicantList[info["userSeq"]] = [
-              {
-                'quest' : '자기소개서1',
-                'answer' : apply["apply-Resume1"]
-              },
-              {
-                'quest' : '자기소개서2',
-                'answer' : apply["apply-Resume2"]
-              },
-              {
-                'quest' : '자기소개서3',
-                'answer' : apply["apply-Resume3"]
-              },
-              {
-                'quest' : '자기소개서4',
-                'answer' : apply["apply-Resume4"]
-              },
-            ]
+          if(!this.mainStreamManager){
+            this.mainStreamManager = subscriber
           }
-        }
 
-        console.log("현재 방에 존재하는 지원자들의 자소서들", this.currentApplicantList)
-      }else{
-        this.viewers.push(subscriber)
-      }
+          for (const apply of this.allApplicantList) {
+            if(apply["apply-Seq"]==info["userSeq"]){
+              
+              this.currentApplicantList[info["userSeq"]] = [
+                {
+                  'quest' : '자기소개서1',
+                  'answer' : apply["apply-Resume1"]
+                },
+                {
+                  'quest' : '자기소개서2',
+                  'answer' : apply["apply-Resume2"]
+                },
+                {
+                  'quest' : '자기소개서3',
+                  'answer' : apply["apply-Resume3"]
+                },
+                {
+                  'quest' : '자기소개서4',
+                  'answer' : apply["apply-Resume4"]
+                },
+              ]
+            }
+          }
+        }else{
+          this.viewers.push(subscriber)
+        }
+      })
+      .catch((err) => {
+          console.log(err)
+          alert("세션 이름에 따른 지원자 갖고오기 실패")
+      })
     });
 
     // Stream 삭제
@@ -334,16 +334,6 @@ export default {
   },
 
   methods: {
-    sendMessage() {
-      if (this.text === "") return
-
-      this.session.signal({ data: this.text, to: [], type: "my-chat" })
-        .then()
-        .catch(err => console.error(err))
-
-      this.text = ""
-    },
-
     leaveSession() {
       axios
         .get(`${SERVER_URL}/session/leaveSession`, {
@@ -384,7 +374,13 @@ export default {
 
     updateMain(stream){
       this.mainStreamManager = stream;
-    }
+    },
+    
+    sendMessage(text) {
+      this.session.signal({ data: text, to: [], type: "my-chat" })
+        .then()
+        .catch(err => console.error(err))
+    },
   },
 
   computed: {
