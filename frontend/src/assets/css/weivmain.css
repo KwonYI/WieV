@@ -1,66 +1,98 @@
+html {
+  overflow-y: auto;
+}
+
 /* 메인 컬러  */
 .main-bg-navy {
-    background-color: #304B61 !important;
-    color: white;
+  background-color: #304B61 !important;
+  color: white;
 }
 
 
 .main-bg-navy-img {
-    background-color: #304B61 !important;
-    color: white;
-    background-image: url("../images/bg_image_dark_61.png");
-    background-size: cover;
-    /* filter: brightness(50%); */
+  background-color: #304B61 !important;
+  color: white;
+  background-image: url("../images/nightview.jpg");
+  background-size: cover;
+  /* filter: brightness(50%); */
+}
+
+.main-bg-navy-img::after {
+  width: 100%;
+  height: 100%;
+  content: '';
+  background-color: black;
+  opacity: 0.3;
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* z-index: -1; */
+  /* color: white; */
 }
 
 .main-bg-img {
-    background-color: #304B61 !important;
-    color: white;
-    opacity: 0.93;
+  background-color: #304B61 !important;
+  color: white;
+  opacity: 0.93;
 }
 
 ​.main-bg-beige {
-    background-color: #FFF1C3;
+  background-color: #FFF1C3;
 }
 
 ​.main-bg-lightsteelblue {
-    color: lightsteelblue;
+  color: lightsteelblue;
 }
-
 
 ​.main-ft-beige {
-    color: #FFF1C3;
+  color: #FFF1C3;
 }
 
+.bg-violet {
+  background-color: #B1B2C7;
+}
+
+.bg-lavendar {
+  background-color: lavender;
+}
+
+.blurEffect {
+  background-color: rgba(0, 0, 0, 0.5);  
+}
+
+.blurEffect::after{
+
+  filter: blur(10px);
+}
 
 
 
 
 ​.main-ft-white {
-    color: white;
+  color: white;
 }
 
 /* 버튼 속성 */
 ​.btn-active {
-    background-color: #758EF5;
+  background-color: #758EF5;
 }
 
 ​.btn-inactive {
-    background-color: #ABABAB;
+  background-color: #ABABAB;
 }
 
 /* 라우터 속성 */
 a {
-    text-decoration: none !important;
-    color: inherit !important;
+  text-decoration: none !important;
+  color: inherit !important;
 }
 
 input[type=password] {
-    font-family: initial;
-    
-    &::placeholder {
-      font-family: "NanumSquare";
-    }
+  font-family: initial;
+
+  &::placeholder {
+    font-family: "NanumSquare";
+  }
 }
 
 
@@ -68,21 +100,21 @@ input[type=password] {
 
 
 /* 플랫폼소개 처리 */
-.darkimg{
-    filter: brightness(50%);
-  }
+.darkimg {
+  filter: brightness(50%);
+}
 
-  .cardimg{
-    min-height: 12rem;
-    max-height: 12rem;
-    min-width: 15rem;
-    max-width: 20rem;
-  }
+.cardimg {
+  min-height: 12rem;
+  max-height: 12rem;
+  min-width: 15rem;
+  max-width: 20rem;
+}
 
-.cardsize{
-	min-height: 25rem;
-	max-height: 25rem;
-    min-width: 20rem;
-    max-width: 20rem;
+.cardsize {
+  min-height: 25rem;
+  max-height: 25rem;
+  min-width: 20rem;
+  max-width: 20rem;
 
 }

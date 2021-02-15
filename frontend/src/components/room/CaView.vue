@@ -73,13 +73,13 @@
           <!-- 면접관 -->
           <v-col cols="4" class="viewer-box centering flex-column">
             <div v-for="i in viewer" :key="i" class="brd screen-res-sm">면접관 {{i}}</div>
-            <!-- <span v-for="sub in subscribers" :key="sub.stream.connection.connectionId">
+            <!-- <!-- v-for="sub in subscribers" :key="sub.stream.connection.connectionId">
               <user-video
                 v-if="JSON.parse(sub.stream.connection.data.split('%/%')[0])['type'] !== 'viewee'"
                 :stream-manager="sub" 
                 @click.native="updateMainVideoStreamManager(sub)"
               />
-            </span> -->
+            </!--> -->
           </v-col>
           <!-- 지원자 -->
           <v-col v-if="!isViewee" cols="8" class="viewee-box centering flex-wrap">
