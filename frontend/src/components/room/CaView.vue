@@ -97,7 +97,7 @@
           <!-- 지원자 -->
           <v-col cols="8" class="viewee-box centering flex-wrap">
             <span v-if="isViewee">
-              <user-video :stream-manager="publisher" class="screen-res-md"/>
+              <user-video :stream-manager="publisher" class="screen-res-lr"/>
             </span>
             <span v-else>
               <user-video :stream-manager="mainStreamManager" class="screen-res-md"/>
@@ -107,7 +107,7 @@
       </v-col>
 
       <!-- 우측 중앙 - 기능 탭 -->
-      <v-col cols="3" class="sub-box">
+      <v-col v-if="!isViewee" cols="3" class="sub-box">
         <!-- 대기실 - 면접실 메신저 -->
         <div :class="isViewee ? 'hidden' : ''" class="pb-2 mb-2 centering justify-space-between" style="height: 10%">
           <!-- 메시지 보내기 -->
@@ -475,7 +475,10 @@ export default {
   width: 640px;
   height: 360px;
 }
-
+.screen-res-lr {
+  width: 720px;
+  height: 405px;
+}
 
 ::v-deep input::-webkit-outer-spin-button,
 ::v-deep input::-webkit-inner-spin-button {
