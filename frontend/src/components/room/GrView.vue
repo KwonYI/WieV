@@ -69,7 +69,7 @@
         </v-row>
 
         <!-- 메인 위 - 지원자들 화면, 클릭하면 큰 화면으로 보기 -->
-        <v-row>
+        <!-- <v-row>
           <div v-if="!isViewee" class='d-flex justify-center'>
             <user-video v-for="sub in viewees" :key="sub.stream.connection.connectionId"
               class= 'screen-res'
@@ -78,30 +78,28 @@
               @click.native="updateMain(sub)"
             />
           </div>
-        </v-row>
+        </v-row> -->
 
         <!-- 메인 중앙 - 면접관, 지원자 화면 -->
         <v-row class="main-screen">
-          <!-- 면접관 -->
-          <v-col cols="4" class="viewer-box centering flex-column">
-            <span v-if="!isViewee">
-              <user-video :stream-manager="publisher" class="screen-res-sm"/>
-            </span>
-            <span v-for="sub in viewers" :key="sub.stream.connection.connectionId">
-              <user-video
-                class="screen-res-sm"
-                :stream-manager="sub" 
-              />
-            </span>
+          <!--스크롤 면접관-->
+          <v-col cols="4" class="d-flex flex-column justify-center align-center no-gutters" style="">
+            <div class="overflow-y-auto pr-2" style="height:70vh">
+              <span v-if="!isViewee">
+                <user-video :stream-manager="publisher" class="screen-res-sm" />
+              </span>
+              <span v-for="sub in viewers" :key="sub.stream.connection.connectionId">
+                <user-video class="screen-res-sm" :stream-manager="sub" />
+              </span>
+            </div>
           </v-col>
           <!-- 지원자 -->
           <v-col cols="8" class="viewee-box centering flex-wrap">
-            <span v-if="isViewee">
-              <user-video :stream-manager="publisher" class="screen-res-md"/>
-            </span>
-            <span v-else>
-              <user-video :stream-manager="mainStreamManager" class="screen-res-md"/>
-            </span>
+            <user-video v-if="isViewee" :stream-manager="publisher" class="screen-res-sm"/>
+            <user-video v-for="sub in viewees" :key="sub.stream.connection.connectionId"
+              class= 'screen-res-sm'
+              :stream-manager="sub"
+            />
           </v-col>
         </v-row>
       </v-col>
@@ -503,11 +501,31 @@ export default {
   width: 640px;
   height: 360px;
 }
-
+.screen-res-lr {
+  width: 720px;
+  height: 405px;
+}
 
 ::v-deep input::-webkit-outer-spin-button,
 ::v-deep input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+/*  / 스크롤 바 밑의 배경 / */
+::-webkit-scrollbar-track {
+  background-color: grey;
+  opacity: 0.2;
+}
+
+/* / 실질적 스크롤 바 / */
+::-webkit-scrollbar-thumb {
+  background: aliceblue;
+  border-radius: 10px;
+}
+
+/* / 스크롤 바 상 하단 버튼 */
+::-webkit-scrollbar-button {
+  display: none;
 }
 </style>
