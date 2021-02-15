@@ -431,6 +431,7 @@ public class InterviewerController {
 
 				String waitSessionName = groupeType.getWaitSessionName(); // 대기방세션이름
 				String interviewSessionName = groupeType.getInterviewSessionName(); // 면접방세션이름
+				int groupTypeSeq = groupeType.getGroupTypeSeq();
 
 				GroupAll groupAll = groupAllDao.findGroupAllByGroupSeq(groupeType.getGroupGroupSeq());
 				Recruit recruit = recruitDao.findRecruitByReSeq(groupAll.getRecruitReSeq()); // 공고 정보
@@ -451,6 +452,7 @@ public class InterviewerController {
 				interviewInfo.setInterviewSessionName(interviewSessionName);
 
 				resultMap.put("interview", interviewInfo);
+				resultMap.put("groupTypeSeq", groupTypeSeq);
 
 				result.status = true;
 				result.data = "success";

@@ -17,7 +17,7 @@
 
         <!-- 왼쪽 상단 위치 -->
         <v-toolbar-items v-if="isNotRoom" class="srv-btn">
-          <v-btn v-if="isHome" plain style="font-size: 1rem" href="#work">플랫폼 소개</v-btn>
+          <v-btn v-if="isHome" plain style="font-size: 1rem"  href="#work">플랫폼 소개</v-btn>
           <v-btn v-if="isHome" plain style="font-size: 1rem" href="#contact">문의하기</v-btn>
           <!-- <v-btn plain style="font-size: 1rem" @click="$vuetify.goTo(target, options)">문의하기</v-btn> -->
         </v-toolbar-items>
@@ -153,20 +153,18 @@
 
 
       <!-- Contents -->
-      <v-sheet id="scrolling-techniques-7" class="overflow-y-auto" max-height="100vh" style="height: 100%">
-        <v-container class="p-0 m-0 pt-16" :class="[!accessToken || isHome ? 'main-bg-navy-img' : '']"
-          style="min-height: 100vh; max-width: initial; height: 100%">
+      
+      <v-responsive id="scrolling-techniques-7" class="overflow-y-auto" max-height="100vh">
+        <v-container class="p-0 m-0 pt-16" style="max-width: initial">
           <div id="top"></div>
-          <router-view />
-
+          <router-view transition transition-mode="out-in" />
         </v-container>
 
-        <Introduce v-if="isHome"/>
-        <Ask v-if="isHome"/>
-
-
-
-        <footer class="bg-dark py-2">
+        <!-- <Introduce v-if="isHome"/>
+        <Ask v-if="isHome"/> -->
+        
+        
+        <footer class="bg-dark py-4">
           <div class="container text-light">
             <div class="row">
               <div class="col-md-6 col-sm-12">&copy; Wiev. All rights reserved.</div>
@@ -174,13 +172,8 @@
                   target="_blank">SSAFY A405</a></div>
             </div>
           </div>
-
         </footer>
-
-
-
-      </v-sheet>
-
+      </v-responsive>
     </v-card>
 
 
@@ -202,161 +195,154 @@
 </template>
 
 <script>
-  import {
-    mapGetters,
-    mapState
-  } from "vuex"
-  import axios from "axios"
-  import Ask from '@/components/main/Ask'
-  import Introduce from '@/components/main/Introduce'
-  const SERVER_URL = process.env.VUE_APP_SERVER_URL
+import { mapGetters, mapState } from "vuex"
+import axios from "axios"
+// import Ask from '@/components/main/Ask'
+// import Introduce from '@/components/main/Introduce'
+const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
-  export default {
-    name: "App",
-    components: {
-      Ask,
-      Introduce
-    },
-    data: function () {
-      return {
-        dialogLogin: false,
-        dialogPassword: false,
+// import Router from 'vue-router'
+// import goTo from 'vuetify/es5/services/goto'
 
-        Manager: "",
-        images: {
-          logo: require('@/assets/images/logo.png')
-        },
-        userCredentials: {
-          userEmail: "",
-          userPassword: "",
-        },
+export default {
+  name: "App",
+  components: {
+    // Ask, Introduce
+  },
+  data: function () {
+    return {
+      dialogLogin: false,
+      dialogPassword: false,
 
-        userInfo: [{
-            label: "이름",
-            type: "text",
-            value: "hrName",
-            icon: "mdi-account",
-            rule: [
-              value => !!value || '이름은 필수 항목입니다.',
-            ],
-            longmsg: ''
-          },
-          {
-            label: "이메일",
-            type: "text",
-            value: "hrEmail",
-            icon: "mdi-email",
-            rule: [
-              value => !!value || '이메일은 필수 항목입니다.',
-              value => /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/.test(
-                value) || '이메일 형식이 유효하지 않습니다.',
-            ],
-            longmsg: ''
-          },
-          {
-            label: "연락처",
-            type: "text",
-            value: "hrPhone",
-            icon: "mdi-cellphone",
-            rule: [
-              value => !!value || '연락처는 필수 항목입니다.',
-              value => /^\d{3}-\d{3,4}-\d{4}$/.test(value) || '연락처 형식이 유효하지 않습니다.'
-            ],
-            longmsg: ''
-          },
-        ],
-        credentials: {
-          hrName: "",
-          hrEmail: "",
-          hrPhone: "",
+      Manager: "",
+      images: {
+        logo: require('@/assets/images/logo.png')
+      },
+      userCredentials: {
+        userEmail: "",
+        userPassword: "",
+      },
+
+      userInfo: [
+        {
+          label: "이름",
+          type: "text",
+          value: "hrName",
+          icon: "mdi-account",
+          rule: [
+            value => !!value || '이름은 필수 항목입니다.',
+          ],
+          longmsg: ''
         },
+        {
+          label: "이메일",
+          type: "text",
+          value: "hrEmail",
+          icon: "mdi-email",
+          rule: [
+            value => !!value || '이메일은 필수 항목입니다.',
+            value => /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/.test(
+              value) || '이메일 형식이 유효하지 않습니다.',
+          ],
+          longmsg: ''
+        },
+        {
+          label: "연락처",
+          type: "text",
+          value: "hrPhone",
+          icon: "mdi-cellphone",
+          rule: [
+            value => !!value || '연락처는 필수 항목입니다.',
+            value => /^\d{3}-\d{3,4}-\d{4}$/.test(value) || '연락처 형식이 유효하지 않습니다.'
+          ],
+          longmsg: ''
+        },
+      ],
+      credentials: {
+        hrName: "",
+        hrEmail: "",
+        hrPhone: "",
+      },
+    }
+  },
+  computed: {
+    ...mapState(["accessToken", 'user']),
+    ...mapGetters(["getAccessToken"]),
+    isNotRoom() {
+      if (['WaitRoom', 'ViewRoom', 'Main'].includes(this.$route.name)) {
+        return false
+      } else {
+        return true
       }
     },
-    computed: {
-      ...mapState(["accessToken", 'user']),
-      ...mapGetters(["getAccessToken"]),
-      isNotRoom() {
-        if (['WaitRoom', 'ViewRoom', 'Main'].includes(this.$route.name)) {
-          return false
-        } else {
-          return true
-        }
-      },
-      isHome() {
-        if (this.$route.name === 'Home') {
-          return true
-        } else {
-          return false
-        }
+    isHome() {
+      if (this.$route.name === 'Home') {
+        return true
+      } else {
+        return false
       }
-    },
-    methods: {
-      findPassword: function () {
-        if (this.$refs.form.validate()) {
+    }
+  },
+  methods: {
+    findPassword: function () {
+      if (this.$refs.form.validate()) {
 
-          let signupForm = {
-            hrEmail: this.credentials.hrEmail,
-            hrName: this.credentials.hrName,
-            hrPhone: this.credentials.hrPhone
-          }
-
-          axios.post(`${SERVER_URL}/hr/findPassword`, signupForm)
-            .then(() => {
-              // console.log(res)
-              alert("입력한 이메일로 새로운 비밀번호를 전송했습니다.")
-              this.$router.push({
-                name: "Home"
-              })
-            })
-            .catch((err) => {
-              console.log(err)
-              alert("가입된 정보가 존재하지 않습니다.")
-            })
-
-          this.credentials.hrName = ""
-          this.credentials.hrEmail = ""
-          this.credentials.hrPhone = ""
-          this.dialogPassword = false
+        let signupForm = {
+          hrEmail: this.credentials.hrEmail,
+          hrName: this.credentials.hrName,
+          hrPhone: this.credentials.hrPhone
         }
 
-      },
-    findPasswordOutside: function() {
-      this.credentials.hrName = ""
-      this.credentials.hrEmail = ""
-      this.credentials.hrPhone = ""
-      this.dialogPassword = false
+        axios.post(`${SERVER_URL}/hr/findPassword`, signupForm)
+          .then(() => {
+            // console.log(res)
+            alert("입력한 이메일로 새로운 비밀번호를 전송했습니다.")
+            this.$router.push({
+              name: "Home"
+            })
+          })
+          .catch((err) => {
+            console.log(err)
+            alert("가입된 정보가 존재하지 않습니다.")
+          })
+
+        this.credentials.hrName = ""
+        this.credentials.hrEmail = ""
+        this.credentials.hrPhone = ""
+        this.dialogPassword = false
+      }
+
     },
     login: function () {
       this.$store.dispatch("LOGIN", this.userCredentials)
-         .then(() => {
+        .then(() => {
           // this.$router.push(this.$router.currentRoute) 
-          this.$router.push({name: 'Home'})
+          this.$router.push({
+            name: 'Home'
+          })
           this.userCredentials.userEmail = ""
           this.userCredentials.userPassword = ""
         })
 
       this.dialogLogin = false
     },
-    loginOutside: function() {
-      this.dialogLogin = false
-      this.userCredentials.userEmail = ''
-      this.userCredentials.userPassword = ''
-    },
     logout: function () {
       this.$store.dispatch("LOGOUT")
-        .then(() => this.$router.replace({ name: "Home" }))
+        .then(() => this.$router.replace({
+          name: "Home"
+        }))
     },
-      //개행메소드
-      handleNewLine(str) {
-        return String(str).replace(/(?:\r\n|\r|\n)/g, "</br>");
-      },
+    //개행메소드
+    handleNewLine(str) {
+      return String(str).replace(/(?:\r\n|\r|\n)/g, "</br>");
     },
-    created: function () {
-      this.Manager = this.$store.state.Manager
-      console.log("this.", this.$route.name)
-    },
+  },
+  created: function () {
+    this.Manager = this.$store.state.Manager
+    console.log("this.", this.$route.name)
+  },
     
-  }
+}
 </script>
 
 <style>
@@ -380,6 +366,14 @@
 
   .v-parallax__content {
     padding: 0 !important;
+  }
+
+  .v-transition {
+    transition: opacity .1s ease-out;
+  }
+    
+  .v-enter, .v-leave {
+    opacity: 0;
   }
 </style>
 
