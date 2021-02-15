@@ -1,69 +1,36 @@
 <template>
 	<div id="introduce">
 		<!-- What is VieW -->
-		<div style="margin-bottom: 10rem">WieV는 비대면 면접에 최적화된 솔루션을 제공하는 플랫폼입니다.</div>
-
-		<!-- <v-lazy
-			v-model="isActive"
-			:options="{
-				threshold: .5
-			}"
-			min-height="200"
-		>
-			<v-expand-x-transition>
-				<v-card
-					class="mx-auto"
-					max-width="336"
-				>
-					<v-card-title>Card title</v-card-title>
-
-					<v-card-text>
-						Phasellus magna. Quisque rutrum. Nunc egestas, augue at pellentesque laoreet, felis eros vehicula leo, at malesuada velit leo quis pede. Aliquam lobortis. Quisque libero metus, condimentum nec, tempor a, commodo mollis, magna.
-
-						In turpis. In dui magna, posuere eget, vestibulum et, tempor auctor, justo. In turpis. Pellentesque dapibus hendrerit tortor. Ut varius tincidunt libero.
-					</v-card-text>
-				</v-card>
-			</v-expand-x-transition>
-		</v-lazy> -->
+		<div data-aos="flip-right" class="headline text-center" style="margin-bottom: 10rem">WieV는 비대면 면접에 최적화된 솔루션을 제공하는 플랫폼입니다.</div>
 		
 		<!-- What we serve -->
-		<v-lazy
-			v-model="isActive"
-			:options="{
-				threshold: 0.5
-			}"
-			min-height="200"
-		>
-			<v-expand-x-transition name="x-expansion">
-				<v-container style="margin-bottom: 10rem">
-					<v-row no-gutters>
-						<div class="text-h4 text-center font-weight-black" style="margin-bottom: 5rem">What We Serve</div>
-						<v-col v-for="(item, i) in serve" :key="i" class="serve-content">
-							<v-card class="mx-auto my-12" max-width="374" elevation="0">
+		<v-container style="margin-bottom: 10rem">
+			<v-row no-gutters>
+				<div class="text-h4 text-center font-weight-black" style="margin-bottom: 5rem" data-aos="flip-left">What We Serve</div>
+				<v-col v-for="(item, i) in serve" :key="i" class="serve-content">
+					<v-card class="mx-auto my-12" max-width="374" elevation="0">
 
-								<v-card-title class="text-h4 justify-center">{{ item.title }}</v-card-title>
+						<v-card-title class="text-h4 justify-center" data-aos="fade-down">{{ item.title }}</v-card-title>
 
-								<v-icon size="90" color="#0277BD" style="margin: 3.5rem 0; width: 100%"> mdi-{{ item.icon }} </v-icon>
+						<v-icon size="90" color="#0277BD" style="margin: 3.5rem 0; width: 100%" data-aos="fade-down"> mdi-{{ item.icon }} </v-icon>
 
-								<v-card-text>
-									<div class="body-2 text-dark font-weight-medium">
-										{{ item.content }}
-									</div>
-								</v-card-text>
+						<v-card-text>
+							<div class="body-2 text-dark font-weight-medium" data-aos="fade-down">
+								{{ item.content }}
+							</div>
+						</v-card-text>
 
-								<!-- <v-divider class="mx-4"></v-divider> -->
+						<!-- <v-divider class="mx-4"></v-divider> -->
 
-							</v-card>
-						</v-col>
-					</v-row>
-				</v-container>
-			</v-expand-x-transition>
-		</v-lazy>
+					</v-card>
+				</v-col>
+			</v-row>
+		</v-container>
 
 		<!-- What we support -->
-		<div class="text-h4 text-center font-weight-black" style="margin-bottom: 7rem">What We Support</div>
+		<div class="text-h4 text-center font-weight-black" style="margin-bottom: 7rem" data-aos="flip-left">What We Support</div>
 		<v-row style="margin-bottom: 10rem" no-gutters>
-			<v-col v-for="(sup, i) in support" :key="i" cols="4" class="pa-0">
+			<v-col v-for="(sup, i) in support" :key="i" cols="4" class="pa-0" data-aos="zoom-in">
 				<v-hover v-slot="{ hover }">
 					<v-card :class="{'on-hover': hover}" :dark="!hover" tile>
 						<v-img :src="sup.src" class="support">
@@ -76,7 +43,7 @@
 		</v-row>
 
 		<!-- What we deliver -->
-		<div class="text-h4 text-center font-weight-black" style="margin-bottom: 7rem">What We Deliver</div>
+		<div class="text-h4 text-center font-weight-black" style="margin-bottom: 7rem" data-aos="flip-left">What We Deliver</div>
 		<v-carousel
 			cycle
 			height="300"
@@ -97,30 +64,30 @@
 		</v-carousel>
 
 		<!-- Our Team -->
-		<div class="text-h4 text-center font-weight-black" style="margin-bottom: 7rem">Our Team</div>
+		<div class="text-h4 text-center font-weight-black" style="margin-bottom: 7rem" data-aos="flip-left">Our Team</div>
     <v-container style="margin-bottom: 10rem">
       <v-row class="mt-10">
         <v-col cols="12 d-flex justify-space-around">
           <div v-for="(member, i) in team" :key="i">
-            <v-avatar size="200" class="avatarImg">
+            <v-avatar size="200" class="avatarImg" data-aos="flip-right">
               <img alt="user" :src="member.img">
             </v-avatar>
 
-            <p class="text-center h3 font-weight-black mt-3">{{ member.name }}</p>
-            <p class="text-center h6 font-weight-black">{{ member.position }}</p>
+            <p class="text-center h3 font-weight-black mt-3" data-aos="flip-right">{{ member.name }}</p>
+            <p class="text-center h6 font-weight-black" data-aos="flip-right">{{ member.position }}</p>
 
             <div class="d-flex justify-center">
-							<v-btn class="mx-2" fab dark small color="secondary" :href="member.github" target="_blank">
+							<v-btn class="mx-2" fab dark small color="secondary" :href="member.github" target="_blank" data-aos="flip-right">
 								<v-icon style="color:white">
 									mdi-github
 								</v-icon>
 							</v-btn>
-							<v-btn class="mx-2" fab dark small color="blue" :href="member.facebook" target="_blank">
+							<v-btn class="mx-2" fab dark small color="blue" :href="member.facebook" target="_blank" data-aos="flip-right">
 								<v-icon style="color:white">
 									mdi-facebook
 								</v-icon>
 							</v-btn>
-							<v-btn class="mx-2" fab dark small color="pink" :href="member.instagram" target="_blank">
+							<v-btn class="mx-2" fab dark small color="pink" :href="member.instagram" target="_blank" data-aos="flip-right">
 								<v-icon style="color:white">
 									mdi-instagram
 								</v-icon>
@@ -135,47 +102,13 @@
 		<v-col>
 			<!-- <div class="text-h4 text-center font-weight-black">Contact</div> -->
 		</v-col>
-
-
-    <!-- <section class="page-section mb-10" id="services">
-      <div class="container my-5">
-        <h3 class="h3 text-center">자동 채용 관리 시스템 & 실시간 화상 면접 을 통해</h3>
-        <h3 class="h3 text-center">
-          채용 편의성을 높이고 비즈니스에 집중할 수 있습니다.</h3>
-      </div>
-      <hr class="divider my-4" />
-      <div class="container">
-        <div class="row d-flex justify-content-center">
-          <div class="col-lg-3 col-md-6 text-center">
-            <div class="mt-5">
-              <img src="@/assets/images/interview.png" width="150">
-              <h3 class="h4 m-2">면접을 진행하고 싶은 사람이 있나요?</h3>
-              <p class="text-muted mb-0">언제 어디서든 면접을 진행하세요.</p>
-            </div>
-          </div>
-          <div class="col-lg-3 col-md-6 text-center">
-            <div class="mt-5">
-              <img src="@/assets/images/money-bag.png" width="150">
-              <h3 class="h4 m-2">면접에 대한 비용을 절약하고 싶나요?</h3>
-              <p class="text-muted mb-0">장소 대관에 들이는 시간 및 비용을 절약하세요.
-                WieV가 알아서 제공해드립니다.</p>
-            </div>
-          </div>
-          <div class="col-lg-3 col-md-6 text-center">
-            <div class="mt-5">
-              <img src="@/assets/images/calendar.png" width="150">
-              <h3 class="h4 m-2">면접 일정을 쉽게 만들고 싶나요?</h3>
-              <p class="text-muted mb-0">사내 채용 관련 데이터를 등록하면 자동으로 면접일정을 생성해 드립니다.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section> -->
-
   </div>
 </template>
 
 <script>
+import AOS from 'aos'
+import 'aos/dist/aos.css'
+
 	export default {
 		name: "Introduce",
 		data: function () {
@@ -305,11 +238,14 @@
 		},
 
 		methods: {
-
+			
 		},
 
 		created: function () {
-
+			AOS.init()
+		},
+		mounted() {
+			AOS.refresh()
 		},
 		computed: {
 
