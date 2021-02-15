@@ -6,7 +6,7 @@
         <div class="d-flex flex-column justify-center align-center text-white">
           <v-col class="wiev-box">
             <v-col :class="[getAccessToken ? '' : 'text-h5']">
-              <h3 class="ml2 white--text">View Everywhere</h3>
+              <h3 class="white--text" data-aos="fade-in">View Everywhere</h3>
             </v-col>
             <v-col v-if="!getAccessToken">
               비대면 화상면접 플랫폼
@@ -50,6 +50,11 @@
 
 
 <script>
+import AOS from 'aos'
+import 'aos/dist/aos.css'
+
+AOS.init()
+
   import {
     mapGetters
   } from "vuex";

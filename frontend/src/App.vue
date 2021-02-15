@@ -1,10 +1,8 @@
 <template>
   <v-app>
     <!-- Navbar -->
-    <v-card class="overflow-hidden" style="border-radius: 0">
-
-      <v-app-bar absolute class="main-bg-navy" elevate-on-scroll dark scroll-target="#scrolling-techniques-7"
-        style="z-index:999">
+    <v-card class="" style="border-radius: 0">
+      <v-app-bar absolute class="main-bg-navy" elevate-on-scroll dark scroll-target="#scrolling-techniques-7" style="z-index:99; position: sticky">
         <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
         <v-toolbar-title id="wiev">
           <img :src="images.logo" width="40" alt="logo">
@@ -155,8 +153,8 @@
 
       <!-- Contents -->
       
-      <v-responsive id="scrolling-techniques-7" class="overflow-y-auto" max-height="100vh">
-        <v-container class="p-0 m-0 pt-16" style="max-width: initial">
+      <v-responsive id="scrolling-techniques-7" class="" style="overflow: initial">
+        <v-container class="p-0 m-0" style="max-width: initial">
           <div id="top"></div>
           <router-view transition transition-mode="out-in" />
         </v-container>
