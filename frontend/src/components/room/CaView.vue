@@ -88,7 +88,7 @@
                     class= 'screen-res'
                     :stream-manager="sub" 
                     :id = "sub.stream.connection.connectionId"
-                    @click.native="updateMainVideoStreamManager(sub)"
+                    @click.native="updateMain(sub)"
                   />
                 </div>
               </v-row>
