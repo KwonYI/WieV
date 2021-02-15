@@ -256,12 +256,6 @@ public class InterviewerController {
 			}
 
 		}
-//			status = HttpStatus.OK;
-//		} catch (RuntimeException e) {
-//			logger.error("면접관 자동 배정 실패", e);
-//			status = HttpStatus.INTERNAL_SERVER_ERROR;
-//		}
-//		return new ResponseEntity<>("면접관 자동 배정 완료", status);
 	}
 
 	@PostMapping("/register/{reSeq}")

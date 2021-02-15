@@ -371,14 +371,11 @@ public class ApplicantController {
 		return new ResponseEntity<>(resultMap, status);
 	}
 
-//	@PostMapping("/assign/{groupSeq}")
-//	@ApiOperation(value = "지원자 자동 배정")
+
 	public void applicantAssign(int groupSeq) {
-//		HttpStatus status = null;
 		List<Applicant> applicantList = new ArrayList<Applicant>();
 		List<GroupDetail> groupDetailList = new ArrayList<GroupDetail>();
 
-//		try {
 
 		GroupAll nowGroupAll = groupAllDao.findGroupAllByGroupSeq(groupSeq);
 
@@ -438,12 +435,6 @@ public class ApplicantController {
 			}
 
 		}
-//			status = HttpStatus.OK;
-//		} catch (RuntimeException e) {
-//			logger.error("지원자 자동 배정 실패", e);
-//			status = HttpStatus.INTERNAL_SERVER_ERROR;
-//		}
-//		return new ResponseEntity<>("지원자 자동 배정 완료", status);
 	}
 
 	@GetMapping("/mypage/{Id}")
@@ -536,11 +527,6 @@ public class ApplicantController {
 		// 웹상에서 업로드 되어 MultipartFile인 경우 바로 InputStream으로 변경하여 사용.
 		InputStream inputStream = new ByteArrayInputStream(files.getBytes());
 
-		// String filePath = "C:\\example.xlsx"; // xlsx 형식
-		// String filePath = "D:\\applicant.xls"; // xls 형식
-
-		// InputStream inputStream = new FileInputStream(filePath);
-
 		// 엑셀 로드
 		Workbook workbook = WorkbookFactory.create(inputStream);
 
@@ -573,9 +559,6 @@ public class ApplicantController {
 
 					switch (index) {
 					case 0:
-						// 인덱스
-						// applicant.setApplySeq(((Double) getValueFromCell(cell)).intValue());
-						// 셀이 숫자형인 경우 Double형으로 변환 후 int형으로 변환
 						break;
 					case 1:
 						// 성명
@@ -659,9 +642,6 @@ public class ApplicantController {
 
 				// 아직 면접 일정 배정 안함
 				applicant.setApplyAssigned(0);
-
-				// insert문
-				// applicantDao.save(applicant);
 
 				applicantList.add(applicant);
 			}
@@ -935,8 +915,7 @@ public class ApplicantController {
 				}
 				status = HttpStatus.OK;
 				resultMap.put("message", "이메일 전송 성공");
-			}
-			else {
+			} else {
 				status = HttpStatus.OK;
 				resultMap.put("message", "지원자 존재하지 않음");
 			}

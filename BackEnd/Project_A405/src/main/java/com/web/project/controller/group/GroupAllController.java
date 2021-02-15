@@ -811,11 +811,6 @@ public class GroupAllController {
 			}
 
 		}
-//			status = HttpStatus.OK;
-//		} catch (RuntimeException e) {
-//			logger.error("지원자 자동 배정 실패", e);
-//			status = HttpStatus.INTERNAL_SERVER_ERROR;
-//		}
-//		return new ResponseEntity<>("지원자 자동 배정 완료", status);
+
 	}
 }
