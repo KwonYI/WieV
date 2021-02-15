@@ -391,7 +391,8 @@ export default {
 
 <style scoped>
 #viewroom {
-  height: 100%;
+  /* height: 100%; */
+  height: 91vh;
   display: flex;
   flex-direction: column;
   background-color: #ECEFF1;
