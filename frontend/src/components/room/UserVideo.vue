@@ -1,8 +1,8 @@
 <template>
-  <div v-if="streamManager" align="center">
+  <span v-if="streamManager" align="center">
     <ov-video :stream-manager="streamManager" />
     <p>{{ JSON.parse(streamManager.stream.connection.data.split("%/%")[0])['name'] }}</p>
-  </div>
+  </span>
 </template>
 
 <script>
