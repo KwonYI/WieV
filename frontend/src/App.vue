@@ -164,7 +164,7 @@
         <Ask v-if="isHome"/> -->
         
         
-        <footer class="bg-dark py-4">
+        <footer v-if="isFooterView" class="bg-dark py-4">
           <div class="container text-light">
             <div class="row">
               <div class="col-md-6 col-sm-12">&copy; Wiev. All rights reserved.</div>
@@ -277,6 +277,13 @@ export default {
     },
     isHome() {
       if (this.$route.name === 'Home') {
+        return true
+      } else {
+        return false
+      }
+    },
+    isFooterView() {
+       if (['Main', 'Home'].includes(this.$route.name)) {
         return true
       } else {
         return false
