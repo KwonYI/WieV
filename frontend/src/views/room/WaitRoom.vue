@@ -149,10 +149,10 @@
               <!--지원자 1명-->
               <v-row class="d-flex flex-wrap justify-center align-center">
                 <span v-if="isViewee">
-                  <user-video :streamManager="publisher" class="screen-res-md"/>
+                  <user-video :stream-manager="publisher" class="screen-res-md"/>
                 </span>
                 <span v-else>
-                  <user-video v-if="mainStreamManager" :streamManager="mainStreamManager" class="screen-res-md"/>
+                  <user-video v-if="mainStreamManager" :stream-manager="mainStreamManager" class="screen-res-md"/>
                 </span>
               </v-row>              
             </v-col>
