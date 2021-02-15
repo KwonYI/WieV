@@ -31,7 +31,8 @@
               >
                 <v-list-item-content>
                   <v-list-item-title>
-                    {{item.reYear}} {{item.reFlag}} {{item.reStatus}} {{item.reSeq}}
+                    {{item.reYear}} {{item.reFlag}} {{item.reStatus}}
+                     <!-- {{item.reSeq}} -->
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>

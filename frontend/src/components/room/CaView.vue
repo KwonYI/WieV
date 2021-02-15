@@ -9,9 +9,8 @@
           <v-col cols="2" class="d-flex align-center">
             <h5 class="mb-0 font-weight-bold">직무 면접실</h5>
           </v-col>
-          <v-col cols="3"></v-col>
           <!-- 타이머 -->
-          <v-col cols="7" class="centering justify-start">
+          <!-- <v-col cols="7" class="centering justify-start">
             <v-card
               elevation="3"
               height="70%"
@@ -21,13 +20,13 @@
             >
               <span class="subtitle-1 px-4">
                 남은 시간 {{ minutes }} : {{ seconds }}
-              </span>
+              </span> -->
               <!-- <span v-for="(item, i) in timerBtn" :key="i">
                 <v-btn v-if="item.if" color="#757575" height="100%" tile dark @click="item.click">
                   {{ item.name }}
                 </v-btn>
               </span> -->
-              <v-btn v-if="!timer" color="#757575" height="100%" tile dark @click="startTimer">
+              <!-- <v-btn v-if="!timer" color="#757575" height="100%" tile dark @click="startTimer">
                 시작
               </v-btn>
               <v-btn v-else color="#757575" height="100%" tile dark @click="stopTimer">
@@ -65,40 +64,81 @@
                 hide-details
               ></v-text-field>
             </v-col>
-          </v-col>
+          </v-col>  -->
         </v-row>
 
+          <v-row>
+            <!--면접관-->
+            <v-col cols="4" class="d-flex flex-column justify-center align-center">
+              <span v-if="!isViewee">
+                <user-video :streamManager="publisher" class="screen-res-sm"/>
+              </span>
+              <span v-for="sub in viewers" :key="sub.stream.connection.connectionId">
+                <user-video
+                  class="screen-res-sm"
+                  :stream-manager="sub" 
+                />
+              </span>
+            </v-col>
+            <v-col cols="8" class='d-flex flex-column align-center'>
+              <!--지원자 여러명-->
+              <v-row>
+                <div v-if="!isViewee" class='d-flex justify-center'>
+                  <user-video v-for="sub in viewees" :key="sub.stream.connection.connectionId"
+                    class= 'screen-res'
+                    :stream-manager="sub" 
+                    :id = "sub.stream.connection.connectionId"
+                    @click.native="updateMain(sub)"
+                  />
+                </div>
+              </v-row>
+              <!--지원자 1명-->
+              <v-row class="d-flex flex-wrap justify-center align-center">
+                <span v-if="isViewee">
+                  <user-video :stream-manager="publisher" class="screen-res-md"/>
+                </span>
+                <span v-else>
+                  <user-video v-if="mainStreamManager" :stream-manager="mainStreamManager" class="screen-res-md"/>
+                </span>
+              </v-row>              
+            </v-col>
+          </v-row>
+        <!-- 메인 위 - 지원자들 화면, 클릭하면 큰 화면으로 보기 -->
+        <!-- <v-row>
+          <div v-if="!isViewee" class='d-flex justify-center'>
+            <user-video v-for="sub in viewees" :key="sub.stream.connection.connectionId"
+              class= 'screen-res'
+              :stream-manager="sub" 
+              :id = "sub.stream.connection.connectionId"
+              @click.native="updateMain(sub)"
+            />
+          </div>
+        </v-row> -->
+
         <!-- 메인 중앙 - 면접관, 지원자 화면 -->
-        <v-row class="main-screen">
+        <!-- <v-row class="main-screen"> -->
           <!-- 면접관 -->
-          <v-col cols="4" class="viewer-box centering flex-column">
-            <div v-for="i in viewer" :key="i" class="brd screen-res-sm">면접관 {{i}}</div>
-            <!-- <span v-for="sub in subscribers" :key="sub.stream.connection.connectionId">
+          <!-- <v-col cols="4" class="viewer-box centering flex-column">
+            <span v-if="!isViewee">
+              <user-video :stream-manager="publisher" class="screen-res-sm"/>
+            </span>
+            <span v-for="sub in viewers" :key="sub.stream.connection.connectionId">
               <user-video
-                v-if="JSON.parse(sub.stream.connection.data.split('%/%')[0])['type'] !== 'viewee'"
+                class="screen-res-sm"
                 :stream-manager="sub" 
-                @click.native="updateMainVideoStreamManager(sub)"
               />
-            </span> -->
-          </v-col>
+            </span>
+          </v-col> -->
           <!-- 지원자 -->
-          <v-col v-if="!isViewee" cols="8" class="viewee-box centering flex-wrap">
-            <div v-for="i in viewee" :key="i" :class="[viewee === 1 ? `screen-res-md` : `screen-res-sm`, 'brd']">지원자 {{i}}</div>
-            <!-- <span v-for="sub in subscribers" :key="sub.stream.connection.connectionId">
-            <div v-if="!isViewee">
-              
-            </div>
-              <user-video
-                v-if="JSON.parse(sub.stream.connection.data.split('%/%')[0])['type'] === 'viewee'"
-                :stream-manager="sub" 
-                @click.native="updateMainVideoStreamManager(sub)"
-              />
-            </span> -->
+          <!-- <v-col cols="8" class="viewee-box centering flex-wrap">
+            <span v-if="isViewee">
+              <user-video :stream-manager="publisher" class="screen-res-lr"/>
+            </span>
+            <span v-else>
+              <user-video :stream-manager="mainStreamManager" class="screen-res-md"/>
+            </span>
           </v-col>
-          <v-col v-else cols="8" class="viewee-box centering flex-wrap">
-            <div class="screen-res-md brd">나</div>
-          </v-col>
-        </v-row>
+        </v-row> -->
       </v-col>
 
       <!-- 우측 중앙 - 기능 탭 -->
@@ -115,17 +155,19 @@
                 clearable
                 no-resize
                 hide-details
+                v-model="messageToSession"
               ></v-textarea>
-              <v-btn text color="secondary">Send</v-btn>
+              <v-btn @click="sendToSession" text color="secondary">Send</v-btn>
             </template>
           </a-popover>
           <!-- 메시지 출력 -->
           <v-sheet color="white" height="100%" width="60%" elevation="3" class="d-flex justify-center align-center">
-            <div>면접 준비 완료</div>
+            <!-- <div>면접 준비 완료</div> -->
+            <div>{{messageFromSession}}</div>
           </v-sheet>
         </div>
         <!-- 자기소개서 -->
-        <v-card v-if="!isViewee" style="height: 90%">
+        <v-card v-if="!isViewee" style="height: 82%">
           <v-tabs
             v-model="letterTab"
             slider-color="#304B61"
@@ -133,26 +175,31 @@
             center-active
           >
             <v-tab
-              v-for="(item, i) in letterList"
+              v-for="(item, i) in currentApplicantList[clickedSeq]"
               :key="i"
             >
-              질문 {{ i+1 }}
+              <span v-if="item.quest !== '자기소개서'">
+                질문 {{ i+1 }}
+              </span>
+              <span v-else>
+                자기소개서
+              </span>
             </v-tab>
           </v-tabs>
           <v-card-text class="">
             <v-tabs-items v-model="letterTab">
-              <v-tab-item v-for="(item, i) in letterList" :key="i">
-                {{ i+1 }}. {{ item.quest }}
+              <v-tab-item v-for="(item, i) in currentApplicantList[clickedSeq]" :key="i">
+                {{ i+1 }}. {{ item.quest }} // {{clickedSeq}}번 지원자
                 <v-divider></v-divider>
                 <v-virtual-scroll
-                  item-height="250"
+                  item-height="400"
                   :items="[item]"
                 >
                   {{ item.answer }}
                 </v-virtual-scroll>
               </v-tab-item>
             </v-tabs-items>
-            <v-textarea
+            <!-- <v-textarea
               label="Memo"
               outlined
               rows="2"
@@ -160,10 +207,83 @@
               style="margin-top: .5rem;"
               no-resize
               hide-details
-            ></v-textarea>
+            ></v-textarea> -->
           </v-card-text>
+      
         </v-card>
-        <v-card v-else style="height: 90%"></v-card>
+        <!--타이머-->
+          <v-card v-if="!isViewee" style="height: 8%">
+            <v-card 
+              elevation="3"
+              height="100%"
+              class="centering"
+              :class="isViewee ? 'd-none' : ''"
+              tile
+            >
+              <span class="subtitle-1 px-4 text-center">
+                타이머 {{ minutes }}:{{ seconds }}
+              </span>
+              <!-- <span v-for="(item, i) in timerBtn" :key="i">
+                <v-btn v-if="item.if" color="#757575" height="100%" tile dark @click="item.click">
+                  {{ item.name }}
+                </v-btn>
+              </span> -->
+              <v-btn v-if="!timer" color="#757575" height="100%" tile dark @click="startTimer">
+                시작
+              </v-btn>
+              <v-btn v-else color="#757575" height="100%" tile dark @click="stopTimer">
+                정지
+              </v-btn>
+              <v-btn v-if="resetButton" color="#757575" height="100%" tile dark @click="resetTimer">
+                리셋
+              </v-btn>
+              <v-btn v-if="!timer" color="#757575" height="100%" tile dark @click="editTimer">
+                설정
+              </v-btn>
+              <v-col v-if="edit" cols="4" class="d-flex pa-0" style="height: 100%">
+                <v-text-field
+                  v-model="inputMin"
+                  solo
+                  height="100%"
+                  max-width="70px"
+                  type="number"
+                  label="분"
+                  class="time-input"
+                  tile
+                  hide-details
+                ></v-text-field>
+                <v-text-field
+                  v-model="inputSec"
+                  solo
+                  height="100%"
+                  max-width="70px"
+                  type="number"
+                  label="초"
+                  class="time-input"
+                  tile
+                  hide-details
+                ></v-text-field>
+              </v-col>              
+            </v-card>
+          </v-card>
+        <v-card v-else style="height: 90%">
+          <v-sheet color="white" height="100%" elevation="3">
+            <v-list class="pa-0" v-auto-bottom="messages">
+              <div v-for="(msg, index) in messages" :key="index">
+                {{ msg.from }} : {{ msg.text }}
+              </div>
+            </v-list>
+            <v-text-field
+              v-model="text"
+              label="메세지를 입력하세요."
+              class="pa-0 ma-0 mx-1"
+              single-line
+              hide-details
+              dense
+              @keyup.13="sendMessage"
+            ></v-text-field>
+          </v-sheet>          
+        </v-card>
         <!-- 평가 -->
 
       </v-col>
@@ -174,55 +294,54 @@
 
 
 <script>
-import { OpenVidu } from "openvidu-browser"
-// import UserVideo from "@/components/room/UserVideo"
-import axios from "axios"
+import UserVideo from "@/components/room/UserVideo"
+// import axios from "axios"
 
+import Stomp from 'webstomp-client'
+import SockJS from 'sockjs-client'
 
 const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
 export default {
   name: "CaView",
   components: {
-    // UserVideo,
+    UserVideo,
+  },
+  props: {
+    groupTypeSeq :{
+      type : String
+    },
+    isViewee: {
+      type: Boolean,
+    },
+    viewees: {
+      type: Array,
+    },
+    viewers: {
+      type: Array,
+    },
+    currentApplicantList: {
+      type: Object,
+    },
+    publisher: {
+      type: Object,
+    },
+    mainStreamManager :{
+      type : Object
+    },
+    messages :{
+      type : Array
+    }
   },
   data: function () {
     return {
-      isViewee: false,
-
-      OV: undefined,
-      session: undefined,
-      mainStreamManager: undefined, // 메인 비디오
-      publisher: undefined, // 연결 객체
-      subscribers: [],
-
-      // 채팅
-      text: "",
-      messages: [],
-
-      // 화면, 소리, 화면 공유
-      audioOn: true,
-      audioMsg: "소리 Off",
-      videoOn: true,
-      videoMsg: "화면 Off",
-      // shareOn: false,
-      // shareMsg: "공유 Off",
-
-      // From SessionController
-      sessionName: undefined,
-      token: undefined,
-      userName: "",
-      type: undefined, // 대기실 관리자(manager) / 면접관(interviewer) / 면접자(interviewee)
-
-      // From Main.vue
-      comName: undefined,
-      re_year: undefined,
-      re_flag: undefined,
-      re_status: undefined,
-
       // 인원 수 
       viewer: 2,
       viewee: 4,
+
+      // 세션간 통신
+      messageToSession : '',
+      messageFromSession : '',
 
       // 타이머
       // timerBtn: [
@@ -238,45 +357,25 @@ export default {
       time: 0,
       resetButton: false,
       edit: false,
+      
+      clickedSeq : '',
 
+      // 채팅
+      text : '',
+
+      // questionList: [],
       // 탭
-      letterList: [
-        {
-          'quest' : '애국가',
-          'answer' : '동해 물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라 만세. 무궁화 삼천리 화려 강산. 대한 사람, 대한으로 길이 보전하세.'
-        },
-        {
-          'quest' : '미국 국가',
-          'answer' : 'O say, can you see, by the dawn’s early light, What so proudly we hailed at the twilight’s last gleaming, Whose broad stripes and bright stars, through the perilous fight, O’er the ramparts we watched, were so gallantly streaming? And the rockets’ red glare, the bombs bursting in air, Gave proof through the night that our flag was still there. O say, does that star-spangled banner yet wave. O’er the land of the free and the home of the brave?'
-        },
-        {
-          'quest' : '몽골 국가',
-          'answer' : 'Дархан манай тусгаар улс, Даяар Монголын ариун голомт. Далай их дээдсийн гэгээн үйлс, Дандаа энхжиж, үүрд мөнхөжинө. Хамаг дэлхийн шударга улстай. Хамтран нэгдсэн эвээ бэхжүүлж. Хатан зориг, бүхий л чадлаараа. Хайртай Монгол орноо мандуулъя. Өндөр төрийн минь сүлд ивээж. Өргөн түмний минь заяа түшиж. Үндэс язгуур, хэл соёлоо. Үрийн үрдээ өвлөн бадраая'
-        },
-        {
-          'quest' : '원주율 1000자리',
-          'answer' : '3.14159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214808651328230664709384460955058223172535940812848111745028410270193852110555964462294895493038196442881097566593344612847564823378678316527120190914564856692346034861045432664821339360726024914127372458700660631558817488152092096282925409171536436789259036001133053054882046652138414695194151160943305727036575959195309218611738193261179310511854807446237996274956735188575272489122793818301194912'
-        },
-        {
-          'quest' : '1차 공통 프로젝트 우승팀은?',
-          'answer' : 'WieV! WieV!'
-        },
-      ],
       length: 5,
       letterTab: null,
-      
-
     }
   },
   created: function () {
+    if(!this.isViewee){
+      this.connect()
+    }
+
     window.addEventListener("beforeunload", this.leaveSession)
     window.addEventListener("backbutton", this.leaveSession)
-
-    let user_data = ['comName', 're_year', 're_flag', 're_status', 'sessionName', 'token', 'userName', 'type']
-
-    for (const data of user_data) {
-      this[data] = this.$route.query[data]
-    }
   },
 
   beforeDestroy() {
@@ -285,122 +384,10 @@ export default {
   },
 
   mounted() {
-    this.OV = new OpenVidu()
-    this.session = this.OV.initSession()
-
-    // 신규 생성된 Stream 동기화
-    this.session.on("streamCreated", ({ stream }) => {
-      const subscriber = this.session.subscribe(stream)
-      this.subscribers.push(subscriber)
-    })
-
-    // Stream 삭제
-    this.session.on("streamDestroyed", ({ stream }) => {
-      const index = this.subscribers.indexOf(stream.streamManager, 0)
-      if (index >= 0) {
-        this.subscribers.splice(index, 1)
-      }
-    })
-
-    // 채팅 기능 -> 세션 동기화
-    this.session.on("signal:my-chat", (event) => {
-      let message = { from: "", text: "" }
-      message.from = event.from.data.split('":"')[1].slice(0, -7)
-      message.text = event.data
-
-      this.messages.push(message)
-    })
-
-    // 신규 Stream 생성 및 퍼블리싱
-    this.session.connect(this.token, { name: this.userName, type : this.type})
-      .then(() => {
-        let publisher = this.OV.initPublisher(undefined, {
-          audioSource: undefined, // The source of audio. If undefined default microphone
-          videoSource: undefined, // The source of video. If undefined default webcam
-          publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
-          publishVideo: true, // Whether you want to start publishing with your video enabled or not
-          resolution: "272x153", // The resolution of your video
-          frameRate: 30, // The frame rate of your video
-          insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
-          mirror: false, // Whether to mirror your local video or not
-        })
-
-        this.mainStreamManager = publisher
-        this.publisher = publisher
-
-        this.session.publish(this.publisher)
-        this.subscribers.push(this.publisher)
-      })
-      .catch(err => {
-        console.log("There was an error connecting to the session:", err.code, err.message)
-      })
-
     window.addEventListener("beforeunload", this.leaveSession)
   },
 
   methods: {
-    // 채팅 메시지 전송
-    sendMessage() {
-      if (this.text === "") return
-
-      this.session.signal({ data: this.text, to: [], type: "my-chat" })
-        .then()
-        .catch(err => console.error(err))
-
-      this.text = ""
-    },
-
-    leaveSession() {
-      axios.get(`${SERVER_URL}/session/leaveSession`, {
-        params: {
-          sessionName: this.sessionName,
-          token: this.token,
-        },
-      })
-        .then(res => {
-          console.log(res)
-          if (this.session) this.session.disconnect()
-          this.session = undefined
-          this.mainStreamManager = undefined
-          this.publisher = undefined
-          this.subscribers = []
-          this.OV = undefined
-          window.close()
-        })
-        .catch(err => console.log(err))
-    },
-
-    updateMainVideoStreamManager(stream) {
-      if (this.mainStreamManager === stream) {
-        return this.mainStreamManager = stream
-      }
-    },
-
-    audioOnOOff() {
-      this.audioOn = !this.audioOn
-      if (this.audioOn === true) this.audioMsg = "소리 Off"
-      else this.audioMsg = "소리 On"
-
-      this.publisher.publishAudio(this.audioOn)
-    },
-
-    videoOnOOff() {
-      this.videoOn = !this.videoOn
-      if (this.videoOn === true) this.videoMsg = "화면 Off"
-      else this.videoMsg = "화면 On"
-
-      this.publisher.publishVideo(this.videoOn)
-    },
-
-    handling(e) {
-      if (this.moving_viewee.includes(e.key)) {
-        this.moving_viewee.splice(this.moving_viewee.indexOf(e.key), 1)
-      } else {
-        this.moving_viewee.push(e.key)
-      }
-
-      this.visible = true
-    },
 
     startTimer: function() {
       //1000ms = 1 second
@@ -427,7 +414,47 @@ export default {
     },
     countdown: function() {
       this.time--
-    }
+    },
+    connect() {
+      let socket = new SockJS(`${SERVER_URL}/ws-stomp`);
+      this.stompClient = Stomp.over(socket);
+      this.stompClient.connect(
+        {},
+        frame => {
+          this.connected = true;
+          console.log('소켓 연결 성공', frame);
+          this.stompClient.subscribe("/send/"+this.groupTypeSeq, res => {
+            this.messageFromSession = JSON.parse(res.body)['message']
+          });
+        },
+        error => {
+          // 소켓 연결 실패
+          console.log('소켓 연결 실패', error);
+          this.connected = false;
+        }
+      );        
+    },
+    sendToSession() {
+      if (this.stompClient && this.stompClient.connected) {
+        const msg = { 
+          name: '',
+          message: this.messageToSession 
+        };
+        this.stompClient.send("/receive/"+this.groupTypeSeq, JSON.stringify(msg), {});
+      }
+      this.messageToSession = '';
+    },
+
+    updateMain(stream) {
+      this.clickedSeq = JSON.parse(stream.stream.connection.data.split('%/%')[0])['userSeq']
+      this.$emit("updateMain", stream)
+    },
+
+    sendMessage() {
+      if (this.text === "") return
+      this.$emit("sendMessage", this.text)
+      this.text = ''
+    },
   },
 
   computed: {
@@ -556,6 +583,10 @@ export default {
   visibility: hidden;
 }
 
+.screen-res {
+  width: 208px;
+  height: 117px;
+}
 .screen-res-sm {
   width: 288px;
   height: 162px;
@@ -564,7 +595,10 @@ export default {
   width: 640px;
   height: 360px;
 }
-
+.screen-res-lr {
+  width: 720px;
+  height: 405px;
+}
 
 ::v-deep input::-webkit-outer-spin-button,
 ::v-deep input::-webkit-inner-spin-button {

@@ -379,7 +379,6 @@ public class GroupAllController {
 				int totalApplyCount = (int) applicantDao.countByRecruitReSeqAndCareerCaSeq(recruitSeq, careerCaSeq);
 
 				// 5. 그룹 결정하기
-				int time = 1;
 				int nowTime = Integer.parseInt(groupAllRequest.getStartTime());
 				String nowDate = recruit.getReStartDate();
 				for (int i = 1; i <= groupCount; i++) {
@@ -408,10 +407,8 @@ public class GroupAllController {
 
 					// 각 그룹 날짜 세팅
 					// 오늘 할당된 시간보다 늦어진 경우
-					if (nowTime > Integer.parseInt(groupAllRequest.getEndTime())) {
+					if ((nowTime + groupAllRequest.getDivideTime()) > Integer.parseInt(groupAllRequest.getEndTime())) {
 						// 다음날로 넘어간다.
-						// 시간 초기화
-						time = 1;
 						nowTime = Integer.parseInt(groupAllRequest.getStartTime());
 						// 날짜 계산하기
 						nowDate = findNextDate(nowDate);
@@ -423,9 +420,7 @@ public class GroupAllController {
 					resultGroupAll = groupAllDao.save(groupAll);
 
 					// 날짜 & 시간 -> 시작 시간을 기준으로 끝 시간까지 소요 시간을 더하기
-					nowTime += (time * groupAllRequest.getDivideTime());
-
-					time++;
+					nowTime += groupAllRequest.getDivideTime();
 
 //					System.out.println(groupAllDao.findGroupAllByGroupDate(groupAll.getGroupDate()).getGroupSeq());
 //					System.out.println(i);
@@ -816,11 +811,6 @@ public class GroupAllController {
 			}
 
 		}
-//			status = HttpStatus.OK;
-//		} catch (RuntimeException e) {
-//			logger.error("지원자 자동 배정 실패", e);
-//			status = HttpStatus.INTERNAL_SERVER_ERROR;
-//		}
-//		return new ResponseEntity<>("지원자 자동 배정 완료", status);
+
 	}
 }

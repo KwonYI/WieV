@@ -1,10 +1,7 @@
 <template>
-  <div v-if="streamManager">
+  <div v-if="streamManager" align="center">
     <ov-video :stream-manager="streamManager" />
-    <div>
-      <p>{{ clientData.name }}</p>
-      <!-- <p>{{ clientData.type }}</p> -->
-    </div>
+    <p>{{ JSON.parse(streamManager.stream.connection.data.split("%/%")[0])['name'] }}</p>
   </div>
 </template>
 
@@ -24,26 +21,21 @@ export default {
 
   data() {
     return {
-      clientData : undefined,
-      // length : 0
+      clientData : undefined
     }
   },
 
   created() {
+    if(this.streamManager){
       const { connection } = this.streamManager.stream;
       this.clientData = JSON.parse(connection.data.split("%/%")[0]);
-
-      // if(this.clientData.type === 'viewee'){
-      //   this.length = 6;
-      // }else{
-      //   this.length = 3;
-      // }
+    }
   },
 };
 </script>
 <style>
 .speaking{
-  border-color: red;
+  border-color: skyblue;
   border-style: solid;
 }  
 </style>

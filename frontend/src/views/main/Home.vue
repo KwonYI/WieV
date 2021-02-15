@@ -1,81 +1,132 @@
 <template>
   <div id="home">
-    <div class="container">
-    <v-row justify="center" class="pt-10" no-gutters>
-      <v-col cols="8" class="main-box text-center">
+
+    <v-row justify="center" class="pt-10 main-bg-navy-img" style="height: 100vh; position: relative" no-gutters>
+      <v-col cols="8" class="main-box text-center" style="z-index:1">
         <div class="d-flex flex-column justify-center align-center text-white">
           <v-col class="wiev-box">
-            <v-col :class="[getAccessToken ? '' : 'text-h5']"
-              >View Everywhere</v-col
-            >
-            <v-col v-if="!getAccessToken" class="mt-3"
-              >비대면 화상면접 플랫폼</v-col
-            >
-            <span :class="[getAccessToken ? 'text-h4' : 'text-h3']">WieV</span>
+            <v-col :class="[getAccessToken ? '' : 'text-h5']">
+              <h3 class="ml2 white--text">View Everywhere</h3>
+            </v-col>
+            <v-col v-if="!getAccessToken">
+              비대면 화상면접 플랫폼
+            </v-col>
+            <img class="mt-3" v-if="!getAccessToken" :src="images.logo" width="200" alt="logo">
+            <p :class="[getAccessToken ? 'text-h4' : 'text-h3']" class="mt-3">WieV</p>
+            
+
           </v-col>
 
           <!-- 로그인 시, 면접스케줄 현황 -->
-          <v-col v-if="getAccessToken" class="mt-10">
+          <v-col v-if="getAccessToken" class="mt-1">
             <!-- 로그인 완료 -->
             <div v-if="getUserViewWait === -1">
               <Schedule />
             </div>
             <div v-else>
-              <router-link :to="{ name: 'Main', params: { isLogin: true } }">
+              <v-btn class="m-2 white--text" elevation="2" large rounded color=#304B61 :to="{ name: 'Main', params: { isLogin: true } }">
                 대기실 이동하기
-              </router-link>
+              </v-btn>
             </div>
           </v-col>
         </div>
       </v-col>
     </v-row>
 
-    
 
-    </div>
+    <!-- <v-parallax
+      dark
+      :src="require('@/assets/images/bg_image_dark_61.png')"
+      height="700"
+    >
+    </v-parallax> -->
 
-<!--여기서는 플랫폼소개를 보여준다. -->
-
-
-      
-
-
+    <Introduce />
+    <Ask />
   </div>
 
 </template>
 
+
+
 <script>
-import { mapGetters } from "vuex";
+  import {
+    mapGetters
+  } from "vuex";
 
-import Schedule from "@/components/main/Schedule";
+  import Schedule from "@/components/main/Schedule";
+  import Ask from '@/components/main/Ask'
+  import Introduce from '@/components/main/Introduce'
+  import anime from 'animejs/lib/anime.es.js'
 
-export default {
-  name: "Home",
-  components: {
-    Schedule,
-  },
-  data: () => ({
-    message: "",
-  }),
-  computed: {
-    ...mapGetters(["getUser", "getAccessToken", "getUserViewWait"]),
-  },
-  methods: {
-  },
-}
+
+
+
+  export default {
+    name: "Home",
+    components: {
+      Schedule,
+      Ask,
+      Introduce
+    },
+    data: () => ({
+      message: "",
+      images: {
+        logo: require('@/assets/images/new_logo_shadow.png')
+      },
+    }),
+    computed: {
+      ...mapGetters(["getUser", "getAccessToken", "getUserViewWait"]),
+    },
+    methods: {
+
+    },
+    created: {
+
+    },
+    mounted() {
+      var textWrapper = document.querySelector('.ml2');
+      textWrapper.innerHTML = textWrapper.textContent.replace(/\S/g, "<span class='letter'>$&</span>");
+
+      anime.timeline({
+          loop: true
+        })
+        .add({
+          targets: '.ml2 .letter',
+          scale: [4, 1],
+          opacity: [0, 1],
+          translateZ: 0,
+          easing: "easeOutExpo",
+          duration: 1300,
+          delay: (el, i) => 70 * i
+        }).add({
+          targets: '.ml2',
+          opacity: 0,
+          duration: 1000,
+          easing: "easeOutExpo",
+          delay: 1500
+        });
+
+    
+
+    },
+  }
 </script>
 
 <style scoped>
-tr * {
-  padding: 0;
-  /* margin-bottom: 2rem; */
-}
+  tr * {
+    padding: 0;
+    /* margin-bottom: 2rem; */
+  }
 
-table tbody tr:hover {
-  background: inherit !important;
-}
+  table tbody tr:hover {
+    background: inherit !important;
+  }
 
-td {
-  border: none !important;
-}
+  td {
+    border: none !important;
+  }
+
+
+  
 </style>

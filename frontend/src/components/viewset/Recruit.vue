@@ -25,12 +25,12 @@
           <div>
             <v-chip style="" outlined color="blue-grey darken-3">
               <router-link :to="{ name: 'CreateSet', params: { recruitItem: recruitItem }}">
-                면접스케줄 생성 +
+                <v-icon left>mdi-calendar-plus</v-icon> 면접스케줄 생성
               </router-link>
             </v-chip>
           </div>
         </v-app-bar>
-        <v-tabs-items v-model="recruitTab" class="bg-transparent">
+        <v-tabs-items v-model="recruitTab" class="bg-transparent pa-0">
           <v-tab-item v-for="(tab, i) in tabs" :key="i">
             <component :is="tab.content" :recruitItem="recruitItem"></component>
           </v-tab-item>

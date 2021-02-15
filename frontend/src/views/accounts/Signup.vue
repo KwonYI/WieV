@@ -3,7 +3,7 @@
     <!-- 정보입력 Form -->
     <!-- <v-row no-gutters> -->
       <!-- v-model="recFormValid" -->
-      <div class="h3 text-center mt-5 mb-5">회원가입</div>
+      <div class="h3 text-center mb-5">회원가입</div>
 
       <v-form ref="form" lazy-validation>
         <v-col md="6" offset-md="3">

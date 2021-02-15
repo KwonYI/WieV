@@ -1,6 +1,6 @@
 <template>
   <div id="viewers">
-    <v-toolbar dark color="brown lighten-1 font-weight-bold black--text">
+    <v-toolbar dark color="#b0c4de" class="font-weight-bold black--text d-flex justify-content-end">
     <!-- <v-toolbar dark color="brown darken-1 black--text"> -->
       <v-toolbar-title></v-toolbar-title>
      
@@ -13,14 +13,17 @@
         multiple />
       <v-btn class="m-3" v-on:click="submitFile()"><v-icon left>mdi-table-arrow-up</v-icon>엑셀 업로드</v-btn>
       <v-btn class="m-3" @click="exportExcel"><v-icon left>mdi-download-box</v-icon>엑셀 양식 다운로드</v-btn>
-      <v-btn class="m-2" @click="updateViewerDB"><v-icon left>mdi-refresh</v-icon>목록 업데이트 </v-btn>
+      <v-btn class="m-2" @click="updateViewerDB" color="green"><v-icon left>mdi-refresh</v-icon>목록 업데이트 </v-btn>
 
     </v-toolbar>
     <v-simple-table fixed-header  height="500px" class="mt-5">
       <thead>
         <tr>
           <th class="text-center">No</th>
+          <th class="text-center">부서</th>
+          <th class="text-center">직군</th>
           <th class="text-center">이름</th>
+          <th class="text-center">포지션</th>
           <th class="text-center">이메일</th>
           <th class="text-center">연락처</th>
           <th class="text-center">비밀번호</th>
@@ -29,12 +32,16 @@
       </thead>
       <tbody>
         <tr v-for="viewer in comViewerList" :key="viewer.no" class="text-center">
-          <td>{{ viewer.viewSeq }}</td>
-          <td>{{ viewer.viewName }}</td>
-          <td>{{ viewer.viewEmail }}</td>
-          <td>{{ viewer.viewPhone }}</td>
-          <td>{{ viewer.viewPassword }}</td>
-          <td v-if="viewer.viewAssigned === 1" class="blue--text">배정완료</td>
+          <td>{{ viewer.interviewerSeq }}</td>
+          <td>{{ viewer.interviewerPartName }}</td>
+          <td>{{ viewer.interviewerCareerName }}</td>
+          <td>{{ viewer.interviewerName }}</td>
+          <td v-if="viewer.interviewerWait === 1">대기관</td>
+          <td v-else>면접관</td>
+          <td>{{ viewer.interviewerEmail }}</td>
+          <td>{{ viewer.interviewerPhone }}</td>
+          <td>{{ viewer.interviewerPassword }}</td>
+          <td v-if="viewer.interviewerAssigned === 1" class="blue--text">배정완료</td>
             <td v-else class="red--text">미배정</td>
         </tr>
       </tbody>

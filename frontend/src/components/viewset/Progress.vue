@@ -1,24 +1,22 @@
 <template>
   <div id="progress">
-      <v-toolbar dark color="blue-grey darken-1 font-weight-bold black--text">
+    <v-toolbar dark color="#b0c4de" class="font-weight-bold black--text d-flex justify-content-end">
       <v-toolbar-title></v-toolbar-title>
       <div class="d-flex justify-end">
-      <v-btn class="m-2" v-on:click="applicantSendMail()"><v-icon left>mdi-email-send-outline</v-icon>지원자 안내메일 전송</v-btn>
-      <v-btn class="m-2" v-on:click="interviewerSendMail()"><v-icon left>mdi-email-send-outline</v-icon>면접관 안내메일 전송</v-btn>
-      <v-btn class="m-2" v-on:click="deleteGroupAll()"><v-icon left>mdi-trash-can-outline</v-icon>면접일정 초기화</v-btn>
+        <v-btn class="m-2" :loading="loading" :disabled="loading" 
+          @click="[loader = 'loading', applicantSendMail()]">지원자 안내메일 전송</v-btn>
+        <v-btn class="m-2" :loading="loading2" :disabled="loading2" 
+          @click="[loader2 = 'loading2', interviewerSendMail()]">면접관 안내메일 전송</v-btn>          
+      <v-btn class="m-2" v-on:click="deleteGroupAll()" color="red"><v-icon left>mdi-trash-can-outline</v-icon>면접일정 초기화</v-btn>
     </div>
     </v-toolbar>
-
-
     <hr>
     <!-- 스케줄 테이블 -->
-
     <v-data-table :headers="schGroupTable.headers" :items="getProgressListCurrentRecruit"
       :expanded.sync="schGroupTable.expanded" single-expand item-key="groupSeq"
-      @click:row="(item, slot) => slot.expand(!slot.isExpanded)">
+      @click:row="(item, slot) => slot.expand(!slot.isExpanded)" class="text-center">
       <!-- 스케줄 row -->
       <template v-slot:item="{ item, expand, isExpanded }">
-        
         <tr @click="expand(!isExpanded)">
           <td>{{ item.groupSeq }}</td>
           <td>{{ item.groupDate }}</td>
@@ -28,23 +26,23 @@
             <span v-for="(view, i) in item.interviewTypeList" :key="i">{{ view }} </span>
           </td>
           <td>
-            <span v-for="(viewee, i) in (item.groupApplicantList)" :key="i">{{ viewee }} </span>
+            <div v-if="item.groupApplicantList.length > 3">
+              <span v-for="(viewee, i) in slicedViewee(item.groupApplicantList)" :key="i">{{ viewee }} </span>
+              <br>
+              외 {{ item.groupApplicantList.length - 3 }}명
+            </div>
+            <div v-else>
+              <span v-for="(viewee, i) in slicedViewee(item.groupApplicantList)" :key="i">{{ viewee }} </span>
+            </div>
           </td>
           <td>
-            <span v-for="(guide, i) in (item.waitInterviewerList)" :key="i">{{ guide.interviewerName }} </span>
+            <span v-for="(guide, i) in slicedGuide(item.waitInterviewerList)" :key="i">{{ guide.interviewerName }} </span>
           </td>
           <td>
-            <span v-for="(viewer, i) in (item.interviewerList)" :key="i">{{ viewer.interviewerName }} </span>
+            <span v-for="(viewer, i) in slicedViewer(item.interviewerList)" :key="i">{{ viewer.interviewerName }} </span>
           </td>
         </tr>
-
       </template>
-        
-
-      
-
-
-
       <!-- 세부그룹 확장 패널 -->
       <template v-slot:expanded-item="{ headers, item: groupItem }" id="detailTable" >
         <td :colspan="headers.length" class="pa-0">
@@ -77,38 +75,16 @@
                       :key="i">[{{viewer.interviewType}}]{{ viewer.interviewerName }},
                     </span>
                   </td>
-                  
                 </tr>
                 <tr>
                   <td v-for="(item, i) in 8" :key="i"><hr></td>
                 </tr>
-                
               </tbody>
-              
-              
             </template>
-            
-
           </v-data-table>
         </td>
-
-
       </template>
-
-      
-
-
     </v-data-table>
-    
-
-
-
-
-
-
-
-
-
   </div>
 </template>
 
@@ -141,10 +117,10 @@
               text: '날짜',
               align: 'center',
               value: 'schGroupDate',
-              width: '5%'
+              width: '6%'
             },
             {
-              text: '시간',
+              text: '시작 시간',
               align: 'center',
               value: 'schGroupTime',
               width: '5%'
@@ -159,13 +135,13 @@
               text: '면접 유형',
               align: 'center',
               value: 'schGroupInterview',
-              width: '10%'
+              width: '5%'
             },
             {
               text: '지원자',
               align: 'center',
               value: 'schGroupViewee',
-              width: '20%'
+              width: '10%'
             },
             {
               text: '대기실',
@@ -177,12 +153,17 @@
               text: '면접실',
               align: 'center',
               value: 'schGroupViewer',
-              width: '15%'
+              width: '10%'
             },
           ],
 
         },
 
+        loader: null,
+        loading: false,
+
+        loader2:null,
+        loading2:false,
 
       }
     },
@@ -192,34 +173,44 @@
     },
     methods: {
       applicantSendMail: function () {
+        this.loading=true
         console.log(this.recruitItem.reSeq)
         axios.post(`${SERVER_URL}/applicant/send/` + this.recruitItem.reSeq)
           .then(res => {
-            console.log(res)
+            this.loading=false
+            console.log(res.data.message)
+            if(res.data.message==="지원자 존재하지 않음")
+            alert("면접 일정이 존재하지 않습니다.")
+            else{
             alert("지원자 메일 전송 성공")
-            // this.$router.push({
-            //   name: "Home"
-            // })
+            }
           })
           .catch((err) => {
+            this.loading=false
             console.log(err)
             alert("지원자 메일 전송 실패")
           })
+          setTimeout(() =>{this.loading=false}, 3000000)
       },
       interviewerSendMail: function () {
+        this.loading2=true
         console.log(this.recruitItem.reSeq)
         axios.post(`${SERVER_URL}/interviewer/send/` + this.recruitItem.reSeq)
           .then(res => {
+            this.loading2=false
             console.log(res)
+            if(res.data.message==="면접관 존재하지 않음")
+            alert("면접 일정이 존재하지 않습니다.")
+            else{
             alert("면접관 메일 전송 성공")
-            // this.$router.push({
-            //   name: "Home"
-            // })
+            }
           })
           .catch((err) => {
+            this.loading2=false
             console.log(err)
             alert("면접관 메일 전송 실패")
           })
+          setTimeout(() =>{this.loading2=false}, 3000000)
       },
       deleteGroupAll: function () {
         if (confirm('모든 면접 일정을 삭제하시겠습니까?') == true) {
@@ -244,10 +235,24 @@
       clicked: function (value) {
         this.schGroupTable.expanded.push(value)
       },
+    watch: {
+      loader() {
+        const l = this.loader
+        this[l] = !this[l]
 
+        setTimeout(() => (this[l] = false), 3000)
 
+        this.loader = null
+      },
+      loader2() {
+        const k  = this.loader2
+        this[k] = !this[k]
 
+        setTimeout(() => (this[k] = false), 3000)
 
+        this.loader2 = null
+      },      
+    },
     },
     computed: {
       ...mapState(["recruitList", "recruitProgressList", "selectedRecruitNo"]),
@@ -255,7 +260,7 @@
 
       slicedViewee() {
         return (Viewee) => {
-          return _.slice(Viewee, 0, 5)
+          return _.slice(Viewee, 0, 3)
         }
       },
       slicedGuide() {

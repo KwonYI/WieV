@@ -17,7 +17,7 @@
 
         <!-- 왼쪽 상단 위치 -->
         <v-toolbar-items v-if="isNotRoom" class="srv-btn">
-          <v-btn v-if="isHome" plain style="font-size: 1rem" href="#work">플랫폼 소개</v-btn>
+          <v-btn v-if="isHome" plain style="font-size: 1rem"  href="#work">플랫폼 소개</v-btn>
           <v-btn v-if="isHome" plain style="font-size: 1rem" href="#contact">문의하기</v-btn>
           <!-- <v-btn plain style="font-size: 1rem" @click="$vuetify.goTo(target, options)">문의하기</v-btn> -->
         </v-toolbar-items>
@@ -29,7 +29,8 @@
               <div class="text-subtitle-1 px-5 py-1" style="border: 1px solid">현재 면접자 수 : 8명</div>
             </v-col>
             <v-col class="d-flex justify-center align-center">
-              <div class="text-subtitle-1 px-5 py-1" style="border: 1px solid">현재 시각 : 7/10(월) 오후 5:23</div>
+              <div class="text-subtitle-1 px-5 py-1" style="border: 1px solid">현재 시각:<a id="clock"></a>
+              </div>
             </v-col>
           </v-row>
         </v-toolbar-items>
@@ -153,30 +154,18 @@
 
 
       <!-- Contents -->
-      <v-sheet id="scrolling-techniques-7" class="overflow-y-auto" max-height="100vh" style="height: 100%">
-        <v-container class="p-0 m-0 pt-16" :class="[!accessToken || isHome ? 'main-bg-navy-img' : '']"
-          style="min-height: 100vh; max-width: initial; height: 100%">
+      
+      <v-responsive id="scrolling-techniques-7" class="overflow-y-auto" max-height="100vh">
+        <v-container class="p-0 m-0 pt-16" style="max-width: initial">
           <div id="top"></div>
-          <router-view />
-
+          <router-view transition transition-mode="out-in" />
         </v-container>
 
-        <div id="work">
-          aaa
-        </div>
-        <Introduce v-if="isHome"/>
-        <Ask v-if="isHome"/>
-
+        <!-- <Introduce v-if="isHome"/>
+        <Ask v-if="isHome"/> -->
         
-        <!-- <v-parallax
-          dark
-          class="mt-16"
-          :src="require('@/assets/bg_image.png')"
-          style="min-height: 100vh"
-        >
-        </v-parallax> -->
         
-        <footer class="bg-dark py-4 mt-5 tf-footer">
+        <footer v-if="isFooterView" class="bg-dark py-4">
           <div class="container text-light">
             <div class="row">
               <div class="col-md-6 col-sm-12">&copy; Wiev. All rights reserved.</div>
@@ -185,11 +174,7 @@
             </div>
           </div>
         </footer>
-
-
-
-      </v-sheet>
-
+      </v-responsive>
     </v-card>
 
 
@@ -213,8 +198,8 @@
 <script>
 import { mapGetters, mapState } from "vuex"
 import axios from "axios"
-import Ask from '@/components/main/Ask'
-import Introduce from '@/components/main/Introduce'
+// import Ask from '@/components/main/Ask'
+// import Introduce from '@/components/main/Introduce'
 const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
 // import Router from 'vue-router'
@@ -223,7 +208,7 @@ const SERVER_URL = process.env.VUE_APP_SERVER_URL
 export default {
   name: "App",
   components: {
-    Ask, Introduce
+    // Ask, Introduce
   },
   data: function () {
     return {
@@ -279,6 +264,8 @@ export default {
         hrEmail: "",
         hrPhone: "",
       },
+
+ 
     }
   },
   computed: {
@@ -293,6 +280,13 @@ export default {
     },
     isHome() {
       if (this.$route.name === 'Home') {
+        return true
+      } else {
+        return false
+      }
+    },
+    isFooterView() {
+       if (['Main', 'Home'].includes(this.$route.name)) {
         return true
       } else {
         return false
@@ -329,6 +323,13 @@ export default {
       }
 
     },
+    findPasswordOutside: function() {
+      this.credentials.hrName = ""
+      this.credentials.hrEmail = ""
+      this.credentials.hrPhone = ""
+      this.dialogPassword = false
+    },
+
     login: function () {
       this.$store.dispatch("LOGIN", this.userCredentials)
         .then(() => {
@@ -342,6 +343,12 @@ export default {
 
       this.dialogLogin = false
     },
+    loginOutside: function() {
+      this.dialogLogin = false
+      this.userCredentials.userEmail = ''
+      this.userCredentials.userPassword = ''
+    },
+
     logout: function () {
       this.$store.dispatch("LOGOUT")
         .then(() => this.$router.replace({
@@ -356,11 +363,22 @@ export default {
   created: function () {
     this.Manager = this.$store.state.Manager
     console.log("this.", this.$route.name)
+
+  setInterval(function(){
+             
+            var timer = new Date();
+            var month=timer.getMonth()+1;
+            var day=timer.getDate();
+            var h = timer.getHours();
+            var m = timer.getMinutes();
+            var s = timer.getSeconds();
+            console.log(month)
+            document.getElementById('clock').innerHTML = month +"/"+ day +" "+ h + ":" + m + ":" + s;
+        },1000);
   },
     
 }
 </script>
-
 
 <style>
   @import url(https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@1.0/nanumsquare.css);
@@ -383,6 +401,14 @@ export default {
 
   .v-parallax__content {
     padding: 0 !important;
+  }
+
+  .v-transition {
+    transition: opacity .1s ease-out;
+  }
+    
+  .v-enter, .v-leave {
+    opacity: 0;
   }
 </style>
 

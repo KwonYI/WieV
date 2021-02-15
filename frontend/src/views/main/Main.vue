@@ -7,7 +7,7 @@
         <h2 v-else>관리자 페이지</h2>
         <!--@@@@@@@@@@@@@@@@@@@@@여기에 컴포넌트들 for문으로 등록해야함 -->
         <!--면접관의 경우 컴포넌트를 여러 개 사용한다. 다양한 공고의 면접관/관리자 로 들어갈 수 있기 때문이다.  -->
-        <ViewerRecruitItem :interview="interview" :user="user" />
+        <ViewerRecruitItem :interview="interview" :user="user" :groupTypeSeq="groupTypeSeq"/>
       </div>
       <div v-else>
         <!-- <div class="d-flex flex-column align-center">
@@ -43,6 +43,7 @@ export default {
 
       user: {},
       interview: {},
+      groupTypeSeq : 0,
       intervieweeData : {
         company : {},
         interviews : {},
@@ -61,6 +62,11 @@ export default {
   updated() {
   },
   created: function () {
+
+    // console.log("???", this.$route.name)
+
+
+
     if (this.$route.fullPath === '/main') {
       this.user = this.getUser
       this.isLogin = true
@@ -70,17 +76,24 @@ export default {
           interviewerEmail: this.user.userEmail,
         },
       })
-        .then(res => {
-          this.interview = res.data.interview
-        })
-        .catch(err => console.log(err))
-    } else {
-      axios.get(`${SERVER_URL}/applicant/mypage/` + this.$route.query.Id)
-        .then(res => {
-          console.log("지원자가 가진 정보를 보여줍니다(Main)", res.data)
-          this.intervieweeData = res.data
-        })
-        .catch(err => console.log("Main.vue에서 에러발생", err))
+      .then((res) => {
+        this.isLogin = true;
+        this.interview = res.data.interview;
+        this.groupTypeSeq = res.data.groupTypeSeq
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  } else {
+    axios
+      .get(`${SERVER_URL}/applicant/mypage/` + this.$route.query.Id)
+      .then((res) => {
+        console.log("지원자가 가진 정보를 보여줍니다(Main)", res.data);
+        this.intervieweeData = res.data;
+      })
+      .catch((err) => {
+        console.log("Main.vue에서 에러발생", err);
+      });
     }
   },
   mounted() {},
