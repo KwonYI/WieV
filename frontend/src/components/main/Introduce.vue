@@ -30,11 +30,11 @@
 		<v-lazy
 			v-model="isActive"
 			:options="{
-				threshold: 0.9
+				threshold: 0.5
 			}"
 			min-height="200"
 		>
-			<v-expand-x-transition>
+			<v-expand-x-transition name="x-expansion">
 				<v-container style="margin-bottom: 10rem">
 					<v-row no-gutters>
 						<div class="text-h4 text-center font-weight-black" style="margin-bottom: 5rem">What We Serve</div>
@@ -325,7 +325,12 @@
 	justify-content: center;
 	height: 30rem;
 }
-
+.x-expansion-enter-active {
+  transition: all 5s ease;
+}
+/* .x-expansion-leave-active {
+  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+} */
 .crs-content {
 	background-color: transparent;
 }
