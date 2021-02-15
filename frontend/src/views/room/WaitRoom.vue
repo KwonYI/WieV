@@ -316,8 +316,6 @@ export default {
         { title: '뭐야 내 면접 돌려줘요', answer: '안 돼 안 바꿔줘 바꿀 생각 없어 빨리 돌아가' },
       ],
 
-      //스크롤
-      benched: 0,
     }
   },
   created: function () {
@@ -700,12 +698,6 @@ export default {
   },
 
   computed: {
-    items () {
-        return Array.from({ length: this.length }, (k, v) => v + 1)
-      },
-      length () {
-        return 7000
-      },
   },
   watch : {
 
