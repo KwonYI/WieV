@@ -62,6 +62,11 @@ export default {
   updated() {
   },
   created: function () {
+
+    // console.log("???", this.$route.name)
+
+
+
     if (this.$route.fullPath === '/main') {
       this.user = this.getUser
       this.isLogin = true

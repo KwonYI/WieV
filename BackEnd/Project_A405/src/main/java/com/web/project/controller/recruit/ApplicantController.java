@@ -855,7 +855,7 @@ public class ApplicantController {
 									+ "      <td style=\"overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:'Open Sans',sans-serif;\" align=\"left\">\r\n"
 									+ "        \r\n" + "<div align=\"center\">\r\n"
 									+ "  <!--[if mso]><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-spacing: 0; border-collapse: collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;font-family:'Open Sans',sans-serif;\"><tr><td style=\"font-family:'Open Sans',sans-serif;\" align=\"center\"><v:roundrect xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:w=\"urn:schemas-microsoft-com:office:word\" href=\"\" style=\"height:47px; v-text-anchor:middle; width:167px;\" arcsize=\"87%\" stroke=\"f\" fillcolor=\"#466b8c\"><w:anchorlock/><center style=\"color:#FFFFFF;font-family:'Open Sans',sans-serif;\"><![endif]-->\r\n"
-									+ "    <a href=\"http://localhost:3000/applicant/mypage?Id="
+									+ "    <a href=\"https://i4a405.p.ssafy.io:8000/main?Id="
 									+ applicant.getApplyId()
 									+ "\" target=\"_blank\" style=\"box-sizing: border-box;display: inline-block;font-family:'Open Sans',sans-serif;text-decoration: none;-webkit-text-size-adjust: none;text-align: center;color: #FFFFFF; background-color: #466b8c; border-radius: 41px; -webkit-border-radius: 41px; -moz-border-radius: 41px; width:auto; max-width:100%; overflow-wrap: break-word; word-break: break-word; word-wrap:break-word; mso-border-alt: none;\">\r\n"
 									+ "      <span style=\"display:block;padding:15px 33px;line-height:120%;\"><strong>사이트 바로가기</strong></span>\r\n"
