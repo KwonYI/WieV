@@ -64,27 +64,12 @@
                   <div class="text--primary">
                     {{ interview.interviewType }}
                   </div>
-                  <!-- <div class="text--primary">
-                    {{ group.type_name }}
-                  </div> -->
                   <v-btn
                     color="blue lighten-3 yellow--text"
                     @click="goSession(interview.waitSessionName, interview.interviewSessionName, interview.interviewType)"
                   >
                     대기실 입장
                   </v-btn>
-
-                  <!-- :disabled="inWait === true" -->
-                  <!-- 지원자는 대기방에서 면접방 입장가능, 다시 지울 예정 -->
-                  <!-- <v-btn
-                    color="blue lighten-3 yellow--text"
-                    @click="goInterviewSession(interview.interviewSessionName)"
-                  >
-                    면접실 입장
-                  </v-btn> -->
-                  <!-- <div class="text--primary">
-                    {{ group.check_terminate }}
-                  </div> -->
                 </v-card-text>
               </v-card>
             </div>
@@ -108,23 +93,6 @@ export default {
   },
   data: function () {
     return {
-      // re_data: [1, 2, 3],
-      // show: false,
-      // com_name: "버즈글로벌",
-      // re_year: 2021,
-      // re_flag: "상반기",
-      // re_status: "신입",
-      // re_startdate: "2021-08-07",
-      // group_date: "20-08-07",
-      // group_start_time: "14:00",
-      // ca_name: "마케팅",
-      // apply_name: "김지원",
-      // group_data: [
-      //   //order_seqy 에 따라 배치되어야 합니다.
-      //   { type_name: "PT면접", check_terminate: "면접 미완료" },
-      //   { type_name: "직무면접", check_terminate: "면접 미완료" },
-      //   { type_name: "그룹면접", check_terminate: "면접 미완료" },
-      // ],
       applicantName: "",
     };
   },
@@ -140,10 +108,6 @@ export default {
         })
         .then((res) => {
           console.log(res);
-          // this.$router.push({
-          //   name: "WaitRoom",
-          //   params: { interview: this.interview, interviewer: res.data },
-          // });
           let routeData = this.$router.resolve({
             name: "WaitRoom",
             query: {
@@ -167,39 +131,6 @@ export default {
           alert("방이 아직 개설되지 않았습니다.");
         });
     },
-
-    // 테스트용,지울예정
-    // goInterviewSession(session) {
-    //   axios.get(`${SERVER_URL}/session/join`, {
-    //       params: {
-    //         applicantName: this.intervieweeData.user.applyName,
-    //         sessionName: session,
-    //       },
-    //     })
-    //       .then(res => {
-    //         console.log(res);
-    //         let routeData = this.$router.resolve({
-    //           name: "ViewRoom",
-    //           query: {
-    //             comName: this.intervieweeData.company.comName,
-    //             re_year: this.intervieweeData.recruit.reYear,
-    //             re_flag: this.intervieweeData.recruit.reFlag,
-    //             re_status: this.intervieweeData.recruit.reStatus,
-    //             userName: res.data.applicantName,
-    //             type: res.data.type,
-    //             token: res.data.token,
-    //             sessionName: session,
-    //             userSeq : this.intervieweeData.user.applySeq
-    //           },
-    //         })
-    //         // this.inInterview = true;
-    //         window.open(routeData.href, "_blank")
-    //       })
-    //       .catch(err => {
-    //         console.log(err)
-    //         alert("방이 아직 개설되지 않았습니다.")
-    //       })
-    //    },
   },
 };
 </script>
