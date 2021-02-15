@@ -1,22 +1,6 @@
 <template>
   <div id="viewers">
-    <v-toolbar dark color="#b0c4de" class="font-weight-bold black--text d-flex justify-content-end">
-    <!-- <v-toolbar dark color="brown darken-1 black--text"> -->
-      <v-toolbar-title></v-toolbar-title>
-     
-        <span class="m-2 text-subtitle-1">File:</span>
-        <input
-        type="file"
-         id="files"
-        ref="files" 
-        v-on:change="handleFileUpload()" 
-        multiple />
-      <v-btn class="m-3" v-on:click="submitFile()"><v-icon left>mdi-table-arrow-up</v-icon>엑셀 업로드</v-btn>
-      <v-btn class="m-3" @click="exportExcel"><v-icon left>mdi-download-box</v-icon>엑셀 양식 다운로드</v-btn>
-      <v-btn class="m-2" @click="updateViewerDB" color="green"><v-icon left>mdi-refresh</v-icon>목록 업데이트 </v-btn>
-
-    </v-toolbar>
-    <v-simple-table fixed-header  height="500px" class="mt-5">
+    <v-simple-table fixed-header height="58vh" class="mt-1 mb-1">
       <thead>
         <tr>
           <th class="text-center">No</th>
@@ -39,9 +23,22 @@
         </tr>
       </tbody>
     </v-simple-table>
-    <div class="d-flex justify-end">
-      <v-btn class="m-2" v-on:click="deleteAllInterviewer">면접관 전체삭제</v-btn>
-    </div>
+    <v-toolbar dark color="#b0c4de" class="font-weight-bold black--text d-flex justify-content-end">
+    <!-- <v-toolbar dark color="brown darken-1 black--text"> -->
+      <v-toolbar-title></v-toolbar-title>
+     
+        <span class="m-2 text-subtitle-1">File:</span>
+        <input
+        type="file"
+         id="files"
+        ref="files" 
+        v-on:change="handleFileUpload()" 
+        multiple />
+      <v-btn class="m-2" v-on:click="submitFile()"><v-icon left>mdi-table-arrow-up</v-icon>엑셀 업로드</v-btn>
+      <v-btn class="m-2" @click="exportExcel"><v-icon left>mdi-download-box</v-icon>엑셀 양식 다운로드</v-btn>
+      <v-btn class="m-2" @click="updateViewerDB" color="green"><v-icon left>mdi-refresh</v-icon>목록 업데이트 </v-btn>
+      <v-btn class="m-2" v-on:click="deleteAllInterviewer" color="red"><v-icon left>mdi-trash-can-outline</v-icon>면접관 전체삭제</v-btn>
+    </v-toolbar>
   </div>
 </template>
 
