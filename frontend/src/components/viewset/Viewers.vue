@@ -21,6 +21,7 @@
         <tr>
           <th class="text-center">No</th>
           <th class="text-center">이름</th>
+          <th class="text-center">포지션</th>
           <th class="text-center">이메일</th>
           <th class="text-center">연락처</th>
           <th class="text-center">비밀번호</th>
@@ -31,6 +32,8 @@
         <tr v-for="viewer in comViewerList" :key="viewer.no" class="text-center">
           <td>{{ viewer.viewSeq }}</td>
           <td>{{ viewer.viewName }}</td>
+          <td v-if="viewer.viewWait === 1">대기관</td>
+          <td v-else>면접관</td>
           <td>{{ viewer.viewEmail }}</td>
           <td>{{ viewer.viewPhone }}</td>
           <td>{{ viewer.viewPassword }}</td>
