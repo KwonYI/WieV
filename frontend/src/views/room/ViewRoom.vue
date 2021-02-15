@@ -91,7 +91,6 @@ export default {
       mainStreamManager: undefined, // 내 비디오
       publisher: undefined, // 연결 객체
       
-
       // 면접관, 지원자들만 담아두는 리스트
       viewers : [],
       viewees : [],
@@ -191,7 +190,10 @@ export default {
 
       if(info['type'] === 'viewee'){
         this.viewees.push(subscriber)
-        this.mainStreamManager = subscriber
+
+        if(!this.mainStreamManager){
+          this.mainStreamManager = subscriber
+        }
 
         for (const apply of this.allApplicantList) {
           if(apply["apply-Seq"]==info["userSeq"]){
@@ -236,17 +238,19 @@ export default {
 
         delete this.currentApplicantList[info["userSeq"]] 
 
+        if(this.mainStreamManager.stream === stream){
+          if(this.viewees.length !== 0){
+            this.mainStreamManager = this.viewees[0]
+          }else{
+            this.mainStreamManager = null
+          }
+        }
+
       }else{
         const index = this.viewers.indexOf(stream.streamManager, 0);
         if (index >= 0) {
           this.viewers.splice(index, 1);
         }
-      }
-
-      if(this.viewees.length !== 0){
-        this.mainStreamManager = this.viewees[0]
-      }else{
-        this.mainStreamManager = null
       }
 
       console.log("viewee : ",this.viewees, " viewer : ", this.viewers)
@@ -377,7 +381,6 @@ export default {
 
     updateMain(stream){
       this.mainStreamManager = stream;
-      console.log("에밋 메세지 옴")
     }
   },
 
@@ -398,7 +401,7 @@ export default {
   align-items: center;
   max-width: 95%;
 }
-.screen-res-sm {
+/* .screen-res-sm {
   width: 288px;
   height: 162px;
 }
@@ -409,5 +412,5 @@ export default {
 .screen-res-md {
   width: 640px;
   height: 360px;
-}
+} */
 </style>

@@ -68,34 +68,41 @@
           </v-col>
         </v-row>
 
+        <!-- 메인 위 - 지원자들 화면, 클릭하면 큰 화면으로 보기 -->
+        <v-row>
+          <div v-if="!isViewee" class='d-flex justify-center'>
+            <user-video v-for="sub in viewees" :key="sub.stream.connection.connectionId"
+              class= 'screen-res'
+              :stream-manager="sub" 
+              :id = "sub.stream.connection.connectionId"
+              @click.native="updateMain(sub)"
+            />
+          </div>
+        </v-row>
+
         <!-- 메인 중앙 - 면접관, 지원자 화면 -->
         <v-row class="main-screen">
           <!-- 면접관 -->
           <v-col cols="4" class="viewer-box centering flex-column">
-            <!-- <div v-for="i in viewers" :key="i" class="brd screen-res-sm">면접관 {{i}}</div> -->
+            <span v-if="!isViewee">
+              <user-video :streamManager="publisher" class="screen-res-sm"/>
+            </span>
             <span v-for="sub in viewers" :key="sub.stream.connection.connectionId">
               <user-video
                 class="screen-res-sm"
                 :stream-manager="sub" 
-                :id = "sub.stream.connection.connectionId"
               />
             </span>
           </v-col>
           <!-- 지원자 -->
-          <!-- v-if="!isViewee" 이거 뻈다 -->
           <v-col cols="8" class="viewee-box centering flex-wrap">
-            <span v-for="sub in viewees" :key="sub.stream.connection.connectionId">
-              <user-video
-                :class="viewees.length === 1 ? 'screen-res-md' : 'screen-res-sm'"
-                :stream-manager="sub" 
-                :id = "sub.stream.connection.connectionId"
-                @click.native="updateMainVideoStreamManager(sub)"
-              />
+            <span v-if="isViewee">
+              <user-video :streamManager="publisher" class="screen-res-md"/>
+            </span>
+            <span v-else>
+              <user-video :streamManager="mainStreamManager" class="screen-res-md"/>
             </span>
           </v-col>
-          <!-- <v-col v-else cols="8" class="viewee-box centering flex-wrap">
-            <div class="screen-res-md brd">나</div>
-          </v-col> -->
         </v-row>
       </v-col>
 
@@ -133,16 +140,21 @@
             center-active
           >
             <v-tab
-              v-for="(item, i) in letterList"
+              v-for="(item, i) in currentApplicantList[clickedSeq]"
               :key="i"
             >
-              질문 {{ i+1 }}
+              <span v-if="item.quest !== '자기소개서'">
+                질문 {{ i+1 }}
+              </span>
+              <span v-else>
+                자기소개서
+              </span>
             </v-tab>
           </v-tabs>
           <v-card-text class="">
             <v-tabs-items v-model="letterTab">
-              <v-tab-item v-for="(item, i) in letterList" :key="i">
-                {{ i+1 }}. {{ item.quest }}
+              <v-tab-item v-for="(item, i) in currentApplicantList[clickedSeq]" :key="i">
+                {{ i+1 }}. {{ item.quest }} // {{clickedSeq}}번 지원자
                 <v-divider></v-divider>
                 <v-virtual-scroll
                   item-height="250"
@@ -206,6 +218,9 @@ export default {
     publisher: {
       type: Object,
     },
+    mainStreamManager :{
+      type : Object
+    }
   },
   data: function () {
     return {
@@ -233,14 +248,11 @@ export default {
       edit: false,
 
       clickedSeq : '',
-      clickedVieweeStream : undefined,
 
       // questionList: [],
       // 탭
       length: 5,
       letterTab: null,
-      
-
     }
   },
   created: function () {
@@ -318,9 +330,9 @@ export default {
       }
       this.messageToSession = '';
     },
-    updateMainVideoStreamManager(stream) {
-      this.clickedVieweeStream = stream
+    updateMain(stream) {
       this.clickedSeq = JSON.parse(stream.stream.connection.data.split('%/%')[0])['userSeq']
+      this.$emit("updateMain", stream)
     },
   },
 
@@ -450,6 +462,10 @@ export default {
   visibility: hidden;
 }
 
+.screen-res {
+  width: 208px;
+  height: 117px;
+}
 .screen-res-sm {
   width: 288px;
   height: 162px;

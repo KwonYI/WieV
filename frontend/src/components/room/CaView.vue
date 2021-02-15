@@ -333,9 +333,7 @@ export default {
 
     updateMain(stream) {
       this.clickedSeq = JSON.parse(stream.stream.connection.data.split('%/%')[0])['userSeq']
-      console.log("에밋 실행전")
       this.$emit("updateMain", stream)
-      console.log("에밋 실행후", stream)
     },
   },
 
@@ -465,13 +463,13 @@ export default {
   visibility: hidden;
 }
 
+.screen-res {
+  width: 208px;
+  height: 117px;
+}
 .screen-res-sm {
   width: 288px;
   height: 162px;
-}
-.screen-res {
-  width: 240px;
-  height: 135px;
 }
 .screen-res-md {
   width: 640px;

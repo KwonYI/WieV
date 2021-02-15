@@ -385,7 +385,6 @@ export default {
 
         if(this.mainStreamManager.stream === stream){
           if(this.viewees.length !== 0){
-            console.log(this.viewees[0], " 얘는 어때")
             this.mainStreamManager = this.viewees[0]
           }else{
             this.mainStreamManager = null
@@ -530,19 +529,19 @@ export default {
         },
       })
       .then(() => {
-
-          if (this.session) {
-            this.session.disconnect()
-            this.session = undefined
-            this.mainStreamManager = undefined
-            this.publisher = undefined
-            this.viewers = [],
-            this.viewees = [],
-            this.OV = undefined
-          }
-          window.close()
-        })
-        .catch(err => console.log(err))
+        if (this.session) {
+          this.session.disconnect()
+          this.session = undefined
+          this.mainStreamManager = undefined
+          this.publisher = undefined
+          this.viewers = [],
+          this.viewees = [],
+          this.OV = undefined
+        }
+        
+        window.close()
+      })
+      .catch(err => console.log(err))
     },
 
     updateMainVideoStreamManager(stream) {
