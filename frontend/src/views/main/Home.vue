@@ -1,22 +1,24 @@
 <template>
   <div id="home">
-    
+
     <v-row justify="center" class="pt-10 main-bg-navy-img" style="height: 100vh; position: relative" no-gutters>
       <v-col cols="8" class="main-box text-center" style="z-index:1">
         <div class="d-flex flex-column justify-center align-center text-white">
           <v-col class="wiev-box">
             <v-col :class="[getAccessToken ? '' : 'text-h5']">
-              View Everywhere
+              <h3 class="ml2 white--text">View Everywhere</h3>
             </v-col>
             <v-col v-if="!getAccessToken">
               비대면 화상면접 플랫폼
             </v-col>
             <p :class="[getAccessToken ? 'text-h4' : 'text-h3']">WieV</p>
-            <img v-if="!getAccessToken" :src="images.logo" width="300"  alt="logo">
+            
+
+            <img v-if="!getAccessToken" :src="images.logo" width="300" alt="logo">
           </v-col>
 
           <!-- 로그인 시, 면접스케줄 현황 -->
-          <v-col v-if="getAccessToken" class="mt-10">
+          <v-col v-if="getAccessToken" class="mt-1">
             <!-- 로그인 완료 -->
             <div v-if="getUserViewWait === -1">
               <Schedule />
@@ -30,7 +32,7 @@
         </div>
       </v-col>
     </v-row>
-    
+
 
     <!-- <v-parallax
       dark
@@ -48,42 +50,83 @@
 
 
 <script>
-import { mapGetters } from "vuex";
+  import {
+    mapGetters
+  } from "vuex";
 
-import Schedule from "@/components/main/Schedule";
-import Ask from '@/components/main/Ask'
-import Introduce from '@/components/main/Introduce'
+  import Schedule from "@/components/main/Schedule";
+  import Ask from '@/components/main/Ask'
+  import Introduce from '@/components/main/Introduce'
+  import anime from 'animejs/lib/anime.es.js'
 
-export default {
-  name: "Home",
-  components: {
-    Schedule, Ask, Introduce
-  },
-  data: () => ({
-    message: "",
-    images: {
-        logo: require('@/assets/images/logo.png')
+
+
+
+  export default {
+    name: "Home",
+    components: {
+      Schedule,
+      Ask,
+      Introduce
+    },
+    data: () => ({
+      message: "",
+      images: {
+        logo: require('@/assets/images/new_logo_shadow.png')
       },
-  }),
-  computed: {
-    ...mapGetters(["getUser", "getAccessToken", "getUserViewWait"]),
-  },
-  methods: {
-  },
-}
+    }),
+    computed: {
+      ...mapGetters(["getUser", "getAccessToken", "getUserViewWait"]),
+    },
+    methods: {
+
+    },
+    created: {
+
+    },
+    mounted() {
+      var textWrapper = document.querySelector('.ml2');
+      textWrapper.innerHTML = textWrapper.textContent.replace(/\S/g, "<span class='letter'>$&</span>");
+
+      anime.timeline({
+          loop: true
+        })
+        .add({
+          targets: '.ml2 .letter',
+          scale: [4, 1],
+          opacity: [0, 1],
+          translateZ: 0,
+          easing: "easeOutExpo",
+          duration: 1300,
+          delay: (el, i) => 70 * i
+        }).add({
+          targets: '.ml2',
+          opacity: 0,
+          duration: 1000,
+          easing: "easeOutExpo",
+          delay: 1500
+        });
+
+    
+
+    },
+  }
 </script>
 
 <style scoped>
-tr * {
-  padding: 0;
-  /* margin-bottom: 2rem; */
-}
+  tr * {
+    padding: 0;
+    /* margin-bottom: 2rem; */
+  }
 
-table tbody tr:hover {
-  background: inherit !important;
-}
+  table tbody tr:hover {
+    background: inherit !important;
+  }
 
-td {
-  border: none !important;
-}
+  td {
+    border: none !important;
+  }
+
+
+  
 </style>

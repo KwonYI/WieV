@@ -133,7 +133,7 @@
 
 		<!-- Contact -->
 		<v-col>
-			<div class="text-h4 text-center font-weight-black">Contact</div>
+			<!-- <div class="text-h4 text-center font-weight-black">Contact</div> -->
 		</v-col>
 
 

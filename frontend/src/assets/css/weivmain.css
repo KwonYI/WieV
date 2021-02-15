@@ -12,7 +12,7 @@ html {
 .main-bg-navy-img {
   background-color: #304B61 !important;
   color: white;
-  background-image: url("../images/bg_image_dark_43.png");
+  background-image: url("../images/nightview.jpg");
   background-size: cover;
   /* filter: brightness(50%); */
 }
@@ -22,7 +22,7 @@ html {
   height: 100%;
   content: '';
   background-color: black;
-  opacity: 0.5;
+  opacity: 0.3;
   position: absolute;
   top: 0;
   left: 0;
@@ -44,9 +44,16 @@ html {
   color: lightsteelblue;
 }
 
-
 ​.main-ft-beige {
   color: #FFF1C3;
+}
+
+.bg-violet {
+  background-color: #B1B2C7;
+}
+
+.bg-lavendar {
+  background-color: lavender;
 }
 
 .blurEffect {
