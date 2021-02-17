@@ -8,27 +8,12 @@
         <!--######## 상단 메뉴들 ###############-->
         <!--######## if문 걸어서 recruitNo 관련해서 값 없으면 그냥 프로필 보여주던지 해야함 -->
         <v-app-bar>
-          <!-- <v-tabs style="width: initial" align-with-title>
-            {{ recruitNo }}
-            <v-tab :to="{ name: 'Progress', params: { recruitNo: recruitNo } }">면접 일정</v-tab>
-            <v-tab :to="{ name: 'Viewers', params: { recruitNo: recruitNo } }">면접관 관리</v-tab>
-            <v-tab :to="{ name: 'Viewees', params: { recruitNo: recruitNo } }">지원자 관리</v-tab>
-          </v-tabs> -->
-          
           <v-tabs v-model="recruitTab" align-with-title>
             <v-tabs-slider></v-tabs-slider>
-            <v-tab v-for="(tab, i) in tabs" :key="i" class=" text-subtitle-1">
+            <v-tab v-for="(tab, i) in tabs" :key="i" class="text-subtitle-1">
               {{ tab.name }}
             </v-tab>
           </v-tabs>
-          
-          <div>
-            <v-chip style="" outlined color="blue-grey darken-3">
-              <router-link :to="{ name: 'CreateSet', params: { recruitItem: recruitItem }}">
-                <v-icon left>mdi-calendar-plus</v-icon> 면접스케줄 생성
-              </router-link>
-            </v-chip>
-          </div>
         </v-app-bar>
         <v-tabs-items v-model="recruitTab" class="bg-transparent pa-0">
           <v-tab-item v-for="(tab, i) in tabs" :key="i">

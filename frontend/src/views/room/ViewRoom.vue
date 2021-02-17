@@ -174,6 +174,9 @@ export default {
     }else{
       this.roomType = 'ca';
     }
+
+    // // 테스트용
+    // this.roomType = 'gr'
   },
 
   beforeDestroy() {

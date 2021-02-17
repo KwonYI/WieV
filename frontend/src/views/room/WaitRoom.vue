@@ -71,13 +71,13 @@
 
           <v-row>
             <!--스크롤 면접관-->
-            <v-col cols="4" class="d-flex flex-column justify-center align-center no-gutters" style="">
+            <v-col cols="4" class="d-flex flex-column justify-center align-center" style="height:100%">
               <div class="overflow-y-auto pr-2" style="height:70vh">
                 <span v-if="!isViewee">
-                  <user-video :streamManager="publisher" class="screen-res-sm" />
+                  <user-video :stream-manager="publisher" class="screen-res-sm" />
                 </span>
                 <span v-for="sub in viewers" :key="sub.stream.connection.connectionId">
-                  <user-video class="screen-res-sm" :stream-manager="sub" />
+                  <user-video class="screen-res-sm " :stream-manager="sub" />
                 </span>
               </div>
             </v-col>
@@ -329,8 +329,6 @@ export default {
         { title: '뭐야 내 면접 돌려줘요', answer: '안 돼 안 바꿔줘 바꿀 생각 없어 빨리 돌아가' },
       ],
 
-      //스크롤
-      benched: 0,
     }
   },
   created: function () {
@@ -762,12 +760,12 @@ export default {
   },
 
   computed: {
-    items () {
-      return Array.from({ length: this.length }, (k, v) => v + 1)
-    },
-    length () {
-      return 7000
-    },
+    // items () {
+    //   return Array.from({ length: this.length }, (k, v) => v + 1)
+    // },
+    // length () {
+    //   return 7000
+    // },
   },
   watch : {
 
