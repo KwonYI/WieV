@@ -99,6 +99,7 @@
             <user-video v-for="sub in viewees" :key="sub.stream.connection.connectionId"
               class= 'screen-res-sm'
               :stream-manager="sub"
+              @click.native="updateMain(sub)"
             />
           </v-col>
         </v-row>
