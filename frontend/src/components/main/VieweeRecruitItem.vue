@@ -71,12 +71,12 @@
                    <span style="color: #FFF1C3">대기실 입장</span>
                   </v-btn>
                   <!-- 테스트용 -->
-                  <v-btn
+                  <!-- <v-btn
                     color="blue-grey darken-1"
                     @click="goInterviewSession(interview.interviewSessionName, interview.interviewType)"
                   >
                     <span style="color: #FFF1C3">면접실 입장</span>
-                  </v-btn>
+                  </v-btn> -->
                 </v-card-text>
               </v-card>
             </div>
