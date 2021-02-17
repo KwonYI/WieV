@@ -253,6 +253,9 @@ export default {
     },
     messages :{
       type : Array
+    },
+    userName :{
+      type : String
     }
   },
   data: function () {
