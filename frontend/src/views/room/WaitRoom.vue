@@ -36,7 +36,7 @@
             <v-col cols="3">
               <v-card v-if="!isViewee" color="#304B61" elevation="2" style="height: 100%" dark>
                 <v-card-title class="justify-center py-2">
-                  <div class="text-center text-subtitle-1" @click="sendSignal">
+                  <div class="text-center text-subtitle-1" :style="moving_viewee.length ? '' : 'text-secondary'" @click="moving_viewee.length ? sendSignal() : ''">
                     면접실 이동
                   </div>
                 </v-card-title>

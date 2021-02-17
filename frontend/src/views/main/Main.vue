@@ -91,6 +91,7 @@ export default {
       .then((res) => {
         console.log("지원자가 가진 정보를 보여줍니다(Main)", res.data);
         this.intervieweeData = res.data;
+        this.$store.state.recruit_viewee = res.data 
       })
       .catch((err) => {
         console.log("Main.vue에서 에러발생", err);
