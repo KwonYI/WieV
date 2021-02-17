@@ -726,7 +726,8 @@ export default {
     },
 
     screenShare() {
-      this.sessionScreen = this.OV.initSession()
+      this.screenOV = new OpenVidu()
+      this.sessionScreen = this.screenOV.initSession()
 
       axios.get(`${SERVER_URL}/session/getToken`, {
         params: {
