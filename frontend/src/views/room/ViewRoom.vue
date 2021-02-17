@@ -58,9 +58,9 @@
     
     <!-- 메인 하단 - 환경설정 -->
     <v-bottom-navigation dark class="main-bg-navy mt-auto">
-      <v-col cols="2">
+      <!-- <v-col cols="2">
         <v-btn @click="screenShare">화면 공유</v-btn>
-      </v-col>
+      </v-col> -->
       <v-btn @click="audioOnOOff">
         <v-icon v-if="audioOn === true">mdi-volume-high</v-icon>
         <v-icon v-if="audioOn === false">mdi-volume-off</v-icon> 
@@ -175,7 +175,7 @@ export default {
       this.roomType = 'ca';
     }
 
-    // // 테스트용
+    // 테스트용
     this.roomType = 'gr'
   },
 
