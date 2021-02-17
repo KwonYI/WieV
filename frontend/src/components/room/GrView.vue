@@ -188,8 +188,8 @@
             ></v-textarea> -->
           </v-card-text>
         </v-card>
-        <v-card v-else style="height: 90%">
-          <v-sheet color="white" height="100%" elevation="3">
+        <v-card v-else style="height:90%">
+          <v-sheet color="white" height="100%" max-height="100%" elevation="3">
             <v-list class="pa-0" v-auto-bottom="messages">
               <div v-for="(msg, index) in messages" :key="index">
                 {{ msg.from }} : {{ msg.text }}

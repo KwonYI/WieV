@@ -71,8 +71,8 @@
 
           <v-row>
             <!--스크롤 면접관-->
-            <v-col cols="4" class="d-flex flex-column justify-center align-center" style="height:100%">
-              <div class="overflow-y-auto pr-2" style="height:70vh">
+            <v-col cols="4" class="" style="height:100%">
+              <div class="d-flex flex-column justify-start align-center overflow-y-auto pr-2" style="height:65vh">
                 <span v-if="!isViewee">
                   <user-video :stream-manager="publisher" class="screen-res-sm" />
                 </span>
@@ -86,7 +86,7 @@
               <div v-if="isScreen" id="sharedScreen" class="screen-video screen-res-sm "></div>
               <!--지원자 여러명-->
               <v-row v-if="!isViewee" style=" width:100% " class="d-flex align-center">
-                <v-col cols="12" class="overflow-x-auto" style="width:100%;">
+                <v-col cols="12" class=" overflow-x-auto" style="width:100%;">
 
                   <div class='d-flex mb-5'>
                     <user-video v-for="sub in viewees" :key="sub.stream.connection.connectionId"
@@ -96,7 +96,7 @@
                 </v-col>
               </v-row>
               <!--지원자 1명-->
-              <v-row class="d-flex justify-center align-center pt-5" style="">
+              <v-row class="d-flex justify-center align-center  p-2 pb-0 pt-4" style="">
                 <span v-if="isViewee" style=" width:100% ">
                   <user-video :stream-manager="publisher" class="screen-res-md" />
                 </span>
@@ -875,8 +875,8 @@ export default {
   }
 
   .screen-res-md {
-    width: 640px;
-    height: 360px;
+    width: 608px;
+    height: 342px;
   }
 
   ::v-deep .screen-video > * {

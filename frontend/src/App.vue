@@ -6,7 +6,7 @@
         <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
         <v-toolbar-title id="wiev">
           <img :src="images.logo" width="40" alt="logo">
-          <router-link :to="{name: 'Home'}">
+          <router-link v-if="isNotWaitRoomViewRoom" :to="{name: 'Home'}">
             WieV
           </router-link>
 
@@ -43,9 +43,9 @@
             <v-btn plain style="font-size: 1rem" @click="logout">Logout</v-btn>
           </v-toolbar-items>
           <!-- 오른쪽 상단 위치, 대기실/면접실 -->
-          <v-toolbar-items v-else class="d-flex align-center body-1 mr-5">
+          <!-- <v-toolbar-items v-else class="d-flex align-center body-1 mr-5">
             WieV Inc. 2021 하반기 신입 공채
-          </v-toolbar-items>
+          </v-toolbar-items> -->
         </div>
         <div v-else class="h-100">
           <!-- 오른쪽 상단 위치, 로그인 후 -->
@@ -162,7 +162,7 @@
         <!-- <Introduce v-if="isHome"/>
         <Ask v-if="isHome"/> -->
         
-        
+         <!-- :style="isHome ? '' :  " -->
         <footer v-if="isFooterView" class="bg-dark py-4">
           <div class="container text-light">
             <div class="row">
@@ -276,6 +276,16 @@ export default {
         return true
       }
     },
+
+    isNotWaitRoomViewRoom() {
+      if (['WaitRoom', 'ViewRoom'].includes(this.$route.name)) {
+        return false
+      } else {
+        return true
+      }
+    },
+
+
     isHome() {
       if (this.$route.name === 'Home') {
         return true
