@@ -71,7 +71,7 @@
         <!-- 메인 중앙 - 면접관, 지원자 화면 -->
         <v-row class="main-screen">
           <!--스크롤 면접관-->
-          <v-col cols="4" class="d-flex flex-column justify-center align-center no-gutters" style="">
+          <v-col cols="4" class="d-flex flex-column justify-center align-center" style="">
             <div class="overflow-y-auto pr-2" style="height:70vh">
               <span v-if="!isViewee">
                 <user-video :stream-manager="publisher" class="screen-res-sm" />
@@ -82,13 +82,15 @@
             </div>
           </v-col>
           <!-- 지원자 -->
-          <v-col cols="8" class="viewee-box centering flex-wrap">
-            <user-video v-if="isViewee" :stream-manager="publisher" class="screen-res-sm"/>
+          <v-col cols="8" class="">
+            <div class="overflow-y-auto d-flex centering flex-wrap" style="height:70vh">
+            <user-video v-if="isViewee" :stream-manager="publisher" class="screen-res-sm mb-10"/>
             <user-video v-for="sub in viewees" :key="sub.stream.connection.connectionId"
-              class= 'screen-res-sm'
+              class= 'screen-res-sm mb-10'
               :stream-manager="sub"
               @click.native="updateMain(sub)"
             />
+             </div>
           </v-col>
         </v-row>
       </v-col>
@@ -524,6 +526,12 @@ export default {
   -webkit-appearance: none;
   margin: 0;
 }
+
+
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
 
 /*  / 스크롤 바 밑의 배경 / */
 ::-webkit-scrollbar-track {
