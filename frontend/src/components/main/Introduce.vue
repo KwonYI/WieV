@@ -231,12 +231,12 @@
 						gmail: 'mailto:dooly7183@gmail.com'
 					},
 					{
-						img: require('@/assets/images/team_jh.png'),
+						img: require('@/assets/images/team_jh.jpg'),
 						name: '이준희',
 						position: 'Front',
-						github: '',
-						facebook: '',
-						gmail: ''
+						github: 'https://github.com/i-cluster',
+						facebook: 'https://www.linkedin.com/in/jhleeic/',
+						instagram: 'https://www.instagram.com/june_bonav/'
 					}
 				],
 

@@ -134,6 +134,7 @@ export default new Vuex.Store({
     }, ],
 
     recruit: {},
+    recruit_viewee: {},
 
     // 부서와 직군 정보
     partCareer: {
