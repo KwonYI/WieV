@@ -70,7 +70,7 @@
 
           <v-row>
             <!--스크롤 면접관-->
-            <v-col cols="4" class="d-flex flex-column justify-center align-center no-gutters" style="">
+            <v-col cols="4" class="d-flex flex-column justify-center align-center no-gutters" style="height:100%">
               <div class="overflow-y-auto pr-2" style="height:70vh">
                 <span v-if="!isViewee">
                   <user-video :streamManager="publisher" class="screen-res-sm" />
@@ -83,10 +83,10 @@
 
             <v-col cols="8" class='d-flex flex-column align-center'>
               <!--지원자 여러명-->
-              <v-row v-if="!isViewee" style=" height:18vh; width:100% ">
+              <v-row v-if="!isViewee" style=" width:100% " class="d-flex align-center" >
                 <v-col cols="12" class="overflow-x-auto" style="width:100%;">
 
-                  <div class='d-flex'>
+                  <div class='d-flex mb-5'>
                     <user-video v-for="sub in viewees" :key="sub.stream.connection.connectionId"
                       class='screen-res  mx-2' :stream-manager="sub" :id="sub.stream.connection.connectionId"
                       @click.native="updateMain(sub)" />
@@ -518,16 +518,18 @@ export default {
 }
 
 .screen-res {
-  width: 208px;
-  height: 117px;
+  /* width: 208px;
+  height: 117px; */
+  width: 160px;
+    height: 90px;
 }
 .screen-res-sm {
   width: 288px;
   height: 162px;
 }
 .screen-res-md {
-  width: 640px;
-  height: 360px;
+  width: 608px;
+    height: 342px;
 }
 .screen-res-lr {
   width: 720px;
@@ -539,4 +541,26 @@ export default {
   -webkit-appearance: none;
   margin: 0;
 }
+
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  /*  / 스크롤 바 밑의 배경 / */
+  ::-webkit-scrollbar-track {
+    background-color: grey;
+    opacity: 0.2;
+  }
+
+  /* / 실질적 스크롤 바 / */
+  ::-webkit-scrollbar-thumb {
+    background: aliceblue;
+    border-radius: 10px;
+  }
+
+  /* / 스크롤 바 상 하단 버튼 */
+  ::-webkit-scrollbar-button {
+    display: none;
+  }
 </style>
