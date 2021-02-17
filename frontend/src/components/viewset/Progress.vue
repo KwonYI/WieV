@@ -234,8 +234,7 @@
       findDetail: function (item) {
         this.detailGroupItem = item
       },
-    },
-    watch: {
+      watch: {
       loader() {
         const l = this.loader
         this[l] = !this[l]
@@ -253,6 +252,8 @@
         this.loader2 = null
       },      
     },
+    },
+
     computed: {
       ...mapState(["recruitList", "recruitProgressList", "selectedRecruitNo"]),
       ...mapGetters(["getProgressListCurrentRecruit", "getUserComSeq"]),

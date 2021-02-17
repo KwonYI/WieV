@@ -42,21 +42,17 @@
                   <div class="text--primary">
                     {{ interview.interviewType }} 면접
                   </div>
-                  <v-btn
+                  <!-- <v-btn
                     color="blue-grey darken-1"
                     @click="goWaitSession"
                   >
                     <span style="color: #FFF1C3">대기실 입장</span>
-                  </v-btn>
+                  </v-btn> -->
                   <v-btn
                     color="blue-grey darken-1"
                     @click="goInterviewSession"
                   >
                     <span style="color: #FFF1C3">면접실 입장</span>
-                    <!-- 
-                    :disabled="inWait === true"
-                    :disabled="inInterview === true"
-                     -->
                   </v-btn>
                 </v-card-text>
               </v-card>

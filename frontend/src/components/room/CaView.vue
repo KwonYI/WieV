@@ -7,7 +7,7 @@
         <v-row class="main-banner">
           <!-- 면접실 이름 -->
           <v-col cols="2" class="d-flex align-center">
-            <h5 class="mb-0 font-weight-bold">직무 면접실</h5>
+            <h5 class="mb-0 font-weight-bold">인성 면접실</h5>
           </v-col>
           <v-col cols="3"></v-col>
           <!-- 타이머 -->
@@ -266,7 +266,7 @@ export default {
     messages :{
       type : Array
     },
-    username :{
+    userName :{
       type : String
     }
   },
@@ -362,7 +362,7 @@ export default {
           console.log('소켓 연결 성공', frame);
           this.stompClient.subscribe("/send/"+this.groupTypeSeq, res => {
             let message = JSON.parse(res.body)
-            if(message['name'] === this.username) return
+            if(message['name'] === this.userName) return
             this.messageFromSession = JSON.parse(res.body)['message']
           });
         },
