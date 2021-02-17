@@ -14,7 +14,7 @@
           <v-col cols="7" class="centering justify-start">
             <v-card
               elevation="3"
-              height="70%"
+              height="50%"
               class="centering"
               :class="isViewee ? 'd-none' : ''"
               tile
@@ -67,18 +67,6 @@
             </v-col>
           </v-col>
         </v-row>
-
-        <!-- 메인 위 - 지원자들 화면, 클릭하면 큰 화면으로 보기 -->
-        <!-- <v-row>
-          <div v-if="!isViewee" class='d-flex justify-center'>
-            <user-video v-for="sub in viewees" :key="sub.stream.connection.connectionId"
-              class= 'screen-res'
-              :stream-manager="sub" 
-              :id = "sub.stream.connection.connectionId"
-              @click.native="updateMain(sub)"
-            />
-          </div>
-        </v-row> -->
 
         <!-- 메인 중앙 - 면접관, 지원자 화면 -->
         <v-row class="main-screen">
@@ -142,12 +130,15 @@
               v-for="(item, i) in currentApplicantList[clickedSeq]"
               :key="i"
             >
-              <span v-if="item.quest !== '자기소개서'">
-                질문 {{ i+1 }}
+              <span>
+                자기소개서 {{ i+1 }}
               </span>
-              <span v-else>
+              <!-- <span v-else>
                 자기소개서
-              </span>
+              </span> -->
+            </v-tab>
+            <v-tab>
+              채팅
             </v-tab>
           </v-tabs>
           <v-card-text class="">
@@ -156,14 +147,35 @@
                 {{ i+1 }}. {{ item.quest }} // {{clickedSeq}}번 지원자
                 <v-divider></v-divider>
                 <v-virtual-scroll
-                  item-height="250"
+                  item-height="400"
                   :items="[item]"
                 >
                   {{ item.answer }}
                 </v-virtual-scroll>
               </v-tab-item>
+
+              <!--채팅기능-->
+              <v-tab-item style="height: 45%">
+                <v-sheet color="white" height="100%" elevation="3">
+                  <v-list class="pa-0" v-auto-bottom="messages">
+                    <div v-for="(msg, index) in messages" :key="index">
+                      {{ msg.from }} : {{ msg.text }}
+                    </div>
+                  </v-list>
+                  <v-text-field
+                    v-model="text"
+                    label="메세지를 입력하세요."
+                    class="pa-0 ma-0 mx-1"
+                    single-line
+                    hide-details
+                    dense
+                    @keyup.13="sendMessage"
+                  ></v-text-field>
+                </v-sheet>                
+              </v-tab-item>
+
             </v-tabs-items>
-            <v-textarea
+            <!-- <v-textarea
               label="Memo"
               outlined
               rows="2"
@@ -171,10 +183,10 @@
               style="margin-top: .5rem;"
               no-resize
               hide-details
-            ></v-textarea>
+            ></v-textarea> -->
           </v-card-text>
         </v-card>
-        <v-card style="height: 100px">
+        <v-card v-else style="height: 90%">
           <v-sheet color="white" height="100%" elevation="3">
             <v-list class="pa-0" v-auto-bottom="messages">
               <div v-for="(msg, index) in messages" :key="index">
@@ -190,7 +202,7 @@
               dense
               @keyup.13="sendMessage"
             ></v-text-field>
-          </v-sheet>
+          </v-sheet>          
         </v-card>
         <!-- 평가 -->
 

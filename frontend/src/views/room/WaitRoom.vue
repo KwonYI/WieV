@@ -230,9 +230,9 @@
 
     <!-- 메인 하단 - 환경설정 -->
     <v-bottom-navigation dark class="main-bg-navy">
-      <v-col cols="2">
+      <!-- <v-col cols="2">
         <v-btn @click="screenShare">화면 공유</v-btn>
-      </v-col>
+      </v-col> -->
       <v-btn @click="audioOnOOff">
         <v-icon v-if="audioOn === true">mdi-volume-high</v-icon>
         <v-icon v-if="audioOn === false">mdi-volume-off</v-icon>
@@ -448,6 +448,7 @@ export default {
     //   })
     // });
 
+    // 대기방에서의 채팅
     this.session.on("signal:my-chat", event => {
       let message = { from: "", text: "" }
       message.from = event.from.data.split('":"')[1].slice(0, -7)
@@ -456,6 +457,7 @@ export default {
       this.messages.push(message)
     })
 
+    // 대기관이 지원자 대기방에 보내기
     this.session.on("signal:signal", event => {
       if(this.type === 'viewee' && this.userName === event.data){
         if(confirm("이동하시겠습니까?")){
@@ -468,10 +470,12 @@ export default {
       }
     })
 
+    // 대기관이 상단 공지배너 작성
     this.session.on("signal:notice", event => {
       this.banner_message = event.data
     })
 
+    // 지원자가 면접관에게 이동여부 대답
     this.session.on("signal:answer", event => {
       if(this.type === 'manager'){
         let message = event.from.data.split('":"')[1].slice(0, -7)
@@ -486,6 +490,18 @@ export default {
         
         this.interview_messages.push(message)
       }
+    })
+
+    // 화면 공유 시작 메세지
+    this.session.on("signal:startShare", () => {
+      console.log("화면공유 시작한다고??")
+      this.isScreen = true;
+    })
+
+    // 화면 공유 종료 메세지
+    this.session.on("signal:endShare", () => {
+      console.log("화면공유 끝났다고??")
+      this.isScreen = false;
     })
 
     this.connectSession();
@@ -708,6 +724,8 @@ export default {
     },
 
     screenShare() {
+      this.screenOV = new OpenVidu()
+      this.sessionScreen = this.screenOV.initSession()
 
       axios.get(`${SERVER_URL}/session/getToken`, {
         params: {
@@ -717,38 +735,37 @@ export default {
         }
       })
         .then(res => {
-          console.log('따끈한 토큰', res.data.token)
+          // console.log('따끈한 토큰', res.data.token)
           this.isScreen = true
           this.screenToken = res.data.token
           this.sessionScreen.connect(res.data.token, { name: this.userName, type : 'screen', userSeq : this.userSeq})
             .then(() => {
-              console.log('커넥트 성공')
-              let publisher = this.screenOV.initPublisher('sharedScreen', { videoSource: "screen", resolution: '1280x720', publishAudio: false })
-              console.log('스크린 공유자 : ', publisher)
+              // console.log('커넥트 성공')
+              let publisher = this.screenOV.initPublisher('sharedScreen', { videoSource: "screen", resolution: '1280x720'})
+              // console.log('스크린 공유자 : ', publisher)
 
               publisher.once('accessAllowed', () => {
                 publisher.stream.getMediaStream().getVideoTracks()[0].addEventListener('ended', () => {
-                  axios.get(`${SERVER_URL}/session/leaveSession`, {
-                    params: {
-                      sessionName: this.sessionName,
-                      token: this.screenToken,
-                    },
-                  })
-                  .then(() => {
-                    if (this.sessionScreen) {
-                      this.sessionScreen.disconnect()
-                      this.screenOV = undefined,
-                      this.sessionScreen = undefined,
-                      this.screenToken = undefined
-                      this.isScreen = false
-                    }
-                  })
-                  .catch(err => console.log(err))
-                  console.log('User pressed the "Stop sharing" button')
+                  this.sessionScreen.signal({ data: '', to: [], type: "endShare" })
+                  .then()
+                  .catch(err => console.error(err))
+                  
+                  if (this.sessionScreen) {
+                    this.sessionScreen.disconnect()
+                    this.sessionScreen = undefined
+                    this.screenToken = undefined
+                    this.screenOV = undefined
+                    this.isScreen = false
+                    console.log('User pressed the "Stop sharing" button')
+                  }
+                  
                 })
+                this.sessionScreen
+                    .signal({ data: '', to: [], type: "startShare" })
+                    .then()
+                    .catch(err => console.error(err))
                 this.sessionScreen.publish(publisher)
               })
-
               publisher.once('accessDenied', () => {
                 console.warn('ScreenShare: Access Denied');
               })
