@@ -133,6 +133,8 @@ export default new Vuex.Store({
       reEndDate: "",
     }, ],
 
+    recruit: {},
+
     // 부서와 직군 정보
     partCareer: {
       partSeq: 0,

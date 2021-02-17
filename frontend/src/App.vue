@@ -43,9 +43,9 @@
             <v-btn plain style="font-size: 1rem" @click="logout">Logout</v-btn>
           </v-toolbar-items>
           <!-- 오른쪽 상단 위치, 대기실/면접실 -->
-          <!-- <v-toolbar-items v-else class="d-flex align-center body-1 mr-5">
-            WieV Inc. 2021 하반기 신입 공채
-          </v-toolbar-items> -->
+          <v-toolbar-items v-else class="d-flex align-center body-1 mr-5">
+            {{ user.userComName }} {{ recruit.recruitYear }} {{ recruit.recruitFlag }} {{ recruit.recruitStatus }} 채용
+          </v-toolbar-items>
         </div>
         <div v-else class="h-100">
           <!-- 오른쪽 상단 위치, 로그인 후 -->
@@ -267,7 +267,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(["accessToken", 'user']),
+    ...mapState(["accessToken", 'user', 'recruit']),
     ...mapGetters(["getAccessToken"]),
     isNotRoom() {
       if (['WaitRoom', 'ViewRoom', 'Main'].includes(this.$route.name)) {

@@ -265,6 +265,9 @@ export default {
     },
     messages :{
       type : Array
+    },
+    username :{
+      type : String
     }
   },
   data: function () {
@@ -358,6 +361,8 @@ export default {
           this.connected = true;
           console.log('소켓 연결 성공', frame);
           this.stompClient.subscribe("/send/"+this.groupTypeSeq, res => {
+            let message = JSON.parse(res.body)
+            if(message['name'] === this.username) return
             this.messageFromSession = JSON.parse(res.body)['message']
           });
         },
@@ -528,8 +533,8 @@ export default {
   height: 162px;
 }
 .screen-res-md {
-  width: 608px;
-    height: 342px;
+  width: 533px;
+  height: 300px;
 }
 .screen-res-lr {
   width: 720px;

@@ -78,7 +78,8 @@ export default {
       })
       .then((res) => {
         this.isLogin = true;
-        this.interview = res.data.interview;
+        this.interview = res.data.interview
+        this.$store.state.recruit = res.data.interview
         this.groupTypeSeq = res.data.groupTypeSeq
       })
       .catch((err) => {
