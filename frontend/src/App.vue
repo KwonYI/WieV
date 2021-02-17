@@ -9,6 +9,9 @@
           <router-link v-if="isNotWaitRoomViewRoom" :to="{name: 'Home'}">
             WieV
           </router-link>
+          <span v-else>
+            WieV
+          </span>
 
 
         </v-toolbar-title>
@@ -380,7 +383,7 @@ export default {
       var m = timer.getMinutes()
       var s = timer.getSeconds()
       // console.log(month)
-      document.getElementById('clock').innerHTML = month +"월"+ day +"일" + h + "시" + m + "분" + s + "초"
+      document.getElementById('clock').innerHTML = month +"/"+ day +"&nbsp&nbsp" + h + "시" + m + "분&nbsp&nbsp" + s
     }, 1000)
   },
   updated() {
