@@ -115,6 +115,7 @@ export default {
 
       // 화면, 소리, 화면 공유
       audioOn: true,
+      // audioOn: false,
       videoOn: true,
 
       // From SessionController
@@ -176,7 +177,7 @@ export default {
     }
 
     // 테스트용
-    this.roomType = 'gr'
+    // this.roomType = 'pt'
   },
 
   beforeDestroy() {
@@ -313,6 +314,7 @@ export default {
           audioSource: undefined, // The source of audio. If undefined default microphone
           videoSource: undefined, // The source of video. If undefined default webcam
           publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
+          // publishAudio: false, // Whether you want to start publishing with your audio unmuted or not
           publishVideo: true, // Whether you want to start publishing with your video enabled or not
           // resolution: "272x153", // The resolution of your video
           resolution: "1280x720", // The resolution of your video

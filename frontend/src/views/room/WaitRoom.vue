@@ -287,6 +287,7 @@ export default {
 
       // 화면, 소리, 화면 공유
       audioOn: true,
+      // audioOn: false,
       videoOn: true,
 
       // From SessionController
@@ -698,6 +699,7 @@ export default {
             audioSource: undefined, // The source of audio. If undefined default microphone
             videoSource: undefined, // The source of video. If undefined default webcam
             publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
+            // publishAudio: false, // 입장시 음소거
             publishVideo: true, // Whether you want to start publishing with your video enabled or not
             // resolution: "272x153", // The resolution of your video
             resolution: "1280x720", // The resolution of your video
@@ -736,9 +738,9 @@ export default {
       })
         .then(res => {
           // console.log('따끈한 토큰', res.data.token)
-          this.isScreen = true
+          // this.isScreen = true
           this.screenToken = res.data.token
-          this.sessionScreen.connect(res.data.token, { name: this.userName, type : 'screen', userSeq : this.userSeq})
+          this.sessionScreen.connect(this.screenToken, { name: this.userName, type : 'screen', userSeq : '-1'})
             .then(() => {
               // console.log('커넥트 성공')
               let publisher = this.screenOV.initPublisher('sharedScreen', { videoSource: "screen", resolution: '1280x720'})
@@ -760,6 +762,7 @@ export default {
                   }
                   
                 })
+                this.isScreen = true
                 this.sessionScreen
                     .signal({ data: '', to: [], type: "startShare" })
                     .then()
