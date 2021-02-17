@@ -25,6 +25,8 @@
             </div>
             <div v-else>
               <!-- <v-btn class="m-2 white--text" elevation="2" large rounded color=#304B61 :to="{ name: 'Main', params: { isLogin: true } }"> -->
+              <h4 class="my-16 text-white"> 반갑습니다 [{{user.userComName}}] - {{user.userName}}님 </h4>
+
               <v-btn class="m-2 amber lighten-3 black--text font-weight-black" elevation="2" x-large rounded  :to="{ name: 'Main', params: { isLogin: true } }">
                 대기실 이동하기
               </v-btn>
@@ -96,7 +98,8 @@ AOS.init()
     data: () => ({
       message: "",
       images: {
-        logo: require('@/assets/images/new_logo_shadow.png')
+        logo: require('@/assets/images/new_logo_shadow.png'),
+        user: ''
       },
     }),
     computed: {
@@ -113,8 +116,8 @@ AOS.init()
     beforeDestroy() {
       window.addEventListener('scroll', this.handleScroll)
     },
-    created: {
-
+    created() {
+      this.user = this.getUser
     },
     mounted() {
       var textWrapper = document.querySelector('.ml2');

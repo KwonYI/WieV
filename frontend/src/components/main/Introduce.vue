@@ -2,7 +2,10 @@
 	<div id="introduce">
 		<!-- What is WieV -->
 		<v-img :src="require('@/assets/images/intro_image.png')" class="intro-img">
-			<div data-aos="fade-right" data-aos-offset="120" class="headline intro-msg">WieV는 비대면 면접에 최적화된 솔루션을 제공하는 플랫폼입니다.</div>
+			<div data-aos="fade-right" data-aos-offset="120" class="headline intro-msg">
+				WieV는 언택트 채용과 면접에 최적화된 솔루션으로<br><br>
+				효과적인 리크루팅을 지원하도록 개발된 면접관리 플랫폼입니다.
+			</div>
 		</v-img>
 		
 		<v-col class="margining"></v-col>
@@ -126,12 +129,12 @@
 					{
 						title: 'For Enterprise',
 						icon: 'chart-line',
-						content: '효율적인 언택트 채용으로 면접 전형에서 발생하는 비용을 절감할 수 있습니다.'
+						content: '빠르고 쉽게 이용할 수 있는 화상면접 서비스로 비대면 채용의 부담과 비용을 줄입니다.'
 					},
 					{
 						title: 'For Recruiter',
 						icon: 'rotate-orbit',
-						content: '비대면 면접스케줄을 통합 데이터로 관리하고 트래킹할 수 있습니다.'
+						content: '비대면 면접스케줄을 통합 채용 데이터베이스에서 트래킹하고 개별 일정을 조정합니다.'
 					},
 					{
 						title: 'For Viewer',
@@ -142,38 +145,38 @@
 
 				support: [
 					{
-						title: '유연한 데이터베이스',
-						content: '엑셀 업로드',
+						title: '편리하고 유연한 데이터베이스',
+						content: '사내 채용 DB와 연계하거나 엑셀 같은 간편한 도구로 DB를 생성 및 관리할 수 있습니다.',
 						detail: '',
 						src: require('@/assets/images/intro1.png')
 					},
 					{
-						title: '통합 관리 시스템',
-						content: '이메일 발송, 진행 중 면접',
+						title: '통합적인 채용 관리 시스템',
+						content: '비대면 면접을 넘어 면접관 계정 발급과 안내 이메일 발송 등 면접 준비에 필요한 다양한 작업을 수행할 수 있습니다.',
 						detail: '',
 						src: require('@/assets/images/intro2.png')
 					},
 					{
-						title: '면접실 커스커마이징',
-						content: '유형별, 데이터별 템플릿 활용',
+						title: '대기실과 면접실 커스커마이징',
+						content: '인성/직무, PT, 토론 등 다양한 면접유형에 맞춰 화면 템플릿을 제공하고 필요에 맞게 사용할 수 있습니다.',
 						detail: '',
 						src: require('@/assets/images/intro3.png')
 					},
 					{
 						title: '면접스케줄 자동화',
-						content: '스케줄-면접실 연결',
+						content: '자동 배정 시스템으로 간단하게 면접스케줄을 생성하고 지원자와 면접관을 배정된 면접실로 연결시킬 수 있습니다.',
 						detail: '',
 						src: require('@/assets/images/intro4.png')
 					},
 					{
-						title: '다양한 부가기능',
-						content: '자기소개서, 공지 배너',
+						title: '면접에 최적화된 부가기능',
+						content: '자기소개서 분할 화면, 배너를 통한 면접 안내 등 면접 진행에 필요한 여러 기능들을 활용할 수 있습니다.',
 						detail: '',
 						src: require('@/assets/images/intro5.png')
 					},
 					{
-						title: '',
-						content: '웹 기반, 언제 어디서나',
+						title: '웹 기반의 높은 접근성',
+						content: '별도의 앱 설치 없이 인터넷이 설치된 어디서나 가볍고 빠르게 이용할 수 있습니다.',
 						detail: '',
 						src: require('@/assets/images/intro6.png')
 					}
@@ -182,18 +185,18 @@
 				carousel: [
 					{
             src: require('@/assets/images/5-start-simple-slider.jpg'),
-            content: "WieV는 '기업'에 초점을 맞춘 최고의 화상면접 플랫폼입니다.",
-            subcontent:"실무자들이 면접의 목적인 지원자의 평가와 선발에 집중할 수 있도록 간편하고 효율적인 시스템을 제공합니다."
+            content: "WieV는 언택트 채용이라는 단 하나의 목적을 위해 구성된 면접관리 플랫폼입니다.",
+            subcontent: "익숙하지 않은 비대면 면접과 리크루팅 관리에 맞춰 대면 상황에서와 같은 채용 환경을 만들기 위해 노력합니다."
           },
           {
             src: require('@/assets/images/6-start-simple-slider.jpg'),
-            content: "WieV는 성공적인 비즈니스를 운영할 수 있는 파트너입니다.",
-            subcontent:"여러분이 오직 채용에만 집중할 수 있도록 모든 면접 일정을 생성 및 관리하겠습니다."
+            content: "WieV의 면접 전형에 필수적인 최소한의 기술로 누구나 비용 걱정 없이 진행할 수 있습니다.",
+            subcontent: "적은 투자로 채용을 진행할 수 있도록 쉽고 빠르게 사용할 수 있는 인터페이스와 기능을 제공합니다."
           },
           {
             src: require('@/assets/images/7-start-simple-slider.jpg'),
-            content: "WieV는 언제 어디서나 면접을 진행하고 관리할 수 있습니다.",
-            subcontent:"화상면접을 통해 지원자, 면접관을 쉽게 연결하며 채용에 대한 비용을 최소화합니다.",
+            content: "WieV는 언제 어디서나 지원자의 평가에 집중할 수 있는 채용 시스템과 솔루션을 제공합니다.",
+            subcontent: "웹 기반의 간편한 접근과 채용-면접 연계 시스템으로 실무자들이 면접 자체에 집중하며 채용 정확도를 높입니다.",
           },
         ],
 
