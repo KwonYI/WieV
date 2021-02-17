@@ -20,6 +20,7 @@
         :publisher = 'publisher'
         :mainStreamManager = 'mainStreamManager'
         :messages = 'messages'
+        :username = "userName"
         @updateMain="updateMain"
         @sendMessage="sendMessage"
       />
@@ -34,6 +35,7 @@
         :publisher = 'publisher'
         :mainStreamManager = 'mainStreamManager'
         :messages = 'messages'
+        :username = "userName"
         @updateMain="updateMain"
         @sendMessage="sendMessage"
       />
@@ -48,6 +50,7 @@
         :publisher = 'publisher'
         :mainStreamManager = 'mainStreamManager'
         :messages = 'messages'
+        :username = "userName"
         @updateMain="updateMain"
         @sendMessage="sendMessage"
       />

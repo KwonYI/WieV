@@ -1,15 +1,5 @@
 <template>
   <div id="waitroom">
-    <!--상단 바-->
-    <v-app-bar class="d-none" dense dark>
-      <v-toolbar-title class="">
-        {{ comName }}
-        {{ re_year }}
-        {{ re_flag }}
-        {{ re_status }}
-
-      </v-toolbar-title>
-    </v-app-bar>
     <!-- 
     화면 해상도
     <div class="brd" style="width: 400px; height: 225px"></div>
@@ -22,20 +12,31 @@
         <v-col cols="9" class="main-box">
           <!-- 메인 상단 - 배너, 면접실 이동 안내 -->
           <v-row class="main-banner">
+            <!-- 대기실 -->
             <v-col cols="2" class="d-flex align-center">
               <h5 class="mb-0 font-weight-bold">대기실</h5>
             </v-col>
+
             <!-- 공지 배너 -->
             <v-col cols="7" class="banner">
-              <v-text-field solo hide-details height="100%" :readonly='isViewee' class="notice" v-model="banner_message"
-                @keyup.13="noticeBanner"></v-text-field>
+              <v-textarea
+                solo
+                hide-details
+                no-resize
+                label="공지 배너"
+                rows="2"
+                :readonly='isViewee'
+                class="notice"
+                v-model="banner_message"
+                :value="banner_message"
+                @keyup.13="noticeBanner"></v-textarea>
             </v-col>
 
             <!-- 면접실 이동 안내 -->
             <v-col cols="3">
               <v-card v-if="!isViewee" color="#304B61" elevation="2" style="height: 100%" dark>
                 <v-card-title class="justify-center py-2">
-                  <div class="text-center text-subtitle-1" @click="moving_viewee.length ? sendSignal : ''">
+                  <div class="text-center text-subtitle-1" @click="sendSignal">
                     면접실 이동
                   </div>
                 </v-card-title>
@@ -72,7 +73,7 @@
           <v-row>
             <!--스크롤 면접관-->
             <v-col cols="4" class="d-flex flex-column justify-center align-center" style="height:100%">
-              <div class="overflow-y-auto pr-2" style="height:70vh">
+              <div class="overflow-y-auto pr-2" style="">
                 <span v-if="!isViewee">
                   <user-video :stream-manager="publisher" class="screen-res-sm" />
                 </span>
@@ -85,16 +86,17 @@
             <v-col cols="8" class='d-flex flex-column align-center'>
               <div v-if="isScreen" id="sharedScreen" class="screen-video screen-res-sm"></div>
               <!--지원자 여러명-->
-              <v-row v-if="!isViewee" style=" height:18vh; width:100% ">
+              <v-row v-if="!isViewee" style="width: 100%">
                 <v-col cols="12" class="overflow-x-auto" style="width:100%;">
 
                   <div class='d-flex'>
                     <user-video v-for="sub in viewees" :key="sub.stream.connection.connectionId"
-                      class='screen-res  mx-2' :stream-manager="sub" :id="sub.stream.connection.connectionId"
+                      class='screen-res mx-2' :stream-manager="sub" :id="sub.stream.connection.connectionId"
                       @click.native="updateMainVideoStreamManager(sub)" />
                   </div>
                 </v-col>
               </v-row>
+
               <!--지원자 1명-->
               <v-row class="d-flex flex-wrap justify-center align-center pt-5" style="">
                 <span v-if="isViewee">
@@ -164,23 +166,24 @@
             <!-- 메시지 출력 -->
             <v-sheet color="white" height="100%" width="60%" elevation="3" class="d-flex justify-center align-center">
               <!-- <div>면접 준비 완료</div> -->
-              <div>{{messageFromSession}}</div>
+              <div>{{ messageFromSession }}</div>
             </v-sheet>
           </div>
+
           <!-- 면접 안내 -->
           <div style="height: 35%">
             <v-sheet color="white" height="100%" elevation="3">
               <div class="text-h6 text-center pt-1">면접 안내</div>
               <v-divider class="my-1"></v-divider>
               <!-- 권영일 추가 interview_messages 값 확인 -->
-              <v-list class="pa-0" v-auto-bottom="interview_messages">
+              <!-- <v-list class="pa-0" v-auto-bottom="interview_messages">
                 <div v-for="(msg, index) in interview_messages" :key="index">
                   {{ getCurrentTime() }} - {{ msg }}
                 </div>
-                <!-- 권영일 추가 -->
-              </v-list>
+              </v-list> -->
             </v-sheet>
           </div>
+
           <!-- FAQ -->
           <div style="height: 10%">
             <v-sheet color="white" height="100%" elevation="3">
@@ -209,6 +212,7 @@
               </v-dialog>
             </v-sheet>
           </div>
+
           <!-- 채팅창 -->
           <div style="height: 45%">
             <v-sheet color="white" height="100%" elevation="3">
@@ -594,8 +598,8 @@ export default {
         this.connected = true;
         console.log('소켓 연결 성공', frame);
         this.stompClient.subscribe("/send/"+this.groupTypeSeq, res => {
-          // let message = JSON.parse(res.body)
-          // if(message['name'] === this.userName) return
+          let message = JSON.parse(res.body)
+          if(message['name'] === this.userName) return
           this.messageFromSession = JSON.parse(res.body)['message']
         });
       }, error => {
@@ -618,7 +622,6 @@ export default {
       this.session.signal({ data: this.banner_message, to: [], type: "notice" })
         .then()
         .catch(err => console.error(err))
-      this.banner_message = ''
     },
 
     goInterview() {
@@ -821,7 +824,7 @@ export default {
 
   ::v-deep .banner .v-input,
   ::v-deep .banner .v-input__control {
-    height: 100%;
+    /* height: 100%; */
   }
 
   ::v-deep .ant-popover-inner .ant-popover-inner-content {
@@ -867,7 +870,7 @@ export default {
   }
 
   .notice {
-    color: red
+    /* color: red */
   }
 
   ::-webkit-scrollbar {

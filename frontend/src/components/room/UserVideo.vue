@@ -1,7 +1,7 @@
 <template>
-  <span v-if="streamManager" align="center">
+  <span v-if="streamManager" align="center" class="video">
     <ov-video :stream-manager="streamManager" />
-    <p>{{ JSON.parse(streamManager.stream.connection.data.split("%/%")[0])['name'] }}</p>
+    <!-- <p>{{ JSON.parse(streamManager.stream.connection.data.split("%/%")[0])['name'] }}</p> -->
   </span>
 </template>
 
@@ -38,4 +38,6 @@ export default {
   border-color: skyblue;
   border-style: solid;
 }  
+
+
 </style>
