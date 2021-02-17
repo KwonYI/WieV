@@ -58,6 +58,9 @@
     
     <!-- 메인 하단 - 환경설정 -->
     <v-bottom-navigation dark class="main-bg-navy mt-auto">
+      <v-col cols="2">
+        <v-btn @click="screenShare">화면 공유</v-btn>
+      </v-col>
       <v-btn @click="audioOnOOff">
         <v-icon v-if="audioOn === true">mdi-volume-high</v-icon>
         <v-icon v-if="audioOn === false">mdi-volume-off</v-icon> 
@@ -100,6 +103,11 @@ export default {
       // 면접관, 지원자들만 담아두는 리스트
       viewers : [],
       viewees : [],
+
+      // 스크린 공유
+      screenOV: undefined,
+      sessionScreen: undefined,
+      screenToken: undefined,
 
       // 채팅
       text: "",
@@ -218,7 +226,7 @@ export default {
               ]
             }
           }
-        }else{
+        } else if (['viewer', 'manager'].includes(info['type'])) {
           this.viewers.push(subscriber)
         }
       })
@@ -381,6 +389,57 @@ export default {
         .then()
         .catch(err => console.error(err))
     },
+
+    screenShare() {
+      this.screenOV = new OpenVidu()
+      this.sessionScreen = this.screenOV.initSession()
+
+      axios.get(`${SERVER_URL}/session/getToken`, {
+        params: {
+          sessionName: this.sessionName,
+          name: this.userName,
+          type: this.type,
+        }
+      })
+        .then(res => {
+          console.log('따끈한 토큰', res.data.token)
+          this.screenToken = res.data.token
+          this.sessionScreen.connect(res.data.token, { name: this.userName, type : 'screen', userSeq : this.userSeq})
+            .then(() => {
+              console.log('커넥트 성공')
+              let publisher = this.screenOV.initPublisher('#sharedScreen', { videoSource: "screen", resolution: '1280x720'})
+              console.log('스크린 공유자 : ', publisher)
+
+              publisher.once('accessAllowed', () => {
+                publisher.stream.getMediaStream().getVideoTracks()[0].addEventListener('ended', () => {
+                  axios.get(`${SERVER_URL}/session/leaveSession`, {
+                    params: {
+                      sessionName: this.sessionName,
+                      token: this.screenToken,
+                    },
+                  })
+                    .then(() => {
+                      if (this.sessionScreen) {
+                        this.sessionScreen.disconnect()
+                        this.screenOV = undefined,
+                        this.sessionScreen = undefined,
+                        this.screenToken = undefined
+                      }
+                    })
+                    .catch(err => console.log(err))
+                    console.log('User pressed the "Stop sharing" button')
+                })
+                this.sessionScreen.publish(publisher)
+              })
+
+              publisher.once('accessDenied', () => {
+                console.warn('ScreenShare: Access Denied');
+              })
+            })
+            .catch(error => console.warn('There was an error connecting to the session:', error.code, error.message))
+        })
+        .catch(err => console.log("토큰 재생성에서 에러 발생", err))
+    }
   },
 
   computed: {

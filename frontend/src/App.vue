@@ -362,19 +362,20 @@ export default {
     this.Manager = this.$store.state.Manager
     console.log("this.", this.$route.name)
 
-  setInterval(function(){
-             
-            var timer = new Date();
-            var month=timer.getMonth()+1;
-            var day=timer.getDate();
-            var h = timer.getHours();
-            var m = timer.getMinutes();
-            var s = timer.getSeconds();
-            console.log(month)
-            document.getElementById('clock').innerHTML = month +"/"+ day +" "+ h + ":" + m + ":" + s;
-        },1000);
+    setInterval(function () {     
+      var timer = new Date()
+      var month=timer.getMonth()+1
+      var day=timer.getDate()
+      var h = timer.getHours()
+      var m = timer.getMinutes()
+      var s = timer.getSeconds()
+      // console.log(month)
+      document.getElementById('clock').innerHTML = month +"월"+ day +"일" + h + "시" + m + "분" + s + "초"
+    }, 1000)
   },
+  updated() {
     
+  },
 }
 </script>
 

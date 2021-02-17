@@ -22,8 +22,11 @@
         <v-col cols="9" class="main-box">
           <!-- 메인 상단 - 배너, 면접실 이동 안내 -->
           <v-row class="main-banner">
+            <v-col cols="2" class="d-flex align-center">
+              <h5 class="mb-0 font-weight-bold">대기실</h5>
+            </v-col>
             <!-- 공지 배너 -->
-            <v-col cols="9" class="banner">
+            <v-col cols="7" class="banner">
               <v-text-field solo hide-details height="100%" :readonly='isViewee' class="notice" v-model="banner_message"
                 @keyup.13="noticeBanner"></v-text-field>
             </v-col>
@@ -32,8 +35,9 @@
             <v-col cols="3">
               <v-card v-if="!isViewee" color="#304B61" elevation="2" style="height: 100%" dark>
                 <v-card-title class="justify-center py-2">
-                  <div class="text-center text-subtitle-1">면접실 이동</div>
-                  <input class="btn" type="button" v-if="moving_viewee.length" @click="sendSignal" value="면접실 보내기" />
+                  <div class="text-center text-subtitle-1" @click="moving_viewee.length ? sendSignal : ''">
+                    면접실 이동
+                  </div>
                 </v-card-title>
                 <v-card-text class="d-flex justify-center pa-0 text-white">
                   <!-- 면접관 -->
@@ -79,6 +83,7 @@
             </v-col>
 
             <v-col cols="8" class='d-flex flex-column align-center'>
+              <div v-if="isScreen" id="sharedScreen" class="screen-video screen-res-sm"></div>
               <!--지원자 여러명-->
               <v-row v-if="!isViewee" style=" height:18vh; width:100% ">
                 <v-col cols="12" class="overflow-x-auto" style="width:100%;">
@@ -225,6 +230,9 @@
 
     <!-- 메인 하단 - 환경설정 -->
     <v-bottom-navigation dark class="main-bg-navy">
+      <v-col cols="2">
+        <v-btn @click="screenShare">화면 공유</v-btn>
+      </v-col>
       <v-btn @click="audioOnOOff">
         <v-icon v-if="audioOn === true">mdi-volume-high</v-icon>
         <v-icon v-if="audioOn === false">mdi-volume-off</v-icon>
@@ -263,6 +271,11 @@ export default {
       mainStreamManager: undefined, // 메인 비디오 <- 가장 큰 비디오
       publisher: undefined, // 연결 객체
       myConnectionId : undefined,
+
+      isScreen: false,
+      screenOV: undefined,
+      sessionScreen: undefined,
+      screenToken: undefined,
 
       // 면접관, 지원자들만 담아두는 리스트
       viewers : [],
@@ -330,18 +343,18 @@ export default {
       this[data] = this.$route.query[data]
     }
 
-    if(this.type === 'viewee'){
+    if (this.type === 'viewee') {
       this.isViewee = true;
-    }else{
+    } else {
       this.isViewee = false;
       this.connect()
     }
 
-    if(this.interviewType === 'PT'){
+    if (this.interviewType === 'PT') {
       this.roomType = 'pt';
-    }else if(this.interviewType === '토론'){
+    } else if (this.interviewType === '토론') {
       this.roomType = 'gr';
-    }else{
+    } else {
       this.roomType = 'ca';
     }
   },
@@ -361,7 +374,7 @@ export default {
 
       let info = JSON.parse(subscriber.stream.connection.data.split('%/%')[0])
 
-      if(info['type'] === 'viewee'){
+      if (info['type'] === 'viewee') {
         this.viewees.push(subscriber)
         this.viewee_list.push(info['name'])
 
@@ -369,7 +382,7 @@ export default {
           this.mainStreamManager = subscriber
         }
 
-      }else{
+      } else if (['viewer', 'manager'].includes(info['type'])) {
         this.viewers.push(subscriber)
       }
       console.log("viewee : ",this.viewees, " viewer : ", this.viewers)
@@ -437,7 +450,7 @@ export default {
     //   })
     // });
 
-    this.session.on("signal:my-chat", (event) => {
+    this.session.on("signal:my-chat", event => {
       let message = { from: "", text: "" }
       message.from = event.from.data.split('":"')[1].slice(0, -7)
       message.text = event.data
@@ -445,7 +458,7 @@ export default {
       this.messages.push(message)
     })
 
-    this.session.on("signal:signal", (event) => {
+    this.session.on("signal:signal", event => {
       if(this.type === 'viewee' && this.userName === event.data){
         if(confirm("이동하시겠습니까?")){
           this.goInterview();
@@ -457,11 +470,11 @@ export default {
       }
     })
 
-    this.session.on("signal:notice", (event) => {
+    this.session.on("signal:notice", event => {
       this.banner_message = event.data
     })
 
-    this.session.on("signal:answer", (event) => {
+    this.session.on("signal:answer", event => {
       if(this.type === 'manager'){
         let message = event.from.data.split('":"')[1].slice(0, -7)
 
@@ -551,7 +564,7 @@ export default {
       if(hour >= 12) {
         if(hour > 12) hour = hour - 12
         time = "오후 " + hour + " : "
-      }else{
+      } else {
         time = "오전 " + hour + " : "
       }
       let minute = today.getMinutes();
@@ -566,8 +579,8 @@ export default {
         this.viewees.forEach(stream =>{
           if(JSON.parse(stream.stream.connection.data.split('%/%')[0])['name'] === name){
             this.session.signal({ data: name, to: [stream.stream.connection.connectionId], type: "signal" })
-                .then()
-                .catch(err => console.error(err))
+              .then()
+              .catch(err => console.error(err))
           }
         })
       })
@@ -579,18 +592,15 @@ export default {
     connect() {
       let socket = new SockJS(`${SERVER_URL}/ws-stomp`);
       this.stompClient = Stomp.over(socket);
-      this.stompClient.connect(
-        {},
-        frame => {
-          this.connected = true;
-          console.log('소켓 연결 성공', frame);
-          this.stompClient.subscribe("/send/"+this.groupTypeSeq, res => {
-            // let message = JSON.parse(res.body)
-            // if(message['name'] === this.userName) return
-            this.messageFromSession = JSON.parse(res.body)['message']
-          });
-        },
-        error => {
+      this.stompClient.connect({}, frame => {
+        this.connected = true;
+        console.log('소켓 연결 성공', frame);
+        this.stompClient.subscribe("/send/"+this.groupTypeSeq, res => {
+          // let message = JSON.parse(res.body)
+          // if(message['name'] === this.userName) return
+          this.messageFromSession = JSON.parse(res.body)['message']
+        });
+      }, error => {
           console.log('소켓 연결 실패', error);
           this.connected = false;
         }
@@ -599,32 +609,31 @@ export default {
 
     sendToSession() {
       if (this.stompClient && this.stompClient.connected) {
-        const msg = { 
-          name: this.userName,
-          message: this.messageToSession 
-        };
+        const msg = { name: this.userName, message: this.messageToSession };
+
         this.stompClient.send("/receive/"+this.groupTypeSeq, JSON.stringify(msg), {});
       }
       this.messageToSession = '';
     },
 
-    noticeBanner(){
+    noticeBanner() {
       this.session.signal({ data: this.banner_message, to: [], type: "notice" })
-          .then()
-          .catch(err => console.error(err))
+        .then()
+        .catch(err => console.error(err))
       this.banner_message = ''
     },
 
-    goInterview(){
+    goInterview() {
       axios.get(`${SERVER_URL}/session/join`, {
         params: {
           applicantName: this.userName,
           sessionName: this.interviewSession,
         },
-      }).then(res => {
+      })
+        .then(res => {
           this.session.signal({ data: "Yes", to: [], type: "answer" })
-          .then()
-          .catch(err => console.error(err))
+            .then()
+            .catch(err => console.error(err))
 
           let routeData = this.$router.resolve({
             name: "ViewRoom",
@@ -648,28 +657,28 @@ export default {
           alert("방이 아직 개설되지 않았습니다.")
           console.log(err)
           this.session.signal({ data: "Fail", to: [], type: "answer" })
-          .then()
-          .catch(err => console.error(err))
+            .then()
+            .catch(err => console.error(err))
         })
-      },
+    },
 
-      getNewToken(){
-        axios.get(`${SERVER_URL}/session/getToken`, {
+    getNewToken() {
+      axios.get(`${SERVER_URL}/session/getToken`, {
         params: {
           sessionName: this.sessionName,
           name: this.userName,
           type: this.type,
-        }})
+        }
+      })
         .then(res => {
-          this.token = res.data.token
+          console.log('따끈한 토큰', res.data.token)
+          this.newToken = res.data.token
         })
-        .catch(err => {
-          console.log("토큰 재생성에서 에러 발생", err)
-        })
-      },
+        .catch(err => console.log("토큰 재생성에서 에러 발생", err))
+    },
 
-      connectSession(){
-        this.session.connect(this.token, { name: this.userName, type : this.type, userSeq : this.userSeq})
+    connectSession() {
+      this.session.connect(this.token, { name: this.userName, type : this.type, userSeq : this.userSeq})
         .then(() => {
           let publisher = this.OV.initPublisher(undefined, {
             audioSource: undefined, // The source of audio. If undefined default microphone
@@ -686,6 +695,8 @@ export default {
           // this.mainStreamManager = publisher
           this.publisher = publisher
 
+          console.log('토큰 :', this.token)
+
           this.session.publish(this.publisher)
 
           this.myConnectionId = this.publisher.stream.connection.connectionId
@@ -696,16 +707,67 @@ export default {
         .catch(err => {
           console.log("There was an error connecting to the session:", err.code, err.message)
         })
-      }
+    },
+
+    screenShare() {
+
+      axios.get(`${SERVER_URL}/session/getToken`, {
+        params: {
+          sessionName: this.sessionName,
+          name: this.userName,
+          type: this.type,
+        }
+      })
+        .then(res => {
+          console.log('따끈한 토큰', res.data.token)
+          this.isScreen = true
+          this.screenToken = res.data.token
+          this.sessionScreen.connect(res.data.token, { name: this.userName, type : 'screen', userSeq : this.userSeq})
+            .then(() => {
+              console.log('커넥트 성공')
+              let publisher = this.screenOV.initPublisher('sharedScreen', { videoSource: "screen", resolution: '1280x720', publishAudio: false })
+              console.log('스크린 공유자 : ', publisher)
+
+              publisher.once('accessAllowed', () => {
+                publisher.stream.getMediaStream().getVideoTracks()[0].addEventListener('ended', () => {
+                  axios.get(`${SERVER_URL}/session/leaveSession`, {
+                    params: {
+                      sessionName: this.sessionName,
+                      token: this.screenToken,
+                    },
+                  })
+                  .then(() => {
+                    if (this.sessionScreen) {
+                      this.sessionScreen.disconnect()
+                      this.screenOV = undefined,
+                      this.sessionScreen = undefined,
+                      this.screenToken = undefined
+                      this.isScreen = false
+                    }
+                  })
+                  .catch(err => console.log(err))
+                  console.log('User pressed the "Stop sharing" button')
+                })
+                this.sessionScreen.publish(publisher)
+              })
+
+              publisher.once('accessDenied', () => {
+                console.warn('ScreenShare: Access Denied');
+              })
+            })
+            .catch(error => console.warn('There was an error connecting to the session:', error.code, error.message))
+        })
+        .catch(err => console.log("토큰 재생성에서 에러 발생", err))
+    }
   },
 
   computed: {
     items () {
-        return Array.from({ length: this.length }, (k, v) => v + 1)
-      },
-      length () {
-        return 7000
-      },
+      return Array.from({ length: this.length }, (k, v) => v + 1)
+    },
+    length () {
+      return 7000
+    },
   },
   watch : {
 
@@ -800,6 +862,10 @@ export default {
   .screen-res-md {
     width: 640px;
     height: 360px;
+  }
+
+  ::v-deep .screen-video > * {
+    height: inherit;
   }
 
   .notice {
