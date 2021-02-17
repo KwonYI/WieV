@@ -91,14 +91,14 @@
 									mdi-github
 								</v-icon>
 							</v-btn>
-							<v-btn class="mx-2" fab dark small color="blue" :href="member.facebook" target="_blank" data-aos="flip-right" data-aos-delay="250">
-								<v-icon style="color:white">
-									mdi-facebook
-								</v-icon>
-							</v-btn>
-							<v-btn class="mx-2" fab dark small color="pink" :href="member.instagram" target="_blank" data-aos="flip-right" data-aos-delay="250">
+							<v-btn class="mx-2" fab dark small color="deep-purple lighten-1" :href="member.facebook" target="_blank" data-aos="flip-right" data-aos-delay="250">
 								<v-icon style="color:white">
 									mdi-instagram
+								</v-icon>
+							</v-btn>
+							<v-btn class="mx-2" fab dark small color="red" :href="member.gmail" target="_blank" data-aos="flip-right" data-aos-delay="250">
+								<v-icon style="color:white">
+									mdi-gmail
 								</v-icon>
 							</v-btn>
             </div>
@@ -203,8 +203,8 @@
 						name: '정일규',
 						position: 'Back',
 						github: 'https://github.com/jig6795',
-						facebook: '',
-						instagram: 'https://www.instagram.com/zzung_19/'
+						facebook: 'https://www.instagram.com/zzung_19/',
+						gmail: 'mailto:wjd1rb@gmail.com'
 					},
 					{	
 						img: require('@/assets/images/team_yi.png'),
@@ -212,23 +212,23 @@
 						position: 'Back',
 						github: 'https://github.com/KwonYI',
 						facebook: 'https://www.facebook.com/profile.php?id=100007782181467',
-						instagram: 'kkwinwin01@gmail.com'
+						gmail: 'mailto:kkwinwin01@gmail.com'
 					},
 					{
 						img: require('@/assets/images/team_mj.png'),
 						name: '김민정',
 						position: 'Front',
 						github: 'https://github.com/snowcuphea',
-						facebook: '',
-						instagram: 'https://www.instagram.com/minjung0915/'
+						facebook: 'https://www.instagram.com/minjung_0915/',
+						gmail: 'mailto:snowcuphea@naver.com'
 					},
 					{
 						img: require('@/assets/images/team_yj.png'),
 						name: '김윤지',
 						position: 'Back',
 						github: 'https://github.com/YooooonJi',
-						facebook: 'dooly7183@gmail.com',
-						instagram: 'https://www.instagram.com/yooooongdi/'
+						facebook: 'https://www.instagram.com/yooooongdi/',
+						gmail: 'mailto:dooly7183@gmail.com'
 					},
 					{
 						img: require('@/assets/images/team_jh.png'),
@@ -236,7 +236,7 @@
 						position: 'Front',
 						github: '',
 						facebook: '',
-						instagram: ''
+						gmail: ''
 					}
 				],
 
