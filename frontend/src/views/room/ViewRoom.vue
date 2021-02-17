@@ -61,9 +61,9 @@
     
     <!-- 메인 하단 - 환경설정 -->
     <v-bottom-navigation dark class="main-bg-navy mt-auto">
-      <v-col cols="2">
+      <!-- <v-col cols="2">
         <v-btn @click="screenShare">화면 공유</v-btn>
-      </v-col>
+      </v-col> -->
       <v-btn @click="audioOnOOff">
         <v-icon v-if="audioOn === true">mdi-volume-high</v-icon>
         <v-icon v-if="audioOn === false">mdi-volume-off</v-icon> 
@@ -118,6 +118,7 @@ export default {
 
       // 화면, 소리, 화면 공유
       audioOn: true,
+      // audioOn: false,
       videoOn: true,
 
       // From SessionController
@@ -178,8 +179,8 @@ export default {
       this.roomType = 'ca';
     }
 
-    // // 테스트용
-    // this.roomType = 'gr'
+    // 테스트용
+    // this.roomType = 'pt'
   },
 
   beforeDestroy() {
@@ -316,6 +317,7 @@ export default {
           audioSource: undefined, // The source of audio. If undefined default microphone
           videoSource: undefined, // The source of video. If undefined default webcam
           publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
+          // publishAudio: false, // Whether you want to start publishing with your audio unmuted or not
           publishVideo: true, // Whether you want to start publishing with your video enabled or not
           // resolution: "272x153", // The resolution of your video
           resolution: "1280x720", // The resolution of your video

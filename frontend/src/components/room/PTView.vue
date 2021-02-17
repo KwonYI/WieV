@@ -14,7 +14,7 @@
           <v-col cols="7" class="centering justify-start">
             <v-card
               elevation="3"
-              height="70%"
+              height="50%"
               class="centering"
               :class="isViewee ? 'd-none' : ''"
               tile
@@ -68,41 +68,41 @@
           </v-col>
         </v-row>
 
-        <!-- 메인 위 - 지원자들 화면, 클릭하면 큰 화면으로 보기 -->
-        <v-row>
-          <div v-if="!isViewee" class='d-flex justify-center'>
-            <user-video v-for="sub in viewees" :key="sub.stream.connection.connectionId"
-              class= 'screen-res'
-              :stream-manager="sub" 
-              :id = "sub.stream.connection.connectionId"
-              @click.native="updateMain(sub)"
-            />
-          </div>
-        </v-row>
-
         <!-- 메인 중앙 - 면접관, 지원자 화면 -->
         <v-row class="main-screen">
-          <!-- 면접관 -->
-          <v-col cols="4" class="viewer-box centering flex-column">
-            <span v-if="!isViewee">
-              <user-video :stream-manager="publisher" class="screen-res-sm"/>
-            </span>
-            <span v-for="sub in viewers" :key="sub.stream.connection.connectionId">
-              <user-video
-                class="screen-res-sm"
-                :stream-manager="sub" 
-              />
-            </span>
+          <!--스크롤 면접관-->
+          <v-col cols="4" class="d-flex flex-column justify-center align-center no-gutters" style="height:100%">
+            <div class="overflow-y-auto pr-2" style="height:70vh">
+              <span v-if="!isViewee">
+                <user-video :streamManager="publisher" class="screen-res-sm" />
+              </span>
+              <span v-for="sub in viewers" :key="sub.stream.connection.connectionId">
+                <user-video class="screen-res-sm" :stream-manager="sub" />
+              </span>
+            </div>
           </v-col>
-          <!-- 지원자 -->
-          <v-col cols="8" class="viewee-box centering flex-wrap">
-            <span v-if="isViewee">
-              <user-video :stream-manager="publisher" class="screen-res-md"/>
-            </span>
-            <span v-else>
-              <user-video :stream-manager="mainStreamManager" class="screen-res-md"/>
-            </span>
-          </v-col>
+          <v-col cols="8" class='d-flex flex-column align-center'>
+              <!--지원자 여러명-->
+              <v-row v-if="!isViewee" style="width:100%;"  class="d-flex align-center" >
+                <v-col cols="12" class="overflow-x-auto" style="width:100%;">
+
+                  <div class='d-flex mb-5'>
+                    <user-video v-for="sub in viewees" :key="sub.stream.connection.connectionId"
+                      class='screen-res  mx-2' :stream-manager="sub" :id="sub.stream.connection.connectionId"
+                      @click.native="updateMain(sub)" />
+                  </div>
+                </v-col>
+              </v-row>
+              <!--지원자 1명-->
+              <v-row class="d-flex flex-wrap justify-center align-center">
+                <span v-if="isViewee">
+                  <user-video :stream-manager="publisher" class="screen-res-md"/>
+                </span>
+                <span v-else>
+                  <user-video v-if="mainStreamManager" :stream-manager="mainStreamManager" class="screen-res-md"/>
+                </span>
+              </v-row>              
+            </v-col>
         </v-row>
       </v-col>
 
@@ -143,12 +143,15 @@
               v-for="(item, i) in currentApplicantList[clickedSeq]"
               :key="i"
             >
-              <span v-if="item.quest !== '자기소개서'">
-                질문 {{ i+1 }}
+              <span>
+                자기소개서 {{ i+1 }}
               </span>
-              <span v-else>
+              <!-- <span v-else>
                 자기소개서
-              </span>
+              </span> -->
+            </v-tab>
+            <v-tab>
+              채팅
             </v-tab>
           </v-tabs>
           <v-card-text class="">
@@ -157,14 +160,35 @@
                 {{ i+1 }}. {{ item.quest }} // {{clickedSeq}}번 지원자
                 <v-divider></v-divider>
                 <v-virtual-scroll
-                  item-height="250"
+                  item-height="400"
                   :items="[item]"
                 >
                   {{ item.answer }}
                 </v-virtual-scroll>
               </v-tab-item>
+
+              <!--채팅기능-->
+              <v-tab-item height = "100px">
+                <v-sheet color="white" height="100%" elevation="3">
+                  <v-list class="pa-0" v-auto-bottom="messages">
+                    <div v-for="(msg, index) in messages" :key="index">
+                      {{ msg.from }} : {{ msg.text }}
+                    </div>
+                  </v-list>
+                  <v-text-field
+                    v-model="text"
+                    label="메세지를 입력하세요."
+                    class="pa-0 ma-0 mx-1"
+                    single-line
+                    hide-details
+                    dense
+                    @keyup.13="sendMessage"
+                  ></v-text-field>
+                </v-sheet>                
+              </v-tab-item>
             </v-tabs-items>
-            <v-textarea
+
+            <!-- <v-textarea
               label="Memo"
               outlined
               rows="2"
@@ -172,10 +196,10 @@
               style="margin-top: .5rem;"
               no-resize
               hide-details
-            ></v-textarea>
+            ></v-textarea> -->
           </v-card-text>
         </v-card>
-        <v-card style="height: 100px">
+        <v-card v-else style="height: 90%">
           <v-sheet color="white" height="100%" elevation="3">
             <v-list class="pa-0" v-auto-bottom="messages">
               <div v-for="(msg, index) in messages" :key="index">
@@ -399,7 +423,7 @@ export default {
 </script>
 
 <style scoped>
-#caview {
+#ptview {
   height: 100%;
 }
 .col {
@@ -496,16 +520,18 @@ export default {
 }
 
 .screen-res {
-  width: 208px;
-  height: 117px;
+  /* width: 208px;
+  height: 117px; */
+  width: 160px;
+    height: 90px;
 }
 .screen-res-sm {
   width: 288px;
   height: 162px;
 }
 .screen-res-md {
-  width: 640px;
-  height: 360px;
+  width: 533px;
+  height: 300px;
 }
 
 
@@ -514,4 +540,27 @@ export default {
   -webkit-appearance: none;
   margin: 0;
 }
+
+
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  /*  / 스크롤 바 밑의 배경 / */
+  ::-webkit-scrollbar-track {
+    background-color: grey;
+    opacity: 0.2;
+  }
+
+  /* / 실질적 스크롤 바 / */
+  ::-webkit-scrollbar-thumb {
+    background: aliceblue;
+    border-radius: 10px;
+  }
+
+  /* / 스크롤 바 상 하단 버튼 */
+  ::-webkit-scrollbar-button {
+    display: none;
+  }
 </style>

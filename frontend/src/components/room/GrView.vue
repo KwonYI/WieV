@@ -14,7 +14,7 @@
           <v-col cols="7" class="centering justify-start">
             <v-card
               elevation="3"
-              height="70%"
+              height="50%"
               class="centering"
               :class="isViewee ? 'd-none' : ''"
               tile
@@ -68,22 +68,10 @@
           </v-col>
         </v-row>
 
-        <!-- 메인 위 - 지원자들 화면, 클릭하면 큰 화면으로 보기 -->
-        <!-- <v-row>
-          <div v-if="!isViewee" class='d-flex justify-center'>
-            <user-video v-for="sub in viewees" :key="sub.stream.connection.connectionId"
-              class= 'screen-res'
-              :stream-manager="sub" 
-              :id = "sub.stream.connection.connectionId"
-              @click.native="updateMain(sub)"
-            />
-          </div>
-        </v-row> -->
-
         <!-- 메인 중앙 - 면접관, 지원자 화면 -->
         <v-row class="main-screen">
           <!--스크롤 면접관-->
-          <v-col cols="4" class="d-flex flex-column justify-center align-center no-gutters" style="">
+          <v-col cols="4" class="d-flex flex-column justify-center align-center" style="">
             <div class="overflow-y-auto pr-2" style="height:70vh">
               <span v-if="!isViewee">
                 <user-video :stream-manager="publisher" class="screen-res-sm" />
@@ -94,12 +82,15 @@
             </div>
           </v-col>
           <!-- 지원자 -->
-          <v-col cols="8" class="viewee-box centering flex-wrap">
-            <user-video v-if="isViewee" :stream-manager="publisher" class="screen-res-sm"/>
+          <v-col cols="8" class="">
+            <div class="overflow-y-auto d-flex centering flex-wrap" style="height:70vh">
+            <user-video v-if="isViewee" :stream-manager="publisher" class="screen-res-sm mb-10"/>
             <user-video v-for="sub in viewees" :key="sub.stream.connection.connectionId"
-              class= 'screen-res-sm'
+              class= 'screen-res-sm mb-10'
               :stream-manager="sub"
+              @click.native="updateMain(sub)"
             />
+             </div>
           </v-col>
         </v-row>
       </v-col>
@@ -141,12 +132,15 @@
               v-for="(item, i) in currentApplicantList[clickedSeq]"
               :key="i"
             >
-              <span v-if="item.quest !== '자기소개서'">
-                질문 {{ i+1 }}
+              <span>
+                자기소개서 {{ i+1 }}
               </span>
-              <span v-else>
+              <!-- <span v-else>
                 자기소개서
-              </span>
+              </span> -->
+            </v-tab>
+            <v-tab>
+              채팅
             </v-tab>
           </v-tabs>
           <v-card-text class="">
@@ -155,14 +149,35 @@
                 {{ i+1 }}. {{ item.quest }} // {{clickedSeq}}번 지원자
                 <v-divider></v-divider>
                 <v-virtual-scroll
-                  item-height="250"
+                  item-height="400"
                   :items="[item]"
                 >
                   {{ item.answer }}
                 </v-virtual-scroll>
               </v-tab-item>
+
+              <!--채팅기능-->
+              <v-tab-item style="height: 45%">
+                <v-sheet color="white" height="100%" elevation="3">
+                  <v-list class="pa-0" v-auto-bottom="messages">
+                    <div v-for="(msg, index) in messages" :key="index">
+                      {{ msg.from }} : {{ msg.text }}
+                    </div>
+                  </v-list>
+                  <v-text-field
+                    v-model="text"
+                    label="메세지를 입력하세요."
+                    class="pa-0 ma-0 mx-1"
+                    single-line
+                    hide-details
+                    dense
+                    @keyup.13="sendMessage"
+                  ></v-text-field>
+                </v-sheet>                
+              </v-tab-item>
+
             </v-tabs-items>
-            <v-textarea
+            <!-- <v-textarea
               label="Memo"
               outlined
               rows="2"
@@ -170,11 +185,11 @@
               style="margin-top: .5rem;"
               no-resize
               hide-details
-            ></v-textarea>
+            ></v-textarea> -->
           </v-card-text>
         </v-card>
-        <v-card style="height: 100px">
-          <v-sheet color="white" height="100%" elevation="3">
+        <v-card v-else style="height:90%">
+          <v-sheet color="white" height="100%" max-height="100%" elevation="3">
             <v-list class="pa-0" v-auto-bottom="messages">
               <div v-for="(msg, index) in messages" :key="index">
                 {{ msg.from }} : {{ msg.text }}
@@ -189,7 +204,7 @@
               dense
               @keyup.13="sendMessage"
             ></v-text-field>
-          </v-sheet>
+          </v-sheet>          
         </v-card>
         <!-- 평가 -->
 
@@ -500,8 +515,8 @@ export default {
   height: 162px;
 }
 .screen-res-md {
-  width: 640px;
-  height: 360px;
+  width: 533px;
+  height: 300px;
 }
 .screen-res-lr {
   width: 720px;
@@ -513,6 +528,12 @@ export default {
   -webkit-appearance: none;
   margin: 0;
 }
+
+
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
 
 /*  / 스크롤 바 밑의 배경 / */
 ::-webkit-scrollbar-track {

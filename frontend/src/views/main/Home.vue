@@ -24,7 +24,8 @@
               <Schedule />
             </div>
             <div v-else>
-              <v-btn class="m-2 white--text" elevation="2" large rounded color=#304B61 :to="{ name: 'Main', params: { isLogin: true } }">
+              <!-- <v-btn class="m-2 white--text" elevation="2" large rounded color=#304B61 :to="{ name: 'Main', params: { isLogin: true } }"> -->
+              <v-btn class="m-2 amber lighten-3 black--text font-weight-black" elevation="2" x-large rounded  :to="{ name: 'Main', params: { isLogin: true } }">
                 대기실 이동하기
               </v-btn>
             </div>

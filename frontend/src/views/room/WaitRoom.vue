@@ -72,8 +72,8 @@
 
           <v-row>
             <!--스크롤 면접관-->
-            <v-col cols="4" class="d-flex flex-column justify-center align-center" style="height:100%">
-              <div class="overflow-y-auto pr-2" style="">
+            <v-col cols="4" class="" style="height:100%">
+              <div class="d-flex flex-column justify-start align-center overflow-y-auto pr-2" style="height:65vh">
                 <span v-if="!isViewee">
                   <user-video :stream-manager="publisher" class="screen-res-sm" />
                 </span>
@@ -84,12 +84,12 @@
             </v-col>
 
             <v-col cols="8" class='d-flex flex-column align-center'>
-              <div v-if="isScreen" id="sharedScreen" class="screen-video screen-res-sm"></div>
+              <div v-if="isScreen" id="sharedScreen" class="screen-video screen-res-sm "></div>
               <!--지원자 여러명-->
-              <v-row v-if="!isViewee" style="width: 100%">
-                <v-col cols="12" class="overflow-x-auto" style="width:100%;">
+              <v-row v-if="!isViewee" style="width:100%" class="d-flex align-center">
+                <v-col cols="12" class=" overflow-x-auto" style="width:100%">
 
-                  <div class='d-flex'>
+                  <div class='d-flex mb-5'>
                     <user-video v-for="sub in viewees" :key="sub.stream.connection.connectionId"
                       class='screen-res mx-2' :stream-manager="sub" :id="sub.stream.connection.connectionId"
                       @click.native="updateMainVideoStreamManager(sub)" />
@@ -98,8 +98,8 @@
               </v-row>
 
               <!--지원자 1명-->
-              <v-row class="d-flex flex-wrap justify-center align-center pt-5" style="">
-                <span v-if="isViewee">
+              <v-row class="d-flex justify-center align-center  p-2 pb-0 pt-4" style="">
+                <span v-if="isViewee" style=" width:100% ">
                   <user-video :stream-manager="publisher" class="screen-res-md" />
                 </span>
                 <span v-else>
@@ -234,9 +234,9 @@
 
     <!-- 메인 하단 - 환경설정 -->
     <v-bottom-navigation dark class="main-bg-navy">
-      <v-col cols="2">
+      <!-- <v-col cols="2">
         <v-btn @click="screenShare">화면 공유</v-btn>
-      </v-col>
+      </v-col> -->
       <v-btn @click="audioOnOOff">
         <v-icon v-if="audioOn === true">mdi-volume-high</v-icon>
         <v-icon v-if="audioOn === false">mdi-volume-off</v-icon>
@@ -291,6 +291,7 @@ export default {
 
       // 화면, 소리, 화면 공유
       audioOn: true,
+      // audioOn: false,
       videoOn: true,
 
       // From SessionController
@@ -452,6 +453,7 @@ export default {
     //   })
     // });
 
+    // 대기방에서의 채팅
     this.session.on("signal:my-chat", event => {
       let message = { from: "", text: "" }
       message.from = event.from.data.split('":"')[1].slice(0, -7)
@@ -460,6 +462,7 @@ export default {
       this.messages.push(message)
     })
 
+    // 대기관이 지원자 대기방에 보내기
     this.session.on("signal:signal", event => {
       if(this.type === 'viewee' && this.userName === event.data){
         if(confirm("이동하시겠습니까?")){
@@ -472,10 +475,12 @@ export default {
       }
     })
 
+    // 대기관이 상단 공지배너 작성
     this.session.on("signal:notice", event => {
       this.banner_message = event.data
     })
 
+    // 지원자가 면접관에게 이동여부 대답
     this.session.on("signal:answer", event => {
       if(this.type === 'manager'){
         let message = event.from.data.split('":"')[1].slice(0, -7)
@@ -490,6 +495,18 @@ export default {
         
         this.interview_messages.push(message)
       }
+    })
+
+    // 화면 공유 시작 메세지
+    this.session.on("signal:startShare", () => {
+      console.log("화면공유 시작한다고??")
+      this.isScreen = true;
+    })
+
+    // 화면 공유 종료 메세지
+    this.session.on("signal:endShare", () => {
+      console.log("화면공유 끝났다고??")
+      this.isScreen = false;
     })
 
     this.connectSession();
@@ -685,6 +702,7 @@ export default {
             audioSource: undefined, // The source of audio. If undefined default microphone
             videoSource: undefined, // The source of video. If undefined default webcam
             publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
+            // publishAudio: false, // 입장시 음소거
             publishVideo: true, // Whether you want to start publishing with your video enabled or not
             // resolution: "272x153", // The resolution of your video
             resolution: "1280x720", // The resolution of your video
@@ -711,6 +729,8 @@ export default {
     },
 
     screenShare() {
+      this.screenOV = new OpenVidu()
+      this.sessionScreen = this.screenOV.initSession()
 
       axios.get(`${SERVER_URL}/session/getToken`, {
         params: {
@@ -720,38 +740,38 @@ export default {
         }
       })
         .then(res => {
-          console.log('따끈한 토큰', res.data.token)
-          this.isScreen = true
+          // console.log('따끈한 토큰', res.data.token)
+          // this.isScreen = true
           this.screenToken = res.data.token
-          this.sessionScreen.connect(res.data.token, { name: this.userName, type : 'screen', userSeq : this.userSeq})
+          this.sessionScreen.connect(this.screenToken, { name: this.userName, type : 'screen', userSeq : '-1'})
             .then(() => {
-              console.log('커넥트 성공')
-              let publisher = this.screenOV.initPublisher('sharedScreen', { videoSource: "screen", resolution: '1280x720', publishAudio: false })
-              console.log('스크린 공유자 : ', publisher)
+              // console.log('커넥트 성공')
+              let publisher = this.screenOV.initPublisher('sharedScreen', { videoSource: "screen", resolution: '1280x720'})
+              // console.log('스크린 공유자 : ', publisher)
 
               publisher.once('accessAllowed', () => {
                 publisher.stream.getMediaStream().getVideoTracks()[0].addEventListener('ended', () => {
-                  axios.get(`${SERVER_URL}/session/leaveSession`, {
-                    params: {
-                      sessionName: this.sessionName,
-                      token: this.screenToken,
-                    },
-                  })
-                  .then(() => {
-                    if (this.sessionScreen) {
-                      this.sessionScreen.disconnect()
-                      this.screenOV = undefined,
-                      this.sessionScreen = undefined,
-                      this.screenToken = undefined
-                      this.isScreen = false
-                    }
-                  })
-                  .catch(err => console.log(err))
-                  console.log('User pressed the "Stop sharing" button')
+                  this.sessionScreen.signal({ data: '', to: [], type: "endShare" })
+                  .then()
+                  .catch(err => console.error(err))
+                  
+                  if (this.sessionScreen) {
+                    this.sessionScreen.disconnect()
+                    this.sessionScreen = undefined
+                    this.screenToken = undefined
+                    this.screenOV = undefined
+                    this.isScreen = false
+                    console.log('User pressed the "Stop sharing" button')
+                  }
+                  
                 })
+                this.isScreen = true
+                this.sessionScreen
+                    .signal({ data: '', to: [], type: "startShare" })
+                    .then()
+                    .catch(err => console.error(err))
                 this.sessionScreen.publish(publisher)
               })
-
               publisher.once('accessDenied', () => {
                 console.warn('ScreenShare: Access Denied');
               })
@@ -861,8 +881,8 @@ export default {
   }
 
   .screen-res-md {
-    width: 640px;
-    height: 360px;
+    width: 533px;
+    height: 300px;
   }
 
   ::v-deep .screen-video > * {

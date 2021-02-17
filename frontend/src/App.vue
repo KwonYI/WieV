@@ -6,7 +6,7 @@
         <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
         <v-toolbar-title id="wiev">
           <img :src="images.logo" width="40" alt="logo">
-          <router-link :to="{name: 'Home'}">
+          <router-link v-if="isNotWaitRoomViewRoom" :to="{name: 'Home'}">
             WieV
           </router-link>
 
@@ -24,10 +24,10 @@
         <v-toolbar-items v-else class="room-status">
           <v-row style="width: 700px" no-gutters>
             <v-col class="d-flex justify-center align-center">
-              <div class="text-subtitle-1 px-5 py-1" style="border: 1px solid">현재 면접자 수 : 8명</div>
+              <!-- <div class="text-subtitle-1 px-5 py-1" style="border: 1px solid">현재 면접자 수 : 8명</div> -->
             </v-col>
             <v-col class="d-flex justify-center align-center">
-              <div class="text-subtitle-1 px-5 py-1" style="border: 1px solid">현재 시각:<a id="clock"></a>
+              <div class="text-subtitle-1 px-5 py-1" style="border: 1px solid">현재 시각 : <span id="clock" class="text-subtitle-1 py-1"></span>
               </div>
             </v-col>
           </v-row>
@@ -44,7 +44,7 @@
           </v-toolbar-items>
           <!-- 오른쪽 상단 위치, 대기실/면접실 -->
           <v-toolbar-items v-else class="d-flex align-center body-1 mr-5">
-            WieV Inc. 2021 하반기 신입 공채
+            {{ user.userComName }} {{ recruit.recruitYear }} {{ recruit.recruitFlag }} {{ recruit.recruitStatus }} 채용
           </v-toolbar-items>
         </div>
         <div v-else class="h-100">
@@ -162,7 +162,7 @@
         <!-- <Introduce v-if="isHome"/>
         <Ask v-if="isHome"/> -->
         
-        
+         <!-- :style="isHome ? '' :  " -->
         <footer v-if="isFooterView" class="bg-dark py-4">
           <div class="container text-light">
             <div class="row">
@@ -267,7 +267,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(["accessToken", 'user']),
+    ...mapState(["accessToken", 'user', 'recruit']),
     ...mapGetters(["getAccessToken"]),
     isNotRoom() {
       if (['WaitRoom', 'ViewRoom', 'Main'].includes(this.$route.name)) {
@@ -276,6 +276,16 @@ export default {
         return true
       }
     },
+
+    isNotWaitRoomViewRoom() {
+      if (['WaitRoom', 'ViewRoom'].includes(this.$route.name)) {
+        return false
+      } else {
+        return true
+      }
+    },
+
+
     isHome() {
       if (this.$route.name === 'Home') {
         return true

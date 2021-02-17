@@ -65,17 +65,17 @@
                     {{ interview.interviewType }}
                   </div>
                   <v-btn
-                    color="blue lighten-3 yellow--text"
+                    color="blue-grey darken-1"
                     @click="goSession(interview.waitSessionName, interview.interviewSessionName, interview.interviewType)"
                   >
-                    대기실 입장
+                   <span style="color: #FFF1C3">대기실 입장</span>
                   </v-btn>
                   <!-- 테스트용 -->
                   <v-btn
-                    color="blue lighten-3 yellow--text"
+                    color="blue-grey darken-1"
                     @click="goInterviewSession(interview.interviewSessionName, interview.interviewType)"
                   >
-                    면접실 입장
+                    <span style="color: #FFF1C3">면접실 입장</span>
                   </v-btn>
                 </v-card-text>
               </v-card>
