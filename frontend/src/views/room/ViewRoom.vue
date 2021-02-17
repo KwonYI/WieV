@@ -176,7 +176,7 @@ export default {
     }
 
     // // 테스트용
-    // this.roomType = 'gr'
+    this.roomType = 'gr'
   },
 
   beforeDestroy() {

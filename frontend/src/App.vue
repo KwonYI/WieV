@@ -24,10 +24,10 @@
         <v-toolbar-items v-else class="room-status">
           <v-row style="width: 700px" no-gutters>
             <v-col class="d-flex justify-center align-center">
-              <div class="text-subtitle-1 px-5 py-1" style="border: 1px solid">현재 면접자 수 : 8명</div>
+              <!-- <div class="text-subtitle-1 px-5 py-1" style="border: 1px solid">현재 면접자 수 : 8명</div> -->
             </v-col>
             <v-col class="d-flex justify-center align-center">
-              <div class="text-subtitle-1 px-5 py-1" style="border: 1px solid">현재 시각:<a id="clock"></a>
+              <div class="text-subtitle-1 px-5 py-1" style="border: 1px solid">현재 시각 : <span id="clock" class="text-subtitle-1 py-1"></span>
               </div>
             </v-col>
           </v-row>
