@@ -83,12 +83,12 @@
             </v-col>
 
             <v-col cols="8" class='d-flex flex-column align-center'>
-              <div v-if="isScreen" id="sharedScreen" class="screen-video screen-res-sm"></div>
+              <div v-if="isScreen" id="sharedScreen" class="screen-video screen-res-sm "></div>
               <!--지원자 여러명-->
-              <v-row v-if="!isViewee" style=" height:18vh; width:100% ">
+              <v-row v-if="!isViewee" style=" width:100% " class="d-flex align-center">
                 <v-col cols="12" class="overflow-x-auto" style="width:100%;">
 
-                  <div class='d-flex'>
+                  <div class='d-flex mb-5'>
                     <user-video v-for="sub in viewees" :key="sub.stream.connection.connectionId"
                       class='screen-res  mx-2' :stream-manager="sub" :id="sub.stream.connection.connectionId"
                       @click.native="updateMainVideoStreamManager(sub)" />
@@ -96,8 +96,8 @@
                 </v-col>
               </v-row>
               <!--지원자 1명-->
-              <v-row class="d-flex flex-wrap justify-center align-center pt-5" style="">
-                <span v-if="isViewee">
+              <v-row class="d-flex justify-center align-center pt-5" style="">
+                <span v-if="isViewee" style=" width:100% ">
                   <user-video :stream-manager="publisher" class="screen-res-md" />
                 </span>
                 <span v-else>
