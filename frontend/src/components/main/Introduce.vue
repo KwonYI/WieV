@@ -36,7 +36,7 @@
 		<!-- What we support -->
 		<div class="text-h3 intro-title" data-aos="flip-left">What we Support</div>
 		<v-row no-gutters>
-			<v-col v-for="(sup, i) in support" :key="i" cols="4" class="pa-0" data-aos="zoom-in">
+			<v-col v-for="(sup, i) in support" :key="i" cols="4" class="pa-0" data-aos="zoom-in" >
 				<v-hover v-slot="{ hover }">
 					<v-card :class="{'on-hover': hover}" :dark="!hover" tile>
 						<v-img :src="sup.src" class="support">
@@ -145,37 +145,37 @@
 						title: '유연한 데이터베이스',
 						content: '엑셀 업로드',
 						detail: '',
-						src: require('@/assets/images/support_img1.jpg')
+						src: require('@/assets/images/intro1.png')
 					},
 					{
 						title: '통합 관리 시스템',
 						content: '이메일 발송, 진행 중 면접',
 						detail: '',
-						src: require('@/assets/images/support_img1.jpg')
+						src: require('@/assets/images/intro2.png')
 					},
 					{
 						title: '면접실 커스커마이징',
 						content: '유형별, 데이터별 템플릿 활용',
 						detail: '',
-						src: require('@/assets/images/support_img1.jpg')
+						src: require('@/assets/images/intro3.png')
 					},
 					{
 						title: '면접스케줄 자동화',
 						content: '스케줄-면접실 연결',
 						detail: '',
-						src: require('@/assets/images/support_img1.jpg')
+						src: require('@/assets/images/intro4.png')
 					},
 					{
 						title: '다양한 부가기능',
 						content: '자기소개서, 공지 배너',
 						detail: '',
-						src: require('@/assets/images/support_img1.jpg')
+						src: require('@/assets/images/intro5.png')
 					},
 					{
 						title: '',
 						content: '웹 기반, 언제 어디서나',
 						detail: '',
-						src: require('@/assets/images/support_img1.jpg')
+						src: require('@/assets/images/intro6.png')
 					}
 				],
 
