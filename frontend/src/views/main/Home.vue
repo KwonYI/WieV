@@ -60,10 +60,10 @@
         style="display: initial"
       >
         <!-- <v-icon>fas fa-angle-double-up</v-icon> -->
-        눌러
+        Top
       </v-btn>
     </v-fab-transition>
-    <div style="cursor:pointer;" @click="$vuetify.goTo(0)">또 눌러</div>
+    <!-- <div style="cursor:pointer;" @click="$vuetify.goTo(0)">또 눌러</div> -->
   </div>
 
 </template>
