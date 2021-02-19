@@ -1,18 +1,18 @@
 ## <프로젝트 소개>
 
-### [ 비대면 화상 면접 & 면접 관리 플랫폼 "WieV" ]
+## [ 비대면 화상 면접 & 면접 관리 플랫폼 "WieV" ]
 
-#### > 실무자들이 면접의 목적인 지원자의 평가와 선발에 집중하기 위해 간편하고 효율적으로 사용할 수 있는 채용 및 면접 관리 플랫폼입니다.
+### > 실무자들이 면접의 목적인 지원자의 평가와 선발에 집중하기 위해 간편하고 효율적으로 사용할 수 있는 채용 및 면접 관리 플랫폼입니다.
 
-##### - 데이터베이스
+#### 데이터베이스
 
 ![DB](/uploads/1d7f664bef197b5f2f3843e38c114664/DB.png)
 
-##### - 기술 스택
+#### 기술 스택
 
 ![기술스택](/uploads/4f0d10a7c199746150f3cb11b0d503fa/기술스택.png)
 
-###### Frontend 개발환경
+##### Frontend 개발환경
 
 - node v14.15.4
 - npm 6.14.10
@@ -26,7 +26,7 @@
     - Live Server - Ritwick Dey
     - Visual Studio IntelliCode - Microsoft
 
-###### Backend 개발 환경
+##### Backend 개발 환경
 
 - Java jdk 13.0.1
     - [http://jdk.java.net/archive/](http://jdk.java.net/archive/)
@@ -38,7 +38,7 @@
     - STS 3.9.14.RELEASE
     - 디펜던시 : Spring Boot DevTools, Lombok, MyBatis Framework, MySQL Driver, Spring Web
 
-##### - 홈 화면
+#### 홈 화면
 
 ![홈화면](/uploads/7f4829de2e9eb88280aac03f4e8da78c/홈화면.gif)
 
