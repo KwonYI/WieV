@@ -6,21 +6,24 @@
 
 #### 홈 화면
 
-![홈화면최종1](/uploads/d27f84c52fe9797e3c09d70f808ffa4b/홈화면최종1.gif)
+![홈화면최종1](https://user-images.githubusercontent.com/68232654/108472328-f2aaab00-72cf-11eb-9108-081587c8004a.gif)
 
 #### 면접 현황 및 생성
 
-![공고최종2](/uploads/9d5953fcc9f4b230a0b9683dd8cee902/공고최종2.gif)
+![공고최종2](https://user-images.githubusercontent.com/68232654/108472502-2b4a8480-72d0-11eb-9661-e90583d8b6c7.gif)
 
-![면접생성최종3](/uploads/69ac8169762db751eb2fa99ad3746f34/면접생성최종3.gif)
+![면접생성최종3](https://user-images.githubusercontent.com/68232654/108472515-31d8fc00-72d0-11eb-8eea-b9cb712fec47.gif)
+
 
 #### 데이터베이스
 
-![DB](/uploads/1d7f664bef197b5f2f3843e38c114664/DB.png)
+![DB](https://user-images.githubusercontent.com/68232654/108472875-a449dc00-72d0-11eb-8d39-7425c00f4e37.png)
+
+![image](https://user-images.githubusercontent.com/68232654/108472915-b0ce3480-72d0-11eb-95b1-114532c1abf5.png)
 
 #### 기술 스택
 
-![기술스택](/uploads/4f0d10a7c199746150f3cb11b0d503fa/기술스택.png)
+![기술스택](https://user-images.githubusercontent.com/68232654/108472650-5fbe4080-72d0-11eb-91f4-234a851ec761.png)
 
 ##### - Frontend 개발환경
 
