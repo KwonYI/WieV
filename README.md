@@ -8,6 +8,16 @@
 
 ![DB](/uploads/1d7f664bef197b5f2f3843e38c114664/DB.png)
 
+#### 홈 화면
+
+![홈화면최종1](/uploads/d27f84c52fe9797e3c09d70f808ffa4b/홈화면최종1.gif)
+
+#### 면접 현황 및 생성
+
+![공고최종2](/uploads/9d5953fcc9f4b230a0b9683dd8cee902/공고최종2.gif)
+
+![면접생성최종3](/uploads/69ac8169762db751eb2fa99ad3746f34/면접생성최종3.gif)
+
 #### 기술 스택
 
 ![기술스택](/uploads/4f0d10a7c199746150f3cb11b0d503fa/기술스택.png)
@@ -41,15 +51,5 @@
 ##### - WebRTC
 
 - openVidu [https://openvidu.io/](https://openvidu.io/)
-
-#### 홈 화면
-
-![홈화면최종1](/uploads/d27f84c52fe9797e3c09d70f808ffa4b/홈화면최종1.gif)
-
-#### 면접 현황 및 생성
-
-![공고최종2](/uploads/9d5953fcc9f4b230a0b9683dd8cee902/공고최종2.gif)
-
-![면접생성최종3](/uploads/69ac8169762db751eb2fa99ad3746f34/면접생성최종3.gif)
 
 
