@@ -12,7 +12,7 @@
 
 ![기술스택](/uploads/4f0d10a7c199746150f3cb11b0d503fa/기술스택.png)
 
-##### Frontend 개발환경
+##### - Frontend 개발환경
 
 - node v14.15.4
 - npm 6.14.10
@@ -26,7 +26,7 @@
     - Live Server - Ritwick Dey
     - Visual Studio IntelliCode - Microsoft
 
-##### Backend 개발 환경
+##### - Backend 개발 환경
 
 - Java jdk 13.0.1
     - [http://jdk.java.net/archive/](http://jdk.java.net/archive/)
@@ -38,8 +38,16 @@
     - STS 3.9.14.RELEASE
     - 디펜던시 : Spring Boot DevTools, Lombok, MyBatis Framework, MySQL Driver, Spring Web
 
+##### - WebRTC
+
+- openVidu [https://openvidu.io/](https://openvidu.io/)
+
 #### 홈 화면
 
-![홈화면](/uploads/7f4829de2e9eb88280aac03f4e8da78c/홈화면.gif)
+![홈화면최종1](/uploads/d27f84c52fe9797e3c09d70f808ffa4b/홈화면최종1.gif)
+
+#### 면접 현황 및 생성
+
+
 
 
