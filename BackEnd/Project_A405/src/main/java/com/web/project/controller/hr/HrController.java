@@ -982,7 +982,7 @@ public class HrController {
 				"        \r\n" + 
 				"  <div style=\"color: #ffffff; line-height: 140%; text-align: left; word-wrap: break-word;\">\r\n" + 
 				"    <p style=\"font-size: 14px; line-height: 140%; text-align: center;\"><span style=\"color: #466b8c; font-size: 14px; line-height: 19.6px;\">&copy; SSAFY Company. All Rights Reserved</span></p>\r\n" + 
-				"<p style=\"font-size: 14px; line-height: 140%; text-align: center;\"><span style=\"color: #466b8c; font-size: 14px; line-height: 19.6px;\">Talk to us (010) 1212-3333 or </span><br /><span style=\"color: #466b8c; font-size: 14px; line-height: 19.6px;\">Email us ssafytesta405@gmail.com</span></p>\r\n" + 
+				"<p style=\"font-size: 14px; line-height: 140%; text-align: center;\"><span style=\"color: #466b8c; font-size: 14px; line-height: 19.6px;\">Talk to us (010) 1212-3333 or </span><br /><span style=\"color: #466b8c; font-size: 14px; line-height: 19.6px;\">Email us wievservice@gmail.com</span></p>\r\n" + 
 				"  </div>\r\n" + 
 				"\r\n" + 
 				"      </td>\r\n" + 
