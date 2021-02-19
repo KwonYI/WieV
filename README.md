@@ -14,6 +14,16 @@
 
 ![면접생성최종3](https://user-images.githubusercontent.com/68232654/108472515-31d8fc00-72d0-11eb-8eea-b9cb712fec47.gif)
 
+#### 면접 진행
+
+1) 대기방 - 지원자 목소리 체크 및 신분증 확인 진행, 확인 후 면접방으로 이동
+
+![면접영상3](https://user-images.githubusercontent.com/68232654/108474880-4ff42b80-72d3-11eb-82bc-43361b42ee5f.gif)
+
+2) 면접방 - 면접 진행하는 방, 클릭으로 지원자의 자기소개서 확인 가능
+
+![면접영상_면접방](https://user-images.githubusercontent.com/68232654/108475519-2a1b5680-72d4-11eb-9782-99bb8733f03a.gif)
+
 
 #### 데이터베이스
 
