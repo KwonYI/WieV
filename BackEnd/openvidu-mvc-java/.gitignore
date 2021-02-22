@@ -1,8 +1,8 @@
-# ignore properties file
-config.properties
-
 # Compiled class file
 *.class
+
+# ignore properties file
+config.properties
 
 # Log file
 *.log
