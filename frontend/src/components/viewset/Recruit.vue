@@ -29,9 +29,9 @@
 </template>
 
 <script>
-  import Progress from '@/components/viewset/Progress'
-  import Viewees from '@/components/viewset/Viewees'
-  import Viewers from '@/components/viewset/Viewers'
+import Progress from '@/components/viewset/Progress'
+import Viewees from '@/components/viewset/Viewees'
+import Viewers from '@/components/viewset/Viewers'
 import {  mapState } from "vuex"
   export default {
     name: "Recruit",
