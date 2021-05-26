@@ -44,7 +44,7 @@
     - Live Server - Ritwick Dey
     - Visual Studio IntelliCode - Microsoft
 ```
-## Bacnd
+## BackEnd
 ```
 - Java jdk 13.0.1
     - [http://jdk.java.net/archive/](http://jdk.java.net/archive/)
